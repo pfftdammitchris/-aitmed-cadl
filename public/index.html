@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head lang='en'>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<meta charset='utf-8'>
+	<meta name='viewport' content='width=device-width'>
+	<title>AiTmed CADL SDK Test Page</title>
+	<style>
+		body {
+			font-family: 'Helvetica Neue', Arial, sans-serif;
+			color: #333;
+			font-weight: 300;
+		}
+	</style>
+	<link href="index.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+	<h1>AiTmed CADL SDK Test Page</h1>
+
+	<div>
+		<h3>Input the CADL Endpoint URL and batch test all pages at once.</h3>
+		<input id="cadlEndpoint-txtField" placeholder="Enter CADL Endpoint"/>
+		<button id="cadlEndpoint-btn">Validate</button>
+		<div>
+			<h4 class="cadlEndpoint-details"></h4>
+			<ul class="invalid-list"></ul>
+			<p class="cadlEndpoint-error"></p>
+		</div>
+		<h3 id="val-endpoint-text">Validating....</h3>
+	</div>
+
+	<div>
+		<h3>Input the CADL Page URL to test a single page.</h3>
+		<input id="cadlPage-txtField" placeholder="Enter CADL Page URL"/>
+		<button id="cadlPage-btn">Validate</button>
+		<div>
+			<p id="isValid"></p>
+			<p class="page-error"></p>
+		</div>
+		<h3 id="val-page-text">Validating....</h3>
+	</div>
+	<script src='bundle.js'></script>
+</body>
+</html>

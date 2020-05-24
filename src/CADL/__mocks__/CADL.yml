@@ -1,0 +1,774 @@
+pageName: ApplyBusiness
+module: patient
+pageNumber: '410'
+dataModels:
+  init:
+    - actionType: ecosConnection
+      dataModel: applyBusinessForm
+      ecosAction: get
+    - actionType: ecosConnection
+      dataModel: w9
+      ecosAction: get
+    - actionType: ecosConnection
+      dataModel: workersCompInsurance
+      ecosAction: get
+  final: ''
+  applyBusinessForm:
+    edge:
+      get:
+        type: '100010'
+      store: # this is only a place holder. It is duplicated from BaseDataModel
+        id: ''
+        type: .applyBusinessForm.dataModel.type
+        subType: .applyBusinessForm.dataModel.subType
+        name: .applyBusinessForm.dataModel.name
+      dataModel:
+        id: '' # when get, id is returned from ECOS. When store, w/o id, ECOS will create a new. otherwise ECOS will do update.
+        type: '100010'
+        subType: '0'
+        name:
+          organizationName: 'A&C Urgentcare'
+          street: '1000 S Anaheim Blvd #200'
+          city: 'Anaheim'
+          state: 'CA'
+          zip: '92805'
+          companyPhone: '(714) 123-4212'
+          isMedicalServiceSelected: 'true'
+          isBusinessSelected: 'true'
+          isOtherSelected: 'true'
+          otherText: ''
+          store: 'N/A'
+          taxId: '19858839'
+          websiteURL: Urgentcareac.com
+          generalInsurance: PPO
+          workersCompInsurance: ''
+          file-w9: applicationDataType-101
+          file-workersCompInsurance: applicationDataType-102
+          message:
+            avatar: .global.CurrentUser.avatar
+            name: .global.CurrentUser.firstName # + global.CurrentUser.LastName
+  w9:
+    document:
+      dataModel:
+        name:
+          title: 'W-9'
+          type: .w9.store.mediaType # "i.e. "image/jpeg"
+          data: binFile
+        type:
+          applicationDataType: .const.w9
+      get:
+        ids: .applyBusinessForm.dataModel.id
+        xfname: eid
+        type: .applyBusinessForm.dataModel.name.file-w9
+      store:
+        mediaType: # mediaType : "image/jpeg"
+          condition:
+            isPlain: 'text/plain'
+            isJpeg: 'image/jpeg'
+            isPng: 'image/png'
+        name: .w9.dataModel.name
+        eid: .applyBusinessForm.dataModel.id
+        type: .w9.dataModel.type
+  workersCompInsurance:
+    document:
+      get:
+        ids: .applyBusinessForm.dataModel.id
+        xfname: eid
+        type: .applyBusinessForm.dataModel.name.file-workersCompInsurance
+      store:
+        mediaType:
+          condition:
+            isPlain: 'text/plain'
+            isJpeg: 'image/jpeg'
+            isPng: 'image/png'
+        name: .workersCompInsurance.dataModel.name
+        eid: .applyBusinessForm.dataModel.id
+        type: .workersCompInsurance.dataModel.type
+    dataModel:
+      name:
+        title: 'Workers Company Insurance'
+        type: .workersCompInsurance.store.mediaType # "i.e. "image/jpeg"
+        data: binFile
+      type:
+        applicationDataType: .const.workComp
+components:
+  - type: header
+    componentId: header
+    className: header
+    style:
+      height: '0.065'
+    children:
+      - type: button
+        componentId: leftButton
+        path: backButtonYellow.png
+        onClick:
+          - actionType: builtIn
+            funcName: goBack
+        text: ' Back'
+        className: leftButton
+      - type: label
+        componentId: headerTitle
+        text: Apply
+        className: headerTitle
+      - type: label
+        componentId: headerSubtitle
+        text: Business
+        style:
+          top: '0.04'
+          left: '0'
+          width: '1'
+          height: '0.025'
+          fontSize: '14'
+          textAlign:
+            x: center
+            y: center
+          color: '0x00000058'
+
+  - type: scrollView
+    componentId: bodyContainer
+    style:
+      left: '0'
+      top: '0.065'
+      width: '1'
+      height: '0.935'
+
+    children:
+      - type: label
+        componentId: organizationNameLabel
+        text: 'Organization Name'
+        style:
+          left: '0.15'
+          top: '0.02'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: organizationNameInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.organizationName
+        contentType: text
+        style:
+          left: '0.15'
+          top: '0.06'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: streetLabel
+        text: Street
+        style:
+          left: '0.15'
+          top: '0.11'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: streetInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.street
+        contentType: text
+        style:
+          left: '0.15'
+          top: '0.15'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: cityLabel
+        text: City
+        style:
+          left: '0.15'
+          top: '0.2'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: cityInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.city
+        contentType: text
+        style:
+          left: '0.15'
+          top: '0.24'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: stateLabel
+        text: State
+        style:
+          left: '0.15'
+          top: '0.29'
+          width: '0.325'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: select
+        componentId: stateInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.state
+        style:
+          left: '0.15'
+          top: '0.33'
+          width: '0.325'
+          height: '0.04'
+          required: 'true'
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+        options:
+          - AL
+          - AK
+          - AZ
+          - AR
+          - CA
+          - CO
+
+      - type: label
+        componentId: zipLabel
+        text: Zip
+        style:
+          left: '0.525'
+          top: '0.29'
+          width: '0.325'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: zipInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.zip
+        contentType: number
+        style:
+          left: '0.525'
+          top: '0.33'
+          width: '0.325'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: companyPhoneLabel
+        text: 'Company Phone #'
+        style:
+          left: '0.15'
+          top: '0.38'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: companyPhoneInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.companyPhone
+        contentType: phoneNumber
+        style:
+          left: '0.15'
+          top: '0.42'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: categoryLabel
+        text: Category
+        style:
+          left: '0.15'
+          top: '0.49'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '18'
+          fontStyle: 'bold'
+          textAlign:
+            x: left
+            y: center
+
+      - type: divider
+        componentId: divider1
+        className: divider
+        style:
+          left: '0.15'
+          top: '0.54'
+          height: '0.0015'
+          width: '0.7'
+          backgroundColor: '0x000000'
+
+      - type: button
+        componentId: medicalServiceCheck
+        onClick:
+          - actionType: builtIn
+            funcName: toggleMedicalService
+        text: '\u2705'
+        textSelected: '\u2705'
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.isMedicalServiceSelected
+        style:
+          left: '0.15'
+          top: '0.57'
+          width: '0.04'
+          height: '0.02'
+          border:
+            style: '3'
+            width: '1'
+            color: '0x0000008c'
+          borderRadius: '0'
+
+      - type: label
+        componentId: medicalServiceLabel
+        text: 'Medical Service'
+        style:
+          left: '0.25'
+          top: '0.56'
+          width: '0.55'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+
+      - type: button
+        componentId: businessCheck
+        onClick:
+          - actionType: builtIn
+            funcName: toggleBusiness
+        text: '\u2705'
+        textSelected: '\u2705'
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.isBusinessSelected
+        style:
+          left: '0.15'
+          top: '0.62'
+          width: '0.04'
+          height: '0.02'
+          border:
+            style: '3'
+            width: '1'
+            color: '0x0000008c'
+          borderRadius: '0'
+
+      - type: label
+        componentId: businessLabel
+        text: Business
+        style:
+          left: '0.25'
+          top: '0.61'
+          width: '0.55'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+
+      - type: button
+        componentId: otherCheck
+        onClick:
+          - actionType: builtIn
+            funcName: toggleOther
+        text: '\u2705'
+        textSelected: '\u2705'
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.isOtherSelected
+        style:
+          left: '0.15'
+          top: '0.67'
+          width: '0.04'
+          height: '0.02'
+          border:
+            style: '3'
+            width: '1'
+            color: '0x0000008c'
+          borderRadius: '0'
+
+      - type: label
+        componentId: otherLabel
+        text: Other
+        style:
+          left: '0.25'
+          top: '0.66'
+          width: '0.15'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: otherInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.otherText
+        contentType: text
+        style:
+          left: '0.42'
+          top: '0.66'
+          width: '0.43'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: storeLabel
+        text: 'Store # (if applicable)'
+        style:
+          left: '0.15'
+          top: '0.71'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: storeInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.store
+        contentType: text
+        style:
+          left: '0.15'
+          top: '0.75'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: taxId
+        text: 'Tax ID'
+        style:
+          left: '0.15'
+          top: '0.8'
+          width: '0.6'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: taxIdInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.taxId
+        contentType: number
+        style:
+          left: '0.15'
+          top: '0.84'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: websiteURLLabel
+        text: 'Website URL'
+        style:
+          left: '0.15'
+          top: '0.89'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: websiteURLInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.websiteURL
+        contentType: text
+        style:
+          left: '0.15'
+          top: '0.93'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: generalInsuranceLabel
+        text: 'General & Professional Liability Insurance'
+        style:
+          left: '0.15'
+          top: '0.98'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: generalInsuranceInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.generalInsurance
+        contentType: text
+        style:
+          left: '0.15'
+          top: '1.02'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: workersCompInsuranceLabel
+        text: 'Workers comp insurance'
+        style:
+          left: '0.15'
+          top: '1.07'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '12'
+          color: '0x00000058'
+          textAlign:
+            x: left
+            y: center
+
+      - type: textField
+        componentId: workersCompInsuranceInput
+        dataModel: applyBusinessForm
+        dataId: dataModel.name.workersCompInsurance
+        contentType: text
+        style:
+          left: '0.15'
+          top: '1.11'
+          width: '0.7'
+          height: '0.04'
+          fontSize: '16'
+          required: 'true'
+          textAlign:
+            x: left
+            y: center
+          border:
+            style: '2'
+            width: '1'
+            color: '0x000000'
+
+      - type: label
+        componentId: w9Label
+        text: W-9
+        style:
+          left: '0.15'
+          top: '1.16'
+          width: '0.85'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+
+      - type: view
+        componentId: w9Container
+        dataModel: w9
+        dataId: dataModel.name.data
+        onClick:
+          - actionType: pageJump
+            destination: ApplyBusinessChooseFile
+        style:
+          left: '0.15'
+          top: '1.19891'
+          width: '0.7'
+          height: '0.1'
+          required: 'true'
+          border:
+            style: '4'
+            width: '2'
+            color: '0x000000ff'
+        children:
+          - type: image
+            componentId: uploadImageW9
+            path: cloud.png
+            style:
+              left: '0.05'
+              top: '0.012'
+              width: '0.1333'
+              height: '0.06812'
+          - type: label
+            componentId: uploadLabelW9
+            text: 'Click here to upload files...'
+            style:
+              left: '0.21'
+              top: '0.035'
+              width: '0.48'
+              height: '0.025'
+              color: '0x000000ff'
+              fontSize: '14'
+
+      - type: label
+        componentId: workersCompInsuranceFileLabel
+        text: 'Workers comp insurance'
+        style:
+          left: '0.15'
+          top: '1.31'
+          width: '0.85'
+          height: '0.04'
+          fontSize: '16'
+          textAlign:
+            x: left
+            y: center
+
+      - type: view
+        componentId: insuranceContainer
+        dataModel: workersCompInsurance
+        dataId: dataModel.name.data
+        onClick:
+          - actionType: pageJump
+            destination: ApplyBusinessChooseFile
+        style:
+          left: '0.15'
+          top: '1.34877'
+          width: '0.7'
+          height: '0.1'
+          border:
+            style: '4'
+            width: '2'
+            color: '0x000000ff'
+            required: 'true'
+        children:
+          - type: image
+            componentId: uploadImageWork
+            path: cloud.png
+            style:
+              left: '0.05'
+              top: '0.012'
+              width: '0.1333'
+              height: '0.06812'
+          - type: label
+            componentId: uploadLabelWork
+            text: 'Click here to upload files...'
+            style:
+              left: '0.21'
+              top: '0.035'
+              width: '0.48'
+              height: '0.025'
+              color: '0x000000ff'
+              fontSize: '14'
+
+      - type: button
+        componentId: submitButton
+        text: Submit
+        onClick:
+          - actionType: ecosConnection
+            dataModel: applyBusinessForm
+            ecosAction: store
+          - actionType: ecosConnection
+            dataModel: w9
+            ecosAction: store
+          - actionType: ecosConnection
+            dataModel: workersCompInsurance
+            ecosAction: store
+          - actionType: pageJump
+            destination: ApplyBusinessSuccess
+        style:
+          left: '0.3133'
+          top: '1.5'
+          width: '0.3733'
+          height: '0.0493'
+          color: '0xffffffff'
+          backgroundColor: '0xfda512ff'
