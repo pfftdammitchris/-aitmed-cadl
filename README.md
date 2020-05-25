@@ -1,0 +1,1 @@
+This package contains teh CADL class used to process CADL objects in addition to utility functions used to validate the CADL YAML files.
