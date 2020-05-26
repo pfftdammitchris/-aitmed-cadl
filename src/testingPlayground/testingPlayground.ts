@@ -7,10 +7,13 @@
 import { fetchAll, fetchCADLObject } from '../utils'
 import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
+import CADL from '../CADL'
+import { defaultConfig } from '../config'
 export default (async function () {
 
     $(document).ready(function () {
-
+        const cadl = new CADL({ ...defaultConfig })
+        debugger
         $('#cadlEndpoint-btn').click(function () {
             const url = $('#cadlEndpoint-txtField').val()
             if (!url) return

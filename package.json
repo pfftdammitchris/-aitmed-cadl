@@ -50,6 +50,7 @@
     "dist"
   ],
   "dependencies": {
+    "@aitmed/ecos-lvl2-sdk": "^1.4.77",
     "axios": "^0.19.2",
     "jquery": "^3.5.1",
     "pako": "^1.0.11",

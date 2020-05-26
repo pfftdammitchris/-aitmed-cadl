@@ -6,6 +6,7 @@ import {
     attachFns,
 } from './utils'
 import { CADL_OBJECT, BASE_DATA_MODEL } from './types'
+import store, { ResponseCatcher, ErrorCatcher } from '../common/store'
 
 import {
     NoDataModelsFound,
@@ -28,9 +29,18 @@ export default class CADL {
     private _data: Record<string, any> = {}
     private _baseDataModel: BASE_DATA_MODEL
 
-    constructor(baseDataModel_URL: string, pageURL: string) {
-        this._baseDataModel_URL = baseDataModel_URL
-        this._pageUrl = pageURL
+    //TODO: create a method that takes in the page url and process the yaml for that page
+    constructor(
+
+        { apiVersion, env, apiHost, configUrl }
+
+    ) {
+        //replace default arguments
+        store.env = env
+        store.configUrl = configUrl
+        store.apiVersion = apiVersion
+        store.apiHost = apiHost
+
     }
 
     /**
@@ -40,6 +50,10 @@ export default class CADL {
      * @throws UnableToExecuteDataModelFn if an init function fails to execute
      */
     public async init(): Promise<void> {
+        if(store.getConfig()===null){
+            store.level2SDK.
+        }
+        await this.getCadlEndpoint()
         if (!this.cadl) {
             try {
                 await this.getCADL()
@@ -252,6 +266,34 @@ export default class CADL {
 
     public set data(data) {
         this._data = data || {}
+    }
+    set apiVersion(apiVersion) {
+        store.apiVersion = apiVersion
+    }
+
+    get apiVersion() {
+        return store.apiVersion
+    }
+
+    public getConfig() {
+        return store.getConfig()
+    }
+
+
+    /**
+     * Only able to be set when env = development
+     * @param catcher if undefined, reset the catcher to be default
+     */
+    public setResponseCatcher(catcher?: ResponseCatcher) {
+        store.setResponseCatcher(catcher)
+    }
+
+    /**
+     * Only able to be set when env = development
+     * @param catcher if undefined, reset the catcher to be default
+     */
+    public setErrorCatcher(catcher?: ErrorCatcher) {
+        store.setErrorCatcher(catcher)
     }
 
 
