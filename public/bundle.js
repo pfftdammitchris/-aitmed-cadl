@@ -16875,7 +16875,7 @@
 
 	function _fetchAll() {
 	  _fetchAll = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(url) {
-	    var cadlEndpointObject, result, _cadlEndpointObject, yamlList, baseUrl, fileSuffix, baseUrlWithCADLVersion, _iterator, _step, page, pageName, cadlYAML, cadlObject, isValid, err, _yield$axios$get2, data, cadlResponse;
+	    var cadlEndpointObject, result, _cadlEndpointObject, yamlList, baseUrl, fileSuffix, baseUrlWithCADLVersion, _iterator, _step, page, pageName, cadlYAML, cadlObject, isValid, err, _url, _yield$axios$get2, data, cadlResponse;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
@@ -16899,7 +16899,7 @@
 
 	          case 10:
 	            if (!cadlEndpointObject) {
-	              _context2.next = 46;
+	              _context2.next = 48;
 	              break;
 	            }
 
@@ -16913,7 +16913,7 @@
 
 	          case 16:
 	            if ((_step = _iterator.n()).done) {
-	              _context2.next = 38;
+	              _context2.next = 40;
 	              break;
 	            }
 
@@ -16923,22 +16923,30 @@
 	            isValid = false;
 	            err = null;
 	            _context2.prev = 22;
-	            _context2.next = 25;
-	            return axios$1.get("".concat(baseUrlWithCADLVersion).concat(pageName, "_en").concat(fileSuffix));
+	            _url = void 0;
 
-	          case 25:
+	            if (pageName === 'BaseCSS') {
+	              _url = "".concat(baseUrlWithCADLVersion).concat(pageName).concat(fileSuffix);
+	            } else {
+	              _url = "".concat(baseUrlWithCADLVersion).concat(pageName, "_en").concat(fileSuffix);
+	            }
+
+	            _context2.next = 27;
+	            return axios$1.get(_url);
+
+	          case 27:
 	            _yield$axios$get2 = _context2.sent;
 	            data = _yield$axios$get2.data;
 	            cadlYAML = data;
-	            _context2.next = 33;
+	            _context2.next = 35;
 	            break;
 
-	          case 30:
-	            _context2.prev = 30;
+	          case 32:
+	            _context2.prev = 32;
 	            _context2.t1 = _context2["catch"](22);
 	            err = new UnableToRetrieveYAML(_context2.t1.message);
 
-	          case 33:
+	          case 35:
 	            if (err === null) {
 	              try {
 	                cadlObject = YAML.parse(cadlYAML);
@@ -16956,36 +16964,36 @@
 	            });
 	            result.push(cadlResponse);
 
-	          case 36:
+	          case 38:
 	            _context2.next = 16;
 	            break;
 
-	          case 38:
-	            _context2.next = 43;
+	          case 40:
+	            _context2.next = 45;
 	            break;
 
-	          case 40:
-	            _context2.prev = 40;
+	          case 42:
+	            _context2.prev = 42;
 	            _context2.t2 = _context2["catch"](14);
 
 	            _iterator.e(_context2.t2);
 
-	          case 43:
-	            _context2.prev = 43;
+	          case 45:
+	            _context2.prev = 45;
 
 	            _iterator.f();
 
-	            return _context2.finish(43);
+	            return _context2.finish(45);
 
-	          case 46:
+	          case 48:
 	            return _context2.abrupt("return", result);
 
-	          case 47:
+	          case 49:
 	          case "end":
 	            return _context2.stop();
 	        }
 	      }
-	    }, _callee2, null, [[1, 7], [14, 40, 43, 46], [22, 30]]);
+	    }, _callee2, null, [[1, 7], [14, 42, 45, 48], [22, 32]]);
 	  }));
 	  return _fetchAll.apply(this, arguments);
 	}
