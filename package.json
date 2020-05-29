@@ -6,7 +6,7 @@
   "module": "dist/index.esm.js",
   "browser": "dist/index.umd.js",
   "scripts": {
-    "build": "rm -rf dist && rollup -c",
+    "build": "rm -rf dist && rm public/bundle.js public/bundle.js.map && rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
     "watch": "rollup -c -w",
     "start": "serve public",

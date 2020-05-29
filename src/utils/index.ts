@@ -1,7 +1,7 @@
 import pako from 'pako'
 import YAML from 'yaml'
 import axios from 'axios'
-import { UnableToParseYAML, UnableToRetrieveYAML } from '../CADL/errors'
+import { UnableToParseYAML, UnableToRetrieveYAML, InvalidDestination } from '../CADL/errors'
 import { CADLResponse } from '../common/Response'
 
 export const compareUint8Arrays = (
@@ -108,7 +108,7 @@ export async function fetchAll(url) {
             const pageName = page.split('_').pop()
             let cadlYAML, cadlObject
             let isValid = false
-            let err: null | Error = null
+            let err: Error[] = []
             try {
                 let url
                 if (pageName === 'BaseCSS') {
@@ -119,15 +119,23 @@ export async function fetchAll(url) {
                 const { data } = await axios.get(url)
                 cadlYAML = data
             } catch (error) {
-                err = new UnableToRetrieveYAML(error.message)
+                err.push(new UnableToRetrieveYAML(error.message))
             }
 
-            if (err === null) {
+            if (!err.length) {
                 try {
                     cadlObject = YAML.parse(cadlYAML)
                     isValid = true
                 } catch (error) {
-                    err = new UnableToParseYAML(error.message)
+                    err.push(new UnableToParseYAML(error.message))
+                }
+            }
+
+            if (!err.length) {
+                const destinationErrors = valPageJump(cadlObject, yamlList)
+                if (destinationErrors.length) {
+                    isValid = false
+                    err.push(...destinationErrors)
                 }
             }
 
@@ -137,4 +145,33 @@ export async function fetchAll(url) {
     }
     return result
 
+}
+
+export function valPageJump(cadlObject: Record<string, any>, validPages: string[]): InvalidDestination[] {
+    const cadlCopy = Object.assign({}, cadlObject)
+    let errors: InvalidDestination[] = []
+    searchAndVal(cadlCopy)
+
+    function searchAndVal(cadlObject) {
+        for (let key in cadlObject) {
+            if (isObject(cadlObject[key])) {
+                searchAndVal(cadlObject[key])
+            } else if (Array.isArray(cadlObject[key])) {
+                for (let elem of cadlObject[key]) {
+                    if (isObject(elem)) {
+                        searchAndVal(elem)
+                    }
+                }
+            } else {
+                if (key === 'destination') {
+                    if (!validPages.includes(cadlObject[key])) {
+                        errors.push(new InvalidDestination(`${cadlObject[key] !== '' ? cadlObject[key] : null} is not a valid page destination.`))
+                    }
+                }
+            }
+        }
+        return
+    }
+
+    return errors
 }

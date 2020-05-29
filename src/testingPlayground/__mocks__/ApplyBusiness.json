@@ -1,0 +1,937 @@
+{
+    "ApplyBusiness": {
+      "init": {
+        "ecosAction": [
+          "..formData.edge.get", 
+          "..formData.w9.get", 
+          "..formData.workersCompInsurance.get"
+        ]
+      }, 
+      "pageNumber": "410", 
+      "components": [
+        {
+          "className": "header", 
+          "style": {
+            "height": "0.065"
+          }, 
+          "type": "header", 
+          "componentId": "header", 
+          "children": [
+            {
+              "className": "leftButton", 
+              "onClick": [
+                {
+                  "actionType": "builtIn", 
+                  "funcName": "goBack"
+                }
+              ], 
+              "path": "backButtonYellow.png", 
+              "text": " Back", 
+              "type": "button", 
+              "componentId": "leftButton"
+            }, 
+            {
+              "className": "headerTitle", 
+              "text": "Apply", 
+              "type": "label", 
+              "componentId": "headerTitle"
+            }, 
+            {
+              "text": "Business", 
+              "style": {
+                "width": "1", 
+                "fontSize": "14", 
+                "color": "0x00000058", 
+                "top": "0.04", 
+                "left": "0", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "center"
+                }, 
+                "height": "0.025"
+              }, 
+              "type": "label", 
+              "componentId": "headerSubtitle"
+            }
+          ]
+        }, 
+        {
+          "style": {
+            "width": "1", 
+            "top": "0.065", 
+            "left": "0", 
+            "height": "0.935"
+          }, 
+          "type": "scrollView", 
+          "componentId": "bodyContainer", 
+          "children": [
+            {
+              "text": "Organization Name", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.02", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "organizationNameLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.organizationName", 
+              "style": {
+                "top": "0.06", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "text", 
+              "componentId": "organizationNameInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Street", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.11", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "streetLabel"
+            }, 
+            {
+              "dataId": "..formData.name.street", 
+              "style": {
+                "top": "0.15", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "text", 
+              "componentId": "streetInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "City", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.2", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "cityLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.city", 
+              "style": {
+                "top": "0.24", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "text", 
+              "componentId": "cityInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "State", 
+              "style": {
+                "width": "0.325", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.29", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "stateLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.state", 
+              "style": {
+                "width": "0.325", 
+                "left": "0.15", 
+                "top": "0.33", 
+                "required": "true", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "select", 
+              "componentId": "stateInput", 
+              "options": [
+                "AL", 
+                "AK", 
+                "AZ", 
+                "AR", 
+                "CA", 
+                "CO"
+              ]
+            }, 
+            {
+              "text": "Zip", 
+              "style": {
+                "width": "0.325", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.29", 
+                "left": "0.525", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "zipLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.zip", 
+              "style": {
+                "top": "0.33", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.325", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.525"
+              }, 
+              "contentType": "number", 
+              "componentId": "zipInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Company Phone #", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.38", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "companyPhoneLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.companyPhone", 
+              "style": {
+                "top": "0.42", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "phoneNumber", 
+              "componentId": "companyPhoneInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Category", 
+              "style": {
+                "width": "0.7", 
+                "fontStyle": "bold", 
+                "fontSize": "18", 
+                "top": "0.49", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "categoryLabel"
+            }, 
+            {
+              "className": "divider", 
+              "style": {
+                "width": "0.7", 
+                "top": "0.54", 
+                "left": "0.15", 
+                "backgroundColor": "0x000000", 
+                "height": "0.0015"
+              }, 
+              "type": "divider", 
+              "componentId": "divider1"
+            }, 
+            {
+              "dataId": "..formData.edge.name.isMedicalServiceSelected", 
+              "style": {
+                "width": "0.04", 
+                "borderRadius": "0", 
+                "top": "0.57", 
+                "left": "0.15", 
+                "border": {
+                  "color": "0x0000008c", 
+                  "width": "1", 
+                  "style": "3"
+                }, 
+                "height": "0.02"
+              }, 
+              "onClick": [
+                {
+                  "actionType": "builtIn", 
+                  "funcName": "toggleMedicalService"
+                }
+              ], 
+              "text": "\\u2705", 
+              "type": "button", 
+              "componentId": "medicalServiceCheck", 
+              "textSelected": "\\u2705"
+            }, 
+            {
+              "text": "Medical Service", 
+              "style": {
+                "width": "0.55", 
+                "fontSize": "16", 
+                "top": "0.56", 
+                "left": "0.25", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "medicalServiceLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.isMedicalServiceSelected", 
+              "style": {
+                "width": "0.04", 
+                "borderRadius": "0", 
+                "top": "0.62", 
+                "left": "0.15", 
+                "border": {
+                  "color": "0x0000008c", 
+                  "width": "1", 
+                  "style": "3"
+                }, 
+                "height": "0.02"
+              }, 
+              "onClick": [
+                {
+                  "actionType": "builtIn", 
+                  "funcName": "toggleBusiness"
+                }
+              ], 
+              "text": "\\u2705", 
+              "type": "button", 
+              "componentId": "businessCheck", 
+              "textSelected": "\\u2705"
+            }, 
+            {
+              "text": "Business", 
+              "style": {
+                "width": "0.55", 
+                "fontSize": "16", 
+                "top": "0.61", 
+                "left": "0.25", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "businessLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.isOtherSelected", 
+              "style": {
+                "width": "0.04", 
+                "borderRadius": "0", 
+                "top": "0.67", 
+                "left": "0.15", 
+                "border": {
+                  "color": "0x0000008c", 
+                  "width": "1", 
+                  "style": "3"
+                }, 
+                "height": "0.02"
+              }, 
+              "onClick": [
+                {
+                  "actionType": "builtIn", 
+                  "funcName": "toggleOther"
+                }
+              ], 
+              "text": "\\u2705", 
+              "type": "button", 
+              "componentId": "otherCheck", 
+              "textSelected": "\\u2705"
+            }, 
+            {
+              "text": "Other", 
+              "style": {
+                "width": "0.15", 
+                "fontSize": "16", 
+                "top": "0.66", 
+                "left": "0.25", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "otherLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.otherText", 
+              "style": {
+                "width": "0.43", 
+                "fontSize": "16", 
+                "top": "0.66", 
+                "left": "0.42", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "contentType": "text", 
+              "componentId": "otherInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Store # (if applicable)", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.71", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "storeLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.store", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "16", 
+                "top": "0.75", 
+                "left": "0.15", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "contentType": "text", 
+              "componentId": "storeInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Tax ID", 
+              "style": {
+                "width": "0.6", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.8", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "taxId"
+            }, 
+            {
+              "dataId": "..formData.edge.name.taxId", 
+              "style": {
+                "top": "0.84", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "number", 
+              "componentId": "taxIdInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Website URL", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.89", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "websiteURLLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.websiteURL", 
+              "style": {
+                "top": "0.93", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "text", 
+              "componentId": "websiteURLInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "General & Professional Liability Insurance", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "0.98", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "generalInsuranceLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.generalInsurance", 
+              "style": {
+                "top": "1.02", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "text", 
+              "componentId": "generalInsuranceInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "Workers comp insurance", 
+              "style": {
+                "width": "0.7", 
+                "fontSize": "12", 
+                "color": "0x00000058", 
+                "top": "1.07", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "workersCompInsuranceLabel"
+            }, 
+            {
+              "dataId": "..formData.edge.name.workersCompInsurance", 
+              "style": {
+                "top": "1.11", 
+                "required": "true", 
+                "height": "0.04", 
+                "width": "0.7", 
+                "fontSize": "16", 
+                "border": {
+                  "color": "0x000000", 
+                  "width": "1", 
+                  "style": "2"
+                }, 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "left": "0.15"
+              }, 
+              "contentType": "text", 
+              "componentId": "workersCompInsuranceInput", 
+              "type": "textField"
+            }, 
+            {
+              "text": "W-9", 
+              "style": {
+                "width": "0.85", 
+                "fontSize": "16", 
+                "top": "1.16", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "w9Label"
+            }, 
+            {
+              "dataId": "..formData.w9.name.data", 
+              "style": {
+                "width": "0.7", 
+                "left": "0.15", 
+                "top": "1.19891", 
+                "required": "true", 
+                "border": {
+                  "color": "0x000000ff", 
+                  "width": "2", 
+                  "style": "4"
+                }, 
+                "height": "0.1"
+              }, 
+              "onClick": [
+                {
+                  "destination": "ApplyBusinessChooseFile", 
+                  "actionType": "pageJump"
+                }
+              ], 
+              "type": "view", 
+              "children": [
+                {
+                  "path": "cloud.png", 
+                  "style": {
+                    "width": "0.1333", 
+                    "top": "0.012", 
+                    "left": "0.05", 
+                    "height": "0.06812"
+                  }, 
+                  "type": "image", 
+                  "componentId": "uploadImageW9"
+                }, 
+                {
+                  "text": "Click here to upload files...", 
+                  "style": {
+                    "width": "0.48", 
+                    "fontSize": "14", 
+                    "color": "0x000000ff", 
+                    "top": "0.035", 
+                    "left": "0.21", 
+                    "height": "0.025"
+                  }, 
+                  "type": "label", 
+                  "componentId": "uploadLabelW9"
+                }
+              ], 
+              "componentId": "w9Container"
+            }, 
+            {
+              "text": "Workers comp insurance", 
+              "style": {
+                "width": "0.85", 
+                "fontSize": "16", 
+                "top": "1.31", 
+                "left": "0.15", 
+                "textAlign": {
+                  "y": "center", 
+                  "x": "left"
+                }, 
+                "height": "0.04"
+              }, 
+              "type": "label", 
+              "componentId": "workersCompInsuranceFileLabel"
+            }, 
+            {
+              "dataId": "..formData.workersCopInsurance.name.data", 
+              "style": {
+                "width": "0.7", 
+                "top": "1.34877", 
+                "left": "0.15", 
+                "border": {
+                  "color": "0x000000ff", 
+                  "width": "2", 
+                  "style": "4", 
+                  "required": "true"
+                }, 
+                "height": "0.1"
+              }, 
+              "onClick": [
+                {
+                  "destination": "ApplyBusinessChooseFile", 
+                  "actionType": "pageJump"
+                }
+              ], 
+              "type": "view", 
+              "children": [
+                {
+                  "path": "cloud.png", 
+                  "style": {
+                    "width": "0.1333", 
+                    "top": "0.012", 
+                    "left": "0.05", 
+                    "height": "0.06812"
+                  }, 
+                  "type": "image", 
+                  "componentId": "uploadImageWork"
+                }, 
+                {
+                  "text": "Click here to upload files...", 
+                  "style": {
+                    "width": "0.48", 
+                    "fontSize": "14", 
+                    "color": "0x000000ff", 
+                    "top": "0.035", 
+                    "left": "0.21", 
+                    "height": "0.025"
+                  }, 
+                  "type": "label", 
+                  "componentId": "uploadLabelWork"
+                }
+              ], 
+              "componentId": "insuranceContainer"
+            }, 
+            {
+              "text": "Submit", 
+              "style": {
+                "width": "0.3733", 
+                "backgroundColor": "0xfda512ff", 
+                "color": "0xffffffff", 
+                "top": "1.5", 
+                "left": "0.3133", 
+                "height": "0.0493"
+              }, 
+              "type": "button", 
+              "componentId": "submitButton", 
+              "onClick": [
+                "save", 
+                {
+                  "pageJump": "ApplyBusinessSuccess"
+                }
+              ]
+            }
+          ]
+        }
+      ], 
+      "formData": {
+        ".edge": {
+          "subType": "0", 
+          "name": {
+            "companyPhone": "(714) 123-4212", 
+            "isMedicalServiceSelected": "true", 
+            "file-workersCompInsurance": ".const.workComp", 
+            "isBusinessSelected": "true", 
+            "file-w9": ".const.w9", 
+            "taxId": "19858839", 
+            "street": "1000 S Anaheim Blvd #200", 
+            "city": "Anaheim", 
+            "organizationName": "A&C Urgentcare", 
+            "zip": "92805", 
+            "generalInsurance": "PPO", 
+            "isOtherSelected": "true", 
+            "websiteURL": "Urgentcareac.com", 
+            "state": "CA", 
+            ".message": {
+              "content": "I want the setup a business entity on AiTmed platlform.", 
+              "avatar": ".global.currentUser.vertex.name.avatar", 
+              "subject": "Apply Business"
+            }, 
+            "otherText": "", 
+            "workersCompInsurance": "", 
+            "store": "N/A"
+          }, 
+          "get": {
+            "type": "100010"
+          }, 
+          "type": "100010", 
+          "id": "", 
+          "store": null
+        }, 
+        "workersCompInsurance": {
+          ".document": {
+            "name": {
+              "type": ".workersCompInsurance.store.mediaType", 
+              "data": "binFile", 
+              "title": "Workers Company Insurance"
+            }, 
+            "type": {
+              "applicationDataType": ".const.workComp"
+            }, 
+            "eid": "..formData.edge.id", 
+            "store": {
+              "type": {
+                "mediaType": null
+              }, 
+              "mediaType": null, 
+              "condition": {
+                "isPng": "image/png", 
+                "isPlain": "text/plain", 
+                "isJpeg": "image/jpeg"
+              }
+            }, 
+            "get": {
+              "type": "..formData.name.file-workersCompInsurance", 
+              "ids": "..formData.edge.id", 
+              "xfname": "eid"
+            }
+          }
+        }, 
+        "w9": {
+          ".document": {
+            "name": {
+              "type": ".w9.store.mediaType", 
+              "data": "binFile", 
+              "title": "W-9"
+            }, 
+            "type": {
+              "applicationDataType": ".const.w9"
+            }, 
+            "eid": "..formData.edge.id", 
+            "store": {
+              "type": {
+                "mediaType": null
+              }, 
+              "condition": {
+                "isPng": "image/png", 
+                "isPlain": "text/plain", 
+                "isJpeg": "image/jpeg"
+              }
+            }, 
+            "get": {
+              "type": "..formData.edge.name.file-w9", 
+              "ids": "..formData.edge.id", 
+              "xfname": "eid"
+            }
+          }
+        }
+      }, 
+      "save": {
+        "ecosAction": [
+          "..formData.store", 
+          "..formData.w9.store", 
+          "..formData.workersCompInsurance.store"
+        ]
+      }, 
+      "final": "..save", 
+      "module": "patient"
+    }
+  }
