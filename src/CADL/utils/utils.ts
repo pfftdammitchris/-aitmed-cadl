@@ -13,6 +13,7 @@ export {
     attachFns,
     replaceEidWithId,
     lookUp,
+    populateKeys,
 }
 
 
@@ -61,11 +62,12 @@ function mergeDataModels(baseDataModel: Record<string, any>, dataModels: Record<
         pageName,
         ...restBaseProperties
     } = _baseDataModel
+    debugger
     let mergedDataModels = { ...restBaseProperties }
 
-    const mergedBaseEdgeDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseEdgeDataModel)
-    const mergedBaseDocumentDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseDocumentDataModel)
-    const mergedBaseVertexDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseVertexDataModel)
+    // const mergedBaseEdgeDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseEdgeDataModel)
+    // const mergedBaseDocumentDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseDocumentDataModel)
+    // const mergedBaseVertexDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseVertexDataModel)
 
     for (let [dataModelKey, dataModel] of Object.entries(dataModels)) {
         try {
@@ -150,6 +152,39 @@ function populateData(source: Record<string, any>, locations: Record<string, any
                     }
                     output[key] = newVal
                 }
+            } else {
+                output[key] = source[key]
+            }
+        })
+    }
+    return output
+}
+
+function populateKeys(source: Record<string, any>, locations: Record<string, any>[]) {
+    // debugger
+    let output = Object.assign({}, source)
+    if (isObject(source)) {
+        Object.keys(source).forEach((key) => {
+            //TODO: check if the key startsWith('.')
+            if (key.startsWith('.')) {
+                let parent = {}
+                for (let location of locations) {
+                    try {
+                        // debugger
+                        parent = lookUp(key, location)
+                        // debugger
+                    } catch (error) {
+                        if (error instanceof UnableToLocateValue) {
+                            continue
+                        } else {
+                            throw error
+                        }
+                    }
+                }
+                output = { ...output, ...parent, ...populateKeys(output[key], locations) }
+                if (Object.keys(parent).length) delete output[key]
+            } else if (isObject(source[key])) {
+                output[key] = populateKeys(source[key], locations)
             } else {
                 output[key] = source[key]
             }

@@ -110,7 +110,13 @@ export async function fetchAll(url) {
             let isValid = false
             let err: null | Error = null
             try {
-                const { data } = await axios.get(`${baseUrlWithCADLVersion}${pageName}_en${fileSuffix}`)
+                let url
+                if (pageName === 'BaseCSS') {
+                    url = `${baseUrlWithCADLVersion}${pageName}${fileSuffix}`
+                } else {
+                    url = `${baseUrlWithCADLVersion}${pageName}_en${fileSuffix}`
+                }
+                const { data } = await axios.get(url)
                 cadlYAML = data
             } catch (error) {
                 err = new UnableToRetrieveYAML(error.message)

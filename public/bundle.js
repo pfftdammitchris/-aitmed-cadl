@@ -16730,68 +16730,10 @@
 
 	function _isNativeReflectConstruct$o() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
-	var NoDataModelsFound = /*#__PURE__*/function (_Error) {
-	  inherits(NoDataModelsFound, _Error);
-
-	  var _super = _createSuper$n(NoDataModelsFound);
-
-	  function NoDataModelsFound(message, error) {
-	    var _this;
-
-	    classCallCheck(this, NoDataModelsFound);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'NoDataModelsFound';
-	    Object.setPrototypeOf(assertThisInitialized(_this), NoDataModelsFound.prototype);
-	    return _this;
-	  }
-
-	  return NoDataModelsFound;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$o(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$p(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$p() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToRetrieveCADL = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToRetrieveCADL, _Error);
-
-	  var _super = _createSuper$o(UnableToRetrieveCADL);
-
-	  function UnableToRetrieveCADL(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToRetrieveCADL);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToRetrieveCADL';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToRetrieveCADL.prototype);
-	    return _this;
-	  }
-
-	  return UnableToRetrieveCADL;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 	var UnableToRetrieveBaseDataModel = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToRetrieveBaseDataModel, _Error);
 
-	  var _super = _createSuper$p(UnableToRetrieveBaseDataModel);
+	  var _super = _createSuper$n(UnableToRetrieveBaseDataModel);
 
 	  function UnableToRetrieveBaseDataModel(message, error) {
 	    var _this;
@@ -16813,14 +16755,14 @@
 	  return UnableToRetrieveBaseDataModel;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
-	function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$o(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$p(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$p() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var UnableToExecuteDataModelFn = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToExecuteDataModelFn, _Error);
 
-	  var _super = _createSuper$q(UnableToExecuteDataModelFn);
+	  var _super = _createSuper$o(UnableToExecuteDataModelFn);
 
 	  function UnableToExecuteDataModelFn(message, error) {
 	    var _this;
@@ -16842,14 +16784,14 @@
 	  return UnableToExecuteDataModelFn;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
-	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var UnableToParseYAML = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToParseYAML, _Error);
 
-	  var _super = _createSuper$r(UnableToParseYAML);
+	  var _super = _createSuper$p(UnableToParseYAML);
 
 	  function UnableToParseYAML(message, error) {
 	    var _this;
@@ -16871,14 +16813,14 @@
 	  return UnableToParseYAML;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
-	function _createSuper$s(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$t(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$t() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var UnableToRetrieveYAML = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToRetrieveYAML, _Error);
 
-	  var _super = _createSuper$s(UnableToRetrieveYAML);
+	  var _super = _createSuper$q(UnableToRetrieveYAML);
 
 	  function UnableToRetrieveYAML(message, error) {
 	    var _this;
@@ -16900,14 +16842,14 @@
 	  return UnableToRetrieveYAML;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
-	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$u() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var UnableToLocateValue = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToLocateValue, _Error);
 
-	  var _super = _createSuper$t(UnableToLocateValue);
+	  var _super = _createSuper$r(UnableToLocateValue);
 
 	  function UnableToLocateValue(message, error) {
 	    var _this;
@@ -17063,7 +17005,7 @@
 
 	function _fetchAll() {
 	  _fetchAll = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(url) {
-	    var cadlEndpointObject, result, _cadlEndpointObject, yamlList, baseUrl, fileSuffix, baseUrlWithCADLVersion, _iterator, _step, page, pageName, cadlYAML, cadlObject, isValid, err, _yield$axios$get2, data, cadlResponse;
+	    var cadlEndpointObject, result, _cadlEndpointObject, yamlList, baseUrl, fileSuffix, baseUrlWithCADLVersion, _iterator, _step, page, pageName, cadlYAML, cadlObject, isValid, err, _url, _yield$axios$get2, data, cadlResponse;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
@@ -17087,7 +17029,7 @@
 
 	          case 10:
 	            if (!cadlEndpointObject) {
-	              _context2.next = 46;
+	              _context2.next = 48;
 	              break;
 	            }
 
@@ -17101,7 +17043,7 @@
 
 	          case 16:
 	            if ((_step = _iterator.n()).done) {
-	              _context2.next = 38;
+	              _context2.next = 40;
 	              break;
 	            }
 
@@ -17111,22 +17053,30 @@
 	            isValid = false;
 	            err = null;
 	            _context2.prev = 22;
-	            _context2.next = 25;
-	            return axios$1.get("".concat(baseUrlWithCADLVersion).concat(pageName, "_en").concat(fileSuffix));
+	            _url = void 0;
 
-	          case 25:
+	            if (pageName === 'BaseCSS') {
+	              _url = "".concat(baseUrlWithCADLVersion).concat(pageName).concat(fileSuffix);
+	            } else {
+	              _url = "".concat(baseUrlWithCADLVersion).concat(pageName, "_en").concat(fileSuffix);
+	            }
+
+	            _context2.next = 27;
+	            return axios$1.get(_url);
+
+	          case 27:
 	            _yield$axios$get2 = _context2.sent;
 	            data = _yield$axios$get2.data;
 	            cadlYAML = data;
-	            _context2.next = 33;
+	            _context2.next = 35;
 	            break;
 
-	          case 30:
-	            _context2.prev = 30;
+	          case 32:
+	            _context2.prev = 32;
 	            _context2.t1 = _context2["catch"](22);
 	            err = new UnableToRetrieveYAML(_context2.t1.message);
 
-	          case 33:
+	          case 35:
 	            if (err === null) {
 	              try {
 	                cadlObject = YAML.parse(cadlYAML);
@@ -17144,36 +17094,36 @@
 	            });
 	            result.push(cadlResponse);
 
-	          case 36:
+	          case 38:
 	            _context2.next = 16;
 	            break;
 
-	          case 38:
-	            _context2.next = 43;
+	          case 40:
+	            _context2.next = 45;
 	            break;
 
-	          case 40:
-	            _context2.prev = 40;
+	          case 42:
+	            _context2.prev = 42;
 	            _context2.t2 = _context2["catch"](14);
 
 	            _iterator.e(_context2.t2);
 
-	          case 43:
-	            _context2.prev = 43;
+	          case 45:
+	            _context2.prev = 45;
 
 	            _iterator.f();
 
-	            return _context2.finish(43);
+	            return _context2.finish(45);
 
-	          case 46:
+	          case 48:
 	            return _context2.abrupt("return", result);
 
-	          case 47:
+	          case 49:
 	          case "end":
 	            return _context2.stop();
 	        }
 	      }
-	    }, _callee2, null, [[1, 7], [14, 40, 43, 46], [22, 30]]);
+	    }, _callee2, null, [[1, 7], [14, 42, 45, 48], [22, 32]]);
 	  }));
 	  return _fetchAll.apply(this, arguments);
 	}
@@ -28059,49 +28009,6 @@
 
 	var objectWithoutProperties = _objectWithoutProperties;
 
-	function _classCallCheck$1(instance, Constructor) {
-	  if (!(instance instanceof Constructor)) {
-	    throw new TypeError("Cannot call a class as a function");
-	  }
-	}
-
-	var classCallCheck$1 = _classCallCheck$1;
-
-	function _defineProperties$1(target, props) {
-	  for (var i = 0; i < props.length; i++) {
-	    var descriptor = props[i];
-	    descriptor.enumerable = descriptor.enumerable || false;
-	    descriptor.configurable = true;
-	    if ("value" in descriptor) descriptor.writable = true;
-	    Object.defineProperty(target, descriptor.key, descriptor);
-	  }
-	}
-
-	function _createClass$1(Constructor, protoProps, staticProps) {
-	  if (protoProps) _defineProperties$1(Constructor.prototype, protoProps);
-	  if (staticProps) _defineProperties$1(Constructor, staticProps);
-	  return Constructor;
-	}
-
-	var createClass$1 = _createClass$1;
-
-	function _defineProperty$1(obj, key, value) {
-	  if (key in obj) {
-	    Object.defineProperty(obj, key, {
-	      value: value,
-	      enumerable: true,
-	      configurable: true,
-	      writable: true
-	    });
-	  } else {
-	    obj[key] = value;
-	  }
-
-	  return obj;
-	}
-
-	var defineProperty$1 = _defineProperty$1;
-
 	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 	function commonjsRequire$1 () {
@@ -28883,6 +28790,49 @@
 	}
 
 	var asyncToGenerator$1 = _asyncToGenerator$1;
+
+	function _classCallCheck$1(instance, Constructor) {
+	  if (!(instance instanceof Constructor)) {
+	    throw new TypeError("Cannot call a class as a function");
+	  }
+	}
+
+	var classCallCheck$1 = _classCallCheck$1;
+
+	function _defineProperties$1(target, props) {
+	  for (var i = 0; i < props.length; i++) {
+	    var descriptor = props[i];
+	    descriptor.enumerable = descriptor.enumerable || false;
+	    descriptor.configurable = true;
+	    if ("value" in descriptor) descriptor.writable = true;
+	    Object.defineProperty(target, descriptor.key, descriptor);
+	  }
+	}
+
+	function _createClass$1(Constructor, protoProps, staticProps) {
+	  if (protoProps) _defineProperties$1(Constructor.prototype, protoProps);
+	  if (staticProps) _defineProperties$1(Constructor, staticProps);
+	  return Constructor;
+	}
+
+	var createClass$1 = _createClass$1;
+
+	function _defineProperty$1(obj, key, value) {
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+
+	  return obj;
+	}
+
+	var defineProperty$1 = _defineProperty$1;
 
 	var bind$1 = function bind(fn, thisArg) {
 	  return function wrap() {
@@ -46171,10 +46121,10 @@
 	    value: function () {
 	      var _loadConfig = asyncToGenerator$1(
 	      /*#__PURE__*/
-	      regenerator$1.mark(function _callee2() {
+	      regenerator$1.mark(function _callee2(appName) {
 	        var _this = this;
 
-	        var appName, hostname, splits, configData, config, configJSON;
+	        var hostname, splits, configData, config, configJSON;
 	        return regenerator$1.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -46191,7 +46141,7 @@
 
 	              case 2:
 	                // Getting app name from hostname
-	                appName = 'aitmed';
+	                appName = appName ? appName : 'aitmed';
 
 	                if (window && window.location && window.location.hostname) {
 	                  hostname = window.location.hostname;
@@ -46267,7 +46217,7 @@
 	        }, _callee2, this);
 	      }));
 
-	      function loadConfig() {
+	      function loadConfig(_x) {
 	        return _loadConfig.apply(this, arguments);
 	      }
 
@@ -57455,13 +57405,13 @@
 	}
 
 	var commonServices = /*#__PURE__*/Object.freeze({
-	  __proto__: null,
-	  toSDKVertex: toSDKVertex,
-	  toSDKEdge: toSDKEdge,
-	  toSDKDoc: toSDKDoc,
-	  generateEsak: generateEsak,
-	  encryptData: encryptData,
-	  decryptData: decryptData
+		__proto__: null,
+		toSDKVertex: toSDKVertex,
+		toSDKEdge: toSDKEdge,
+		toSDKDoc: toSDKDoc,
+		generateEsak: generateEsak,
+		encryptData: encryptData,
+		decryptData: decryptData
 	});
 
 	function retrieveVertexService(_request) {
@@ -60242,6 +60192,36 @@
 	      return store.getConfig();
 	    }
 	  }, {
+	    key: "loadConfigData",
+	    value: function () {
+	      var _loadConfigData = asyncToGenerator$1(
+	      /*#__PURE__*/
+	      regenerator$1.mark(function _callee(appName) {
+	        return regenerator$1.wrap(function _callee$(_context) {
+	          while (1) {
+	            switch (_context.prev = _context.next) {
+	              case 0:
+	                _context.next = 2;
+	                return store.loadConfig(appName);
+
+	              case 2:
+	                return _context.abrupt("return", _context.sent);
+
+	              case 3:
+	              case "end":
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee);
+	      }));
+
+	      function loadConfigData(_x) {
+	        return _loadConfigData.apply(this, arguments);
+	      }
+
+	      return loadConfigData;
+	    }()
+	  }, {
 	    key: "apiVersion",
 	    set: function set(apiVersion) {
 	      store.apiVersion = apiVersion;
@@ -60378,9 +60358,9 @@
 	  INVALID_ROOT_TYPE: 'The root type provided is invalid'
 	};
 
-	function _createSuper$u(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$v(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$s(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$t(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$v() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$t() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 	var names = Object.keys(ErrorCodes).filter(function (name) {
 	  return typeof ErrorCodes[name] === 'number';
 	});
@@ -60391,7 +60371,7 @@
 	var AiTmedError = /*#__PURE__*/function (_Error) {
 	  inherits(AiTmedError, _Error);
 
-	  var _super = _createSuper$u(AiTmedError);
+	  var _super = _createSuper$s(AiTmedError);
 
 	  function AiTmedError(_ref) {
 	    var _this;
@@ -60585,10 +60565,9 @@
 	}();
 
 	var defaultConfig$1 = {
-	  apiHost: 'testapi2.aitmed.com',
-	  apiVersion: 'v1beta1',
+	  cadlVersion: 'test',
 	  env: 'development',
-	  configUrl: 'https://public.aitmed.com/config/aitmed.yml'
+	  configUrl: 'https://public.aitmed.com/config'
 	};
 
 	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -61624,17 +61603,12 @@
 	      pageName = _baseDataModel.pageName,
 	      restBaseProperties = objectWithoutProperties(_baseDataModel, ["vertex", "edge", "document", "dataModel", "pageName"]);
 
-	  var mergedDataModels = _objectSpread$6({}, restBaseProperties);
+	  debugger;
 
-	  var mergedBaseEdgeDataModelWithBaseDataModel = mergeDeep({
-	    dataModel: superDataModel
-	  }, baseEdgeDataModel);
-	  var mergedBaseDocumentDataModelWithBaseDataModel = mergeDeep({
-	    dataModel: superDataModel
-	  }, baseDocumentDataModel);
-	  var mergedBaseVertexDataModelWithBaseDataModel = mergeDeep({
-	    dataModel: superDataModel
-	  }, baseVertexDataModel);
+	  var mergedDataModels = _objectSpread$6({}, restBaseProperties); // const mergedBaseEdgeDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseEdgeDataModel)
+	  // const mergedBaseDocumentDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseDocumentDataModel)
+	  // const mergedBaseVertexDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseVertexDataModel)
+
 
 	  for (var _i = 0, _Object$entries = Object.entries(dataModels); _i < _Object$entries.length; _i++) {
 	    var _Object$entries$_i = slicedToArray(_Object$entries[_i], 2),
@@ -61731,6 +61705,53 @@
 
 	          output[key] = newVal;
 	        }
+	      } else {
+	        output[key] = source[key];
+	      }
+	    });
+	  }
+
+	  return output;
+	}
+
+	function populateKeys(source, locations) {
+	  // debugger
+	  var output = Object.assign({}, source);
+
+	  if (isObject$1(source)) {
+	    Object.keys(source).forEach(function (key) {
+	      //TODO: check if the key startsWith('.')
+	      if (key.startsWith('.')) {
+	        var parent = {};
+
+	        var _iterator2 = _createForOfIteratorHelper$f(locations),
+	            _step2;
+
+	        try {
+	          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+	            var location = _step2.value;
+
+	            try {
+	              // debugger
+	              parent = lookUp(key, location); // debugger
+	            } catch (error) {
+	              if (error instanceof UnableToLocateValue) {
+	                continue;
+	              } else {
+	                throw error;
+	              }
+	            }
+	          }
+	        } catch (err) {
+	          _iterator2.e(err);
+	        } finally {
+	          _iterator2.f();
+	        }
+
+	        output = _objectSpread$6(_objectSpread$6(_objectSpread$6({}, output), parent), populateKeys(output[key], locations));
+	        if (Object.keys(parent).length) delete output[key];
+	      } else if (isObject$1(source[key])) {
+	        output[key] = populateKeys(source[key], locations);
 	      } else {
 	        output[key] = source[key];
 	      }
@@ -62213,36 +62234,33 @@
 	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	var CADL = /*#__PURE__*/function () {
-	  //TODO: create a method that takes in the page url and process the yaml for that page
 	  function CADL(_ref) {
-	    var apiVersion = _ref.apiVersion,
-	        env = _ref.env,
-	        apiHost = _ref.apiHost,
-	        configUrl = _ref.configUrl;
+	    var env = _ref.env,
+	        configUrl = _ref.configUrl,
+	        cadlVersion = _ref.cadlVersion;
 
 	    classCallCheck(this, CADL);
 
-	    defineProperty(this, "_pageUrl", void 0);
-
-	    defineProperty(this, "_baseDataModel_URL", void 0);
-
-	    defineProperty(this, "_cadl", void 0);
-
-	    defineProperty(this, "_pageName", void 0);
-
-	    defineProperty(this, "_dataModels", void 0);
-
-	    defineProperty(this, "_dataModelKeys", void 0);
-
-	    defineProperty(this, "_data", {});
+	    defineProperty(this, "_cadlVersion", void 0);
 
 	    defineProperty(this, "_baseDataModel", void 0);
+
+	    defineProperty(this, "_baseCSS", void 0);
+
+	    defineProperty(this, "_cadlEndpoint", void 0);
+
+	    defineProperty(this, "_baseUrl", void 0);
+
+	    defineProperty(this, "_assetsUrl", void 0);
+
+	    defineProperty(this, "_pages", {});
+
+	    defineProperty(this, "_data", {});
 
 	    //replace default arguments
 	    store$1.env = env;
 	    store$1.configUrl = configUrl;
-	    store$1.apiVersion = apiVersion;
-	    store$1.apiHost = apiHost;
+	    this._cadlVersion = cadlVersion;
 	  }
 	  /**
 	   * @throws UnableToRetrieveCADL if CADL object is note retrieved
@@ -62256,64 +62274,109 @@
 	    key: "init",
 	    value: function () {
 	      var _init = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	        var cadlCopy, mergedDataModels, populatedData, populateAgain, init, boundDispatch, _iterator, _step, command, dataModelKey, ecosAction, currDataModel, dataModelWithFn, _populatedData, _populateAgain;
+	        var config, _config, cadlEndpointUrl, web, cadlEndpointUrlWithCadlVersion, _yield$this$getCadlEn, baseUrl, assetsUrl, rawBaseDataModel, populatedBaseDataModel;
 
 	        return regenerator.wrap(function _callee$(_context) {
 	          while (1) {
 	            switch (_context.prev = _context.next) {
 	              case 0:
-	                if (this.cadl) {
-	                  _context.next = 9;
+	                config = store$1.getConfig();
+
+	                if (!(config === null)) {
+	                  _context.next = 5;
 	                  break;
 	                }
 
-	                _context.prev = 1;
 	                _context.next = 4;
-	                return this.getCADL();
+	                return store$1.level2SDK.loadConfigData('aitmedAlpha');
 
 	              case 4:
-	                _context.next = 9;
-	                break;
+	                config = _context.sent;
 
-	              case 6:
-	                _context.prev = 6;
-	                _context.t0 = _context["catch"](1);
-	                throw _context.t0;
+	              case 5:
+	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web; //set cadlVersion
 
-	              case 9:
-	                if (this.baseDataModel) {
-	                  _context.next = 18;
-	                  break;
-	                }
+	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
+	                cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion);
+	                _context.next = 10;
+	                return this.getCadlEndpoint(cadlEndpointUrlWithCadlVersion);
 
-	                _context.prev = 10;
-	                _context.next = 13;
+	              case 10:
+	                _yield$this$getCadlEn = _context.sent;
+	                baseUrl = _yield$this$getCadlEn.baseUrl;
+	                assetsUrl = _yield$this$getCadlEn.assetsUrl;
+	                this.baseUrl = baseUrl;
+	                this.assetsUrl = assetsUrl;
+	                _context.next = 17;
 	                return this.getBaseDataModel();
 
-	              case 13:
-	                _context.next = 18;
-	                break;
+	              case 17:
+	                rawBaseDataModel = _context.sent;
+	                debugger;
+	                populatedBaseDataModel = populateKeys(rawBaseDataModel, [rawBaseDataModel]);
+	                debugger;
+	                this.baseDataModel = populatedBaseDataModel;
+	                _context.next = 24;
+	                return this.getBaseCSS();
 
-	              case 15:
-	                _context.prev = 15;
-	                _context.t1 = _context["catch"](10);
-	                throw _context.t1;
+	              case 24:
+	                this.baseCSS = _context.sent;
 
-	              case 18:
-	                if (this._dataModelKeys.length) {
-	                  _context.next = 20;
+	              case 25:
+	              case "end":
+	                return _context.stop();
+	            }
+	          }
+	        }, _callee, this);
+	      }));
+
+	      function init() {
+	        return _init.apply(this, arguments);
+	      }
+
+	      return init;
+	    }()
+	    /**
+	     * 
+	     * @param pageName 
+	     * 
+	     * - initiates cadlObject for page specified
+	     */
+
+	  }, {
+	    key: "initPage",
+	    value: function () {
+	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
+	        var pageCADL, cadlCopy, populatedCadlCopy, mergedDataModels, populatedData, populateAgain, init, boundDispatch, _iterator, _step, command, dataModelKey, ecosAction, currDataModel, dataModelWithFn, _populatedData, _populateAgain;
+
+	        return regenerator.wrap(function _callee2$(_context2) {
+	          while (1) {
+	            switch (_context2.prev = _context2.next) {
+	              case 0:
+	                if (this.cadlEndpoint) {
+	                  _context2.next = 3;
 	                  break;
 	                }
 
-	                throw new NoDataModelsFound("There were no dataModels found for ".concat(this.pageName));
+	                _context2.next = 3;
+	                return this.init();
 
-	              case 20:
+	              case 3:
+	                _context2.next = 5;
+	                return this.getPage(pageName);
+
+	              case 5:
+	                pageCADL = _context2.sent;
 	                //make a copy of the CADL object
-	                cadlCopy = Object.assign({}, this.cadl);
-	                cadlCopy.data = {}; //merge CADL dataModels with base dataModels
+	                cadlCopy = Object.assign({}, pageCADL);
+	                debugger;
+	                populatedCadlCopy = populateKeys(cadlCopy, [this.baseDataModel]);
+	                debugger; //merge CADL dataModels with base dataModels
 
-	                mergedDataModels = mergeDataModels(this.baseDataModel, this.dataModels);
-	                cadlCopy.dataModels = mergedDataModels; //populateData
+	                mergedDataModels = mergeDataModels(this.baseDataModel, populatedCadlCopy);
+	                debugger;
+	                cadlCopy.dataModels = mergedDataModels;
+	                debugger; //populateData
 
 	                populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels]);
 	                populateAgain = populateData(populatedData, [cadlCopy.dataModels]);
@@ -62322,18 +62385,18 @@
 	                boundDispatch = this.dispatch.bind(this); //iterate through dataModels.init
 
 	                if (!(Array.isArray(init) && init.length > 0)) {
-	                  _context.next = 61;
+	                  _context2.next = 51;
 	                  break;
 	                }
 
 	                _iterator = _createForOfIteratorHelper$g(init);
-	                _context.prev = 31;
+	                _context2.prev = 21;
 
 	                _iterator.s();
 
-	              case 33:
+	              case 23:
 	                if ((_step = _iterator.n()).done) {
-	                  _context.next = 53;
+	                  _context2.next = 43;
 	                  break;
 	                }
 
@@ -62349,66 +62412,66 @@
 	                cadlCopy.dataModels[dataModelKey] = dataModelWithFn; //run init commands
 
 	                if (!(typeof cadlCopy.dataModels[dataModelKey][ecosAction] === 'function')) {
-	                  _context.next = 51;
+	                  _context2.next = 41;
 	                  break;
 	                }
 
-	                _context.prev = 40;
-	                _context.next = 43;
+	                _context2.prev = 30;
+	                _context2.next = 33;
 	                return cadlCopy.dataModels[dataModelKey][ecosAction]();
 
-	              case 43:
-	                _context.next = 48;
+	              case 33:
+	                _context2.next = 38;
 	                break;
 
-	              case 45:
-	                _context.prev = 45;
-	                _context.t2 = _context["catch"](40);
-	                throw new UnableToExecuteDataModelFn("An error occured while executing ".concat(dataModelKey, ".").concat(ecosAction), _context.t2);
+	              case 35:
+	                _context2.prev = 35;
+	                _context2.t0 = _context2["catch"](30);
+	                throw new UnableToExecuteDataModelFn("An error occured while executing ".concat(dataModelKey, ".").concat(ecosAction), _context2.t0);
 
-	              case 48:
+	              case 38:
 	                //populateData again
 	                _populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels, this.data.dataModels]);
 	                _populateAgain = populateData(_populatedData, [cadlCopy.dataModels, this.data.dataModels]);
 	                cadlCopy.dataModels = _populateAgain;
 
-	              case 51:
-	                _context.next = 33;
+	              case 41:
+	                _context2.next = 23;
 	                break;
 
-	              case 53:
-	                _context.next = 58;
+	              case 43:
+	                _context2.next = 48;
 	                break;
 
-	              case 55:
-	                _context.prev = 55;
-	                _context.t3 = _context["catch"](31);
+	              case 45:
+	                _context2.prev = 45;
+	                _context2.t1 = _context2["catch"](21);
 
-	                _iterator.e(_context.t3);
+	                _iterator.e(_context2.t1);
 
-	              case 58:
-	                _context.prev = 58;
+	              case 48:
+	                _context2.prev = 48;
 
 	                _iterator.f();
 
-	                return _context.finish(58);
+	                return _context2.finish(48);
 
-	              case 61:
+	              case 51:
 	                this.cadl = cadlCopy;
 
-	              case 62:
+	              case 52:
 	              case "end":
-	                return _context.stop();
+	                return _context2.stop();
 	            }
 	          }
-	        }, _callee, this, [[1, 6], [10, 15], [31, 55, 58, 61], [40, 45]]);
+	        }, _callee2, this, [[21, 45, 48, 51], [30, 35]]);
 	      }));
 
-	      function init() {
-	        return _init.apply(this, arguments);
+	      function initPage(_x) {
+	        return _initPage.apply(this, arguments);
 	      }
 
-	      return init;
+	      return initPage;
 	    }()
 	    /**
 	     * @returns CADL_OBJECT
@@ -62416,43 +62479,49 @@
 	     */
 
 	  }, {
-	    key: "getCADL",
+	    key: "getPage",
 	    value: function () {
-	      var _getCADL = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	        return regenerator.wrap(function _callee2$(_context2) {
+	      var _getPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(pageName) {
+	        var pageCADL, url;
+	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
-	            switch (_context2.prev = _context2.next) {
+	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                _context2.prev = 0;
-	                _context2.next = 3;
-	                return this.defaultObject(this._pageUrl);
+	                _context3.prev = 0;
+	                url = pageName === 'BaseCSS' ? "".concat(this.baseUrl).concat(pageName, ".yml") : "".concat(this.baseUrl).concat(pageName, "_en.yml");
+	                _context3.next = 4;
+	                return this.defaultObject("".concat(this.baseUrl).concat(pageName, "_en.yml"));
 
-	              case 3:
-	                this.cadl = _context2.sent;
-	                _context2.next = 9;
+	              case 4:
+	                pageCADL = _context3.sent;
+	                this.dispatch({
+	                  type: 'set-page',
+	                  payload: defineProperty({}, pageName, pageCADL)
+	                });
+	                _context3.next = 11;
 	                break;
 
-	              case 6:
-	                _context2.prev = 6;
-	                _context2.t0 = _context2["catch"](0);
-	                throw new UnableToRetrieveCADL("There was an error retrieving the CADL object for ".concat(this._pageUrl), _context2.t0);
+	              case 8:
+	                _context3.prev = 8;
+	                _context3.t0 = _context3["catch"](0);
+	                throw _context3.t0;
 
-	              case 9:
-	                return _context2.abrupt("return", this.cadl);
+	              case 11:
+	                return _context3.abrupt("return", pageCADL);
 
-	              case 10:
+	              case 12:
 	              case "end":
-	                return _context2.stop();
+	                return _context3.stop();
 	            }
 	          }
-	        }, _callee2, this, [[0, 6]]);
+	        }, _callee3, this, [[0, 8]]);
 	      }));
 
-	      function getCADL() {
-	        return _getCADL.apply(this, arguments);
+	      function getPage(_x2) {
+	        return _getPage.apply(this, arguments);
 	      }
 
-	      return getCADL;
+	      return getPage;
 	    }()
 	    /**
 	     * @returns BASE_DATA_MODEL
@@ -62462,34 +62531,32 @@
 	  }, {
 	    key: "getBaseDataModel",
 	    value: function () {
-	      var _getBaseDataModel = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-	        return regenerator.wrap(function _callee3$(_context3) {
+	      var _getBaseDataModel = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4() {
+	        var baseDataModel;
+	        return regenerator.wrap(function _callee4$(_context4) {
 	          while (1) {
-	            switch (_context3.prev = _context3.next) {
+	            switch (_context4.prev = _context4.next) {
 	              case 0:
-	                _context3.prev = 0;
-	                _context3.next = 3;
-	                return this.defaultObject(this._baseDataModel_URL);
+	                _context4.prev = 0;
+	                _context4.next = 3;
+	                return this.defaultObject("".concat(this.baseUrl, "BaseDataModel_en.yml"));
 
 	              case 3:
-	                this.baseDataModel = _context3.sent;
-	                _context3.next = 9;
-	                break;
+	                baseDataModel = _context4.sent;
+	                this.baseDataModel = baseDataModel;
+	                return _context4.abrupt("return", baseDataModel);
 
-	              case 6:
-	                _context3.prev = 6;
-	                _context3.t0 = _context3["catch"](0);
-	                throw new UnableToRetrieveBaseDataModel("There was an error retrieving the baseDataModel object for ".concat(this._pageUrl), _context3.t0);
+	              case 8:
+	                _context4.prev = 8;
+	                _context4.t0 = _context4["catch"](0);
+	                throw new UnableToRetrieveBaseDataModel("There was an error retrieving the baseDataModel objec", _context4.t0);
 
-	              case 9:
-	                return _context3.abrupt("return", this.baseDataModel);
-
-	              case 10:
+	              case 11:
 	              case "end":
-	                return _context3.stop();
+	                return _context4.stop();
 	            }
 	          }
-	        }, _callee3, this, [[0, 6]]);
+	        }, _callee4, this, [[0, 8]]);
 	      }));
 
 	      function getBaseDataModel() {
@@ -62497,6 +62564,49 @@
 	      }
 
 	      return getBaseDataModel;
+	    }()
+	    /**
+	     * @returns Record<string, any>
+	     */
+
+	  }, {
+	    key: "getBaseCSS",
+	    value: function () {
+	      var _getBaseCSS = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
+	        return regenerator.wrap(function _callee5$(_context5) {
+	          while (1) {
+	            switch (_context5.prev = _context5.next) {
+	              case 0:
+	                _context5.prev = 0;
+	                _context5.next = 3;
+	                return this.defaultObject("".concat(this.baseUrl, "BaseCSS.yml"));
+
+	              case 3:
+	                this.baseCSS = _context5.sent;
+	                _context5.next = 9;
+	                break;
+
+	              case 6:
+	                _context5.prev = 6;
+	                _context5.t0 = _context5["catch"](0);
+	                throw _context5.t0;
+
+	              case 9:
+	                return _context5.abrupt("return", this.baseCSS);
+
+	              case 10:
+	              case "end":
+	                return _context5.stop();
+	            }
+	          }
+	        }, _callee5, this, [[0, 6]]);
+	      }));
+
+	      function getBaseCSS() {
+	        return _getBaseCSS.apply(this, arguments);
+	      }
+
+	      return getBaseCSS;
 	    }()
 	    /**
 	     * 
@@ -62511,52 +62621,52 @@
 	  }, {
 	    key: "defaultObject",
 	    value: function () {
-	      var _defaultObject = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(url) {
+	      var _defaultObject = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(url) {
 	        var cadlYAML, cadlObject, _yield$axios$get, data;
 
-	        return regenerator.wrap(function _callee4$(_context4) {
+	        return regenerator.wrap(function _callee6$(_context6) {
 	          while (1) {
-	            switch (_context4.prev = _context4.next) {
+	            switch (_context6.prev = _context6.next) {
 	              case 0:
-	                _context4.prev = 0;
-	                _context4.next = 3;
+	                _context6.prev = 0;
+	                _context6.next = 3;
 	                return axios$1.get(url);
 
 	              case 3:
-	                _yield$axios$get = _context4.sent;
+	                _yield$axios$get = _context6.sent;
 	                data = _yield$axios$get.data;
 	                cadlYAML = data;
-	                _context4.next = 11;
+	                _context6.next = 11;
 	                break;
 
 	              case 8:
-	                _context4.prev = 8;
-	                _context4.t0 = _context4["catch"](0);
-	                throw new UnableToRetrieveYAML("Unable to retrieve yaml for ".concat(url), _context4.t0);
+	                _context6.prev = 8;
+	                _context6.t0 = _context6["catch"](0);
+	                throw new UnableToRetrieveYAML("Unable to retrieve yaml for ".concat(url), _context6.t0);
 
 	              case 11:
-	                _context4.prev = 11;
+	                _context6.prev = 11;
 	                cadlObject = YAML.parse(cadlYAML);
-	                _context4.next = 18;
+	                _context6.next = 18;
 	                break;
 
 	              case 15:
-	                _context4.prev = 15;
-	                _context4.t1 = _context4["catch"](11);
-	                throw new UnableToParseYAML("Unable to parse yaml for ".concat(url), _context4.t1);
+	                _context6.prev = 15;
+	                _context6.t1 = _context6["catch"](11);
+	                throw new UnableToParseYAML("Unable to parse yaml for ".concat(url), _context6.t1);
 
 	              case 18:
-	                return _context4.abrupt("return", cadlObject);
+	                return _context6.abrupt("return", cadlObject);
 
 	              case 19:
 	              case "end":
-	                return _context4.stop();
+	                return _context6.stop();
 	            }
 	          }
-	        }, _callee4, null, [[0, 8], [11, 15]]);
+	        }, _callee6, null, [[0, 8], [11, 15]]);
 	      }));
 
-	      function defaultObject(_x) {
+	      function defaultObject(_x3) {
 	        return _defaultObject.apply(this, arguments);
 	      }
 
@@ -62597,6 +62707,11 @@
 	            return;
 	          }
 
+	        case 'set-page':
+	          {
+	            this.pages = _objectSpread$7(_objectSpread$7({}, this.pages), action.payload);
+	          }
+
 	        case 'attach-Fns':
 	          {
 	            var dataModelsCopy = Object.assign({}, this.dataModels);
@@ -62631,6 +62746,56 @@
 	      }
 	    }
 	  }, {
+	    key: "getCadlEndpoint",
+	    value: function () {
+	      var _getCadlEndpoint = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(cadlEndpointUrl) {
+	        var cadlEndpoint;
+	        return regenerator.wrap(function _callee7$(_context7) {
+	          while (1) {
+	            switch (_context7.prev = _context7.next) {
+	              case 0:
+	                _context7.prev = 0;
+	                _context7.next = 3;
+	                return this.defaultObject(cadlEndpointUrl);
+
+	              case 3:
+	                cadlEndpoint = _context7.sent;
+
+	                if (!Object.keys(cadlEndpoint).length) {
+	                  _context7.next = 8;
+	                  break;
+	                }
+
+	                this.cadlEndpoint = cadlEndpoint;
+	                _context7.next = 9;
+	                break;
+
+	              case 8:
+	                return _context7.abrupt("return");
+
+	              case 9:
+	                return _context7.abrupt("return", cadlEndpoint);
+
+	              case 12:
+	                _context7.prev = 12;
+	                _context7.t0 = _context7["catch"](0);
+	                throw _context7.t0;
+
+	              case 15:
+	              case "end":
+	                return _context7.stop();
+	            }
+	          }
+	        }, _callee7, this, [[0, 12]]);
+	      }));
+
+	      function getCadlEndpoint(_x4) {
+	        return _getCadlEndpoint.apply(this, arguments);
+	      }
+
+	      return getCadlEndpoint;
+	    }()
+	  }, {
 	    key: "getConfig",
 	    value: function getConfig() {
 	      return store$1.getConfig();
@@ -62656,33 +62821,36 @@
 	      store$1.setErrorCatcher(catcher);
 	    }
 	  }, {
-	    key: "pageName",
+	    key: "cadlVersion",
 	    get: function get() {
-	      return this._pageName;
+	      return this._cadlVersion;
 	    },
-	    set: function set(pageName) {
-	      this._pageName = pageName;
+	    set: function set(cadlVersion) {
+	      this._cadlVersion = cadlVersion;
 	    }
 	  }, {
-	    key: "cadl",
+	    key: "cadlEndpoint",
 	    get: function get() {
-	      return this._cadl;
+	      return this._cadlEndpoint;
 	    },
-	    set: function set(cadl) {
-	      var dataModels = cadl.dataModels,
-	          pageName = cadl.pageName;
-	      this._cadl = cadl;
-	      this._dataModelKeys = Object.keys(dataModels).length ? Object.keys(dataModels) : [];
-	      this.pageName = pageName || 'UNKNOWN';
-	      this.dataModels = dataModels || {};
+	    set: function set(cadlEndpoint) {
+	      this._cadlEndpoint = cadlEndpoint;
 	    }
 	  }, {
-	    key: "dataModels",
+	    key: "baseUrl",
 	    get: function get() {
-	      return this._dataModels;
+	      return this._baseUrl;
 	    },
-	    set: function set(dataModels) {
-	      this._dataModels = dataModels || {};
+	    set: function set(baseUrl) {
+	      this._baseUrl = baseUrl.replace('${cadlVersion}', this.cadlVersion);
+	    }
+	  }, {
+	    key: "assetsUrl",
+	    get: function get() {
+	      return this._assetsUrl;
+	    },
+	    set: function set(assetsUrl) {
+	      this._assetsUrl = assetsUrl;
 	    }
 	  }, {
 	    key: "baseDataModel",
@@ -62693,12 +62861,28 @@
 	      this._baseDataModel = dataModel || {};
 	    }
 	  }, {
+	    key: "baseCSS",
+	    get: function get() {
+	      return this._baseCSS;
+	    },
+	    set: function set(baseCSS) {
+	      this._baseCSS = baseCSS || {};
+	    }
+	  }, {
 	    key: "data",
 	    get: function get() {
 	      return this._data;
 	    },
 	    set: function set(data) {
 	      this._data = data || {};
+	    }
+	  }, {
+	    key: "pages",
+	    get: function get() {
+	      return this._pages;
+	    },
+	    set: function set(pages) {
+	      this._pages = pages || {};
 	    }
 	  }, {
 	    key: "apiVersion",
@@ -62723,13 +62907,24 @@
 
 	function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$8(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
+	  var cadl;
 	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
 	        case 0:
+	          cadl = new CADL(_objectSpread$8({}, defaultConfig$1));
+	          debugger;
+	          _context.next = 4;
+	          return cadl.init();
+
+	        case 4:
+	          debugger;
+	          _context.next = 7;
+	          return cadl.initPage('ApplyBusiness');
+
+	        case 7:
+	          debugger;
 	          jquery(document).ready(function () {
-	            var cadl = new CADL(_objectSpread$8({}, defaultConfig$1));
-	            debugger;
 	            jquery('#cadlEndpoint-btn').click(function () {
 	              var url = jquery('#cadlEndpoint-txtField').val();
 	              if (!url) return; //clear previous response and details
@@ -62791,7 +62986,7 @@
 	            });
 	          });
 
-	        case 1:
+	        case 9:
 	        case "end":
 	          return _context.stop();
 	      }

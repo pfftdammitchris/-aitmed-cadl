@@ -11,9 +11,14 @@ import CADL from '../CADL'
 import { defaultConfig } from '../config'
 export default (async function () {
 
+    const cadl = new CADL({...defaultConfig})
+    debugger
+    await cadl.init()
+    debugger
+    await cadl.initPage('ApplyBusiness')
+    debugger
     $(document).ready(function () {
-        const cadl = new CADL({ ...defaultConfig })
-        debugger
+        
         $('#cadlEndpoint-btn').click(function () {
             const url = $('#cadlEndpoint-txtField').val()
             if (!url) return

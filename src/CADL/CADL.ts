@@ -4,6 +4,7 @@ import {
     mergeDataModels,
     populateData,
     attachFns,
+    populateKeys,
 } from './utils'
 import { CADL_OBJECT, BASE_DATA_MODEL } from './types'
 import store, { ResponseCatcher, ErrorCatcher } from '../common/store'
@@ -20,27 +21,21 @@ import {
 
 export default class CADL {
 
-    private _pageUrl: string
-    private _baseDataModel_URL: string
-    private _cadl: CADL_OBJECT
-    private _pageName: string
-    private _dataModels: Record<string, any>
-    private _dataModelKeys: string[]
-    private _data: Record<string, any> = {}
+    private _cadlVersion: 'test' | 'stable'
     private _baseDataModel: BASE_DATA_MODEL
+    private _baseCSS: Record<string, any>
+    private _cadlEndpoint: CADL_OBJECT
+    private _baseUrl: string
+    private _assetsUrl: string
+    private _pages: Record<string, any> = {}
+    private _data: Record<string, any> = {}
 
-    //TODO: create a method that takes in the page url and process the yaml for that page
-    constructor(
 
-        { apiVersion, env, apiHost, configUrl }
-
-    ) {
+    constructor({ env, configUrl, cadlVersion }) {
         //replace default arguments
         store.env = env
         store.configUrl = configUrl
-        store.apiVersion = apiVersion
-        store.apiHost = apiHost
-
+        this._cadlVersion = cadlVersion
     }
 
     /**
@@ -50,36 +45,49 @@ export default class CADL {
      * @throws UnableToExecuteDataModelFn if an init function fails to execute
      */
     public async init(): Promise<void> {
-        if(store.getConfig()===null){
-            store.level2SDK.
+        let config = store.getConfig()
+        if (config === null) {
+            config = await store.level2SDK.loadConfigData('aitmedAlpha')
         }
-        await this.getCadlEndpoint()
-        if (!this.cadl) {
-            try {
-                await this.getCADL()
-            } catch (error) {
-                // UnableToRetrieveCADL
-                throw error
-            }
-        }
-        if (!this.baseDataModel) {
-            try {
-                await this.getBaseDataModel()
-            } catch (error) {
-                // UnableToRetrieveBaseDataModel
-                throw error
-            }
-        }
-        if (!this._dataModelKeys.length) {
-            throw new NoDataModelsFound(`There were no dataModels found for ${this.pageName}`)
-        }
-        //make a copy of the CADL object
-        let cadlCopy = Object.assign({}, this.cadl)
-        cadlCopy.data = {}
+        const { cadlEndpoint: cadlEndpointUrl, web } = config
+        //set cadlVersion
+        this.cadlVersion = web.cadlVersion[this.cadlVersion]
+        const cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion)
+        const { baseUrl, assetsUrl } = await this.getCadlEndpoint(cadlEndpointUrlWithCadlVersion)
 
+        this.baseUrl = baseUrl
+        this.assetsUrl = assetsUrl
+
+        const rawBaseDataModel = await this.getBaseDataModel()
+        debugger
+        const populatedBaseDataModel = populateKeys(rawBaseDataModel, [rawBaseDataModel])
+        debugger
+        this.baseDataModel = populatedBaseDataModel
+        this.baseCSS = await this.getBaseCSS()
+    }
+
+
+    /**
+     * 
+     * @param pageName 
+     * 
+     * - initiates cadlObject for page specified
+     */
+    async initPage(pageName: string) {
+        if (!this.cadlEndpoint) await this.init()
+
+        let pageCADL = await this.getPage(pageName)
+
+        //make a copy of the CADL object
+        let cadlCopy = Object.assign({}, pageCADL)
+        debugger
+        let populatedCadlCopy = populateKeys(cadlCopy, [this.baseDataModel])
+        debugger
         //merge CADL dataModels with base dataModels
-        const mergedDataModels = mergeDataModels(this.baseDataModel, this.dataModels)
+        const mergedDataModels = mergeDataModels(this.baseDataModel, populatedCadlCopy)
+        debugger
         cadlCopy.dataModels = mergedDataModels
+        debugger
 
         //populateData
         const populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels])
@@ -124,13 +132,16 @@ export default class CADL {
      * @returns CADL_OBJECT
      * @throws UnableToRetrieveCADL if CADL object is note retrieved
      */
-    public async getCADL(): Promise<CADL_OBJECT> {
+    public async getPage(pageName): Promise<CADL_OBJECT> {
+        let pageCADL
         try {
-            this.cadl = await this.defaultObject(this._pageUrl)
+            let url = pageName === 'BaseCSS' ? `${this.baseUrl}${pageName}.yml` : `${this.baseUrl}${pageName}_en.yml`
+            pageCADL = await this.defaultObject(`${this.baseUrl}${pageName}_en.yml`)
+            this.dispatch({ type: 'set-page', payload: { [pageName]: pageCADL } })
         } catch (error) {
-            throw new UnableToRetrieveCADL(`There was an error retrieving the CADL object for ${this._pageUrl}`, error)
+            throw error
         }
-        return this.cadl
+        return pageCADL
     }
 
     /**
@@ -139,11 +150,23 @@ export default class CADL {
      */
     public async getBaseDataModel(): Promise<BASE_DATA_MODEL> {
         try {
-            this.baseDataModel = await this.defaultObject(this._baseDataModel_URL)
+            const baseDataModel = await this.defaultObject(`${this.baseUrl}BaseDataModel_en.yml`)
+            this.baseDataModel = baseDataModel
+            return baseDataModel
         } catch (error) {
-            throw new UnableToRetrieveBaseDataModel(`There was an error retrieving the baseDataModel object for ${this._pageUrl}`, error)
+            throw new UnableToRetrieveBaseDataModel(`There was an error retrieving the baseDataModel objec`, error)
         }
-        return this.baseDataModel
+    }
+    /**
+     * @returns Record<string, any>
+     */
+    public async getBaseCSS(): Promise<Record<string, any>> {
+        try {
+            this.baseCSS = await this.defaultObject(`${this.baseUrl}BaseCSS.yml`)
+        } catch (error) {
+            throw error
+        }
+        return this.baseCSS
     }
 
     /**
@@ -200,6 +223,9 @@ export default class CADL {
                 this.data = dataCopy
                 return
             }
+            case ('set-page'): {
+                this.pages = { ...this.pages, ...action.payload }
+            }
             case ('attach-Fns'): {
                 const dataModelsCopy = Object.assign({}, this.dataModels)
                 delete dataModelsCopy.init
@@ -224,40 +250,62 @@ export default class CADL {
         }
     }
 
-
-    public get pageName() {
-        return this._pageName
+    private async getCadlEndpoint(cadlEndpointUrl: string) {
+        let cadlEndpoint
+        try {
+            cadlEndpoint = await this.defaultObject(cadlEndpointUrl)
+            if (Object.keys(cadlEndpoint).length) {
+                this.cadlEndpoint = cadlEndpoint
+            } else return
+            return cadlEndpoint
+        } catch (error) {
+            throw error
+        }
     }
 
-    public set pageName(pageName) {
-        this._pageName = pageName
+
+    public get cadlVersion() {
+        return this._cadlVersion
     }
 
-    public get cadl() {
-        return this._cadl
+    public set cadlVersion(cadlVersion) {
+        this._cadlVersion = cadlVersion
+    }
+    public get cadlEndpoint() {
+        return this._cadlEndpoint
     }
 
-    public set cadl(cadl) {
-        const { dataModels, pageName } = cadl
-        this._cadl = cadl
-        this._dataModelKeys = Object.keys(dataModels).length ? Object.keys(dataModels) : []
-        this.pageName = pageName || 'UNKNOWN'
-        this.dataModels = dataModels || {}
+    public set cadlEndpoint(cadlEndpoint) {
+        this._cadlEndpoint = cadlEndpoint
+    }
+    public get baseUrl() {
+        return this._baseUrl
     }
 
-    public get dataModels() {
-        return this._dataModels
+    public set baseUrl(baseUrl) {
+        this._baseUrl = baseUrl.replace('${cadlVersion}', this.cadlVersion)
+    }
+    public get assetsUrl() {
+        return this._assetsUrl
     }
 
-    public set dataModels(dataModels) {
-        this._dataModels = dataModels || {}
+    public set assetsUrl(assetsUrl) {
+        this._assetsUrl = assetsUrl
     }
+
     public get baseDataModel() {
         return this._baseDataModel
     }
 
     public set baseDataModel(dataModel) {
         this._baseDataModel = dataModel || {}
+    }
+    public get baseCSS() {
+        return this._baseCSS
+    }
+
+    public set baseCSS(baseCSS) {
+        this._baseCSS = baseCSS || {}
     }
 
     public get data() {
@@ -266,6 +314,13 @@ export default class CADL {
 
     public set data(data) {
         this._data = data || {}
+    }
+    public get pages() {
+        return this._pages
+    }
+
+    public set pages(pages) {
+        this._pages = pages || {}
     }
     set apiVersion(apiVersion) {
         store.apiVersion = apiVersion
