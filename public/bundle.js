@@ -805,6 +805,73 @@
 
 	var asyncToGenerator = _asyncToGenerator;
 
+<<<<<<< HEAD
+=======
+	function _arrayLikeToArray(arr, len) {
+	  if (len == null || len > arr.length) len = arr.length;
+
+	  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+	    arr2[i] = arr[i];
+	  }
+
+	  return arr2;
+	}
+
+	var arrayLikeToArray = _arrayLikeToArray;
+
+	function _arrayWithoutHoles(arr) {
+	  if (Array.isArray(arr)) return arrayLikeToArray(arr);
+	}
+
+	var arrayWithoutHoles = _arrayWithoutHoles;
+
+	function _iterableToArray(iter) {
+	  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+	}
+
+	var iterableToArray = _iterableToArray;
+
+	function _unsupportedIterableToArray(o, minLen) {
+	  if (!o) return;
+	  if (typeof o === "string") return arrayLikeToArray(o, minLen);
+	  var n = Object.prototype.toString.call(o).slice(8, -1);
+	  if (n === "Object" && o.constructor) n = o.constructor.name;
+	  if (n === "Map" || n === "Set") return Array.from(o);
+	  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
+	}
+
+	var unsupportedIterableToArray = _unsupportedIterableToArray;
+
+	function _nonIterableSpread() {
+	  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
+	}
+
+	var nonIterableSpread = _nonIterableSpread;
+
+	function _toConsumableArray(arr) {
+	  return arrayWithoutHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableSpread();
+	}
+
+	var toConsumableArray = _toConsumableArray;
+
+	function _defineProperty(obj, key, value) {
+	  if (key in obj) {
+	    Object.defineProperty(obj, key, {
+	      value: value,
+	      enumerable: true,
+	      configurable: true,
+	      writable: true
+	    });
+	  } else {
+	    obj[key] = value;
+	  }
+
+	  return obj;
+	}
+
+	var defineProperty = _defineProperty;
+
+>>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 	var _typeof_1 = createCommonjsModule(function (module) {
 	function _typeof(obj) {
 	  "@babel/helpers - typeof";
@@ -7896,29 +7963,6 @@
 
 	var iterableToArrayLimit = _iterableToArrayLimit;
 
-	function _arrayLikeToArray(arr, len) {
-	  if (len == null || len > arr.length) len = arr.length;
-
-	  for (var i = 0, arr2 = new Array(len); i < len; i++) {
-	    arr2[i] = arr[i];
-	  }
-
-	  return arr2;
-	}
-
-	var arrayLikeToArray = _arrayLikeToArray;
-
-	function _unsupportedIterableToArray(o, minLen) {
-	  if (!o) return;
-	  if (typeof o === "string") return arrayLikeToArray(o, minLen);
-	  var n = Object.prototype.toString.call(o).slice(8, -1);
-	  if (n === "Object" && o.constructor) n = o.constructor.name;
-	  if (n === "Map" || n === "Set") return Array.from(o);
-	  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return arrayLikeToArray(o, minLen);
-	}
-
-	var unsupportedIterableToArray = _unsupportedIterableToArray;
-
 	function _nonIterableRest() {
 	  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 	}
@@ -10771,12 +10815,6 @@
 	  if ((!ctx || !ctx.keep) && typeof value === 'bigint') return Number(value);
 	  return value;
 	}
-
-	function _iterableToArray(iter) {
-	  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
-	}
-
-	var iterableToArray = _iterableToArray;
 
 	function _toArray(arr) {
 	  return arrayWithHoles(arr) || iterableToArray(arr) || unsupportedIterableToArray(arr) || nonIterableRest();
@@ -16842,6 +16880,7 @@
 	  return UnableToRetrieveYAML;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
+<<<<<<< HEAD
 	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
 	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
@@ -16855,6 +16894,21 @@
 	    var _this;
 
 	    classCallCheck(this, UnableToLocateValue);
+=======
+	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var InvalidDestination = /*#__PURE__*/function (_Error) {
+	  inherits(InvalidDestination, _Error);
+
+	  var _super = _createSuper$p(InvalidDestination);
+
+	  function InvalidDestination(message, error) {
+	    var _this;
+
+	    classCallCheck(this, InvalidDestination);
+>>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 
 	    _this = _super.call(this, message);
 
@@ -16863,12 +16917,21 @@
 	    defineProperty(assertThisInitialized(_this), "name", void 0);
 
 	    _this.error = error;
+<<<<<<< HEAD
 	    _this.name = 'UnableToLocateValue';
 	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLocateValue.prototype);
 	    return _this;
 	  }
 
 	  return UnableToLocateValue;
+=======
+	    _this.name = 'InvalidDestination';
+	    Object.setPrototypeOf(assertThisInitialized(_this), InvalidDestination.prototype);
+	    return _this;
+	  }
+
+	  return InvalidDestination;
+>>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
 	var CADLResponse = function CADLResponse(_ref) {
@@ -16898,6 +16961,7 @@
 	function _unsupportedIterableToArray$f(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$f(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$f(o, minLen); }
 
 	function _arrayLikeToArray$f(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+<<<<<<< HEAD
 	var compareUint8Arrays = function compareUint8Arrays(u8a1, u8a2) {
 	  if (u8a1.length !== u8a2.length) return false;
 
@@ -16939,6 +17003,11 @@
 
 	  return output;
 	}
+=======
+	function isObject$1(item) {
+	  return item && _typeof_1(item) === 'object' && !Array.isArray(item);
+	}
+>>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 	/**
 	 * 
 	 * @param url string 
@@ -17005,7 +17074,7 @@
 
 	function _fetchAll() {
 	  _fetchAll = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(url) {
-	    var cadlEndpointObject, result, _cadlEndpointObject, yamlList, baseUrl, fileSuffix, baseUrlWithCADLVersion, _iterator, _step, page, pageName, cadlYAML, cadlObject, isValid, err, _url, _yield$axios$get2, data, cadlResponse;
+	    var cadlEndpointObject, result, _cadlEndpointObject, yamlList, baseUrl, fileSuffix, baseUrlWithCADLVersion, _iterator2, _step2, page, pageName, cadlYAML, cadlObject, isValid, _err, _url, _yield$axios$get2, data, destinationErrors, cadlResponse;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
@@ -17029,29 +17098,29 @@
 
 	          case 10:
 	            if (!cadlEndpointObject) {
-	              _context2.next = 48;
+	              _context2.next = 49;
 	              break;
 	            }
 
 	            _cadlEndpointObject = cadlEndpointObject, yamlList = _cadlEndpointObject.page, baseUrl = _cadlEndpointObject.baseUrl, fileSuffix = _cadlEndpointObject.fileSuffix; //TODO: adjust to be more general
 
 	            baseUrlWithCADLVersion = baseUrl.replace('${cadlVersion}', '0.203');
-	            _iterator = _createForOfIteratorHelper$e(yamlList);
+	            _iterator2 = _createForOfIteratorHelper$e(yamlList);
 	            _context2.prev = 14;
 
-	            _iterator.s();
+	            _iterator2.s();
 
 	          case 16:
-	            if ((_step = _iterator.n()).done) {
-	              _context2.next = 40;
+	            if ((_step2 = _iterator2.n()).done) {
+	              _context2.next = 41;
 	              break;
 	            }
 
-	            page = _step.value;
+	            page = _step2.value;
 	            pageName = page.split('_').pop();
 	            cadlYAML = void 0, cadlObject = void 0;
 	            isValid = false;
-	            err = null;
+	            _err = [];
 	            _context2.prev = 22;
 	            _url = void 0;
 
@@ -17074,58 +17143,110 @@
 	          case 32:
 	            _context2.prev = 32;
 	            _context2.t1 = _context2["catch"](22);
-	            err = new UnableToRetrieveYAML(_context2.t1.message);
+
+	            _err.push(new UnableToRetrieveYAML(_context2.t1.message));
 
 	          case 35:
-	            if (err === null) {
+	            if (!_err.length) {
 	              try {
 	                cadlObject = YAML.parse(cadlYAML);
 	                isValid = true;
 	              } catch (error) {
-	                err = new UnableToParseYAML(error.message);
+	                _err.push(new UnableToParseYAML(error.message));
+	              }
+	            }
+
+	            if (!_err.length) {
+	              destinationErrors = valPageJump(cadlObject, yamlList);
+
+	              if (destinationErrors.length) {
+	                isValid = false;
+
+	                _err.push.apply(_err, toConsumableArray(destinationErrors));
 	              }
 	            }
 
 	            cadlResponse = new CADLResponse({
 	              isValid: isValid,
 	              cadlObject: cadlObject,
-	              error: err,
+	              error: _err,
 	              pageName: pageName
 	            });
 	            result.push(cadlResponse);
 
-	          case 38:
+	          case 39:
 	            _context2.next = 16;
 	            break;
 
-	          case 40:
-	            _context2.next = 45;
+	          case 41:
+	            _context2.next = 46;
 	            break;
 
-	          case 42:
-	            _context2.prev = 42;
+	          case 43:
+	            _context2.prev = 43;
 	            _context2.t2 = _context2["catch"](14);
 
-	            _iterator.e(_context2.t2);
+	            _iterator2.e(_context2.t2);
 
-	          case 45:
-	            _context2.prev = 45;
+	          case 46:
+	            _context2.prev = 46;
 
-	            _iterator.f();
+	            _iterator2.f();
 
-	            return _context2.finish(45);
-
-	          case 48:
-	            return _context2.abrupt("return", result);
+	            return _context2.finish(46);
 
 	          case 49:
+	            return _context2.abrupt("return", result);
+
+	          case 50:
 	          case "end":
 	            return _context2.stop();
 	        }
 	      }
-	    }, _callee2, null, [[1, 7], [14, 42, 45, 48], [22, 32]]);
+	    }, _callee2, null, [[1, 7], [14, 43, 46, 49], [22, 32]]);
 	  }));
 	  return _fetchAll.apply(this, arguments);
+	}
+
+	function valPageJump(cadlObject, validPages) {
+	  var cadlCopy = Object.assign({}, cadlObject);
+	  var errors = [];
+	  searchAndVal(cadlCopy);
+
+	  function searchAndVal(cadlObject) {
+	    for (var key in cadlObject) {
+	      if (isObject$1(cadlObject[key])) {
+	        searchAndVal(cadlObject[key]);
+	      } else if (Array.isArray(cadlObject[key])) {
+	        var _iterator = _createForOfIteratorHelper$e(cadlObject[key]),
+	            _step;
+
+	        try {
+	          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	            var elem = _step.value;
+
+	            if (isObject$1(elem)) {
+	              searchAndVal(elem);
+	            }
+	          }
+	        } catch (err) {
+	          _iterator.e(err);
+	        } finally {
+	          _iterator.f();
+	        }
+	      } else {
+	        if (key === 'destination') {
+	          if (!validPages.includes(cadlObject[key])) {
+	            errors.push(new InvalidDestination("".concat(cadlObject[key] !== '' ? cadlObject[key] : null, " is not a valid page destination.")));
+	          }
+	        }
+	      }
+	    }
+
+	    return;
+	  }
+
+	  return errors;
 	}
 
 	var jquery = createCommonjsModule(function (module) {
@@ -27996,6 +28117,7 @@
 	  if (Object.getOwnPropertySymbols) {
 	    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
 
+<<<<<<< HEAD
 	    for (i = 0; i < sourceSymbolKeys.length; i++) {
 	      key = sourceSymbolKeys[i];
 	      if (excluded.indexOf(key) >= 0) continue;
@@ -28003,6 +28125,25 @@
 	      target[key] = source[key];
 	    }
 	  }
+=======
+	                var cList = jquery('ul.invalid-list');
+	                jquery.each(invalid, function (i) {
+	                  var li = jquery('<li/>').addClass('ui-menu-item').attr('role', 'menuitem').appendTo(cList);
+	                  var a = jquery('<a/>').addClass('pagename').text(invalid[i].pageName).appendTo(li);
+	                  jquery('<br/>').appendTo(a);
+	                  var errors = invalid[i].error;
+	                  jquery.each(errors, function (j) {
+	                    var a = jquery('<a/>').addClass('error').text(errors[j]).appendTo(li);
+	                    jquery('<br/>').appendTo(a);
+	                  });
+	                });
+	              })["catch"](function (err) {
+	                jquery('#val-endpoint-text').hide();
+	                jquery('.cadlEndpoint-details').html("<span style='color:red;font-weight:400'>INVALID</span>");
+	                jquery('.cadlEndpoint-error').html("<span style='color:red;font-weight:400'>".concat(err, "</span>"));
+	              });
+	            }); //single page validation
+>>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 
 	  return target;
 	}

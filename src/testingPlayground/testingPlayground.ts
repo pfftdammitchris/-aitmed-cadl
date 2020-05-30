@@ -51,19 +51,23 @@ export default (async function () {
                 //add response to ui
                 const cList = $('ul.invalid-list')
                 $.each(invalid, function (i) {
-                    var li = $('<li/>')
+                    const li = $('<li/>')
                         .addClass('ui-menu-item')
                         .attr('role', 'menuitem')
                         .appendTo(cList);
-                    var a = $('<a/>')
+                    const a = $('<a/>')
                         .addClass('pagename')
                         .text(invalid[i].pageName)
                         .appendTo(li);
                     $('<br/>').appendTo(a)
-                    $('<a/>')
-                        .addClass('error')
-                        .text(invalid[i].error)
-                        .appendTo(li);
+                    const errors = invalid[i].error
+                    $.each(errors, function (j) {
+                        const a = $('<a/>')
+                            .addClass('error')
+                            .text(errors[j])
+                            .appendTo(li);
+                        $('<br/>').appendTo(a)
+                    })
                 });
             }).catch((err) => {
                 $('#val-endpoint-text').hide()
