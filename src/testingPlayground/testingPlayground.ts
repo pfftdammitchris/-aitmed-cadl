@@ -17,6 +17,9 @@ export default (async function () {
     debugger
     await cadl.initPage('ApplyBusiness')
     debugger
+    await cadl.initPage('SignIn')
+
+    debugger
     $(document).ready(function () {
         
         $('#cadlEndpoint-btn').click(function () {

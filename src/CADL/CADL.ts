@@ -15,7 +15,7 @@ import {
     UnableToRetrieveBaseDataModel,
     UnableToExecuteDataModelFn,
     UnableToParseYAML,
-    UnableToRetrieveYAML
+    UnableToRetrieveYAML,
 } from './errors'
 
 
@@ -59,9 +59,7 @@ export default class CADL {
         this.assetsUrl = assetsUrl
 
         const rawBaseDataModel = await this.getBaseDataModel()
-        debugger
         const populatedBaseDataModel = populateKeys(rawBaseDataModel, [rawBaseDataModel])
-        debugger
         this.baseDataModel = populatedBaseDataModel
         this.baseCSS = await this.getBaseCSS()
     }
@@ -76,56 +74,54 @@ export default class CADL {
     async initPage(pageName: string) {
         if (!this.cadlEndpoint) await this.init()
 
+        debugger
         let pageCADL = await this.getPage(pageName)
+        debugger
 
         //make a copy of the CADL object
         let cadlCopy = Object.assign({}, pageCADL)
-        debugger
-        let populatedCadlCopy = populateKeys(cadlCopy, [this.baseDataModel])
-        debugger
-        //merge CADL dataModels with base dataModels
-        const mergedDataModels = mergeDataModels(this.baseDataModel, populatedCadlCopy)
-        debugger
-        cadlCopy.dataModels = mergedDataModels
-        debugger
+        let populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel])
 
-        //populateData
-        const populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels])
-        const populateAgain = populateData(populatedData, [cadlCopy.dataModels])
+        const populatedData = populateData(populatedKeysCadlCopy, '.', [this.baseDataModel])
+        const populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]])
+        debugger
+        const populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]])
 
-        cadlCopy.dataModels = { ...cadlCopy.dataModels, ...populateAgain }
-
-        const { init } = cadlCopy.dataModels
+        debugger
+        const { init } = Object.values(populateData3)[0]
         const boundDispatch = this.dispatch.bind(this)
-        //iterate through dataModels.init
-        if (Array.isArray(init) && init.length > 0) {
-            for (let command of init) {
-                const { dataModel: dataModelKey, ecosAction } = command
-                const currDataModel = cadlCopy.dataModels[dataModelKey]
+        const withFNs = attachFns(populateData3, boundDispatch)
+        debugger
+        this.pages = { ...this.pages, ...withFNs }
+        // //iterate through dataModels.init
+        // if (Array.isArray(init) && init.length > 0) {
+        //     for (let command of init) {
+        //         const { dataModel: dataModelKey, ecosAction } = command
+        //         const currDataModel = cadlCopy.dataModels[dataModelKey]
 
-                //attach functions to dataModel
-                const dataModelWithFn = attachFns({
-                    dataModelKey,
-                    dataModel: currDataModel,
-                    dispatch: boundDispatch
-                })
-                cadlCopy.dataModels[dataModelKey] = dataModelWithFn
+        //         //attach functions to dataModel
+        //         const dataModelWithFn = attachFns({
+        //             dataModelKey,
+        //             dataModel: currDataModel,
+        //             dispatch: boundDispatch
+        //         })
+        //         cadlCopy.dataModels[dataModelKey] = dataModelWithFn
 
-                //run init commands
-                if (typeof cadlCopy.dataModels[dataModelKey][ecosAction] === 'function') {
-                    try {
-                        await cadlCopy.dataModels[dataModelKey][ecosAction]()
-                    } catch (error) {
-                        throw new UnableToExecuteDataModelFn(`An error occured while executing ${dataModelKey}.${ecosAction}`, error)
-                    }
-                    //populateData again
-                    const populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels, this.data.dataModels])
-                    const populateAgain = populateData(populatedData, [cadlCopy.dataModels, this.data.dataModels])
-                    cadlCopy.dataModels = populateAgain
-                }
-            }
-        }
-        this.cadl = cadlCopy
+        //         //run init commands
+        //         if (typeof cadlCopy.dataModels[dataModelKey][ecosAction] === 'function') {
+        //             try {
+        //                 await cadlCopy.dataModels[dataModelKey][ecosAction]()
+        //             } catch (error) {
+        //                 throw new UnableToExecuteDataModelFn(`An error occured while executing ${dataModelKey}.${ecosAction}`, error)
+        //             }
+        //             //populateData again
+        //             const populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels, this.data.dataModels])
+        //             const populateAgain = populateData(populatedData, [cadlCopy.dataModels, this.data.dataModels])
+        //             cadlCopy.dataModels = populateAgain
+        //         }
+        //     }
+        // }
+        // this.cadl = cadlCopy
     }
 
     /**
@@ -137,7 +133,7 @@ export default class CADL {
         try {
             let url = pageName === 'BaseCSS' ? `${this.baseUrl}${pageName}.yml` : `${this.baseUrl}${pageName}_en.yml`
             pageCADL = await this.defaultObject(`${this.baseUrl}${pageName}_en.yml`)
-            this.dispatch({ type: 'set-page', payload: { [pageName]: pageCADL } })
+            // this.dispatch({ type: 'set-page', payload: pageCADL })
         } catch (error) {
             throw error
         }
@@ -225,6 +221,7 @@ export default class CADL {
             }
             case ('set-page'): {
                 this.pages = { ...this.pages, ...action.payload }
+                debugger
             }
             case ('attach-Fns'): {
                 const dataModelsCopy = Object.assign({}, this.dataModels)

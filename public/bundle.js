@@ -805,8 +805,6 @@
 
 	var asyncToGenerator = _asyncToGenerator;
 
-<<<<<<< HEAD
-=======
 	function _arrayLikeToArray(arr, len) {
 	  if (len == null || len > arr.length) len = arr.length;
 
@@ -854,24 +852,6 @@
 
 	var toConsumableArray = _toConsumableArray;
 
-	function _defineProperty(obj, key, value) {
-	  if (key in obj) {
-	    Object.defineProperty(obj, key, {
-	      value: value,
-	      enumerable: true,
-	      configurable: true,
-	      writable: true
-	    });
-	  } else {
-	    obj[key] = value;
-	  }
-
-	  return obj;
-	}
-
-	var defineProperty = _defineProperty;
-
->>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 	var _typeof_1 = createCommonjsModule(function (module) {
 	function _typeof(obj) {
 	  "@babel/helpers - typeof";
@@ -7696,8 +7676,6 @@
 	var pako = {};
 
 	assign(pako, deflate_1$1, inflate_1$1, constants);
-
-	var pako_1 = pako;
 
 	function _classCallCheck(instance, Constructor) {
 	  if (!(instance instanceof Constructor)) {
@@ -16797,39 +16775,10 @@
 
 	function _isNativeReflectConstruct$p() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
-	var UnableToExecuteDataModelFn = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToExecuteDataModelFn, _Error);
-
-	  var _super = _createSuper$o(UnableToExecuteDataModelFn);
-
-	  function UnableToExecuteDataModelFn(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToExecuteDataModelFn);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToExecuteDataModelFn';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToExecuteDataModelFn.prototype);
-	    return _this;
-	  }
-
-	  return UnableToExecuteDataModelFn;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
 	var UnableToParseYAML = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToParseYAML, _Error);
 
-	  var _super = _createSuper$p(UnableToParseYAML);
+	  var _super = _createSuper$o(UnableToParseYAML);
 
 	  function UnableToParseYAML(message, error) {
 	    var _this;
@@ -16851,14 +16800,14 @@
 	  return UnableToParseYAML;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
-	function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var UnableToRetrieveYAML = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToRetrieveYAML, _Error);
 
-	  var _super = _createSuper$q(UnableToRetrieveYAML);
+	  var _super = _createSuper$p(UnableToRetrieveYAML);
 
 	  function UnableToRetrieveYAML(message, error) {
 	    var _this;
@@ -16880,35 +16829,19 @@
 	  return UnableToRetrieveYAML;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
-<<<<<<< HEAD
-	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var UnableToLocateValue = /*#__PURE__*/function (_Error) {
 	  inherits(UnableToLocateValue, _Error);
 
-	  var _super = _createSuper$r(UnableToLocateValue);
+	  var _super = _createSuper$q(UnableToLocateValue);
 
 	  function UnableToLocateValue(message, error) {
 	    var _this;
 
 	    classCallCheck(this, UnableToLocateValue);
-=======
-	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var InvalidDestination = /*#__PURE__*/function (_Error) {
-	  inherits(InvalidDestination, _Error);
-
-	  var _super = _createSuper$p(InvalidDestination);
-
-	  function InvalidDestination(message, error) {
-	    var _this;
-
-	    classCallCheck(this, InvalidDestination);
->>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 
 	    _this = _super.call(this, message);
 
@@ -16917,21 +16850,41 @@
 	    defineProperty(assertThisInitialized(_this), "name", void 0);
 
 	    _this.error = error;
-<<<<<<< HEAD
 	    _this.name = 'UnableToLocateValue';
 	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLocateValue.prototype);
 	    return _this;
 	  }
 
 	  return UnableToLocateValue;
-=======
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var InvalidDestination = /*#__PURE__*/function (_Error) {
+	  inherits(InvalidDestination, _Error);
+
+	  var _super = _createSuper$r(InvalidDestination);
+
+	  function InvalidDestination(message, error) {
+	    var _this;
+
+	    classCallCheck(this, InvalidDestination);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
 	    _this.name = 'InvalidDestination';
 	    Object.setPrototypeOf(assertThisInitialized(_this), InvalidDestination.prototype);
 	    return _this;
 	  }
 
 	  return InvalidDestination;
->>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
 	var CADLResponse = function CADLResponse(_ref) {
@@ -16961,7 +16914,6 @@
 	function _unsupportedIterableToArray$f(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$f(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$f(o, minLen); }
 
 	function _arrayLikeToArray$f(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-<<<<<<< HEAD
 	var compareUint8Arrays = function compareUint8Arrays(u8a1, u8a2) {
 	  if (u8a1.length !== u8a2.length) return false;
 
@@ -16972,12 +16924,6 @@
 	  }
 
 	  return true;
-	};
-	var gzip$1 = function gzip(data) {
-	  return pako_1.gzip(data);
-	};
-	var ungzip$1 = function ungzip(data) {
-	  return pako_1.ungzip(data);
 	};
 	function isObject$1(item) {
 	  return item && _typeof_1(item) === 'object' && !Array.isArray(item);
@@ -17003,11 +16949,6 @@
 
 	  return output;
 	}
-=======
-	function isObject$1(item) {
-	  return item && _typeof_1(item) === 'object' && !Array.isArray(item);
-	}
->>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 	/**
 	 * 
 	 * @param url string 
@@ -28117,7 +28058,6 @@
 	  if (Object.getOwnPropertySymbols) {
 	    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
 
-<<<<<<< HEAD
 	    for (i = 0; i < sourceSymbolKeys.length; i++) {
 	      key = sourceSymbolKeys[i];
 	      if (excluded.indexOf(key) >= 0) continue;
@@ -28125,25 +28065,6 @@
 	      target[key] = source[key];
 	    }
 	  }
-=======
-	                var cList = jquery('ul.invalid-list');
-	                jquery.each(invalid, function (i) {
-	                  var li = jquery('<li/>').addClass('ui-menu-item').attr('role', 'menuitem').appendTo(cList);
-	                  var a = jquery('<a/>').addClass('pagename').text(invalid[i].pageName).appendTo(li);
-	                  jquery('<br/>').appendTo(a);
-	                  var errors = invalid[i].error;
-	                  jquery.each(errors, function (j) {
-	                    var a = jquery('<a/>').addClass('error').text(errors[j]).appendTo(li);
-	                    jquery('<br/>').appendTo(a);
-	                  });
-	                });
-	              })["catch"](function (err) {
-	                jquery('#val-endpoint-text').hide();
-	                jquery('.cadlEndpoint-details').html("<span style='color:red;font-weight:400'>INVALID</span>");
-	                jquery('.cadlEndpoint-error').html("<span style='color:red;font-weight:400'>".concat(err, "</span>"));
-	              });
-	            }); //single page validation
->>>>>>> 104fa73173fa64eef48ca4a9d7641a0bb41db512
 
 	  return target;
 	}
@@ -60716,984 +60637,6 @@
 	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var store$1 = new Store$1(_objectSpread$5({}, defaultConfig$1));
 
-	var retrieveEdge = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
-	    var response;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return store$1.level2SDK.edgeServices.retrieveEdge({
-	              idList: [id]
-	            }).then(store$1.responseCatcher)["catch"](store$1.errorCatcher);
-
-	          case 2:
-	            response = _context2.sent;
-	            return _context2.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
-
-	          case 4:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function retrieveEdge(_x2) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	var retrieveDocument = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id) {
-	    var response;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return store$1.level2SDK.documentServices.retrieveDocument({
-	              idList: [id]
-	            }).then(store$1.responseCatcher)["catch"](store$1.errorCatcher);
-
-	          case 2:
-	            response = _context3.sent;
-	            return _context3.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
-
-	          case 4:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function retrieveDocument(_x3) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-
-	var setBit = function setBit(target, value, bit) {
-	  return value ? target | 1 << bit : target & ~(1 << bit);
-	};
-	var getBit = function getBit(target, bit) {
-	  return !!(target & 1 << bit) ? 1 : 0;
-	};
-
-	var TOTAL_BITS = 32; // DOC FLAGS
-
-	var FLAG_BITS = 6;
-	var IS_ON_SERVER = 0;
-	var IS_GZIP = 1;
-	var IS_BINARY = 2;
-	var IS_ENCRYPTED = 3;
-	var HAS_EXTRA_KEY = 4;
-	var IS_EDITABLE = 5; // DOC Application Data Type
-
-	var DATA_TYPE_START = 17;
-	var DATA_TYPE_LIST = ['data', 'profile', 'vital']; // DOC Media Type
-
-	var MEDIA_TYPE = 27; // 31 ~ 27: 5
-
-	var MEDIA_TYPE_BITS = TOTAL_BITS - MEDIA_TYPE;
-	var MEDIA_TYPE_LIST = ['others', 'application', 'audio', 'font', 'image', 'message', 'model', 'multipart', 'text', 'video'];
-
-	var DType = /*#__PURE__*/function () {
-	  // DOC FLAGS
-	  // DOC Application Data Type
-	  // DOC Media Type
-	  function DType() {
-	    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-
-	    classCallCheck(this, DType);
-
-	    defineProperty(this, "_flags", 0);
-
-	    defineProperty(this, "_dataType", 0);
-
-	    defineProperty(this, "_mediaType", 0);
-
-	    this.value = value;
-	  }
-
-	  createClass(DType, [{
-	    key: "getFlags",
-	    // DOC FLAGS
-	    value: function getFlags() {
-	      return {
-	        isOnServer: this.isOnServer,
-	        isGzip: this.isGzip,
-	        isBinary: this.isBinary,
-	        isEncrypted: this.isEncrypted,
-	        hasExtraKey: this.hasExtraKey,
-	        isEditable: this.isEditable
-	      };
-	    }
-	  }, {
-	    key: "getDataType",
-	    value: function getDataType() {
-	      return DATA_TYPE_LIST[this._dataType];
-	    } // Media Type
-
-	  }, {
-	    key: "setMediaType",
-	    value: function setMediaType(mediaType) {
-	      var type = MEDIA_TYPE_LIST.findIndex(function (header) {
-	        var val = RegExp("^".concat(header, "/")).test(mediaType);
-	        return val;
-	      });
-	      this._mediaType = type === -1 ? 0 : type;
-	    }
-	  }, {
-	    key: "getMediaType",
-	    value: function getMediaType() {
-	      return MEDIA_TYPE_LIST[this.mediaType];
-	    }
-	  }, {
-	    key: "value",
-	    set: function set(value) {
-	      // flags
-	      this.flags = value << TOTAL_BITS - FLAG_BITS >>> TOTAL_BITS - FLAG_BITS; // data type
-
-	      this.dataType = value << MEDIA_TYPE_BITS >>> DATA_TYPE_START + MEDIA_TYPE_BITS; // media type
-
-	      this.mediaType = value >>> MEDIA_TYPE;
-	    },
-	    get: function get() {
-	      // merger media type
-	      var tmpValue = this._mediaType << MEDIA_TYPE; // merge data type
-
-	      tmpValue |= this._dataType << DATA_TYPE_START; // merge flags
-
-	      tmpValue |= this.flags;
-	      return tmpValue;
-	    }
-	  }, {
-	    key: "flags",
-	    set: function set(value) {
-	      this.isOnServer = !!getBit(value, IS_ON_SERVER);
-	      this.isGzip = !!getBit(value, IS_GZIP);
-	      this.isBinary = !!getBit(value, IS_BINARY);
-	      this.isEncrypted = !!getBit(value, IS_ENCRYPTED);
-	      this.hasExtraKey = !!getBit(value, HAS_EXTRA_KEY);
-	      this.isEditable = !!getBit(value, IS_EDITABLE);
-	    },
-	    get: function get() {
-	      return this._flags;
-	    }
-	  }, {
-	    key: "isOnServer",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_ON_SERVER);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_ON_SERVER);
-	    }
-	  }, {
-	    key: "isGzip",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_GZIP);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_GZIP);
-	    }
-	  }, {
-	    key: "isBinary",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_BINARY);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_BINARY);
-	    }
-	  }, {
-	    key: "isEncrypted",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_ENCRYPTED);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_ENCRYPTED);
-	    }
-	  }, {
-	    key: "hasExtraKey",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, HAS_EXTRA_KEY);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, HAS_EXTRA_KEY);
-	    }
-	  }, {
-	    key: "isEditable",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_EDITABLE);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_EDITABLE);
-	    } // Application Data Type
-
-	  }, {
-	    key: "dataType",
-	    set: function set(_type) {
-	      var type = _type < 0 || _type >= DATA_TYPE_LIST.length ? 0 : _type;
-	      this._dataType = type;
-	    },
-	    get: function get() {
-	      return this._dataType;
-	    }
-	  }, {
-	    key: "mediaType",
-	    set: function set(_type) {
-	      var type = _type < 0 || _type >= MEDIA_TYPE_LIST.length ? 0 : _type;
-	      this._mediaType = type;
-	    },
-	    get: function get() {
-	      return this._mediaType;
-	    }
-	  }]);
-
-	  return DType;
-	}();
-
-	var CONTENT_SIZE_LIMIT = 32768;
-	/**
-	 * @param content: string | Blob
-	 * @param type: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
-	 * @returns Blob
-	 */
-
-	var contentToBlob = function contentToBlob(content) {
-	  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'text/plain';
-
-	  /* Convert content to be blob */
-	  var blob;
-
-	  if (typeof content === 'string') {
-	    blob = new Blob([content], {
-	      type: type
-	    });
-	  } else if (content instanceof Blob) {
-	    blob = content;
-	  } else {
-	    try {
-	      var jsonStr = JSON.stringify(content);
-	      blob = new Blob([jsonStr], {
-	        type: 'application/json'
-	      });
-	    } catch (error) {
-	      throw new AiTmedError({
-	        name: 'NOTE_CONTENT_INVALID',
-	        message: error.message
-	      });
-	    }
-	  }
-
-	  return blob;
-	};
-	/**
-	 *
-	 * @param data: Uint8Array | Blob
-	 * @param besak?: string | Uint8Array
-	 * @returns Promise<obj>
-	 * @returns obj.data: Uint8Array
-	 * @returns obj.isEncrypt: boolean
-	 */
-
-	var produceEncryptData = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_data, esak, publicKeyOfReceiver) {
-	    var data, isEncrypt;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            if (!(_data instanceof Blob)) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            _context.next = 3;
-	            return store$1.level2SDK.utilServices.blobToUint8Array(_data);
-
-	          case 3:
-	            _context.t0 = _context.sent;
-	            _context.next = 7;
-	            break;
-
-	          case 6:
-	            _context.t0 = _data;
-
-	          case 7:
-	            data = _context.t0;
-	            isEncrypt = false;
-
-	            if (!(typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver)) {
-	              _context.next = 19;
-	              break;
-	            }
-
-	            _context.prev = 10;
-	            _context.next = 13;
-	            return store$1.level2SDK.commonServices.encryptData(esak, publicKeyOfReceiver, data);
-
-	          case 13:
-	            data = _context.sent;
-	            isEncrypt = true;
-	            _context.next = 19;
-	            break;
-
-	          case 17:
-	            _context.prev = 17;
-	            _context.t1 = _context["catch"](10);
-
-	          case 19:
-	            return _context.abrupt("return", {
-	              data: data,
-	              isEncrypt: isEncrypt
-	            });
-
-	          case 20:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee, null, [[10, 17]]);
-	  }));
-
-	  return function produceEncryptData(_x, _x2, _x3) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	/**
-	 *
-	 * @param _data Uint8Array | Blob
-	 * @returns Promise<obj>
-	 * @returns obj.data: Uint8Array
-	 * @returns obj.isGzip: boolean
-	 */
-
-	var produceGzipData = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(_data) {
-	    var u8a, data, isGzip;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            if (!(_data instanceof Blob)) {
-	              _context2.next = 6;
-	              break;
-	            }
-
-	            _context2.next = 3;
-	            return store$1.level2SDK.utilServices.blobToUint8Array(_data);
-
-	          case 3:
-	            _context2.t0 = _context2.sent;
-	            _context2.next = 7;
-	            break;
-
-	          case 6:
-	            _context2.t0 = _data;
-
-	          case 7:
-	            u8a = _context2.t0;
-	            data = gzip$1(u8a);
-	            isGzip = data.length < u8a.length;
-	            return _context2.abrupt("return", {
-	              data: isGzip ? data : u8a,
-	              isGzip: isGzip
-	            });
-
-	          case 11:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function produceGzipData(_x4) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	/**
-	 *
-	 * @param document: Doc
-	 * @param edge?: Edge
-	 * @returns Promise<Note>
-	 */
-
-	var documentToNote = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, isBroken, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            document = _ref.document, _edge = _ref._edge, esakOfCurrentUser = _ref.esakOfCurrentUser;
-
-	            if (!(typeof _edge === 'undefined')) {
-	              _context.next = 7;
-	              break;
-	            }
-
-	            _context.next = 4;
-	            return retrieveEdge(document.eid);
-
-	          case 4:
-	            _context.t0 = _context.sent;
-	            _context.next = 8;
-	            break;
-
-	          case 7:
-	            _context.t0 = _edge;
-
-	          case 8:
-	            edge = _context.t0;
-
-	            if (!(edge === null)) {
-	              _context.next = 11;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
-	            });
-
-	          case 11:
-	            //TODO
-	            //currently commented since does not allow comparison between shared notebook
-	            //and docs from root notebook
-	            // if (
-	            //   !store.utils.compareUint8Arrays(
-	            //     <Uint8Array>edge.eid,
-	            //     <Uint8Array>document.eid,
-	            //   )
-	            // ) {
-	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
-	            // }
-	            name = document.name;
-	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
-	            deat = document.deat; // DType
-
-	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
-	            dType = isOldDataStructure ? new DType() : new DType(document.type);
-
-	            if (isOldDataStructure) {
-	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
-	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
-	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
-	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
-	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
-	              dType.setMediaType(name.type);
-	            } // Get data
-
-
-	            content = null, isBroken = false, error = null;
-	            _context.prev = 18;
-
-	            if (!dType.isOnServer) {
-	              _context.next = 29;
-	              break;
-	            }
-
-	            if (!(name.data !== undefined)) {
-	              _context.next = 26;
-	              break;
-	            }
-
-	            _context.next = 23;
-	            return store$1.level2SDK.utilServices.base64ToUint8Array(name.data);
-
-	          case 23:
-	            data = _context.sent;
-	            _context.next = 27;
-	            break;
-
-	          case 26:
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'name.data is undefined'
-	            });
-
-	          case 27:
-	            _context.next = 46;
-	            break;
-
-	          case 29:
-	            if (!(deat !== null && deat.url)) {
-	              _context.next = 45;
-	              break;
-	            }
-
-	            _context.next = 32;
-	            return store$1.level2SDK.documentServices.downloadDocumentFromS3({
-	              url: deat.url
-	            }).then(store$1.responseCatcher)["catch"](store$1.errorCatcher);
-
-	          case 32:
-	            response = _context.sent;
-
-	            if (response) {
-	              _context.next = 35;
-	              break;
-	            }
-
-	            throw 'no response';
-
-	          case 35:
-	            if (!dType.isBinary) {
-	              _context.next = 39;
-	              break;
-	            }
-
-	            _context.t1 = response.data;
-	            _context.next = 42;
-	            break;
-
-	          case 39:
-	            _context.next = 41;
-	            return store$1.level2SDK.utilServices.base64ToUint8Array(response.data);
-
-	          case 41:
-	            _context.t1 = _context.sent;
-
-	          case 42:
-	            data = _context.t1;
-	            _context.next = 46;
-	            break;
-
-	          case 45:
-	            throw 'deat.url is missing';
-
-	          case 46:
-	            // Decryption
-	            edgeHasBesak = edge.besak && edge.besak !== '';
-	            edgeHasEesak = edge.eesak && edge.eesak !== '';
-
-	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
-	              _context.next = 71;
-	              break;
-	            }
-
-	            if (esakOfCurrentUser) {
-	              esak = esakOfCurrentUser;
-	            } else {
-	              esak = edgeHasBesak ? edge.besak : edge.eesak;
-	            }
-
-	            if (!edge.sig) {
-	              _context.next = 57;
-	              break;
-	            }
-
-	            if (edge.sig instanceof Uint8Array) {
-	              publicKeyOfReceiver = store$1.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-	            } else {
-	              publicKeyOfReceiver = edge.sig;
-	            }
-
-	            _context.next = 54;
-	            return store$1.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 54:
-	            data = _context.sent;
-	            _context.next = 71;
-	            break;
-
-	          case 57:
-	            if (!(!edge.sig && edge.type === 10001)) {
-	              _context.next = 65;
-	              break;
-	            }
-
-	            pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
-	            _context.next = 62;
-	            return store$1.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 62:
-	            data = _context.sent;
-	            _context.next = 71;
-	            break;
-
-	          case 65:
-	            if (!(edge.type === 10000)) {
-	              _context.next = 71;
-	              break;
-	            }
-
-	            _pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
-	            _context.next = 70;
-	            return store$1.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 70:
-	            data = _context.sent;
-
-	          case 71:
-	            // Ungzip
-	            if (dType.isGzip) data = ungzip$1(data);
-	            _context.next = 74;
-	            return store$1.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
-
-	          case 74:
-	            blob = _context.sent;
-
-	            if (!/^text\//.test(blob.type)) {
-	              _context.next = 81;
-	              break;
-	            }
-
-	            _context.next = 78;
-	            return new Response(blob).text();
-
-	          case 78:
-	            content = _context.sent;
-	            _context.next = 95;
-	            break;
-
-	          case 81:
-	            if (!(blob.type === 'application/json')) {
-	              _context.next = 94;
-	              break;
-	            }
-
-	            _context.next = 84;
-	            return new Response(blob).text();
-
-	          case 84:
-	            jsonStr = _context.sent;
-	            _context.prev = 85;
-	            content = JSON.parse(jsonStr);
-	            _context.next = 92;
-	            break;
-
-	          case 89:
-	            _context.prev = 89;
-	            _context.t2 = _context["catch"](85);
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
-	            });
-
-	          case 92:
-	            _context.next = 95;
-	            break;
-
-	          case 94:
-	            content = blob;
-
-	          case 95:
-	            _context.next = 103;
-	            break;
-
-	          case 97:
-	            _context.prev = 97;
-	            _context.t3 = _context["catch"](18);
-	            console.log(_context.t3);
-
-	            if (typeof _context.t3 === 'string') {
-	              error = new AiTmedError({
-	                name: 'DOWNLOAD_FROM_S3_FAIL',
-	                message: "Note -> documentToNote -> ".concat(_context.t3)
-	              });
-	            } else {
-	              error = _context.t3;
-	            }
-
-	            content = null;
-	            isBroken = true;
-
-	          case 103:
-	            return _context.abrupt("return", {
-	              id: store$1.utils.idToBase64(document.id),
-	              owner_id: store$1.utils.idToBase64(edge.bvid),
-	              edge_id: store$1.utils.idToBase64(document.eid),
-	              info: {
-	                title: name.title,
-	                type: contentType,
-	                content: content,
-	                tags: name.tags || []
-	              },
-	              created_at: document.ctime * 1000,
-	              modified_at: document.mtime * 1000,
-	              isEditable: dType.isEditable,
-	              isEncrypt: dType.isEncrypted,
-	              isGzip: dType.isGzip,
-	              isOnServer: dType.isOnServer,
-	              size: document.size,
-	              isBroken: isBroken,
-	              error: error
-	            });
-
-	          case 104:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee, null, [[18, 97], [85, 89]]);
-	  }));
-
-	  return function documentToNote(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	/**
-	 * @param params
-	 * @param params.edge_id: string
-	 * @param params.title: string
-	 * @param params.content: string | Blob
-	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
-	 * @param params.tags?: string[]
-	 * @param params.dataType?: number
-	 * @returns Promise<Note>
-	 */
-
-	var create = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var edge_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            edge_id = _ref.edge_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
-	            _context.next = 3;
-	            return retrieveEdge(edge_id);
-
-	          case 3:
-	            edge = _context.sent;
-
-	            if (edge) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 6:
-	            dType = new DType();
-	            dType.dataType = dataType; // Permission
-
-	            dType.isEditable = true; // Content to Blob
-
-	            _context.next = 11;
-	            return contentToBlob(content, type);
-
-	          case 11:
-	            blob = _context.sent;
-	            dType.setMediaType(blob.type); // Gzip
-
-	            _context.next = 15;
-	            return produceGzipData(blob);
-
-	          case 15:
-	            _yield$produceGzipDat = _context.sent;
-	            gzipData = _yield$produceGzipDat.data;
-	            isGzip = _yield$produceGzipDat.isGzip;
-	            dType.isGzip = isGzip;
-	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
-
-	            esak = '';
-	            publicKeyOfReceiver = '';
-
-	            if (!(edge.besak && edge.sig)) {
-	              _context.next = 33;
-	              break;
-	            }
-
-	            esak = edge.besak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 30;
-	              break;
-	            }
-
-	            _context.next = 27;
-	            return store$1.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 27:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 31;
-	            break;
-
-	          case 30:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 31:
-	            _context.next = 42;
-	            break;
-
-	          case 33:
-	            if (!(edge.eesak && edge.sig)) {
-	              _context.next = 42;
-	              break;
-	            }
-
-	            esak = edge.eesak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 41;
-	              break;
-	            }
-
-	            _context.next = 38;
-	            return store$1.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 38:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 42;
-	            break;
-
-	          case 41:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 42:
-	            _context.next = 44;
-	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
-
-	          case 44:
-	            _yield$produceEncrypt = _context.sent;
-	            data = _yield$produceEncrypt.data;
-	            isEncrypt = _yield$produceEncrypt.isEncrypt;
-	            dType.isEncrypted = isEncrypt;
-	            _context.next = 50;
-	            return store$1.level2SDK.utilServices.uint8ArrayToBase64(data);
-
-	          case 50:
-	            bs64Data = _context.sent;
-	            dType.isBinary = false;
-	            name = {
-	              title: title,
-	              tags: tags,
-	              type: blob.type
-	            }; // data must be base64 in name field
-
-	            if (dType.isOnServer) name.data = bs64Data;
-	            _context.next = 56;
-	            return store$1.level2SDK.documentServices.createDocument({
-	              eid: edge.eid,
-	              type: dType.value,
-	              name: name,
-	              size: blob.size
-	            }).then(store$1.responseCatcher)["catch"](store$1.errorCatcher);
-
-	          case 56:
-	            response = _context.sent;
-
-	            if (!(!response || !response.data)) {
-	              _context.next = 59;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> create -> createDocument -> no response'
-	            });
-
-	          case 59:
-	            document = response.data;
-	            deat = document.deat;
-
-	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
-	              _context.next = 64;
-	              break;
-	            }
-
-	            _context.next = 64;
-	            return store$1.level2SDK.documentServices.uploadDocumentToS3({
-	              url: deat.url,
-	              sig: deat.sig,
-	              data: bs64Data
-	            }).then(store$1.responseCatcher)["catch"](store$1.errorCatcher);
-
-	          case 64:
-	            _context.next = 66;
-	            return documentToNote({
-	              document: document
-	            });
-
-	          case 66:
-	            note = _context.sent;
-	            return _context.abrupt("return", note);
-
-	          case 68:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function create(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
-	 *
-	 * @param id: Uint8Array | string
-	 * @param _edge?: Edge
-	 * @returns Promise<Note>
-	 */
-	//TODO: refactor to account for retrieving using edge and xfname:eid
-
-	var retrieve = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id, _edge) {
-	    var document, note;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return retrieveDocument(id);
-
-	          case 2:
-	            document = _context2.sent;
-
-	            if (document) {
-	              _context2.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOT_A_NOTE'
-	            });
-
-	          case 5:
-	            _context2.next = 7;
-	            return documentToNote({
-	              document: document,
-	              _edge: _edge
-	            });
-
-	          case 7:
-	            note = _context2.sent;
-	            return _context2.abrupt("return", note);
-
-	          case 9:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function retrieve(_x2, _x3) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-
-	var Document$3 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		create: create,
-		retrieve: retrieve
-	});
-
 	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 	function _unsupportedIterableToArray$g(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$g(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$g(o, minLen); }
@@ -61728,73 +60671,6 @@
 	}
 	/**
 	 * 
-	 * @param baseDataModel Record<string, any>
-	 * @param dataModels Record<string, any>
-	 * @returns Record<string, any>
-	 */
-
-
-	function mergeDataModels(baseDataModel, dataModels) {
-	  var _baseDataModel = Object.assign({}, baseDataModel);
-
-	  var baseVertexDataModel = _baseDataModel.vertex,
-	      baseEdgeDataModel = _baseDataModel.edge,
-	      baseDocumentDataModel = _baseDataModel.document,
-	      superDataModel = _baseDataModel.dataModel,
-	      pageName = _baseDataModel.pageName,
-	      restBaseProperties = objectWithoutProperties(_baseDataModel, ["vertex", "edge", "document", "dataModel", "pageName"]);
-
-	  debugger;
-
-	  var mergedDataModels = _objectSpread$6({}, restBaseProperties); // const mergedBaseEdgeDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseEdgeDataModel)
-	  // const mergedBaseDocumentDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseDocumentDataModel)
-	  // const mergedBaseVertexDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseVertexDataModel)
-
-
-	  for (var _i = 0, _Object$entries = Object.entries(dataModels); _i < _Object$entries.length; _i++) {
-	    var _Object$entries$_i = slicedToArray(_Object$entries[_i], 2),
-	        dataModelKey = _Object$entries$_i[0],
-	        dataModel = _Object$entries$_i[1];
-
-	    try {
-	      switch (dataModel.objectType) {
-	        case 'edge':
-	          {
-	            var mergedEdgeDataModel = mergeDeep(mergedBaseEdgeDataModelWithBaseDataModel, dataModel);
-	            mergedDataModels = _objectSpread$6(_objectSpread$6({}, mergedDataModels), {}, defineProperty({}, dataModelKey, mergedEdgeDataModel));
-	            break;
-	          }
-
-	        case 'document':
-	          {
-	            var mergedDocumentDataModel = mergeDeep(mergedBaseDocumentDataModelWithBaseDataModel, dataModel);
-	            mergedDataModels = _objectSpread$6(_objectSpread$6({}, mergedDataModels), {}, defineProperty({}, dataModelKey, mergedDocumentDataModel));
-	            break;
-	          }
-
-	        case 'vertex':
-	          {
-	            var mergedVertexDataModel = mergeDeep(mergedBaseVertexDataModelWithBaseDataModel, dataModel);
-	            mergedDataModels = _objectSpread$6(_objectSpread$6({}, mergedDataModels), {}, defineProperty({}, dataModelKey, mergedVertexDataModel));
-	            break;
-	          }
-
-	        default:
-	          {
-	            mergedDataModels = _objectSpread$6(_objectSpread$6({}, mergedDataModels), {}, defineProperty({}, dataModelKey, dataModel));
-	            break;
-	          }
-	      }
-	    } catch (error) {
-	      //TODO: customize error
-	      throw new Error("UIDL -> getALLData -> dataModelKey:".concat(dataModelKey));
-	    }
-	  }
-
-	  return mergedDataModels;
-	}
-	/**
-	 * 
 	 * @param source  Record<string, any> -object that has values that need to be replaced
 	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
 	 * @returns Record<string. any> 
@@ -61802,30 +60678,71 @@
 	//TODO: refactor to populate the values again
 
 
-	function populateData(source, locations) {
+	function populateData(source, lookFor, locations) {
 	  var output = Object.assign({}, source);
 
 	  if (isObject$1(source)) {
 	    Object.keys(source).forEach(function (key) {
 	      if (isObject$1(source[key])) {
-	        output[key] = populateData(source[key], locations);
-	      } else if (source[key]) {
+	        output[key] = populateData(source[key], lookFor, locations);
+	      } else if (Array.isArray(source[key])) {
+	        output[key] = source[key].map(function (elem) {
+	          if (isObject$1(elem)) {
+	            return populateData(elem, lookFor, locations);
+	          } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
+	            var _iterator = _createForOfIteratorHelper$f(locations),
+	                _step;
+
+	            try {
+	              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	                var location = _step.value;
+	                var currVal = elem;
+
+	                if (lookFor === '..') {
+	                  currVal = currVal.slice(1);
+	                }
+
+	                try {
+	                  var res = lookUp(currVal, location);
+	                  return res;
+	                } catch (error) {
+	                  if (error instanceof UnableToLocateValue) {
+	                    continue;
+	                  } else {
+	                    throw error;
+	                  }
+	                }
+	              }
+	            } catch (err) {
+	              _iterator.e(err);
+	            } finally {
+	              _iterator.f();
+	            }
+	          }
+
+	          return elem;
+	        });
+	      } else if (source[key] && typeof source[key] === 'string') {
 	        var currVal = source[key].toString();
 
-	        if (currVal.startsWith('.')) {
+	        if (currVal.startsWith(lookFor)) {
 	          var newVal = currVal;
 
-	          var _iterator = _createForOfIteratorHelper$f(locations),
-	              _step;
+	          if (lookFor === '..') {
+	            currVal = currVal.slice(1);
+	          }
+
+	          var _iterator2 = _createForOfIteratorHelper$f(locations),
+	              _step2;
 
 	          try {
-	            for (_iterator.s(); !(_step = _iterator.n()).done;) {
-	              var location = _step.value;
+	            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+	              var location = _step2.value;
 
 	              try {
 	                var res = lookUp(currVal, location);
 
-	                if (res && typeof res === 'string' && !res.startsWith('.')) {
+	                if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
 	                  newVal = res;
 	                } else if (res) {
 	                  newVal = res;
@@ -61839,9 +60756,9 @@
 	              }
 	            }
 	          } catch (err) {
-	            _iterator.e(err);
+	            _iterator2.e(err);
 	          } finally {
-	            _iterator.f();
+	            _iterator2.f();
 	          }
 
 	          output[key] = newVal;
@@ -61856,7 +60773,6 @@
 	}
 
 	function populateKeys(source, locations) {
-	  // debugger
 	  var output = Object.assign({}, source);
 
 	  if (isObject$1(source)) {
@@ -61865,18 +60781,22 @@
 	      if (key.startsWith('.')) {
 	        var parent = {};
 
-	        var _iterator2 = _createForOfIteratorHelper$f(locations),
-	            _step2;
+	        var _iterator3 = _createForOfIteratorHelper$f(locations),
+	            _step3;
 
 	        try {
-	          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-	            var location = _step2.value;
+	          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+	            var location = _step3.value;
 
 	            try {
-	              // debugger
-	              parent = lookUp(key, location); // debugger
+	              var res = lookUp(key, location);
+
+	              if (res) {
+	                parent = res;
+	              }
 	            } catch (error) {
 	              if (error instanceof UnableToLocateValue) {
+	                parent = {};
 	                continue;
 	              } else {
 	                throw error;
@@ -61884,13 +60804,16 @@
 	            }
 	          }
 	        } catch (err) {
-	          _iterator2.e(err);
+	          _iterator3.e(err);
 	        } finally {
-	          _iterator2.f();
+	          _iterator3.f();
 	        }
 
-	        output = _objectSpread$6(_objectSpread$6(_objectSpread$6({}, output), parent), populateKeys(output[key], locations));
-	        if (Object.keys(parent).length) delete output[key];
+	        if (Object.keys(parent).length) {
+	          var mergedObjects = mergeDeep(parent, populateKeys(output[key], locations));
+	          output = _objectSpread$6(_objectSpread$6({}, output), mergedObjects);
+	          delete output[key];
+	        }
 	      } else if (isObject$1(source[key])) {
 	        output[key] = populateKeys(source[key], locations);
 	      } else {
@@ -61931,387 +60854,37 @@
 
 
 	function isPopulated(item) {
-	  if (!Object.keys(item)) return false;
+	  var itemCopy = Object.assign({}, item);
 	  var isPop = true;
 
-	  if (isObject$1(item)) {
-	    for (var _i2 = 0, _Object$keys = Object.keys(item); _i2 < _Object$keys.length; _i2++) {
-	      var key = _Object$keys[_i2];
+	  if (isObject$1(itemCopy)) {
+	    for (var _i = 0, _Object$keys = Object.keys(itemCopy); _i < _Object$keys.length; _i++) {
+	      var key = _Object$keys[_i];
 	      if (!isPop) return isPop;
 
-	      if (isObject$1(item[key])) {
-	        isPop = isPopulated(item[key]);
-	      } else if (item[key]) {
-	        var currVal = item[key].toString();
+	      if (isObject$1(itemCopy[key])) {
+	        isPop = isPopulated(itemCopy[key]);
+	      } else if (Array.isArray(itemCopy[key])) {
+	        isPop = itemCopy[key].forEach(function (elem) {
+	          if (isObject$1(elem)) {
+	            isPop = isPopulated(elem);
+	          } else if (typeof elem === 'string') {
+	            if (elem.startsWith('.') || elem.startsWith('..')) {
+	              isPop = false;
+	            }
+	          }
+	        });
+	      } else if (typeof itemCopy[key] === 'string') {
+	        var currVal = itemCopy[key].toString();
 
-	        if (currVal.startsWith('.')) {
+	        if (currVal.startsWith('.') || currVal.startsWith('..')) {
 	          isPop = false;
 	        }
 	      }
 	    }
-	  } else if (typeof item === 'string') {
-	    var _currVal = item.toString();
-
-	    if (_currVal.startsWith('.')) {
-	      isPop = false;
-	    }
 	  }
 
 	  return isPop;
-	}
-
-	function attachDocumentFns(_ref) {
-	  var dataModelKey = _ref.dataModelKey,
-	      dataModel = _ref.dataModel,
-	      dispatch = _ref.dispatch;
-	  var output = Object.assign({}, dataModel);
-
-	  var storeFn = function storeFn(dataModel) {
-	    return /*#__PURE__*/function () {
-	      var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref2) {
-	        var data, type, _ref2$id, id, res, _yield$store$level2SD, _data, _dataModel$store, appDataType, eid, _name, response;
-
-	        return regenerator.wrap(function _callee$(_context) {
-	          while (1) {
-	            switch (_context.prev = _context.next) {
-	              case 0:
-	                data = _ref2.data, type = _ref2.type, _ref2$id = _ref2.id, id = _ref2$id === void 0 ? null : _ref2$id;
-
-	                if (!id) {
-	                  _context.next = 15;
-	                  break;
-	                }
-
-	                _context.prev = 2;
-	                _context.next = 5;
-	                return store$1.level2SDK.documentServices.updateDocument(_objectSpread$6(_objectSpread$6({}, dataModel.dataModel), {}, {
-	                  name: name,
-	                  id: id
-	                }));
-
-	              case 5:
-	                _yield$store$level2SD = _context.sent;
-	                _data = _yield$store$level2SD.data;
-	                res = _data;
-	                _context.next = 13;
-	                break;
-
-	              case 10:
-	                _context.prev = 10;
-	                _context.t0 = _context["catch"](2);
-	                throw _context.t0;
-
-	              case 13:
-	                _context.next = 26;
-	                break;
-
-	              case 15:
-	                _context.prev = 15;
-	                _dataModel$store = dataModel.store, appDataType = _dataModel$store.type, eid = _dataModel$store.eid, _name = _dataModel$store.name;
-	                _context.next = 19;
-	                return Document$3.create({
-	                  edge_id: eid,
-	                  dataType: parseInt(appDataType.applicationDataType),
-	                  content: data,
-	                  type: type,
-	                  title: _name.title
-	                });
-
-	              case 19:
-	                response = _context.sent;
-	                res = response;
-	                _context.next = 26;
-	                break;
-
-	              case 23:
-	                _context.prev = 23;
-	                _context.t1 = _context["catch"](15);
-	                throw _context.t1;
-
-	              case 26:
-	                if (!res) {
-	                  _context.next = 30;
-	                  break;
-	                }
-
-	                dispatch({
-	                  type: 'update-data-dataModel',
-	                  payload: {
-	                    key: dataModelKey,
-	                    data: res
-	                  }
-	                });
-	                dispatch({
-	                  type: 'populate'
-	                });
-	                return _context.abrupt("return", res);
-
-	              case 30:
-	                return _context.abrupt("return", null);
-
-	              case 31:
-	              case "end":
-	                return _context.stop();
-	            }
-	          }
-	        }, _callee, null, [[2, 10], [15, 23]]);
-	      }));
-
-	      return function (_x) {
-	        return _ref3.apply(this, arguments);
-	      };
-	    }();
-	  };
-
-	  var getFn = function getFn(dataModel) {
-	    return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	      var res, _dataModel$get, api, ids, type, rest, parsedType, _yield$store$level2SD2, data;
-
-	      return regenerator.wrap(function _callee2$(_context2) {
-	        while (1) {
-	          switch (_context2.prev = _context2.next) {
-	            case 0:
-	              _context2.prev = 0;
-	              _dataModel$get = dataModel.get, api = _dataModel$get.api, ids = _dataModel$get.ids, type = _dataModel$get.type, rest = objectWithoutProperties(_dataModel$get, ["api", "ids", "type"]);
-	              parsedType = type.split('-')[1];
-	              _context2.next = 5;
-	              return store$1.level2SDK.documentServices.retrieveDocument({
-	                idList: [ids],
-	                options: _objectSpread$6(_objectSpread$6({}, rest), {}, {
-	                  type: parseInt(parsedType)
-	                })
-	              });
-
-	            case 5:
-	              _yield$store$level2SD2 = _context2.sent;
-	              data = _yield$store$level2SD2.data;
-	              res = data;
-	              _context2.next = 13;
-	              break;
-
-	            case 10:
-	              _context2.prev = 10;
-	              _context2.t0 = _context2["catch"](0);
-	              throw _context2.t0;
-
-	            case 13:
-	              if (!res) {
-	                _context2.next = 17;
-	                break;
-	              }
-
-	              //TODO: handle case for data is an array or an object
-	              dispatch({
-	                type: 'update-data-dataModel',
-	                payload: {
-	                  key: dataModelKey,
-	                  data: res[0]
-	                }
-	              });
-	              dispatch({
-	                type: 'populate'
-	              });
-	              return _context2.abrupt("return", res);
-
-	            case 17:
-	              return _context2.abrupt("return", null);
-
-	            case 18:
-	            case "end":
-	              return _context2.stop();
-	          }
-	        }
-	      }, _callee2, null, [[0, 10]]);
-	    }));
-	  };
-
-	  output = _objectSpread$6(_objectSpread$6({}, output), {}, {
-	    store: isPopulated(dataModel.store) ? storeFn(dataModel) : dataModel.store,
-	    get: isPopulated(dataModel.get) ? getFn(dataModel) : dataModel.get
-	  });
-	  return output;
-	}
-
-	function attachEdgeFns(_ref5) {
-	  var dataModelKey = _ref5.dataModelKey,
-	      dataModel = _ref5.dataModel,
-	      dispatch = _ref5.dispatch;
-	  var output = Object.assign({}, dataModel);
-
-	  var storeFn = function storeFn(dataModel) {
-	    return /*#__PURE__*/function () {
-	      var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(name) {
-	        var id,
-	            res,
-	            _yield$store$level2SD3,
-	            data,
-	            _yield$store$level2SD4,
-	            _data2,
-	            replacedEidWithId,
-	            _args3 = arguments;
-
-	        return regenerator.wrap(function _callee3$(_context3) {
-	          while (1) {
-	            switch (_context3.prev = _context3.next) {
-	              case 0:
-	                id = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : null;
-
-	                if (!id) {
-	                  _context3.next = 15;
-	                  break;
-	                }
-
-	                _context3.prev = 2;
-	                _context3.next = 5;
-	                return store$1.level2SDK.edgeServices.updateEdge(_objectSpread$6(_objectSpread$6({}, dataModel.dataModel), {}, {
-	                  name: name,
-	                  id: id
-	                }));
-
-	              case 5:
-	                _yield$store$level2SD3 = _context3.sent;
-	                data = _yield$store$level2SD3.data;
-	                res = data;
-	                _context3.next = 13;
-	                break;
-
-	              case 10:
-	                _context3.prev = 10;
-	                _context3.t0 = _context3["catch"](2);
-	                throw _context3.t0;
-
-	              case 13:
-	                _context3.next = 26;
-	                break;
-
-	              case 15:
-	                _context3.prev = 15;
-	                _context3.next = 18;
-	                return store$1.level2SDK.edgeServices.createEdge(_objectSpread$6(_objectSpread$6({}, dataModel.dataModel), {}, {
-	                  name: name
-	                }));
-
-	              case 18:
-	                _yield$store$level2SD4 = _context3.sent;
-	                _data2 = _yield$store$level2SD4.data;
-	                res = _data2;
-	                _context3.next = 26;
-	                break;
-
-	              case 23:
-	                _context3.prev = 23;
-	                _context3.t1 = _context3["catch"](15);
-	                throw _context3.t1;
-
-	              case 26:
-	                if (!res) {
-	                  _context3.next = 32;
-	                  break;
-	                }
-
-	                replacedEidWithId = replaceEidWithId(res);
-	                dispatch({
-	                  type: 'update-data-dataModel',
-	                  payload: {
-	                    key: dataModelKey,
-	                    data: replacedEidWithId
-	                  }
-	                });
-	                dispatch({
-	                  type: 'populate'
-	                });
-	                dispatch({
-	                  type: 'attach-Fns'
-	                });
-	                return _context3.abrupt("return", res);
-
-	              case 32:
-	                return _context3.abrupt("return", null);
-
-	              case 33:
-	              case "end":
-	                return _context3.stop();
-	            }
-	          }
-	        }, _callee3, null, [[2, 10], [15, 23]]);
-	      }));
-
-	      return function (_x2) {
-	        return _ref6.apply(this, arguments);
-	      };
-	    }();
-	  };
-
-	  var getFn = function getFn(dataModel) {
-	    return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4() {
-	      var get, options, res, _yield$store$level2SD5, data;
-
-	      return regenerator.wrap(function _callee4$(_context4) {
-	        while (1) {
-	          switch (_context4.prev = _context4.next) {
-	            case 0:
-	              get = dataModel.get;
-	              options = Object.assign({}, get);
-	              delete options.api;
-	              res = [];
-	              _context4.prev = 4;
-	              _context4.next = 7;
-	              return store$1.level2SDK.edgeServices.retrieveEdge({
-	                idList: [],
-	                options: options
-	              });
-
-	            case 7:
-	              _yield$store$level2SD5 = _context4.sent;
-	              data = _yield$store$level2SD5.data;
-	              res = data;
-	              _context4.next = 15;
-	              break;
-
-	            case 12:
-	              _context4.prev = 12;
-	              _context4.t0 = _context4["catch"](4);
-	              throw _context4.t0;
-
-	            case 15:
-	              if (!(res.length > 0)) {
-	                _context4.next = 20;
-	                break;
-	              }
-
-	              res = res.map(function (edge) {
-	                return replaceEidWithId(edge);
-	              });
-	              dispatch({
-	                type: 'update-data-dataModel',
-	                //TODO: handle case for data is an array or an object
-	                payload: {
-	                  key: dataModelKey,
-	                  data: res[0]
-	                }
-	              });
-	              dispatch({
-	                type: 'populate'
-	              });
-	              return _context4.abrupt("return", res);
-
-	            case 20:
-	              return _context4.abrupt("return", null);
-
-	            case 21:
-	            case "end":
-	              return _context4.stop();
-	          }
-	        }
-	      }, _callee4, null, [[4, 12]]);
-	    }));
-	  };
-
-	  output = _objectSpread$6(_objectSpread$6({}, output), {}, {
-	    store: isPopulated(dataModel.store) ? storeFn(dataModel) : dataModel.store,
-	    get: isPopulated(dataModel.get) ? getFn(dataModel) : dataModel.get
-	  });
-	  return output;
 	}
 	/**
 	 * 
@@ -62323,52 +60896,164 @@
 	 */
 
 
-	function attachFns(_ref8) {
-	  var dataModelKey = _ref8.dataModelKey,
-	      dataModel = _ref8.dataModel,
-	      dispatch = _ref8.dispatch;
-	  var objectType = dataModel.objectType;
+	function attachFns(cadlObject, dispatch) {
+	  var output = Object.assign({}, cadlObject);
 
-	  switch (objectType) {
-	    case 'edge':
-	      {
-	        var dataModelWithFn = attachEdgeFns({
-	          dataModelKey: dataModelKey,
-	          dataModel: dataModel,
-	          dispatch: dispatch
+	  if (isObject$1(output)) {
+	    Object.keys(output).forEach(function (key) {
+	      if (isObject$1(output[key])) {
+	        output[key] = attachFns(output[key]);
+	      } else if (Array.isArray(output[key])) {
+	        output[key] = output[key].map(function (elem) {
+	          if (isObject$1(elem)) return attachFns(elem);
+	          return elem;
 	        });
-	        return dataModelWithFn;
-	      }
+	      } else if (typeof output[key] === 'string' && key === 'api') {
+	        var _output2 = output,
+	            api = _output2.api;
 
-	    case 'document':
-	      {
-	        var _dataModelWithFn = attachDocumentFns({
-	          dataModelKey: dataModelKey,
-	          dataModel: dataModel,
-	          dispatch: dispatch
-	        });
+	        switch (api) {
+	          case 're':
+	            {
+	              var getFn = function getFn(output) {
+	                return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
+	                  var options, res, _yield$store$level2SD6, data;
 
-	        return _dataModelWithFn;
-	      }
-	    //TODO: fill with vertex functions
+	                  return regenerator.wrap(function _callee5$(_context5) {
+	                    while (1) {
+	                      switch (_context5.prev = _context5.next) {
+	                        case 0:
+	                          options = Object.assign({}, output);
+	                          delete options.api;
+	                          res = [];
+	                          _context5.prev = 3;
+	                          _context5.next = 6;
+	                          return store$1.level2SDK.edgeServices.retrieveEdge({
+	                            idList: [],
+	                            options: options
+	                          });
 
-	    case 'vertex':
-	      {
-	        break;
-	      }
+	                        case 6:
+	                          _yield$store$level2SD6 = _context5.sent;
+	                          data = _yield$store$level2SD6.data;
+	                          res = data;
+	                          _context5.next = 14;
+	                          break;
 
-	    default:
-	      {
-	        return;
+	                        case 11:
+	                          _context5.prev = 11;
+	                          _context5.t0 = _context5["catch"](3);
+	                          throw _context5.t0;
+
+	                        case 14:
+	                          if (!(res.length > 0)) {
+	                            _context5.next = 17;
+	                            break;
+	                          }
+
+	                          res = res.map(function (edge) {
+	                            return replaceEidWithId(edge);
+	                          }); //TODO: handle populate
+	                          // dispatch({
+	                          //     type: 'update-data-dataModel',
+	                          //     //TODO: handle case for data is an array or an object
+	                          //     payload: { data: res[0] }
+	                          // })
+	                          //TODO: handle populate
+	                          //dispatch({ type: 'populate' })
+
+	                          return _context5.abrupt("return", res);
+
+	                        case 17:
+	                          return _context5.abrupt("return", null);
+
+	                        case 18:
+	                        case "end":
+	                          return _context5.stop();
+	                      }
+	                    }
+	                  }, _callee5, null, [[3, 11]]);
+	                }));
+	              };
+
+	              output = getFn(output);
+	              break;
+	            }
+
+	          case 'rd':
+	            {
+	              var _getFn = function _getFn(output) {
+	                return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6() {
+	                  var res, _api, ids, type, rest, parsedType, _yield$store$level2SD7, data;
+
+	                  return regenerator.wrap(function _callee6$(_context6) {
+	                    while (1) {
+	                      switch (_context6.prev = _context6.next) {
+	                        case 0:
+	                          _context6.prev = 0;
+	                          _api = output.api, ids = output.ids, type = output.type, rest = objectWithoutProperties(output, ["api", "ids", "type"]);
+	                          parsedType = type.split('-')[1];
+	                          _context6.next = 5;
+	                          return store$1.level2SDK.documentServices.retrieveDocument({
+	                            idList: [ids],
+	                            options: _objectSpread$6(_objectSpread$6({}, rest), {}, {
+	                              type: parseInt(parsedType)
+	                            })
+	                          });
+
+	                        case 5:
+	                          _yield$store$level2SD7 = _context6.sent;
+	                          data = _yield$store$level2SD7.data;
+	                          res = data;
+	                          _context6.next = 13;
+	                          break;
+
+	                        case 10:
+	                          _context6.prev = 10;
+	                          _context6.t0 = _context6["catch"](0);
+	                          throw _context6.t0;
+
+	                        case 13:
+	                          if (!res) {
+	                            _context6.next = 15;
+	                            break;
+	                          }
+
+	                          return _context6.abrupt("return", res);
+
+	                        case 15:
+	                          return _context6.abrupt("return", null);
+
+	                        case 16:
+	                        case "end":
+	                          return _context6.stop();
+	                      }
+	                    }
+	                  }, _callee6, null, [[0, 10]]);
+	                }));
+	              };
+
+	              output = isPopulated(output) ? _getFn(output) : output;
+	              break;
+	            }
+	          //TODO: fill with vertex functions
+
+	          case 'vertex':
+	            {
+	              break;
+	            }
+
+	          default:
+	            {
+	              return;
+	            }
+	        }
 	      }
+	    });
 	  }
+
+	  return output;
 	}
-
-	function _createForOfIteratorHelper$g(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$h(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-	function _unsupportedIterableToArray$h(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$h(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$h(o, minLen); }
-
-	function _arrayLikeToArray$h(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -62453,17 +61138,15 @@
 
 	              case 17:
 	                rawBaseDataModel = _context.sent;
-	                debugger;
 	                populatedBaseDataModel = populateKeys(rawBaseDataModel, [rawBaseDataModel]);
-	                debugger;
 	                this.baseDataModel = populatedBaseDataModel;
-	                _context.next = 24;
+	                _context.next = 22;
 	                return this.getBaseCSS();
 
-	              case 24:
+	              case 22:
 	                this.baseCSS = _context.sent;
 
-	              case 25:
+	              case 23:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -62488,8 +61171,7 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
-	        var pageCADL, cadlCopy, populatedCadlCopy, mergedDataModels, populatedData, populateAgain, init, boundDispatch, _iterator, _step, command, dataModelKey, ecosAction, currDataModel, dataModelWithFn, _populatedData, _populateAgain;
-
+	        var pageCADL, cadlCopy, populatedKeysCadlCopy, populatedData, populateData2, populateData3, init, boundDispatch, withFNs;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -62503,109 +61185,59 @@
 	                return this.init();
 
 	              case 3:
-	                _context2.next = 5;
+	                debugger;
+	                _context2.next = 6;
 	                return this.getPage(pageName);
 
-	              case 5:
+	              case 6:
 	                pageCADL = _context2.sent;
-	                //make a copy of the CADL object
+	                debugger; //make a copy of the CADL object
+
 	                cadlCopy = Object.assign({}, pageCADL);
+	                populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel]);
+	                populatedData = populateData(populatedKeysCadlCopy, '.', [this.baseDataModel]);
+	                populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]]);
 	                debugger;
-	                populatedCadlCopy = populateKeys(cadlCopy, [this.baseDataModel]);
-	                debugger; //merge CADL dataModels with base dataModels
-
-	                mergedDataModels = mergeDataModels(this.baseDataModel, populatedCadlCopy);
+	                populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]]);
 	                debugger;
-	                cadlCopy.dataModels = mergedDataModels;
-	                debugger; //populateData
+	                init = Object.values(populateData3)[0].init;
+	                boundDispatch = this.dispatch.bind(this);
+	                withFNs = attachFns(populateData3);
+	                debugger;
+	                this.pages = _objectSpread$7(_objectSpread$7({}, this.pages), withFNs); // //iterate through dataModels.init
+	                // if (Array.isArray(init) && init.length > 0) {
+	                //     for (let command of init) {
+	                //         const { dataModel: dataModelKey, ecosAction } = command
+	                //         const currDataModel = cadlCopy.dataModels[dataModelKey]
+	                //         //attach functions to dataModel
+	                //         const dataModelWithFn = attachFns({
+	                //             dataModelKey,
+	                //             dataModel: currDataModel,
+	                //             dispatch: boundDispatch
+	                //         })
+	                //         cadlCopy.dataModels[dataModelKey] = dataModelWithFn
+	                //         //run init commands
+	                //         if (typeof cadlCopy.dataModels[dataModelKey][ecosAction] === 'function') {
+	                //             try {
+	                //                 await cadlCopy.dataModels[dataModelKey][ecosAction]()
+	                //             } catch (error) {
+	                //                 throw new UnableToExecuteDataModelFn(`An error occured while executing ${dataModelKey}.${ecosAction}`, error)
+	                //             }
+	                //             //populateData again
+	                //             const populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels, this.data.dataModels])
+	                //             const populateAgain = populateData(populatedData, [cadlCopy.dataModels, this.data.dataModels])
+	                //             cadlCopy.dataModels = populateAgain
+	                //         }
+	                //     }
+	                // }
+	                // this.cadl = cadlCopy
 
-	                populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels]);
-	                populateAgain = populateData(populatedData, [cadlCopy.dataModels]);
-	                cadlCopy.dataModels = _objectSpread$7(_objectSpread$7({}, cadlCopy.dataModels), populateAgain);
-	                init = cadlCopy.dataModels.init;
-	                boundDispatch = this.dispatch.bind(this); //iterate through dataModels.init
-
-	                if (!(Array.isArray(init) && init.length > 0)) {
-	                  _context2.next = 51;
-	                  break;
-	                }
-
-	                _iterator = _createForOfIteratorHelper$g(init);
-	                _context2.prev = 21;
-
-	                _iterator.s();
-
-	              case 23:
-	                if ((_step = _iterator.n()).done) {
-	                  _context2.next = 43;
-	                  break;
-	                }
-
-	                command = _step.value;
-	                dataModelKey = command.dataModel, ecosAction = command.ecosAction;
-	                currDataModel = cadlCopy.dataModels[dataModelKey]; //attach functions to dataModel
-
-	                dataModelWithFn = attachFns({
-	                  dataModelKey: dataModelKey,
-	                  dataModel: currDataModel,
-	                  dispatch: boundDispatch
-	                });
-	                cadlCopy.dataModels[dataModelKey] = dataModelWithFn; //run init commands
-
-	                if (!(typeof cadlCopy.dataModels[dataModelKey][ecosAction] === 'function')) {
-	                  _context2.next = 41;
-	                  break;
-	                }
-
-	                _context2.prev = 30;
-	                _context2.next = 33;
-	                return cadlCopy.dataModels[dataModelKey][ecosAction]();
-
-	              case 33:
-	                _context2.next = 38;
-	                break;
-
-	              case 35:
-	                _context2.prev = 35;
-	                _context2.t0 = _context2["catch"](30);
-	                throw new UnableToExecuteDataModelFn("An error occured while executing ".concat(dataModelKey, ".").concat(ecosAction), _context2.t0);
-
-	              case 38:
-	                //populateData again
-	                _populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels, this.data.dataModels]);
-	                _populateAgain = populateData(_populatedData, [cadlCopy.dataModels, this.data.dataModels]);
-	                cadlCopy.dataModels = _populateAgain;
-
-	              case 41:
-	                _context2.next = 23;
-	                break;
-
-	              case 43:
-	                _context2.next = 48;
-	                break;
-
-	              case 45:
-	                _context2.prev = 45;
-	                _context2.t1 = _context2["catch"](21);
-
-	                _iterator.e(_context2.t1);
-
-	              case 48:
-	                _context2.prev = 48;
-
-	                _iterator.f();
-
-	                return _context2.finish(48);
-
-	              case 51:
-	                this.cadl = cadlCopy;
-
-	              case 52:
+	              case 20:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[21, 45, 48, 51], [30, 35]]);
+	        }, _callee2, this);
 	      }));
 
 	      function initPage(_x) {
@@ -62635,27 +61267,23 @@
 
 	              case 4:
 	                pageCADL = _context3.sent;
-	                this.dispatch({
-	                  type: 'set-page',
-	                  payload: defineProperty({}, pageName, pageCADL)
-	                });
-	                _context3.next = 11;
+	                _context3.next = 10;
 	                break;
 
-	              case 8:
-	                _context3.prev = 8;
+	              case 7:
+	                _context3.prev = 7;
 	                _context3.t0 = _context3["catch"](0);
 	                throw _context3.t0;
 
-	              case 11:
+	              case 10:
 	                return _context3.abrupt("return", pageCADL);
 
-	              case 12:
+	              case 11:
 	              case "end":
 	                return _context3.stop();
 	            }
 	          }
-	        }, _callee3, this, [[0, 8]]);
+	        }, _callee3, this, [[0, 7]]);
 	      }));
 
 	      function getPage(_x2) {
@@ -62851,6 +61479,7 @@
 	        case 'set-page':
 	          {
 	            this.pages = _objectSpread$7(_objectSpread$7({}, this.pages), action.payload);
+	            debugger;
 	          }
 
 	        case 'attach-Fns':
@@ -63065,6 +61694,11 @@
 
 	        case 7:
 	          debugger;
+	          _context.next = 10;
+	          return cadl.initPage('SignIn');
+
+	        case 10:
+	          debugger;
 	          jquery(document).ready(function () {
 	            jquery('#cadlEndpoint-btn').click(function () {
 	              var url = jquery('#cadlEndpoint-txtField').val();
@@ -63098,7 +61732,11 @@
 	                  var li = jquery('<li/>').addClass('ui-menu-item').attr('role', 'menuitem').appendTo(cList);
 	                  var a = jquery('<a/>').addClass('pagename').text(invalid[i].pageName).appendTo(li);
 	                  jquery('<br/>').appendTo(a);
-	                  jquery('<a/>').addClass('error').text(invalid[i].error).appendTo(li);
+	                  var errors = invalid[i].error;
+	                  jquery.each(errors, function (j) {
+	                    var a = jquery('<a/>').addClass('error').text(errors[j]).appendTo(li);
+	                    jquery('<br/>').appendTo(a);
+	                  });
 	                });
 	              })["catch"](function (err) {
 	                jquery('#val-endpoint-text').hide();
@@ -63127,7 +61765,7 @@
 	            });
 	          });
 
-	        case 9:
+	        case 12:
 	        case "end":
 	          return _context.stop();
 	      }
