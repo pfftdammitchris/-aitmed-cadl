@@ -12,7 +12,11 @@
     "start": "serve public",
     "dev": "npm-run-all --parallel start watch",
     "test": "node test/test.js",
-    "pretest": "npm run build"
+    "pretest": "npm run build",
+    "bump-version": "npm version patch",
+    "prepublish:public": "npm run build && npm run bump-version",
+    "publish:public": "npm publish --access public",
+    "postpublish:public": "git push"
   },
   "repository": {
     "type": "git",
@@ -53,6 +57,7 @@
     "@aitmed/ecos-lvl2-sdk": "^1.4.78",
     "axios": "^0.19.2",
     "jquery": "^3.5.1",
+    "lodash": "^4.17.15",
     "pako": "^1.0.11",
     "rollup-plugin-node-resolve": "^5.2.0"
   }

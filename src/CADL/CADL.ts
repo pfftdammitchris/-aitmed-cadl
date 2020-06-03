@@ -1,22 +1,20 @@
 import axios from 'axios'
 import YAML from 'yaml'
 import {
-    mergeDataModels,
     populateData,
     attachFns,
     populateKeys,
+    replaceUpdate
 } from './utils'
 import { CADL_OBJECT, BASE_DATA_MODEL } from './types'
 import store, { ResponseCatcher, ErrorCatcher } from '../common/store'
 
 import {
-    NoDataModelsFound,
-    UnableToRetrieveCADL,
     UnableToRetrieveBaseDataModel,
-    UnableToExecuteDataModelFn,
     UnableToParseYAML,
     UnableToRetrieveYAML,
 } from './errors'
+import _ from 'lodash'
 
 
 export default class CADL {
@@ -61,7 +59,9 @@ export default class CADL {
         const rawBaseDataModel = await this.getBaseDataModel()
         const populatedBaseDataModel = populateKeys(rawBaseDataModel, [rawBaseDataModel])
         this.baseDataModel = populatedBaseDataModel
-        this.baseCSS = await this.getBaseCSS()
+        const rawBaseCSS = await this.getBaseCSS()
+        const populatedBaseCSS = populateKeys(rawBaseCSS, [rawBaseCSS])
+        this.baseCSS = populatedBaseCSS
     }
 
 
@@ -74,25 +74,22 @@ export default class CADL {
     async initPage(pageName: string) {
         if (!this.cadlEndpoint) await this.init()
 
-        debugger
         let pageCADL = await this.getPage(pageName)
-        debugger
 
         //make a copy of the CADL object
         let cadlCopy = Object.assign({}, pageCADL)
-        let populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel])
-
-        const populatedData = populateData(populatedKeysCadlCopy, '.', [this.baseDataModel])
+        let populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel, this.baseCSS])
+        const boundDispatch = this.dispatch.bind(this)
+        let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
+        const populatedData = populateData(replaceUpdateJob, '.', [this.baseDataModel, this.baseCSS])
         const populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]])
-        debugger
         const populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]])
 
-        debugger
         const { init } = Object.values(populateData3)[0]
-        const boundDispatch = this.dispatch.bind(this)
+
         const withFNs = attachFns(populateData3, boundDispatch)
-        debugger
         this.pages = { ...this.pages, ...withFNs }
+        //TODO:implement init func 
         // //iterate through dataModels.init
         // if (Array.isArray(init) && init.length > 0) {
         //     for (let command of init) {
@@ -158,11 +155,12 @@ export default class CADL {
      */
     public async getBaseCSS(): Promise<Record<string, any>> {
         try {
-            this.baseCSS = await this.defaultObject(`${this.baseUrl}BaseCSS.yml`)
+            const baseCSS = await this.defaultObject(`${this.baseUrl}BaseCSS.yml`)
+            this.baseCSS = baseCSS
+            return baseCSS
         } catch (error) {
             throw error
         }
-        return this.baseCSS
     }
 
     /**
@@ -198,15 +196,15 @@ export default class CADL {
      */
     private dispatch(action: { type: string, payload: any }) {
         switch (action.type) {
-            case ('populate'): {
-                //populating twice because data must be filled from both the data.dataModels and the dataModels object
-                //TODO: refactor populate data to require populating once
-                const populatedData = populateData(this.dataModels, [this.data.dataModels, this.data.dataModels])
+            // case ('populate'): {
+            //     //populating twice because data must be filled from both the data.dataModels and the dataModels object
+            //     //TODO: refactor populate data to require populating once
+            //     const populatedData = populateData(this.dataModels, [this.data.dataModels, this.data.dataModels])
 
-                const populatedAgain = populateData(populatedData, [this.dataModels, this.data.dataModels])
-                this.dataModels = populatedAgain
-                return
-            }
+            //     const populatedAgain = populateData(populatedData, [this.dataModels, this.data.dataModels])
+            //     this.dataModels = populatedAgain
+            //     return
+            // }
             case ('update-data-dataModel'): {
                 const dataCopy = Object.assign({}, this.data)
                 if (!dataCopy.dataModels) dataCopy.dataModels = {}
@@ -221,25 +219,39 @@ export default class CADL {
             }
             case ('set-page'): {
                 this.pages = { ...this.pages, ...action.payload }
-                debugger
             }
-            case ('attach-Fns'): {
-                const dataModelsCopy = Object.assign({}, this.dataModels)
-                delete dataModelsCopy.init
-                delete dataModelsCopy.const
-                delete dataModelsCopy.final
-                const boundDispatch = this.dispatch.bind(this)
-                for (let [dataModelKey, dataModel] of Object.entries(dataModelsCopy)) {
+            // case ('attach-Fns'): {
+            //     const dataModelsCopy = Object.assign({}, this.dataModels)
+            //     delete dataModelsCopy.init
+            //     delete dataModelsCopy.const
+            //     delete dataModelsCopy.final
+            //     const boundDispatch = this.dispatch.bind(this)
+            //     for (let [dataModelKey, dataModel] of Object.entries(dataModelsCopy)) {
 
-                    const dataModelWithFn = attachFns({
-                        dataModelKey,
-                        dataModel,
-                        dispatch: boundDispatch
-                    })
-                    dataModelsCopy[dataModelKey] = dataModelWithFn
-                }
-                this.dataModels = { ...this.dataModels, dataModelsCopy }
-                return
+            //         const dataModelWithFn = attachFns({
+            //             dataModelKey,
+            //             dataModel,
+            //             dispatch: boundDispatch
+            //         })
+            //         dataModelsCopy[dataModelKey] = dataModelWithFn
+            //     }
+            //     this.dataModels = { ...this.dataModels, dataModelsCopy }
+            //     return
+            // }
+            case ('update-global'): {
+                const { updateObject, response } = action.payload
+                Object.keys(updateObject).forEach((key) => {
+                    const trimPath = key.substring(1, key.length - 1)
+                    const pathArr = trimPath.split('.')
+
+                    const trimVal = updateObject[key].substring(2, updateObject[key].length)
+
+                    const valPath = trimVal.split('.')
+                    const val = _.get({ builtIn: response }, valPath) || _.get(this.baseDataModel, valPath)
+                    _.set(this.baseDataModel, pathArr, val)
+
+                })
+                break
             }
             default: {
                 return

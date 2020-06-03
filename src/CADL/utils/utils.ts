@@ -12,7 +12,9 @@ export {
     replaceEidWithId,
     lookUp,
     populateKeys,
-    attachFns
+    attachFns,
+    updateState,
+    replaceUpdate
 }
 
 
@@ -145,6 +147,14 @@ function populateKeys(source: Record<string, any>, locations: Record<string, any
                 }
             } else if (isObject(source[key])) {
                 output[key] = populateKeys(source[key], locations)
+            } else if (Array.isArray(source[key])) {
+                source[key] = source[key].map((elem) => {
+                    if (isObject(elem)) {
+                        return populateKeys(elem, locations)
+                    }
+                    return elem
+                })
+                //TODO: may need to add string case
             } else {
                 output[key] = source[key]
             }
@@ -173,6 +183,7 @@ function lookUp(directions: string, location: Record<string, any>) {
         throw new UnableToLocateValue('value not found', error)
     }
 }
+
 
 
 /**
@@ -428,4 +439,26 @@ function attachFns(
     }
     return output
 }
+
+function updateState(updateObject: Record<string, any>, dispatch: Function) {
+    return (response: Record<string, any>): void => {
+        dispatch({ type: 'update-global', payload: { updateObject, response } })
+        return
+    }
+}
+
+function replaceUpdate(cadlObject, dispatch) {
+    const cadlCopy = Object.assign({}, cadlObject)
+    if (isObject(cadlCopy)) {
+        Object.keys(cadlCopy).forEach((key) => {
+            if (key === 'update') {
+                cadlCopy[key] = updateState(cadlCopy[key], dispatch)
+            } else if (isObject(cadlCopy[key])) {
+                cadlCopy[key] = replaceUpdate(cadlCopy[key], dispatch)
+            }
+        })
+    }
+    return cadlCopy
+}
+
 
