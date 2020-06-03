@@ -78327,7 +78327,6 @@
 	                populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel, this.baseCSS]);
 	                boundDispatch = this.dispatch.bind(this);
 	                replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch);
-	                debugger;
 	                populatedData = populateData(replaceUpdateJob, '.', [this.baseDataModel, this.baseCSS]);
 	                populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]]);
 	                populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]]);
@@ -78362,7 +78361,7 @@
 	                // }
 	                // this.cadl = cadlCopy
 
-	              case 17:
+	              case 16:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -78631,19 +78630,15 @@
 	            var _action$payload = action.payload,
 	                updateObject = _action$payload.updateObject,
 	                response = _action$payload.response;
-	            debugger;
 	            Object.keys(updateObject).forEach(function (key) {
 	              var trimPath = key.substring(1, key.length - 1);
 	              var pathArr = trimPath.split('.');
 	              var trimVal = updateObject[key].substring(2, updateObject[key].length);
 	              var valPath = trimVal.split('.');
-	              debugger;
 
 	              var val = lodash.get({
 	                builtIn: response
 	              }, valPath) || lodash.get(_this.baseDataModel, valPath);
-
-	              debugger;
 
 	              lodash.set(_this.baseDataModel, pathArr, val);
 	            });
