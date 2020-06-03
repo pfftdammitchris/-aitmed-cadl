@@ -7,10 +7,25 @@
 import { fetchAll, fetchCADLObject } from '../utils'
 import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
-
+import CADL from '../CADL'
+import { defaultConfig } from '../config'
 export default (async function () {
 
+    const cadl = new CADL({ ...defaultConfig })
+    debugger
+    await cadl.init()
+    debugger
+    // await cadl.initPage('ApplyBusiness')
+    await cadl.initPage('SignIn')
+    // await cadl.initPage('SignUp')
+    debugger
+    cadl.pages['SignIn'].update({
+        UserVertex: 'hello',
+        JWT: 'pop'
+    })
+    debugger
 
+    debugger
     $(document).ready(function () {
 
         $('#cadlEndpoint-btn').click(function () {

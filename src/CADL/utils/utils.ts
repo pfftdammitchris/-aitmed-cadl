@@ -5,14 +5,16 @@ import { UnableToLocateValue } from '../errors'
 
 export {
     filterDataModels,
-    mergeDataModels,
     populateData,
     attachDocumentFns,
     attachEdgeFns,
     isPopulated,
-    attachFns,
     replaceEidWithId,
     lookUp,
+    populateKeys,
+    attachFns,
+    updateState,
+    replaceUpdate
 }
 
 
@@ -45,75 +47,6 @@ function replaceEidWithId(edge: Record<string, any>) {
     }
 }
 
-/**
- * 
- * @param baseDataModel Record<string, any>
- * @param dataModels Record<string, any>
- * @returns Record<string, any>
- */
-function mergeDataModels(baseDataModel: Record<string, any>, dataModels: Record<string, any>) {
-    let _baseDataModel = Object.assign({}, baseDataModel)
-    const {
-        vertex: baseVertexDataModel,
-        edge: baseEdgeDataModel,
-        document: baseDocumentDataModel,
-        dataModel: superDataModel,
-        pageName,
-        ...restBaseProperties
-    } = _baseDataModel
-    let mergedDataModels = { ...restBaseProperties }
-
-    const mergedBaseEdgeDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseEdgeDataModel)
-    const mergedBaseDocumentDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseDocumentDataModel)
-    const mergedBaseVertexDataModelWithBaseDataModel = mergeDeep({ dataModel: superDataModel }, baseVertexDataModel)
-
-    for (let [dataModelKey, dataModel] of Object.entries(dataModels)) {
-        try {
-            switch (dataModel.objectType) {
-                case ('edge'): {
-                    const mergedEdgeDataModel = mergeDeep(mergedBaseEdgeDataModelWithBaseDataModel, dataModel)
-
-                    mergedDataModels = {
-                        ...mergedDataModels,
-                        [dataModelKey]: mergedEdgeDataModel
-                    }
-                    break
-                }
-                case ('document'): {
-                    const mergedDocumentDataModel = mergeDeep(mergedBaseDocumentDataModelWithBaseDataModel, dataModel)
-                    mergedDataModels = {
-                        ...mergedDataModels,
-                        [dataModelKey]: mergedDocumentDataModel
-                    }
-                    break
-                }
-                case ('vertex'): {
-                    const mergedVertexDataModel = mergeDeep(mergedBaseVertexDataModelWithBaseDataModel, dataModel)
-                    mergedDataModels = {
-                        ...mergedDataModels,
-                        [dataModelKey]: mergedVertexDataModel
-                    }
-                    break
-                } default: {
-                    mergedDataModels = {
-                        ...mergedDataModels,
-                        [dataModelKey]: dataModel
-                    }
-                    break
-                }
-            }
-        } catch (error) {
-            //TODO: customize error
-            throw new Error(
-                `UIDL -> getALLData -> dataModelKey:${dataModelKey}`
-            )
-        }
-    }
-
-    return mergedDataModels
-}
-
-
 
 /**
  * 
@@ -122,20 +55,47 @@ function mergeDataModels(baseDataModel: Record<string, any>, dataModels: Record<
  * @returns Record<string. any> 
  */
 //TODO: refactor to populate the values again
-function populateData(source: Record<string, any>, locations: Record<string, any>[]) {
+function populateData(source: Record<string, any>, lookFor: string, locations: Record<string, any>[]) {
     let output = Object.assign({}, source)
     if (isObject(source)) {
         Object.keys(source).forEach((key) => {
             if (isObject(source[key])) {
-                output[key] = populateData(source[key], locations)
-            } else if (source[key]) {
-                const currVal = source[key].toString()
-                if (currVal.startsWith('.')) {
+                output[key] = populateData(source[key], lookFor, locations)
+            } else if (Array.isArray(source[key])) {
+                output[key] = source[key].map((elem) => {
+                    if (isObject(elem)) {
+                        return populateData(elem, lookFor, locations)
+                    } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
+                        for (let location of locations) {
+                            let currVal = elem
+                            if (lookFor === '..') {
+                                currVal = currVal.slice(1)
+                            }
+                            try {
+                                let res = lookUp(currVal, location)
+                                return res
+                            } catch (error) {
+                                if (error instanceof UnableToLocateValue) {
+                                    continue
+                                } else {
+                                    throw error
+                                }
+                            }
+                        }
+                    }
+                    return elem
+                })
+            } else if (source[key] && typeof source[key] === 'string') {
+                let currVal = source[key].toString()
+                if (currVal.startsWith(lookFor)) {
                     let newVal = currVal
+                    if (lookFor === '..') {
+                        currVal = currVal.slice(1)
+                    }
                     for (let location of locations) {
                         try {
                             let res = lookUp(currVal, location)
-                            if (res && typeof res === 'string' && !res.startsWith('.')) {
+                            if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
                                 newVal = res
                             } else if (res) {
                                 newVal = res
@@ -150,6 +110,51 @@ function populateData(source: Record<string, any>, locations: Record<string, any
                     }
                     output[key] = newVal
                 }
+            } else {
+                output[key] = source[key]
+            }
+        })
+    }
+    return output
+}
+
+function populateKeys(source: Record<string, any>, locations: Record<string, any>[]) {
+    let output = Object.assign({}, source)
+    if (isObject(source)) {
+        Object.keys(source).forEach((key) => {
+            //TODO: check if the key startsWith('.')
+            if (key.startsWith('.')) {
+                let parent = {}
+                for (let location of locations) {
+                    try {
+                        const res = lookUp(key, location)
+                        if (res) {
+                            parent = res
+                        }
+                    } catch (error) {
+                        if (error instanceof UnableToLocateValue) {
+                            parent = {}
+                            continue
+                        } else {
+                            throw error
+                        }
+                    }
+                }
+                if (Object.keys(parent).length) {
+                    const mergedObjects = mergeDeep(parent, populateKeys(output[key], locations))
+                    output = { ...output, ...mergedObjects }
+                    delete output[key]
+                }
+            } else if (isObject(source[key])) {
+                output[key] = populateKeys(source[key], locations)
+            } else if (Array.isArray(source[key])) {
+                source[key] = source[key].map((elem) => {
+                    if (isObject(elem)) {
+                        return populateKeys(elem, locations)
+                    }
+                    return elem
+                })
+                //TODO: may need to add string case
             } else {
                 output[key] = source[key]
             }
@@ -180,6 +185,7 @@ function lookUp(directions: string, location: Record<string, any>) {
 }
 
 
+
 /**
  * 
  * @param item string | Record<string, any>
@@ -187,24 +193,29 @@ function lookUp(directions: string, location: Record<string, any>) {
  * -takes in an object or string and checks whether or not the item has been populated
  */
 function isPopulated(item: string | Record<string, any>): boolean {
-    if (!Object.keys(item)) return false
+    let itemCopy = Object.assign({}, item)
     let isPop: boolean = true
-    if (isObject(item)) {
-        for (let key of Object.keys(item)) {
+    if (isObject(itemCopy)) {
+        for (let key of Object.keys(itemCopy)) {
             if (!isPop) return isPop
-            if (isObject(item[key])) {
-                isPop = isPopulated(item[key])
-            } else if (item[key]) {
-                const currVal = item[key].toString()
-                if (currVal.startsWith('.')) {
+            if (isObject(itemCopy[key])) {
+                isPop = isPopulated(itemCopy[key])
+            } else if (Array.isArray(itemCopy[key])) {
+                isPop = itemCopy[key].forEach((elem) => {
+                    if (isObject(elem)) {
+                        isPop = isPopulated(elem)
+                    } else if (typeof elem === 'string') {
+                        if (elem.startsWith('.') || elem.startsWith('..')) {
+                            isPop = false
+                        }
+                    }
+                })
+            } else if (typeof itemCopy[key] === 'string') {
+                const currVal = itemCopy[key].toString()
+                if (currVal.startsWith('.') || currVal.startsWith('..')) {
                     isPop = false
                 }
             }
-        }
-    } else if (typeof item === 'string') {
-        const currVal = item.toString()
-        if (currVal.startsWith('.')) {
-            isPop = false
         }
     }
     return isPop
@@ -342,35 +353,112 @@ function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
  * @param params.dispatch Function
  * @returns Record<string,any>
  */
-function attachFns({
-    dataModelKey,
-    dataModel,
-    dispatch
-}) {
-    const { objectType } = dataModel
-    switch (objectType) {
-        case ('edge'): {
-            const dataModelWithFn = attachEdgeFns({
-                dataModelKey,
-                dataModel,
-                dispatch
-            })
-            return dataModelWithFn
-        }
-        case ('document'): {
-            const dataModelWithFn = attachDocumentFns({
-                dataModelKey,
-                dataModel,
-                dispatch
-            })
-            return dataModelWithFn
-        }
-        //TODO: fill with vertex functions
-        case ('vertex'): {
-            break
-        }
-        default: {
-            return
-        }
+function attachFns(
+    cadlObject, dispatch
+) {
+    let output = Object.assign({}, cadlObject)
+    if (isObject(output)) {
+        Object.keys(output).forEach((key) => {
+            if (isObject(output[key])) {
+                output[key] = attachFns(output[key], dispatch)
+            } else if (Array.isArray(output[key])) {
+                output[key] = output[key].map((elem) => {
+                    if (isObject(elem)) return attachFns(elem, dispatch)
+                    return elem
+                })
+            } else if (typeof output[key] === 'string' && key === 'api') {
+                const { api } = output
+                switch (api) {
+                    case ('re'): {
+                        const getFn = (output) => async () => {
+                            const options = Object.assign({}, output)
+                            delete options.api
+                            let res: any[] = []
+                            try {
+                                const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
+                                res = data
+                            } catch (error) {
+                                throw error
+                            }
+                            if (res.length > 0) {
+                                res = res.map((edge) => {
+                                    return replaceEidWithId(edge)
+                                })
+                                //TODO: handle populate
+                                // dispatch({
+                                //     type: 'update-data-dataModel',
+                                //     //TODO: handle case for data is an array or an object
+                                //     payload: { data: res[0] }
+                                // })
+                                //TODO: handle populate
+                                //dispatch({ type: 'populate' })
+                                return res
+                            }
+                            //TODO:handle else case
+                            return null
+                        }
+                        output = getFn(output)
+                        break
+                    }
+                    case ('rd'): {
+                        const getFn = (output) => async () => {
+                            let res
+                            try {
+                                const { api, ids, type, ...rest } = output
+                                const parsedType = type.split('-')[1]
+                                const { data } = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest, type: parseInt(parsedType) } })
+                                res = data
+                            } catch (error) {
+                                throw error
+                            }
+                            if (res) {
+                                //TODO: handle case for data is an array or an object
+                                //TODO: handle update of data state
+                                // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res[0] } })
+                                //TODO: handle update of data state
+                                // dispatch({ type: 'populate' })
+                                return res
+                            }
+                            //TODO:handle else case
+                            return null
+                        }
+
+                        output = isPopulated(output) ? getFn(output) : output
+                        break
+                    }
+                    //TODO: fill with vertex functions
+                    case ('vertex'): {
+                        break
+                    }
+                    default: {
+                        return
+                    }
+                }
+            }
+        })
+    }
+    return output
+}
+
+function updateState(updateObject: Record<string, any>, dispatch: Function) {
+    return (response: Record<string, any>): void => {
+        dispatch({ type: 'update-global', payload: { updateObject, response } })
+        return
     }
 }
+
+function replaceUpdate(cadlObject, dispatch) {
+    const cadlCopy = Object.assign({}, cadlObject)
+    if (isObject(cadlCopy)) {
+        Object.keys(cadlCopy).forEach((key) => {
+            if (key === 'update') {
+                cadlCopy[key] = updateState(cadlCopy[key], dispatch)
+            } else if (isObject(cadlCopy[key])) {
+                cadlCopy[key] = replaceUpdate(cadlCopy[key], dispatch)
+            }
+        })
+    }
+    return cadlCopy
+}
+
+
