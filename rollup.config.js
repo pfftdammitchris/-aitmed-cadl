@@ -31,6 +31,7 @@ export default [
 				preferBuiltins: true,
 				browser: true,
 			}), // so Rollup can find `ms`
+			json(),
 			commonjs(), // so Rollup can convert `ms` to an ES module
 			babel({
 				include: ['src/**/*'],
@@ -38,7 +39,6 @@ export default [
 				runtimeHelpers: true,
 				extensions,
 			}),
-			json()
 
 		]
 	},
