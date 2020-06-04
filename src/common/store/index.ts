@@ -1,8 +1,10 @@
 import Store from './Store'
-import { defaultConfig } from '../../config'
 export * from './types'
 
 export { Store }
 export default new Store({
-    ...defaultConfig
+    apiVersion: 'v1beta1',
+    apiHost: 'testapi2.aitmed.com',
+    env: 'development',
+    configUrl: 'https://public.aitmed.com/config',
 })
