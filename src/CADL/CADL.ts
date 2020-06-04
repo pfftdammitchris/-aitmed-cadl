@@ -1,21 +1,25 @@
 import axios from 'axios'
 import YAML from 'yaml'
+import _ from 'lodash'
 import {
     populateData,
     attachFns,
     populateKeys,
     replaceUpdate
 } from './utils'
-import { CADL_OBJECT, BASE_DATA_MODEL } from './types'
-import store, { ResponseCatcher, ErrorCatcher } from '../common/store'
-
+import store, {
+    ResponseCatcher,
+    ErrorCatcher
+} from '../common/store'
 import {
-    UnableToRetrieveBaseDataModel,
     UnableToParseYAML,
     UnableToRetrieveYAML,
 } from './errors'
-import _ from 'lodash'
-
+import {
+    CADL_OBJECT,
+    BASE_DATA_MODEL,
+    CADLARGS
+} from './types'
 
 export default class CADL {
 
@@ -25,11 +29,12 @@ export default class CADL {
     private _cadlEndpoint: CADL_OBJECT
     private _baseUrl: string
     private _assetsUrl: string
+    private _global: Record<string, any>
     private _pages: Record<string, any> = {}
     private _data: Record<string, any> = {}
 
 
-    constructor({ env, configUrl, cadlVersion }) {
+    constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
         store.env = env
         store.configUrl = configUrl
@@ -37,33 +42,42 @@ export default class CADL {
     }
 
     /**
-     * @throws UnableToRetrieveCADL if CADL object is note retrieved
-     * @throws UnableToRetrieveBaseDataModel if baseDataModel is note retrieved
-     * @throws NoDataModelsFound if there are no dataModels found in the CADL object
-     * @throws UnableToExecuteDataModelFn if an init function fails to execute
+     * -loads config if not already loaded
+     * 
+     * -sets CADL version, baseUrl, assetsUrl, baseDataModel, baseCSS
+     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
+     * @throws UnableToParseYAML -if unable to parse yaml file
      */
     public async init(): Promise<void> {
         let config = store.getConfig()
         if (config === null) {
-            //@ts-ignore
             config = await store.level2SDK.loadConfigData('aitmedAlpha')
         }
-        //@ts-ignore
         const { cadlEndpoint: cadlEndpointUrl, web } = config
+
         //set cadlVersion
         this.cadlVersion = web.cadlVersion[this.cadlVersion]
         const cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion)
-        const { baseUrl, assetsUrl } = await this.getCadlEndpoint(cadlEndpointUrlWithCadlVersion)
+
+        const cadlEndpoint = await this.defaultObject(cadlEndpointUrlWithCadlVersion)
+        this.cadlEndpoint = cadlEndpoint
+        const { baseUrl, assetsUrl } = cadlEndpoint
 
         this.baseUrl = baseUrl
         this.assetsUrl = assetsUrl
 
-        const rawBaseDataModel = await this.getBaseDataModel()
-        const populatedBaseDataModel = populateKeys(rawBaseDataModel, [rawBaseDataModel])
-        this.baseDataModel = populatedBaseDataModel
-        const rawBaseCSS = await this.getBaseCSS()
-        const populatedBaseCSS = populateKeys(rawBaseCSS, [rawBaseCSS])
-        this.baseCSS = populatedBaseCSS
+        const rawBaseDataModel = await this.getPage('BaseDataModel')
+        const populatedBaseDataModelKeys = populateKeys(rawBaseDataModel, [rawBaseDataModel])
+        const populatedBaseDataModelKeys2 = populateKeys(populatedBaseDataModelKeys, [populatedBaseDataModelKeys])
+        const populatedBaseDataModelVals = populateData(populatedBaseDataModelKeys2, '.', [populatedBaseDataModelKeys2])
+        const populatedBaseDataModelVals2 = populateData(populatedBaseDataModelVals, '.', [populatedBaseDataModelVals])
+        this.baseDataModel = populatedBaseDataModelVals2
+        this.global = Object.assign({}, populatedBaseDataModelVals2.global)
+
+        const rawBaseCSS = await this.getPage('BaseCSS')
+        const populatedBaseCSSKeys = populateKeys(rawBaseCSS, [rawBaseCSS])
+        const populatedBaseCSSVals = populateData(populatedBaseCSSKeys, '.', [populatedBaseCSSKeys])
+        this.baseCSS = populatedBaseCSSVals
     }
 
 
@@ -72,6 +86,8 @@ export default class CADL {
      * @param pageName 
      * 
      * - initiates cadlObject for page specified
+     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
+     * @throws UnableToParseYAML -if unable to parse yaml file
      */
     async initPage(pageName: string) {
         if (!this.cadlEndpoint) await this.init()
@@ -80,9 +96,15 @@ export default class CADL {
 
         //make a copy of the CADL object
         let cadlCopy = Object.assign({}, pageCADL)
+
+        //populate keys 
         let populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel, this.baseCSS])
+
+        //replace any update object 
         const boundDispatch = this.dispatch.bind(this)
         let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
+
+        //populate the values
         const populatedData = populateData(replaceUpdateJob, '.', [this.baseDataModel, this.baseCSS])
         const populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]])
         const populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]])
@@ -90,7 +112,9 @@ export default class CADL {
         //@ts-ignore
         const { init } = Object.values(populateData3)[0]
 
+        //attach functions
         const withFNs = attachFns(populateData3, boundDispatch)
+
         this.pages = { ...this.pages, ...withFNs }
         //TODO:implement init func 
         // //iterate through dataModels.init
@@ -126,46 +150,20 @@ export default class CADL {
 
     /**
      * @returns CADL_OBJECT
-     * @throws UnableToRetrieveCADL if CADL object is note retrieved
+     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
+     * @throws UnableToParseYAML -if unable to parse yaml file
      */
     public async getPage(pageName): Promise<CADL_OBJECT> {
         let pageCADL
         try {
-        //@ts-ignore
 
-            let url = pageName === 'BaseCSS' ? `${this.baseUrl}${pageName}.yml` : `${this.baseUrl}${pageName}_en.yml`
-            pageCADL = await this.defaultObject(`${this.baseUrl}${pageName}_en.yml`)
+            let url = `${this.baseUrl}${pageName}_en.yml`
+            pageCADL = await this.defaultObject(url)
             // this.dispatch({ type: 'set-page', payload: pageCADL })
         } catch (error) {
             throw error
         }
         return pageCADL
-    }
-
-    /**
-     * @returns BASE_DATA_MODEL
-     * @throws UnableToRetrieveBaseDataModel
-     */
-    public async getBaseDataModel(): Promise<BASE_DATA_MODEL> {
-        try {
-            const baseDataModel = await this.defaultObject(`${this.baseUrl}BaseDataModel_en.yml`)
-            this.baseDataModel = baseDataModel
-            return baseDataModel
-        } catch (error) {
-            throw new UnableToRetrieveBaseDataModel(`There was an error retrieving the baseDataModel objec`, error)
-        }
-    }
-    /**
-     * @returns Record<string, any>
-     */
-    public async getBaseCSS(): Promise<Record<string, any>> {
-        try {
-            const baseCSS = await this.defaultObject(`${this.baseUrl}BaseCSS.yml`)
-            this.baseCSS = baseCSS
-            return baseCSS
-        } catch (error) {
-            throw error
-        }
     }
 
     /**
@@ -252,8 +250,8 @@ export default class CADL {
                     const trimVal = updateObject[key].substring(2, updateObject[key].length)
 
                     const valPath = trimVal.split('.')
-                    const val = _.get({ builtIn: response }, valPath) || _.get(this.baseDataModel, valPath)
-                    _.set(this.baseDataModel, pathArr, val)
+                    const val = _.get({ builtIn: response }, valPath) || _.get(this, valPath)
+                    _.set(this, pathArr, val)
 
                 })
                 break
@@ -261,19 +259,6 @@ export default class CADL {
             default: {
                 return
             }
-        }
-    }
-
-    private async getCadlEndpoint(cadlEndpointUrl: string) {
-        let cadlEndpoint
-        try {
-            cadlEndpoint = await this.defaultObject(cadlEndpointUrl)
-            if (Object.keys(cadlEndpoint).length) {
-                this.cadlEndpoint = cadlEndpoint
-            } else return
-            return cadlEndpoint
-        } catch (error) {
-            throw error
         }
     }
 
@@ -285,11 +270,11 @@ export default class CADL {
     public set cadlVersion(cadlVersion) {
         this._cadlVersion = cadlVersion
     }
-    public get cadlEndpoint() {
+    private get cadlEndpoint() {
         return this._cadlEndpoint
     }
 
-    public set cadlEndpoint(cadlEndpoint) {
+    private set cadlEndpoint(cadlEndpoint) {
         this._cadlEndpoint = cadlEndpoint
     }
     public get baseUrl() {
@@ -335,6 +320,13 @@ export default class CADL {
 
     public set pages(pages) {
         this._pages = pages || {}
+    }
+    public get global() {
+        return this._global
+    }
+
+    public set global(global) {
+        this._global = global || {}
     }
     set apiVersion(apiVersion) {
         store.apiVersion = apiVersion

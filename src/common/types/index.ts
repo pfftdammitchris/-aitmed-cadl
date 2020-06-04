@@ -5,5 +5,5 @@ export type ENV = 'development' | 'production'
 export interface ConfigProps {
   configUrl: string
   env: ENV
-  cadlVersion: string
+  cadlVersion: 'test' | 'stable'
 }

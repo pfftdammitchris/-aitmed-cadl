@@ -13,13 +13,16 @@ export default (async function () {
 
     const cadl = new CADL({ ...defaultConfig })
     await cadl.init()
+    debugger
     // await cadl.initPage('ApplyBusiness')
     await cadl.initPage('SignIn')
+    debugger
     // await cadl.initPage('SignUp')
     cadl.pages['SignIn'].update({
         UserVertex: 'hello',
         JWT: 'pop'
     })
+    debugger
 
     $(document).ready(function () {
 

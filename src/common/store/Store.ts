@@ -9,9 +9,11 @@ import {
   ResponseCatcher,
   ErrorCatcher,
   Utils,
+  ConfigParams,
+  APIVersion,
+  ENV
 } from './types'
 
-import { APIVersion, ENV, ConfigProps } from '../types'
 
 
 const defaultResponseCatcher: ResponseCatcher = (response) => {
@@ -35,9 +37,8 @@ export default class Store {
   public responseCatcher: ResponseCatcher = defaultResponseCatcher
   public errorCatcher: ErrorCatcher = defaultErrorCatcher
 
-        //@ts-ignore
 
-  constructor({ apiVersion, apiHost, env, configUrl }: ConfigProps) {
+  constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {
     this._env = env
     this.level2SDK = new SDK({ apiVersion, apiHost, env, configUrl })
 

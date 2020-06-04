@@ -12,3 +12,9 @@ export interface DataModel {
     objectType: string
     dataModel: Record<string, any>
 }
+
+export interface CADLARGS {
+    env: 'development' | 'production'
+    configUrl: string
+    cadlVersion: 'test' | 'stable'
+} 

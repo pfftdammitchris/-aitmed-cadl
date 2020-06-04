@@ -1,13 +1,11 @@
 import { Response, Level2Error } from '../../types/lvl2SDK'
-
-export type ApiVersion = 'v1beta1' | 'v1beta2'
-
-export type ENV = 'development' | 'production'
+import * as CommonTypes from '../types'
+export * from '../types'
 
 export interface ConfigParams {
-  apiVersion: ApiVersion
-  env: ENV
-  apiHost:string
+  apiVersion: CommonTypes.APIVersion
+  env: CommonTypes.ENV
+  apiHost: string
   configUrl: string
 }
 
