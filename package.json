@@ -9,7 +9,7 @@
     "build": "npm run clean && npm run build:js && npm run build:types",
     "build:js": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
-    "clean": "rm -rf dist && rm public/bundle.js public/bundle.js.map ",
+    "clean": "rm -rf dist",
     "watch": "rollup -c -w",
     "start": "serve public",
     "dev": "npm-run-all --parallel start watch",
