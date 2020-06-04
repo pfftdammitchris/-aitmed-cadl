@@ -91,7 +91,7 @@ export default (async function () {
             //show validating...
             $('#val-page-text').show()
 
-            $.when(fetchCADLObject(url)).then(function (res) {
+            $.when(fetchCADLObject(url)).then(function () {
                 $('#val-page-text').hide()
                 $('#isValid').html("<span style='color:green;font-weight:400'>VALID</span>")
             }).catch((err) => {

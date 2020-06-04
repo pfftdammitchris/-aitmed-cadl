@@ -45,8 +45,10 @@ export default class CADL {
     public async init(): Promise<void> {
         let config = store.getConfig()
         if (config === null) {
+            //@ts-ignore
             config = await store.level2SDK.loadConfigData('aitmedAlpha')
         }
+        //@ts-ignore
         const { cadlEndpoint: cadlEndpointUrl, web } = config
         //set cadlVersion
         this.cadlVersion = web.cadlVersion[this.cadlVersion]
@@ -85,6 +87,7 @@ export default class CADL {
         const populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]])
         const populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]])
 
+        //@ts-ignore
         const { init } = Object.values(populateData3)[0]
 
         const withFNs = attachFns(populateData3, boundDispatch)
@@ -128,6 +131,8 @@ export default class CADL {
     public async getPage(pageName): Promise<CADL_OBJECT> {
         let pageCADL
         try {
+        //@ts-ignore
+
             let url = pageName === 'BaseCSS' ? `${this.baseUrl}${pageName}.yml` : `${this.baseUrl}${pageName}_en.yml`
             pageCADL = await this.defaultObject(`${this.baseUrl}${pageName}_en.yml`)
             // this.dispatch({ type: 'set-page', payload: pageCADL })

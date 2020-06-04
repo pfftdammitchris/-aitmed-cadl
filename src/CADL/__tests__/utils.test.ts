@@ -75,6 +75,8 @@ describe('utils', () => {
                 }
             }
 
+        //@ts-ignore
+
             const populatedData = populateData(source, [location])
 
             expect(populatedData).toEqual({ name: 'henry' })
@@ -87,6 +89,7 @@ describe('utils', () => {
                     firstName: 'henry'
                 }
             }
+        //@ts-ignore
 
             const populatedData = populateData(source, [location])
 
@@ -117,6 +120,7 @@ describe('utils', () => {
                     }
                 },
             ]
+        //@ts-ignore
 
             const populatedData = populateData(source, locations)
 
@@ -130,6 +134,8 @@ describe('utils', () => {
                     name: 'henry'
                 }
             }
+        //@ts-ignore
+
             expect(() => populateData(source, [location])).not.toThrow()
         })
     })

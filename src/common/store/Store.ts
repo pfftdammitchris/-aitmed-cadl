@@ -35,6 +35,8 @@ export default class Store {
   public responseCatcher: ResponseCatcher = defaultResponseCatcher
   public errorCatcher: ErrorCatcher = defaultErrorCatcher
 
+        //@ts-ignore
+
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigProps) {
     this._env = env
     this.level2SDK = new SDK({ apiVersion, apiHost, env, configUrl })
