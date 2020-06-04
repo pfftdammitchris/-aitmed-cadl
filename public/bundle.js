@@ -60507,6 +60507,7 @@
 	};
 
 	var Store$1 = /*#__PURE__*/function () {
+	  //@ts-ignore
 	  function Store(_ref) {
 	    var _this = this;
 
@@ -78250,6 +78251,7 @@
 	                config = _context.sent;
 
 	              case 5:
+	                //@ts-ignore
 	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
@@ -78329,7 +78331,8 @@
 	                replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch);
 	                populatedData = populateData(replaceUpdateJob, '.', [this.baseDataModel, this.baseCSS]);
 	                populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]]);
-	                populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]]);
+	                populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]]); //@ts-ignore
+
 	                init = Object.values(populateData3)[0].init;
 	                withFNs = attachFns(populateData3);
 	                this.pages = _objectSpread$7(_objectSpread$7({}, this.pages), withFNs); //TODO:implement init func 
@@ -78390,6 +78393,7 @@
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
 	                _context3.prev = 0;
+	                //@ts-ignore
 	                url = pageName === 'BaseCSS' ? "".concat(this.baseUrl).concat(pageName, ".yml") : "".concat(this.baseUrl).concat(pageName, "_en.yml");
 	                _context3.next = 4;
 	                return this.defaultObject("".concat(this.baseUrl).concat(pageName, "_en.yml"));
@@ -78887,7 +78891,7 @@
 	              jquery('.page-error').empty(); //show validating...
 
 	              jquery('#val-page-text').show();
-	              jquery.when(fetchCADLObject(url)).then(function (res) {
+	              jquery.when(fetchCADLObject(url)).then(function () {
 	                jquery('#val-page-text').hide();
 	                jquery('#isValid').html("<span style='color:green;font-weight:400'>VALID</span>");
 	              })["catch"](function (err) {
