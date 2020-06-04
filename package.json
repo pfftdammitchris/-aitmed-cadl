@@ -6,8 +6,10 @@
   "module": "dist/index.esm.js",
   "browser": "dist/index.umd.js",
   "scripts": {
-    "build": "rm -rf dist && rm public/bundle.js public/bundle.js.map && rollup -c",
+    "build": "npm run clean && npm run build:js && npm run build:types",
+    "build:js": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
+    "clean": "rm -rf dist && rm public/bundle.js public/bundle.js.map ",
     "watch": "rollup -c -w",
     "start": "serve public",
     "dev": "npm-run-all --parallel start watch",
