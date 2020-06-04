@@ -12,20 +12,15 @@ import { defaultConfig } from '../config'
 export default (async function () {
 
     const cadl = new CADL({ ...defaultConfig })
-    debugger
     await cadl.init()
-    debugger
     // await cadl.initPage('ApplyBusiness')
     await cadl.initPage('SignIn')
     // await cadl.initPage('SignUp')
-    debugger
     cadl.pages['SignIn'].update({
         UserVertex: 'hello',
         JWT: 'pop'
     })
-    debugger
 
-    debugger
     $(document).ready(function () {
 
         $('#cadlEndpoint-btn').click(function () {

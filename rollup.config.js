@@ -7,30 +7,6 @@ import json from 'rollup-plugin-json'
 const extensions = ['.js', '.ts']
 
 export default [
-	// browser-friendly UMD build
-	{
-		input: 'src/index.ts',
-		output: {
-			name: 'index',
-			file: pkg.browser,
-			format: 'umd'
-		},
-		plugins: [
-			resolve({
-				extensions,
-				preferBuiltins: true,
-				browser: true,
-			}), // so Rollup can find `ms`
-			commonjs(), // so Rollup can convert `ms` to an ES module
-			babel({
-				include: ['src/**/*'],
-				exclude: 'node_modules/**',
-				runtimeHelpers: true,
-				extensions,
-			}),
-			json()
-		]
-	},
 
 	// CommonJS (for Node) and ES module (for bundlers) build.
 	// (We could have three entries in the configuration array
@@ -40,14 +16,18 @@ export default [
 	// `file` and `format` for each target)
 	{
 		input: 'src/index.ts',
-		external: ['ms'],
 		output: [
-			{ file: pkg.main, format: 'cjs' },
-			{ file: pkg.module, format: 'es' }
+			{
+				file: pkg.main,
+				format: 'cjs',
+				sourcemap: true,
+			},
+			{ file: pkg.module, format: 'es', sourcemap: true, }
 		],
 		plugins: [
 			resolve({
 				extensions,
+				jsnext: true,
 				preferBuiltins: true,
 				browser: true,
 			}), // so Rollup can find `ms`
