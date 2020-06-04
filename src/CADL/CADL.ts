@@ -51,8 +51,10 @@ export default class CADL {
     public async init(): Promise<void> {
         let config = store.getConfig()
         if (config === null) {
+            //@ts-ignore
             config = await store.level2SDK.loadConfigData('aitmedAlpha')
         }
+        //@ts-ignore
         const { cadlEndpoint: cadlEndpointUrl, web } = config
 
         //set cadlVersion
