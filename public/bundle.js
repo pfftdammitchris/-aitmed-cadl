@@ -86869,16 +86869,12 @@
 	  return Store;
 	}();
 
-	var defaultConfig$1 = {
-	  cadlVersion: 'test',
+	var store$3 = new Store$1({
+	  apiVersion: 'v1beta1',
+	  apiHost: 'testapi2.aitmed.com',
 	  env: 'development',
 	  configUrl: 'https://public.aitmed.com/config'
-	};
-
-	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var store$3 = new Store$1(_objectSpread$5({}, defaultConfig$1));
+	});
 
 	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -86886,9 +86882,9 @@
 
 	function _arrayLikeToArray$g(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$6(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 * 
 	 * @param edge 
@@ -86903,7 +86899,7 @@
 
 	  if (eid) {
 	    var b64Id = store$3.utils.idToBase64(eid);
-	    output = _objectSpread$6(_objectSpread$6({}, output), {}, {
+	    output = _objectSpread$5(_objectSpread$5({}, output), {}, {
 	      id: b64Id
 	    });
 	    delete output.eid;
@@ -87054,7 +87050,7 @@
 
 	        if (Object.keys(parent).length) {
 	          var mergedObjects = mergeDeep(parent, populateKeys(output[key], locations));
-	          output = _objectSpread$6(_objectSpread$6({}, output), mergedObjects);
+	          output = _objectSpread$5(_objectSpread$5({}, output), mergedObjects);
 	          delete output[key];
 	        }
 	      } else if (isObject$1(source[key])) {
@@ -87247,7 +87243,7 @@
 	                          _context6.next = 5;
 	                          return store$3.level2SDK.documentServices.retrieveDocument({
 	                            idList: [ids],
-	                            options: _objectSpread$6(_objectSpread$6({}, rest), {}, {
+	                            options: _objectSpread$5(_objectSpread$5({}, rest), {}, {
 	                              type: parseInt(parsedType)
 	                            })
 	                          });
@@ -87335,9 +87331,9 @@
 	  return cadlCopy;
 	}
 
-	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$6(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	var CADL = /*#__PURE__*/function () {
 	  function CADL(_ref) {
@@ -87403,6 +87399,7 @@
 	                config = _context.sent;
 
 	              case 5:
+	                //@ts-ignore
 	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
@@ -87497,7 +87494,7 @@
 	                init = Object.values(populateData3)[0].init; //attach functions
 
 	                withFNs = attachFns(populateData3);
-	                this.pages = _objectSpread$7(_objectSpread$7({}, this.pages), withFNs); //TODO:implement init func 
+	                this.pages = _objectSpread$6(_objectSpread$6({}, this.pages), withFNs); //TODO:implement init func 
 	                // //iterate through dataModels.init
 	                // if (Array.isArray(init) && init.length > 0) {
 	                //     for (let command of init) {
@@ -87688,7 +87685,7 @@
 
 	        case 'set-page':
 	          {
-	            this.pages = _objectSpread$7(_objectSpread$7({}, this.pages), action.payload);
+	            this.pages = _objectSpread$6(_objectSpread$6({}, this.pages), action.payload);
 	          }
 	        // case ('attach-Fns'): {
 	        //     const dataModelsCopy = Object.assign({}, this.dataModels)
@@ -87850,16 +87847,22 @@
 	  RootTypes[RootTypes["docRoot"] = 10000] = "docRoot";
 	})(RootTypes || (RootTypes = {}));
 
-	function ownKeys$8(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	var defaultConfig$1 = {
+	  cadlVersion: 'test',
+	  env: 'development',
+	  configUrl: 'https://public.aitmed.com/config'
+	};
 
-	function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$8(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
 	  var cadl;
 	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
 	        case 0:
-	          cadl = new CADL(_objectSpread$8({}, defaultConfig$1));
+	          cadl = new CADL(_objectSpread$7({}, defaultConfig$1));
 	          _context.next = 3;
 	          return cadl.init();
 
