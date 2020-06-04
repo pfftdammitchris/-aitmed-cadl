@@ -3,6 +3,8 @@ import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json';
 import babel from 'rollup-plugin-babel'
 import json from 'rollup-plugin-json'
+import external from 'rollup-plugin-peer-deps-external'
+
 
 const extensions = ['.js', '.ts']
 
@@ -25,6 +27,7 @@ export default [
 			{ file: pkg.module, format: 'es', sourcemap: true, }
 		],
 		plugins: [
+			external(),
 			resolve({
 				extensions,
 				jsnext: true,
