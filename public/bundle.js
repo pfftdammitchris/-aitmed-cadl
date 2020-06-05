@@ -87383,67 +87383,63 @@
 	          while (1) {
 	            switch (_context.prev = _context.next) {
 	              case 0:
-	                debugger;
-
 	                if (!this.cadlEndpoint) {
-	                  _context.next = 3;
+	                  _context.next = 2;
 	                  break;
 	                }
 
 	                return _context.abrupt("return");
 
-	              case 3:
-	                debugger;
+	              case 2:
 	                config = store$3.getConfig();
 
 	                if (!(config === null)) {
-	                  _context.next = 9;
+	                  _context.next = 7;
 	                  break;
 	                }
 
-	                _context.next = 8;
+	                _context.next = 6;
 	                return store$3.level2SDK.loadConfigData('aitmedAlpha');
 
-	              case 8:
+	              case 6:
 	                config = _context.sent;
 
-	              case 9:
+	              case 7:
 	                //@ts-ignore
 	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
 	                cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion);
-	                _context.next = 14;
+	                _context.next = 12;
 	                return this.defaultObject(cadlEndpointUrlWithCadlVersion);
 
-	              case 14:
+	              case 12:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
 	                baseUrl = cadlEndpoint.baseUrl, assetsUrl = cadlEndpoint.assetsUrl;
 	                this.baseUrl = baseUrl;
 	                this.assetsUrl = assetsUrl;
-	                _context.next = 21;
+	                _context.next = 19;
 	                return this.getPage('BaseDataModel');
 
-	              case 21:
+	              case 19:
 	                rawBaseDataModel = _context.sent;
-	                debugger;
 	                populatedBaseDataModelKeys = populateKeys(rawBaseDataModel, [rawBaseDataModel]);
 	                populatedBaseDataModelKeys2 = populateKeys(populatedBaseDataModelKeys, [populatedBaseDataModelKeys]);
 	                populatedBaseDataModelVals = populateData(populatedBaseDataModelKeys2, '.', [populatedBaseDataModelKeys2]);
 	                populatedBaseDataModelVals2 = populateData(populatedBaseDataModelVals, '.', [populatedBaseDataModelVals]);
 	                this.baseDataModel = populatedBaseDataModelVals2;
 	                this.global = lodash.cloneDeep(populatedBaseDataModelVals2.global);
-	                _context.next = 31;
+	                _context.next = 28;
 	                return this.getPage('BaseCSS');
 
-	              case 31:
+	              case 28:
 	                rawBaseCSS = _context.sent;
 	                populatedBaseCSSKeys = populateKeys(rawBaseCSS, [rawBaseCSS]);
 	                populatedBaseCSSVals = populateData(populatedBaseCSSKeys, '.', [populatedBaseCSSKeys]);
 	                this.baseCSS = populatedBaseCSSVals;
 
-	              case 35:
+	              case 32:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -87883,6 +87879,10 @@
 	          return cadl.initPage('SignIn');
 
 	        case 6:
+	          _context.next = 8;
+	          return cadl.initPage('SignUp');
+
+	        case 8:
 	          debugger; // await cadl.initPage('SignUp')
 
 	          cadl.pages['SignIn'].update({
@@ -87890,10 +87890,10 @@
 	            JWT: 'pop'
 	          });
 	          debugger;
-	          _context.next = 11;
+	          _context.next = 13;
 	          return cadl.init();
 
-	        case 11:
+	        case 13:
 	          debugger;
 	          jquery(document).ready(function () {
 	            jquery('#cadlEndpoint-btn').click(function () {
@@ -87961,7 +87961,7 @@
 	            });
 	          });
 
-	        case 13:
+	        case 15:
 	        case "end":
 	          return _context.stop();
 	      }

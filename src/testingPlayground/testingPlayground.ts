@@ -16,6 +16,7 @@ export default (async function () {
     debugger
     // await cadl.initPage('ApplyBusiness')
     await cadl.initPage('SignIn')
+    await cadl.initPage('SignUp')
     debugger
     // await cadl.initPage('SignUp')
     cadl.pages['SignIn'].update({
