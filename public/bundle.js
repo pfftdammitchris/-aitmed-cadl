@@ -87565,15 +87565,13 @@
 	              case 5:
 	                pageCADL = _context2.sent;
 	                //make a copy of the CADL object
-	                cadlCopy = lodash.cloneDeep(pageCADL);
-	                debugger; //populate keys 
+	                cadlCopy = lodash.cloneDeep(pageCADL); //populate keys 
 
 	                populatedKeysCadlCopy = populateKeys({
 	                  source: cadlCopy,
 	                  lookFor: '.',
 	                  locations: [this.baseDataModel, this.baseCSS]
-	                });
-	                debugger; //replace any update object with Fn
+	                }); //replace any update object with Fn
 
 	                boundDispatch = this.dispatch.bind(this);
 	                replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch); //populate the values from baseDataModels
@@ -87622,7 +87620,7 @@
 	                // }
 	                // this.cadl = cadlCopy
 
-	              case 17:
+	              case 15:
 	              case "end":
 	                return _context2.stop();
 	            }
