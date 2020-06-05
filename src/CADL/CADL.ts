@@ -2,7 +2,7 @@ import axios from 'axios'
 import YAML from 'yaml'
 import _ from 'lodash'
 import {
-    populateData,
+    populateObject,
     attachFns,
     populateKeys,
     replaceUpdate
@@ -48,9 +48,11 @@ export default class CADL {
      * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
      * @throws UnableToParseYAML -if unable to parse yaml file
      */
+    //TODO: add a force parameter to allow user to force init again
     public async init(): Promise<void> {
         if (this.cadlEndpoint) return
 
+        //get config
         let config = store.getConfig()
         if (config === null) {
             //@ts-ignore
@@ -63,25 +65,33 @@ export default class CADL {
         this.cadlVersion = web.cadlVersion[this.cadlVersion]
         const cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion)
 
+        //set cadlEndpoint
         const cadlEndpoint = await this.defaultObject(cadlEndpointUrlWithCadlVersion)
         this.cadlEndpoint = cadlEndpoint
         const { baseUrl, assetsUrl } = cadlEndpoint
 
+        //set baseUrl and assets Url
         this.baseUrl = baseUrl
         this.assetsUrl = assetsUrl
 
+        //populate baseDataModel keys
         const rawBaseDataModel = await this.getPage('BaseDataModel')
-        const populatedBaseDataModelKeys = populateKeys(rawBaseDataModel, [rawBaseDataModel])
-        const populatedBaseDataModelKeys2 = populateKeys(populatedBaseDataModelKeys, [populatedBaseDataModelKeys])
-        const populatedBaseDataModelVals = populateData(populatedBaseDataModelKeys2, '.', [populatedBaseDataModelKeys2])
-        const populatedBaseDataModelVals2 = populateData(populatedBaseDataModelVals, '.', [populatedBaseDataModelVals])
-        this.baseDataModel = populatedBaseDataModelVals2
+        const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
 
-        this.global = _.cloneDeep(populatedBaseDataModelVals2.global)
+        //populate baseDataModel vals
+        const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
 
+        this.baseDataModel = populatedBaseDataModelVals
+
+        this.global = _.cloneDeep(populatedBaseDataModelVals.global)
+
+        //populate baseCSS keys
         const rawBaseCSS = await this.getPage('BaseCSS')
-        const populatedBaseCSSKeys = populateKeys(rawBaseCSS, [rawBaseCSS])
-        const populatedBaseCSSVals = populateData(populatedBaseCSSKeys, '.', [populatedBaseCSSKeys])
+        const populatedBaseCSSKeys = populateKeys({ source: rawBaseCSS, lookFor: '.', locations: [rawBaseCSS] })
+
+        //populate baseCSS vals
+        const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
+
         this.baseCSS = populatedBaseCSSVals
     }
 
@@ -100,25 +110,27 @@ export default class CADL {
         let pageCADL = await this.getPage(pageName)
 
         //make a copy of the CADL object
-        let cadlCopy = Object.assign({}, pageCADL)
-
+        let cadlCopy = _.cloneDeep(pageCADL)
+        
         //populate keys 
-        let populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel, this.baseCSS])
-
-        //replace any update object 
+        let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
+        
+        //replace any update object with Fn
         const boundDispatch = this.dispatch.bind(this)
         let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
 
-        //populate the values
-        const populatedData = populateData(replaceUpdateJob, '.', [this.baseDataModel, this.baseCSS])
-        const populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]])
-        const populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]])
+        //populate the values from baseDataModels
+        const populatedBaseData = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
+
+        //populate the values from self
+        const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]] })
+
 
         //@ts-ignore
-        const { init } = Object.values(populateData3)[0]
+        const { init } = Object.values(populatedSelfData)[0]
 
         //attach functions
-        const withFNs = attachFns(populateData3, boundDispatch)
+        const withFNs = attachFns(populatedSelfData, boundDispatch)
 
         this.pages = { ...this.pages, ...withFNs }
         //TODO:implement init func 

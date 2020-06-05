@@ -5,7 +5,6 @@ import Document from '../../services/document'
 import { UnableToLocateValue } from '../errors'
 
 export {
-    populateData,
     attachDocumentFns,
     attachEdgeFns,
     isPopulated,
@@ -14,7 +13,10 @@ export {
     populateKeys,
     attachFns,
     updateState,
-    replaceUpdate
+    replaceUpdate,
+    populateString,
+    populateArray,
+    populateObject,
 }
 
 
@@ -36,119 +38,48 @@ function replaceEidWithId(edge: Record<string, any>) {
     }
 }
 
-
-/**
- * 
- * @param source  Record<string, any> -object that has values that need to be replaced
- * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
- * @returns Record<string. any> 
- */
-//TODO: refactor to populate the values again
-function populateData(source: Record<string, any>, lookFor: string, locations: Record<string, any>[]): Record<string, any> {
+function populateKeys({ source, lookFor, locations }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[] }) {
     let output = _.cloneDeep(source)
     Object.keys(output).forEach((key) => {
-        if (isObject(output[key])) {
-            output[key] = populateData(output[key], lookFor, locations)
-            //TODO: move array conditional up a level and allow arrays in parameters
-            //TODO:currently not allowing for nested arrays
+        //TODO: check if the key startsWith('..')
+        if (key.startsWith(lookFor)) {
+            let parent = {}
+            let currKey = key
+            if (lookFor === '..') {
+                currKey = currKey.slice(1)
+            }
+            for (let location of locations) {
+                try {
+                    const res = lookUp(currKey, location)
+                    //TODO: check if res needs keys to be populated
+                    if (res) {
+                        parent = res
+                    }
+                } catch (error) {
+                    if (error instanceof UnableToLocateValue) {
+                        parent = {}
+                        continue
+                    } else {
+                        throw error
+                    }
+                }
+            }
+            if (Object.keys(parent).length) {
+                const mergedObjects = mergeDeep(populateKeys({ source: parent, lookFor, locations }), populateKeys({ source: output[key], lookFor, locations }))
+                output = { ...output, ...mergedObjects }
+                delete output[key]
+            }
+        } else if (isObject(output[key])) {
+            output[key] = populateKeys({ source: output[key], lookFor, locations })
         } else if (Array.isArray(output[key])) {
             output[key] = output[key].map((elem) => {
                 if (isObject(elem)) {
-                    return populateData(elem, lookFor, locations)
-                } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
-                    let currVal = elem
-                    for (let location of locations) {
-                        if (lookFor === '..') {
-                            currVal = currVal.slice(1)
-                        }
-                        try {
-                            let res = lookUp(currVal, location)
-                            return res
-                        } catch (error) {
-                            if (error instanceof UnableToLocateValue) {
-                                continue
-                            } else {
-                                throw error
-                            }
-                        }
-                    }
+                    return populateKeys({ source: elem, lookFor, locations })
                 }
                 return elem
             })
-        } else if (output[key] && typeof output[key] === 'string') {
-            let currVal = output[key].toString()
-            if (currVal.startsWith(lookFor)) {
-                let newVal = currVal
-                if (lookFor === '..') {
-                    currVal = currVal.slice(1)
-                }
-                for (let location of locations) {
-                    try {
-                        let res = lookUp(currVal, location)
-                        if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
-                            newVal = res
-                        } else if (res) {
-                            newVal = res
-                        }
-                    } catch (error) {
-                        if (error instanceof UnableToLocateValue) {
-                            continue
-                        } else {
-                            throw error
-                        }
-                    }
-                }
-                output[key] = newVal
-            }
-        } else {
-            output[key] = output[key]
         }
     })
-    return output
-}
-
-function populateKeys(source: Record<string, any>, locations: Record<string, any>[]) {
-    let output = _.cloneDeep(source)
-    if (isObject(output)) {
-        Object.keys(output).forEach((key) => {
-            //TODO: check if the key startsWith('.')
-            if (key.startsWith('.')) {
-                let parent = {}
-                for (let location of locations) {
-                    try {
-                        const res = lookUp(key, location)
-                        if (res) {
-                            parent = res
-                        }
-                    } catch (error) {
-                        if (error instanceof UnableToLocateValue) {
-                            parent = {}
-                            continue
-                        } else {
-                            throw error
-                        }
-                    }
-                }
-                if (Object.keys(parent).length) {
-                    const mergedObjects = mergeDeep(parent, populateKeys(output[key], locations))
-                    output = { ...output, ...mergedObjects }
-                    delete output[key]
-                }
-            } else if (isObject(output[key])) {
-                output[key] = populateKeys(output[key], locations)
-            } else if (Array.isArray(output[key])) {
-                output[key] = output[key].map((elem) => {
-                    if (isObject(elem)) {
-                        return populateKeys(elem, locations)
-                    }
-                    return elem
-                })
-                //TODO: may need to add string case
-            } else {
-                output[key] = output[key]
-            }
-        })
-    }
     return output
 }
 
@@ -160,7 +91,6 @@ function populateKeys(source: Record<string, any>, locations: Record<string, any
  * @throws UnableToLocateValue if value is not found given the directions and location
  */
 function lookUp(directions: string, location: Record<string, any>) {
-
     let arr = directions.split('.')
 
     try {
@@ -182,7 +112,7 @@ function lookUp(directions: string, location: Record<string, any>) {
  * -takes in an object or string and checks whether or not the item has been populated
  */
 function isPopulated(item: string | Record<string, any>): boolean {
-    let itemCopy = Object.assign({}, item)
+    let itemCopy = _.cloneDeep(item)
     let isPop: boolean = true
     if (isObject(itemCopy)) {
         for (let key of Object.keys(itemCopy)) {
@@ -336,15 +266,13 @@ function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
 
 /**
  * 
- * @param params
- * @param params.dataModelKey string
- * @param params.dataModel Record<string, any>
- * @param params.dispatch Function
+ * @param cadlObject Record<string, any>
+ * @param dispatch Function
  * @returns Record<string,any>
  */
 function attachFns(
-    cadlObject, dispatch
-) {
+    cadlObject: Record<string, any>, dispatch: Function
+): Record<string, any> {
     let output = Object.assign({}, cadlObject)
     if (isObject(output)) {
         Object.keys(output).forEach((key) => {
@@ -360,7 +288,7 @@ function attachFns(
                 switch (api) {
                     case ('re'): {
                         const getFn = (output) => async () => {
-                            const options = Object.assign({}, output)
+                            const options = _.cloneDeep(output)
                             delete options.api
                             let res: any[] = []
                             try {
@@ -436,8 +364,8 @@ function updateState(updateObject: Record<string, any>, dispatch: Function) {
     }
 }
 
-function replaceUpdate(cadlObject, dispatch) {
-    const cadlCopy = Object.assign({}, cadlObject)
+function replaceUpdate(cadlObject: Record<string, any>, dispatch: Function) {
+    const cadlCopy = _.cloneDeep(cadlObject)
     if (isObject(cadlCopy)) {
         Object.keys(cadlCopy).forEach((key) => {
             if (key === 'update') {
@@ -450,4 +378,83 @@ function replaceUpdate(cadlObject, dispatch) {
     return cadlCopy
 }
 
+/**
+ * 
+ * @param source  string -object that has values that need to be replaced
+ * @param lookFor string -item to look for in object
+ * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
+ * @returns Record<string. any> 
+ */
+function populateString({ source, lookFor, locations }: { source: string, lookFor: string, locations: Record<string, any>[] }) {
+    if (!source.startsWith(lookFor)) return source
+    let currVal = source
+    if (lookFor === '..') {
+        currVal = currVal.slice(1)
+    }
+    let replacement
+    for (let location of locations) {
+        try {
+            replacement = lookUp(currVal, location)
+            if (replacement && replacement !== source) {
+                if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
+                    return populateString({ source: replacement, lookFor, locations })
+                }
+                return replacement
+            }
+        } catch (error) {
+            if (error instanceof UnableToLocateValue) {
+                continue
+            } else {
+                throw error
+            }
+        }
+    }
+    return source
+}
 
+/**
+ * 
+ * @param source  any[] -object that has values that need to be replaced
+ * @param lookFor string -item to look for in object
+ * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
+ * @returns Record<string. any> 
+ */
+function populateArray({ source, lookFor, locations }: { source: any[], lookFor: string, locations: Record<string, any>[] }) {
+    let sourceCopy = _.cloneDeep(source)
+
+    let replacement = sourceCopy.map((elem) => {
+        if (Array.isArray(elem)) {
+            return populateArray({ source: elem, lookFor, locations })
+        } else if (isObject(elem)) {
+            return populateObject({ source: elem, lookFor, locations })
+        } else if (typeof elem === 'string') {
+            return populateString({ source: elem, lookFor, locations })
+        }
+        return elem
+    })
+
+    return replacement
+}
+
+/**
+ * 
+ * @param source  Record<string, any> -object that has values that need to be replaced
+ * @param lookFor string -item to look for in object
+ * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
+ * @returns Record<string. any> 
+ */
+function populateObject({ source, lookFor, locations }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[] }): Record<string, any> {
+    let sourceCopy = _.cloneDeep(source)
+
+    Object.keys(sourceCopy).forEach((key) => {
+        if (isObject(sourceCopy[key])) {
+            sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations })
+        } else if (Array.isArray(sourceCopy[key])) {
+            sourceCopy[key] = populateArray({ source: sourceCopy[key], lookFor, locations })
+        } else if (typeof sourceCopy[key] === 'string') {
+            sourceCopy[key] = populateString({ source: sourceCopy[key], lookFor, locations })
+        }
+    })
+
+    return sourceCopy
+}

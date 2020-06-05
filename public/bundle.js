@@ -86907,166 +86907,85 @@
 	    return edge;
 	  }
 	}
-	/**
-	 * 
-	 * @param source  Record<string, any> -object that has values that need to be replaced
-	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
-	 * @returns Record<string. any> 
-	 */
-	//TODO: refactor to populate the values again
 
+	function populateKeys(_ref) {
+	  var source = _ref.source,
+	      lookFor = _ref.lookFor,
+	      locations = _ref.locations;
 
-	function populateData(source, lookFor, locations) {
 	  var output = lodash.cloneDeep(source);
 
 	  Object.keys(output).forEach(function (key) {
-	    if (isObject$1(output[key])) {
-	      output[key] = populateData(output[key], lookFor, locations); //TODO: move array conditional up a level and allow arrays in parameters
-	      //TODO:currently not allowing for nested arrays
+	    //TODO: check if the key startsWith('..')
+	    if (key.startsWith(lookFor)) {
+	      var parent = {};
+	      var currKey = key;
+
+	      if (lookFor === '..') {
+	        currKey = currKey.slice(1);
+	      }
+
+	      var _iterator = _createForOfIteratorHelper$f(locations),
+	          _step;
+
+	      try {
+	        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	          var location = _step.value;
+
+	          try {
+	            var res = lookUp(currKey, location); //TODO: check if res needs keys to be populated
+
+	            if (res) {
+	              parent = res;
+	            }
+	          } catch (error) {
+	            if (error instanceof UnableToLocateValue) {
+	              parent = {};
+	              continue;
+	            } else {
+	              throw error;
+	            }
+	          }
+	        }
+	      } catch (err) {
+	        _iterator.e(err);
+	      } finally {
+	        _iterator.f();
+	      }
+
+	      if (Object.keys(parent).length) {
+	        var mergedObjects = mergeDeep(populateKeys({
+	          source: parent,
+	          lookFor: lookFor,
+	          locations: locations
+	        }), populateKeys({
+	          source: output[key],
+	          lookFor: lookFor,
+	          locations: locations
+	        }));
+	        output = _objectSpread$5(_objectSpread$5({}, output), mergedObjects);
+	        delete output[key];
+	      }
+	    } else if (isObject$1(output[key])) {
+	      output[key] = populateKeys({
+	        source: output[key],
+	        lookFor: lookFor,
+	        locations: locations
+	      });
 	    } else if (Array.isArray(output[key])) {
 	      output[key] = output[key].map(function (elem) {
 	        if (isObject$1(elem)) {
-	          return populateData(elem, lookFor, locations);
-	        } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
-	          var currVal = elem;
-
-	          var _iterator = _createForOfIteratorHelper$f(locations),
-	              _step;
-
-	          try {
-	            for (_iterator.s(); !(_step = _iterator.n()).done;) {
-	              var location = _step.value;
-
-	              if (lookFor === '..') {
-	                currVal = currVal.slice(1);
-	              }
-
-	              try {
-	                var res = lookUp(currVal, location);
-	                return res;
-	              } catch (error) {
-	                if (error instanceof UnableToLocateValue) {
-	                  continue;
-	                } else {
-	                  throw error;
-	                }
-	              }
-	            }
-	          } catch (err) {
-	            _iterator.e(err);
-	          } finally {
-	            _iterator.f();
-	          }
+	          return populateKeys({
+	            source: elem,
+	            lookFor: lookFor,
+	            locations: locations
+	          });
 	        }
 
 	        return elem;
 	      });
-	    } else if (output[key] && typeof output[key] === 'string') {
-	      var currVal = output[key].toString();
-
-	      if (currVal.startsWith(lookFor)) {
-	        var newVal = currVal;
-
-	        if (lookFor === '..') {
-	          currVal = currVal.slice(1);
-	        }
-
-	        var _iterator2 = _createForOfIteratorHelper$f(locations),
-	            _step2;
-
-	        try {
-	          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-	            var location = _step2.value;
-
-	            try {
-	              var res = lookUp(currVal, location);
-
-	              if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
-	                newVal = res;
-	              } else if (res) {
-	                newVal = res;
-	              }
-	            } catch (error) {
-	              if (error instanceof UnableToLocateValue) {
-	                continue;
-	              } else {
-	                throw error;
-	              }
-	            }
-	          }
-	        } catch (err) {
-	          _iterator2.e(err);
-	        } finally {
-	          _iterator2.f();
-	        }
-
-	        output[key] = newVal;
-	      }
-	    } else {
-	      output[key] = output[key];
 	    }
 	  });
-	  return output;
-	}
-
-	function populateKeys(source, locations) {
-	  var output = lodash.cloneDeep(source);
-
-	  if (isObject$1(output)) {
-	    Object.keys(output).forEach(function (key) {
-	      //TODO: check if the key startsWith('.')
-	      if (key.startsWith('.')) {
-	        var parent = {};
-
-	        var _iterator3 = _createForOfIteratorHelper$f(locations),
-	            _step3;
-
-	        try {
-	          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
-	            var location = _step3.value;
-
-	            try {
-	              var res = lookUp(key, location);
-
-	              if (res) {
-	                parent = res;
-	              }
-	            } catch (error) {
-	              if (error instanceof UnableToLocateValue) {
-	                parent = {};
-	                continue;
-	              } else {
-	                throw error;
-	              }
-	            }
-	          }
-	        } catch (err) {
-	          _iterator3.e(err);
-	        } finally {
-	          _iterator3.f();
-	        }
-
-	        if (Object.keys(parent).length) {
-	          var mergedObjects = mergeDeep(parent, populateKeys(output[key], locations));
-	          output = _objectSpread$5(_objectSpread$5({}, output), mergedObjects);
-	          delete output[key];
-	        }
-	      } else if (isObject$1(output[key])) {
-	        output[key] = populateKeys(output[key], locations);
-	      } else if (Array.isArray(output[key])) {
-	        output[key] = output[key].map(function (elem) {
-	          if (isObject$1(elem)) {
-	            return populateKeys(elem, locations);
-	          }
-
-	          return elem;
-	        }); //TODO: may need to add string case
-	      } else {
-	        output[key] = output[key];
-	      }
-	    });
-	  }
-
 	  return output;
 	}
 	/**
@@ -87099,7 +87018,8 @@
 
 
 	function isPopulated(item) {
-	  var itemCopy = Object.assign({}, item);
+	  var itemCopy = lodash.cloneDeep(item);
+
 	  var isPop = true;
 
 	  if (isObject$1(itemCopy)) {
@@ -87133,10 +87053,8 @@
 	}
 	/**
 	 * 
-	 * @param params
-	 * @param params.dataModelKey string
-	 * @param params.dataModel Record<string, any>
-	 * @param params.dispatch Function
+	 * @param cadlObject Record<string, any>
+	 * @param dispatch Function
 	 * @returns Record<string,any>
 	 */
 
@@ -87168,7 +87086,7 @@
 	                    while (1) {
 	                      switch (_context5.prev = _context5.next) {
 	                        case 0:
-	                          options = Object.assign({}, output);
+	                          options = lodash.cloneDeep(output);
 	                          delete options.api;
 	                          res = [];
 	                          _context5.prev = 3;
@@ -87314,7 +87232,7 @@
 	}
 
 	function replaceUpdate(cadlObject, dispatch) {
-	  var cadlCopy = Object.assign({}, cadlObject);
+	  var cadlCopy = lodash.cloneDeep(cadlObject);
 
 	  if (isObject$1(cadlCopy)) {
 	    Object.keys(cadlCopy).forEach(function (key) {
@@ -87327,6 +87245,145 @@
 	  }
 
 	  return cadlCopy;
+	}
+	/**
+	 * 
+	 * @param source  string -object that has values that need to be replaced
+	 * @param lookFor string -item to look for in object
+	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
+	 * @returns Record<string. any> 
+	 */
+
+
+	function populateString(_ref11) {
+	  var source = _ref11.source,
+	      lookFor = _ref11.lookFor,
+	      locations = _ref11.locations;
+	  if (!source.startsWith(lookFor)) return source;
+	  var currVal = source;
+
+	  if (lookFor === '..') {
+	    currVal = currVal.slice(1);
+	  }
+
+	  var replacement;
+
+	  var _iterator2 = _createForOfIteratorHelper$f(locations),
+	      _step2;
+
+	  try {
+	    for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+	      var location = _step2.value;
+
+	      try {
+	        replacement = lookUp(currVal, location);
+
+	        if (replacement && replacement !== source) {
+	          if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
+	            return populateString({
+	              source: replacement,
+	              lookFor: lookFor,
+	              locations: locations
+	            });
+	          }
+
+	          return replacement;
+	        }
+	      } catch (error) {
+	        if (error instanceof UnableToLocateValue) {
+	          continue;
+	        } else {
+	          throw error;
+	        }
+	      }
+	    }
+	  } catch (err) {
+	    _iterator2.e(err);
+	  } finally {
+	    _iterator2.f();
+	  }
+
+	  return source;
+	}
+	/**
+	 * 
+	 * @param source  any[] -object that has values that need to be replaced
+	 * @param lookFor string -item to look for in object
+	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
+	 * @returns Record<string. any> 
+	 */
+
+
+	function populateArray(_ref12) {
+	  var source = _ref12.source,
+	      lookFor = _ref12.lookFor,
+	      locations = _ref12.locations;
+
+	  var sourceCopy = lodash.cloneDeep(source);
+
+	  var replacement = sourceCopy.map(function (elem) {
+	    if (Array.isArray(elem)) {
+	      return populateArray({
+	        source: elem,
+	        lookFor: lookFor,
+	        locations: locations
+	      });
+	    } else if (isObject$1(elem)) {
+	      return populateObject({
+	        source: elem,
+	        lookFor: lookFor,
+	        locations: locations
+	      });
+	    } else if (typeof elem === 'string') {
+	      return populateString({
+	        source: elem,
+	        lookFor: lookFor,
+	        locations: locations
+	      });
+	    }
+
+	    return elem;
+	  });
+	  return replacement;
+	}
+	/**
+	 * 
+	 * @param source  Record<string, any> -object that has values that need to be replaced
+	 * @param lookFor string -item to look for in object
+	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
+	 * @returns Record<string. any> 
+	 */
+
+
+	function populateObject(_ref13) {
+	  var source = _ref13.source,
+	      lookFor = _ref13.lookFor,
+	      locations = _ref13.locations;
+
+	  var sourceCopy = lodash.cloneDeep(source);
+
+	  Object.keys(sourceCopy).forEach(function (key) {
+	    if (isObject$1(sourceCopy[key])) {
+	      sourceCopy[key] = populateObject({
+	        source: sourceCopy[key],
+	        lookFor: lookFor,
+	        locations: locations
+	      });
+	    } else if (Array.isArray(sourceCopy[key])) {
+	      sourceCopy[key] = populateArray({
+	        source: sourceCopy[key],
+	        lookFor: lookFor,
+	        locations: locations
+	      });
+	    } else if (typeof sourceCopy[key] === 'string') {
+	      sourceCopy[key] = populateString({
+	        source: sourceCopy[key],
+	        lookFor: lookFor,
+	        locations: locations
+	      });
+	    }
+	  });
+	  return sourceCopy;
 	}
 
 	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -87371,13 +87428,14 @@
 	   * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
 	   * @throws UnableToParseYAML -if unable to parse yaml file
 	   */
+	  //TODO: add a force parameter to allow user to force init again
 
 
 	  createClass(CADL, [{
 	    key: "init",
 	    value: function () {
 	      var _init = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	        var config, _config, cadlEndpointUrl, web, cadlEndpointUrlWithCadlVersion, cadlEndpoint, baseUrl, assetsUrl, rawBaseDataModel, populatedBaseDataModelKeys, populatedBaseDataModelKeys2, populatedBaseDataModelVals, populatedBaseDataModelVals2, rawBaseCSS, populatedBaseCSSKeys, populatedBaseCSSVals;
+	        var config, _config, cadlEndpointUrl, web, cadlEndpointUrlWithCadlVersion, cadlEndpoint, baseUrl, assetsUrl, rawBaseDataModel, populatedBaseDataModelKeys, populatedBaseDataModelVals, rawBaseCSS, populatedBaseCSSKeys, populatedBaseCSSVals;
 
 	        return regenerator.wrap(function _callee$(_context) {
 	          while (1) {
@@ -87391,6 +87449,7 @@
 	                return _context.abrupt("return");
 
 	              case 2:
+	                //get config
 	                config = store$3.getConfig();
 
 	                if (!(config === null)) {
@@ -87409,37 +87468,57 @@
 	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
-	                cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion);
+	                cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion); //set cadlEndpoint
+
 	                _context.next = 12;
 	                return this.defaultObject(cadlEndpointUrlWithCadlVersion);
 
 	              case 12:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
-	                baseUrl = cadlEndpoint.baseUrl, assetsUrl = cadlEndpoint.assetsUrl;
+	                baseUrl = cadlEndpoint.baseUrl, assetsUrl = cadlEndpoint.assetsUrl; //set baseUrl and assets Url
+
 	                this.baseUrl = baseUrl;
-	                this.assetsUrl = assetsUrl;
+	                this.assetsUrl = assetsUrl; //populate baseDataModel keys
+
 	                _context.next = 19;
 	                return this.getPage('BaseDataModel');
 
 	              case 19:
 	                rawBaseDataModel = _context.sent;
-	                populatedBaseDataModelKeys = populateKeys(rawBaseDataModel, [rawBaseDataModel]);
-	                populatedBaseDataModelKeys2 = populateKeys(populatedBaseDataModelKeys, [populatedBaseDataModelKeys]);
-	                populatedBaseDataModelVals = populateData(populatedBaseDataModelKeys2, '.', [populatedBaseDataModelKeys2]);
-	                populatedBaseDataModelVals2 = populateData(populatedBaseDataModelVals, '.', [populatedBaseDataModelVals]);
-	                this.baseDataModel = populatedBaseDataModelVals2;
-	                this.global = lodash.cloneDeep(populatedBaseDataModelVals2.global);
-	                _context.next = 28;
+	                populatedBaseDataModelKeys = populateKeys({
+	                  source: rawBaseDataModel,
+	                  lookFor: '.',
+	                  locations: [rawBaseDataModel]
+	                }); //populate baseDataModel vals
+
+	                populatedBaseDataModelVals = populateObject({
+	                  source: populatedBaseDataModelKeys,
+	                  lookFor: '.',
+	                  locations: [populatedBaseDataModelKeys]
+	                });
+	                this.baseDataModel = populatedBaseDataModelVals;
+	                this.global = lodash.cloneDeep(populatedBaseDataModelVals.global); //populate baseCSS keys
+
+	                _context.next = 26;
 	                return this.getPage('BaseCSS');
 
-	              case 28:
+	              case 26:
 	                rawBaseCSS = _context.sent;
-	                populatedBaseCSSKeys = populateKeys(rawBaseCSS, [rawBaseCSS]);
-	                populatedBaseCSSVals = populateData(populatedBaseCSSKeys, '.', [populatedBaseCSSKeys]);
+	                populatedBaseCSSKeys = populateKeys({
+	                  source: rawBaseCSS,
+	                  lookFor: '.',
+	                  locations: [rawBaseCSS]
+	                }); //populate baseCSS vals
+
+	                populatedBaseCSSVals = populateObject({
+	                  source: populatedBaseCSSKeys,
+	                  lookFor: '.',
+	                  locations: [populatedBaseCSSKeys]
+	                });
 	                this.baseCSS = populatedBaseCSSVals;
 
-	              case 32:
+	              case 30:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -87466,7 +87545,7 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
-	        var pageCADL, cadlCopy, populatedKeysCadlCopy, boundDispatch, replaceUpdateJob, populatedData, populateData2, populateData3, init, withFNs;
+	        var pageCADL, cadlCopy, populatedKeysCadlCopy, boundDispatch, replaceUpdateJob, populatedBaseData, populatedSelfData, init, withFNs;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -87486,20 +87565,34 @@
 	              case 5:
 	                pageCADL = _context2.sent;
 	                //make a copy of the CADL object
-	                cadlCopy = Object.assign({}, pageCADL); //populate keys 
+	                cadlCopy = lodash.cloneDeep(pageCADL);
+	                debugger; //populate keys 
 
-	                populatedKeysCadlCopy = populateKeys(cadlCopy, [this.baseDataModel, this.baseCSS]); //replace any update object 
+	                populatedKeysCadlCopy = populateKeys({
+	                  source: cadlCopy,
+	                  lookFor: '.',
+	                  locations: [this.baseDataModel, this.baseCSS]
+	                });
+	                debugger; //replace any update object with Fn
 
 	                boundDispatch = this.dispatch.bind(this);
-	                replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch); //populate the values
+	                replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch); //populate the values from baseDataModels
 
-	                populatedData = populateData(replaceUpdateJob, '.', [this.baseDataModel, this.baseCSS]);
-	                populateData2 = populateData(populatedData, '..', [Object.values(populatedData)[0]]);
-	                populateData3 = populateData(populateData2, '..', [Object.values(populatedData)[0]]); //@ts-ignore
+	                populatedBaseData = populateObject({
+	                  source: replaceUpdateJob,
+	                  lookFor: '.',
+	                  locations: [this.baseDataModel, this.baseCSS]
+	                }); //populate the values from self
 
-	                init = Object.values(populateData3)[0].init; //attach functions
+	                populatedSelfData = populateObject({
+	                  source: populatedBaseData,
+	                  lookFor: '..',
+	                  locations: [Object.values(populatedBaseData)[0]]
+	                }); //@ts-ignore
 
-	                withFNs = attachFns(populateData3);
+	                init = Object.values(populatedSelfData)[0].init; //attach functions
+
+	                withFNs = attachFns(populatedSelfData);
 	                this.pages = _objectSpread$6(_objectSpread$6({}, this.pages), withFNs); //TODO:implement init func 
 	                // //iterate through dataModels.init
 	                // if (Array.isArray(init) && init.length > 0) {
@@ -87529,7 +87622,7 @@
 	                // }
 	                // this.cadl = cadlCopy
 
-	              case 16:
+	              case 17:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -87874,26 +87967,24 @@
 
 	        case 3:
 	          debugger; // await cadl.initPage('ApplyBusiness')
+	          // await cadl.initPage('SignIn')
+	          // await cadl.initPage('SignUp')
 
 	          _context.next = 6;
-	          return cadl.initPage('SignIn');
+	          return cadl.initPage('ApplyBusiness');
 
 	        case 6:
-	          _context.next = 8;
-	          return cadl.initPage('SignUp');
-
-	        case 8:
 	          debugger; // await cadl.initPage('SignUp')
+	          // cadl.pages['SignIn'].update({
+	          //     UserVertex: 'hello',
+	          //     JWT: 'pop'
+	          // })
+	          // debugger
 
-	          cadl.pages['SignIn'].update({
-	            UserVertex: 'hello',
-	            JWT: 'pop'
-	          });
-	          debugger;
-	          _context.next = 13;
+	          _context.next = 9;
 	          return cadl.init();
 
-	        case 13:
+	        case 9:
 	          debugger;
 	          jquery(document).ready(function () {
 	            jquery('#cadlEndpoint-btn').click(function () {
@@ -87961,7 +88052,7 @@
 	            });
 	          });
 
-	        case 15:
+	        case 11:
 	        case "end":
 	          return _context.stop();
 	      }

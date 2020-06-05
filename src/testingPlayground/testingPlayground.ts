@@ -15,15 +15,16 @@ export default (async function () {
     await cadl.init()
     debugger
     // await cadl.initPage('ApplyBusiness')
-    await cadl.initPage('SignIn')
-    await cadl.initPage('SignUp')
+    // await cadl.initPage('SignIn')
+    // await cadl.initPage('SignUp')
+    await cadl.initPage('ApplyBusiness')
     debugger
     // await cadl.initPage('SignUp')
-    cadl.pages['SignIn'].update({
-        UserVertex: 'hello',
-        JWT: 'pop'
-    })
-    debugger
+    // cadl.pages['SignIn'].update({
+    //     UserVertex: 'hello',
+    //     JWT: 'pop'
+    // })
+    // debugger
     await cadl.init()
     debugger
 
