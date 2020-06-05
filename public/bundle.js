@@ -86891,7 +86891,6 @@
 	 * @returns edge
 	 */
 
-
 	function replaceEidWithId(edge) {
 	  var output = Object.assign({}, edge);
 	  var _output = output,
@@ -86918,74 +86917,33 @@
 
 
 	function populateData(source, lookFor, locations) {
-	  var output = Object.assign({}, source);
+	  var output = lodash.cloneDeep(source);
 
-	  if (isObject$1(source)) {
-	    Object.keys(source).forEach(function (key) {
-	      if (isObject$1(source[key])) {
-	        output[key] = populateData(source[key], lookFor, locations);
-	      } else if (Array.isArray(source[key])) {
-	        output[key] = source[key].map(function (elem) {
-	          if (isObject$1(elem)) {
-	            return populateData(elem, lookFor, locations);
-	          } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
-	            var _iterator = _createForOfIteratorHelper$f(locations),
-	                _step;
+	  Object.keys(output).forEach(function (key) {
+	    if (isObject$1(output[key])) {
+	      output[key] = populateData(output[key], lookFor, locations); //TODO: move array conditional up a level and allow arrays in parameters
+	      //TODO:currently not allowing for nested arrays
+	    } else if (Array.isArray(output[key])) {
+	      output[key] = output[key].map(function (elem) {
+	        if (isObject$1(elem)) {
+	          return populateData(elem, lookFor, locations);
+	        } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
+	          var currVal = elem;
 
-	            try {
-	              for (_iterator.s(); !(_step = _iterator.n()).done;) {
-	                var location = _step.value;
-	                var currVal = elem;
-
-	                if (lookFor === '..') {
-	                  currVal = currVal.slice(1);
-	                }
-
-	                try {
-	                  var res = lookUp(currVal, location);
-	                  return res;
-	                } catch (error) {
-	                  if (error instanceof UnableToLocateValue) {
-	                    continue;
-	                  } else {
-	                    throw error;
-	                  }
-	                }
-	              }
-	            } catch (err) {
-	              _iterator.e(err);
-	            } finally {
-	              _iterator.f();
-	            }
-	          }
-
-	          return elem;
-	        });
-	      } else if (source[key] && typeof source[key] === 'string') {
-	        var currVal = source[key].toString();
-
-	        if (currVal.startsWith(lookFor)) {
-	          var newVal = currVal;
-
-	          if (lookFor === '..') {
-	            currVal = currVal.slice(1);
-	          }
-
-	          var _iterator2 = _createForOfIteratorHelper$f(locations),
-	              _step2;
+	          var _iterator = _createForOfIteratorHelper$f(locations),
+	              _step;
 
 	          try {
-	            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-	              var location = _step2.value;
+	            for (_iterator.s(); !(_step = _iterator.n()).done;) {
+	              var location = _step.value;
+
+	              if (lookFor === '..') {
+	                currVal = currVal.slice(1);
+	              }
 
 	              try {
 	                var res = lookUp(currVal, location);
-
-	                if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
-	                  newVal = res;
-	                } else if (res) {
-	                  newVal = res;
-	                }
+	                return res;
 	              } catch (error) {
 	                if (error instanceof UnableToLocateValue) {
 	                  continue;
@@ -86995,27 +86953,67 @@
 	              }
 	            }
 	          } catch (err) {
-	            _iterator2.e(err);
+	            _iterator.e(err);
 	          } finally {
-	            _iterator2.f();
+	            _iterator.f();
 	          }
-
-	          output[key] = newVal;
 	        }
-	      } else {
-	        output[key] = source[key];
-	      }
-	    });
-	  }
 
+	        return elem;
+	      });
+	    } else if (output[key] && typeof output[key] === 'string') {
+	      var currVal = output[key].toString();
+
+	      if (currVal.startsWith(lookFor)) {
+	        var newVal = currVal;
+
+	        if (lookFor === '..') {
+	          currVal = currVal.slice(1);
+	        }
+
+	        var _iterator2 = _createForOfIteratorHelper$f(locations),
+	            _step2;
+
+	        try {
+	          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+	            var location = _step2.value;
+
+	            try {
+	              var res = lookUp(currVal, location);
+
+	              if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
+	                newVal = res;
+	              } else if (res) {
+	                newVal = res;
+	              }
+	            } catch (error) {
+	              if (error instanceof UnableToLocateValue) {
+	                continue;
+	              } else {
+	                throw error;
+	              }
+	            }
+	          }
+	        } catch (err) {
+	          _iterator2.e(err);
+	        } finally {
+	          _iterator2.f();
+	        }
+
+	        output[key] = newVal;
+	      }
+	    } else {
+	      output[key] = output[key];
+	    }
+	  });
 	  return output;
 	}
 
 	function populateKeys(source, locations) {
-	  var output = Object.assign({}, source);
+	  var output = lodash.cloneDeep(source);
 
-	  if (isObject$1(source)) {
-	    Object.keys(source).forEach(function (key) {
+	  if (isObject$1(output)) {
+	    Object.keys(output).forEach(function (key) {
 	      //TODO: check if the key startsWith('.')
 	      if (key.startsWith('.')) {
 	        var parent = {};
@@ -87053,10 +87051,10 @@
 	          output = _objectSpread$5(_objectSpread$5({}, output), mergedObjects);
 	          delete output[key];
 	        }
-	      } else if (isObject$1(source[key])) {
-	        output[key] = populateKeys(source[key], locations);
-	      } else if (Array.isArray(source[key])) {
-	        source[key] = source[key].map(function (elem) {
+	      } else if (isObject$1(output[key])) {
+	        output[key] = populateKeys(output[key], locations);
+	      } else if (Array.isArray(output[key])) {
+	        output[key] = output[key].map(function (elem) {
 	          if (isObject$1(elem)) {
 	            return populateKeys(elem, locations);
 	          }
@@ -87064,7 +87062,7 @@
 	          return elem;
 	        }); //TODO: may need to add string case
 	      } else {
-	        output[key] = source[key];
+	        output[key] = output[key];
 	      }
 	    });
 	  }
@@ -87385,55 +87383,67 @@
 	          while (1) {
 	            switch (_context.prev = _context.next) {
 	              case 0:
-	                config = store$3.getConfig();
+	                debugger;
 
-	                if (!(config === null)) {
-	                  _context.next = 5;
+	                if (!this.cadlEndpoint) {
+	                  _context.next = 3;
 	                  break;
 	                }
 
-	                _context.next = 4;
+	                return _context.abrupt("return");
+
+	              case 3:
+	                debugger;
+	                config = store$3.getConfig();
+
+	                if (!(config === null)) {
+	                  _context.next = 9;
+	                  break;
+	                }
+
+	                _context.next = 8;
 	                return store$3.level2SDK.loadConfigData('aitmedAlpha');
 
-	              case 4:
+	              case 8:
 	                config = _context.sent;
 
-	              case 5:
+	              case 9:
 	                //@ts-ignore
 	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
 	                cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion);
-	                _context.next = 10;
+	                _context.next = 14;
 	                return this.defaultObject(cadlEndpointUrlWithCadlVersion);
 
-	              case 10:
+	              case 14:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
 	                baseUrl = cadlEndpoint.baseUrl, assetsUrl = cadlEndpoint.assetsUrl;
 	                this.baseUrl = baseUrl;
 	                this.assetsUrl = assetsUrl;
-	                _context.next = 17;
+	                _context.next = 21;
 	                return this.getPage('BaseDataModel');
 
-	              case 17:
+	              case 21:
 	                rawBaseDataModel = _context.sent;
+	                debugger;
 	                populatedBaseDataModelKeys = populateKeys(rawBaseDataModel, [rawBaseDataModel]);
 	                populatedBaseDataModelKeys2 = populateKeys(populatedBaseDataModelKeys, [populatedBaseDataModelKeys]);
 	                populatedBaseDataModelVals = populateData(populatedBaseDataModelKeys2, '.', [populatedBaseDataModelKeys2]);
 	                populatedBaseDataModelVals2 = populateData(populatedBaseDataModelVals, '.', [populatedBaseDataModelVals]);
 	                this.baseDataModel = populatedBaseDataModelVals2;
-	                this.global = Object.assign({}, populatedBaseDataModelVals2.global);
-	                _context.next = 26;
+	                this.global = lodash.cloneDeep(populatedBaseDataModelVals2.global);
+	                _context.next = 31;
 	                return this.getPage('BaseCSS');
 
-	              case 26:
+	              case 31:
 	                rawBaseCSS = _context.sent;
 	                populatedBaseCSSKeys = populateKeys(rawBaseCSS, [rawBaseCSS]);
 	                populatedBaseCSSVals = populateData(populatedBaseCSSKeys, '.', [populatedBaseCSSKeys]);
 	                this.baseCSS = populatedBaseCSSVals;
 
-	              case 30:
+	              case 35:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -87880,6 +87890,11 @@
 	            JWT: 'pop'
 	          });
 	          debugger;
+	          _context.next = 11;
+	          return cadl.init();
+
+	        case 11:
+	          debugger;
 	          jquery(document).ready(function () {
 	            jquery('#cadlEndpoint-btn').click(function () {
 	              var url = jquery('#cadlEndpoint-txtField').val();
@@ -87946,7 +87961,7 @@
 	            });
 	          });
 
-	        case 10:
+	        case 13:
 	        case "end":
 	          return _context.stop();
 	      }

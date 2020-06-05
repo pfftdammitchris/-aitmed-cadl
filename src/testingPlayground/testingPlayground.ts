@@ -23,6 +23,9 @@ export default (async function () {
         JWT: 'pop'
     })
     debugger
+    await cadl.init()
+    debugger
+
 
     $(document).ready(function () {
 

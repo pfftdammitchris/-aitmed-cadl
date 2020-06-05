@@ -1,10 +1,10 @@
+import _ from 'lodash'
 import store from '../../common/store'
 import { mergeDeep, isObject } from '../../utils'
 import Document from '../../services/document'
 import { UnableToLocateValue } from '../errors'
 
 export {
-    filterDataModels,
     populateData,
     attachDocumentFns,
     attachEdgeFns,
@@ -17,17 +17,6 @@ export {
     replaceUpdate
 }
 
-
-function filterDataModels(objectType: string, dataModels: Record<string, any>) {
-    if (!Object.keys(dataModels).length) return {}
-    let output = {}
-    for (let key in dataModels) {
-        if (dataModels[key].objectType === objectType) {
-            output = { ...output, [key]: dataModels[key] }
-        }
-    }
-    return output
-}
 
 /**
  * 
@@ -55,51 +44,26 @@ function replaceEidWithId(edge: Record<string, any>) {
  * @returns Record<string. any> 
  */
 //TODO: refactor to populate the values again
-function populateData(source: Record<string, any>, lookFor: string, locations: Record<string, any>[]) {
-    let output = Object.assign({}, source)
-    if (isObject(source)) {
-        Object.keys(source).forEach((key) => {
-            if (isObject(source[key])) {
-                output[key] = populateData(source[key], lookFor, locations)
-            } else if (Array.isArray(source[key])) {
-                output[key] = source[key].map((elem) => {
-                    if (isObject(elem)) {
-                        return populateData(elem, lookFor, locations)
-                    } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
-                        for (let location of locations) {
-                            let currVal = elem
-                            if (lookFor === '..') {
-                                currVal = currVal.slice(1)
-                            }
-                            try {
-                                let res = lookUp(currVal, location)
-                                return res
-                            } catch (error) {
-                                if (error instanceof UnableToLocateValue) {
-                                    continue
-                                } else {
-                                    throw error
-                                }
-                            }
-                        }
-                    }
-                    return elem
-                })
-            } else if (source[key] && typeof source[key] === 'string') {
-                let currVal = source[key].toString()
-                if (currVal.startsWith(lookFor)) {
-                    let newVal = currVal
-                    if (lookFor === '..') {
-                        currVal = currVal.slice(1)
-                    }
+function populateData(source: Record<string, any>, lookFor: string, locations: Record<string, any>[]): Record<string, any> {
+    let output = _.cloneDeep(source)
+    Object.keys(output).forEach((key) => {
+        if (isObject(output[key])) {
+            output[key] = populateData(output[key], lookFor, locations)
+            //TODO: move array conditional up a level and allow arrays in parameters
+            //TODO:currently not allowing for nested arrays
+        } else if (Array.isArray(output[key])) {
+            output[key] = output[key].map((elem) => {
+                if (isObject(elem)) {
+                    return populateData(elem, lookFor, locations)
+                } else if (typeof elem === 'string' && elem.startsWith(lookFor)) {
+                    let currVal = elem
                     for (let location of locations) {
+                        if (lookFor === '..') {
+                            currVal = currVal.slice(1)
+                        }
                         try {
                             let res = lookUp(currVal, location)
-                            if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
-                                newVal = res
-                            } else if (res) {
-                                newVal = res
-                            }
+                            return res
                         } catch (error) {
                             if (error instanceof UnableToLocateValue) {
                                 continue
@@ -108,20 +72,45 @@ function populateData(source: Record<string, any>, lookFor: string, locations: R
                             }
                         }
                     }
-                    output[key] = newVal
                 }
-            } else {
-                output[key] = source[key]
+                return elem
+            })
+        } else if (output[key] && typeof output[key] === 'string') {
+            let currVal = output[key].toString()
+            if (currVal.startsWith(lookFor)) {
+                let newVal = currVal
+                if (lookFor === '..') {
+                    currVal = currVal.slice(1)
+                }
+                for (let location of locations) {
+                    try {
+                        let res = lookUp(currVal, location)
+                        if (res && typeof res === 'string' && !res.startsWith(lookFor)) {
+                            newVal = res
+                        } else if (res) {
+                            newVal = res
+                        }
+                    } catch (error) {
+                        if (error instanceof UnableToLocateValue) {
+                            continue
+                        } else {
+                            throw error
+                        }
+                    }
+                }
+                output[key] = newVal
             }
-        })
-    }
+        } else {
+            output[key] = output[key]
+        }
+    })
     return output
 }
 
 function populateKeys(source: Record<string, any>, locations: Record<string, any>[]) {
-    let output = Object.assign({}, source)
-    if (isObject(source)) {
-        Object.keys(source).forEach((key) => {
+    let output = _.cloneDeep(source)
+    if (isObject(output)) {
+        Object.keys(output).forEach((key) => {
             //TODO: check if the key startsWith('.')
             if (key.startsWith('.')) {
                 let parent = {}
@@ -145,10 +134,10 @@ function populateKeys(source: Record<string, any>, locations: Record<string, any
                     output = { ...output, ...mergedObjects }
                     delete output[key]
                 }
-            } else if (isObject(source[key])) {
-                output[key] = populateKeys(source[key], locations)
-            } else if (Array.isArray(source[key])) {
-                source[key] = source[key].map((elem) => {
+            } else if (isObject(output[key])) {
+                output[key] = populateKeys(output[key], locations)
+            } else if (Array.isArray(output[key])) {
+                output[key] = output[key].map((elem) => {
                     if (isObject(elem)) {
                         return populateKeys(elem, locations)
                     }
@@ -156,7 +145,7 @@ function populateKeys(source: Record<string, any>, locations: Record<string, any
                 })
                 //TODO: may need to add string case
             } else {
-                output[key] = source[key]
+                output[key] = output[key]
             }
         })
     }

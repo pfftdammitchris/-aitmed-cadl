@@ -49,6 +49,8 @@ export default class CADL {
      * @throws UnableToParseYAML -if unable to parse yaml file
      */
     public async init(): Promise<void> {
+        if (this.cadlEndpoint) return
+
         let config = store.getConfig()
         if (config === null) {
             //@ts-ignore
@@ -74,7 +76,8 @@ export default class CADL {
         const populatedBaseDataModelVals = populateData(populatedBaseDataModelKeys2, '.', [populatedBaseDataModelKeys2])
         const populatedBaseDataModelVals2 = populateData(populatedBaseDataModelVals, '.', [populatedBaseDataModelVals])
         this.baseDataModel = populatedBaseDataModelVals2
-        this.global = Object.assign({}, populatedBaseDataModelVals2.global)
+
+        this.global = _.cloneDeep(populatedBaseDataModelVals2.global)
 
         const rawBaseCSS = await this.getPage('BaseCSS')
         const populatedBaseCSSKeys = populateKeys(rawBaseCSS, [rawBaseCSS])
