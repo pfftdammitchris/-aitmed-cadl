@@ -1,5 +1,5 @@
 import * as NoteUtilsTypes from '../Note/utilsTypes'
-import { Doc } from '@aitmed/ecos-lvl2-sdk/dist/types/common/types'
+import { CommonTypes } from '../../common/types'
 
 export interface NoteDocumentDeat {
     url: string
@@ -47,7 +47,7 @@ export type CreateParams = {
     dataType?: number
 } & NoteUtilsTypes.ContentParams
 export interface Create {
-    (params: CreateParams): Promise<Doc>
+    (params: CreateParams): Promise<CommonTypes.Doc>
 }
 
 // Retrieve

@@ -1,4 +1,4 @@
-import { Doc, UpdateDocumentArgs } from '../../types/lvl2SDK'
+import {  CommonTypes, DocumentTypes } from '../../common/types'
 
 import AiTmedError from '../../common/AiTmedError'
 import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
@@ -334,7 +334,7 @@ export const updateNote: NoteUtilsTypes.UpdateNote = async (
   }
 
   // Update Params
-  const params: UpdateDocumentArgs = {
+  const params: DocumentTypes.UpdateDocumentArgs = {
     id: document.id,
     eid: edge.eid,
   }
@@ -444,7 +444,7 @@ export const updateNote: NoteUtilsTypes.UpdateNote = async (
       })
     }
 
-    const { id, deat }: Doc = response.data
+    const { id, deat }: CommonTypes.Doc = response.data
     if (deat !== null && deat && deat.url && deat.sig) {
       await store.level2SDK.documentServices
         .uploadDocumentToS3({ url: deat.url, sig: deat.sig, data: bs64Data })
@@ -466,7 +466,7 @@ export const updateNote: NoteUtilsTypes.UpdateNote = async (
 }
 
 const listDocsFilter = (
-  document: Doc,
+  document: CommonTypes.Doc,
   { dataType, mediaType, ...options }: NoteUtilsTypes.ListDocsOptions,
 ) => {
   const dType = new DType(document.type)
@@ -544,7 +544,7 @@ export const listDocs: NoteUtilsTypes.ListDocs = async (edge, options = {}) => {
     })
   }
 
-  const documents = (response.data as Doc[]).filter((document) =>
+  const documents = (response.data as CommonTypes.Doc[]).filter((document) =>
     listDocsFilter(document, otherOptions),
   )
 

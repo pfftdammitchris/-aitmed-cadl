@@ -1,9 +1,9 @@
 import store from '../store'
-import { Vertex, Doc, Edge } from '../../types/lvl2SDK'
+import { CommonTypes} from '../../common/types'
 
 const retrieveVertex = async (
   id: Uint8Array | string,
-): Promise<Vertex | null> => {
+): Promise<CommonTypes.Vertex | null> => {
   const response = await store.level2SDK.vertexServices
     .retrieveVertex({
       idList: [id],
@@ -16,7 +16,7 @@ const retrieveVertex = async (
     : null
 }
 
-const retrieveEdge = async (id: string | Uint8Array): Promise<Edge | null> => {
+const retrieveEdge = async (id: string | Uint8Array): Promise<CommonTypes.Edge | null> => {
   const response = await store.level2SDK.edgeServices
     .retrieveEdge({
       idList: [id],
@@ -30,7 +30,7 @@ const retrieveEdge = async (id: string | Uint8Array): Promise<Edge | null> => {
 
 const retrieveDocument = async (
   id: string | Uint8Array,
-): Promise<Doc | null> => {
+): Promise<CommonTypes.Doc | null> => {
   const response = await store.level2SDK.documentServices
     .retrieveDocument({ idList: [id] })
     .then(store.responseCatcher)

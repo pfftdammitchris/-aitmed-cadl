@@ -3,31 +3,27 @@ import { isObject } from '../../utils'
 import {
     UnableToRetrieveYAML
 } from '../errors'
-
+import { defaultConfig } from '../../config'
 
 describe('CADL', () => {
 
     describe('defaultObject', () => {
         test('defaultObject returns an Object', () => {
-        //@ts-ignore
+            const cadl = new CADL({ ...defaultConfig })
 
-            const cadl = new CADL('https://s3.us-east-2.amazonaws.com/public.aitmed.com/alpha/BaseDataModel_en.yml', 'https://s3.us-east-2.amazonaws.com/public.aitmed.com/cadl/aitmed_0.203/ApplyBusiness_en.yml')
-
-            return cadl['defaultObject'](cadl['_pageUrl']).then(data => {
+            return cadl['defaultObject']('https://s3.us-east-2.amazonaws.com/public.aitmed.com/cadl/aitmed_0.203/BaseDataModel_en.yml').then(data => {
                 expect(isObject(data)).toBe(true)
             })
         })
         test('defaultObject rejects an invalid url', () => {
-        //@ts-ignore
 
-            const cadl = new CADL('https://s3.us-east-2.amazonaws.com/public.aitmed.com/alpha/BaseDataModel_en.yml', 'https://s3.us-east-2.amazonaws.com/psasaublic.aitmed.com/cadl/aitmed_0.203/ApplyBusiness_en.yml')
+            const cadl = new CADL({ ...defaultConfig })
 
             expect(cadl['defaultObject'](cadl['_pageUrl'])).rejects
         })
         test('defaultObject throws UnableToRetrieveYAML if something goes wrong in fetching the yaml', async () => {
-        //@ts-ignore
 
-            const cadl = new CADL('https://s3.us-east-2.amazonaws.com/public.aitmed.com/alpha/BaseDataModel_en.yml', 'https://s3.us-east-2.amazonaws.com/psasaublic.aitmeddsds.com/cadl/aitmed_0.203/ApplyBusiness_en.yml')
+            const cadl = new CADL({ ...defaultConfig })
 
             await expect(cadl['defaultObject'](cadl['_pageUrl'])).rejects.toThrowError(UnableToRetrieveYAML)
         })

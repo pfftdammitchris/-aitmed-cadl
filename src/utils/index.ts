@@ -28,6 +28,8 @@ export const ungzip = (data: Uint8Array) => {
 export function isObject(item) {
     return (item && typeof item === 'object' && !Array.isArray(item))
 }
+
+//TODO: write unit tests
 export function mergeDeep(target, source) {
     let output = Object.assign({}, target)
     if (isObject(target) && isObject(source)) {
@@ -48,6 +50,7 @@ export function mergeDeep(target, source) {
     return output
 }
 
+//TODO: write unit tests
 /**
  * 
  * @param cadlYAML string 
@@ -64,6 +67,7 @@ export function validateCADL(cadlYAML: string): Record<string, any> {
     }
 }
 
+//TODO: write unit tests
 /**
  * 
  * @param url string 
@@ -89,6 +93,7 @@ export async function fetchCADLObject(url: string): Promise<Record<string, any>>
     return cadlObject
 }
 
+//TODO: write unit tests
 export async function fetchAll(url) {
     let cadlEndpointObject
     let result: CADLResponse[] = []
@@ -147,6 +152,7 @@ export async function fetchAll(url) {
 
 }
 
+//TODO: write unit tests
 export function valPageJump(cadlObject: Record<string, any>, validPages: string[]): InvalidDestination[] {
     const cadlCopy = Object.assign({}, cadlObject)
     let errors: InvalidDestination[] = []

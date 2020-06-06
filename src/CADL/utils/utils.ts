@@ -41,7 +41,6 @@ function replaceEidWithId(edge: Record<string, any>) {
 function populateKeys({ source, lookFor, locations }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[] }) {
     let output = _.cloneDeep(source)
     Object.keys(output).forEach((key) => {
-        //TODO: check if the key startsWith('..')
         if (key.startsWith(lookFor)) {
             let parent = {}
             let currKey = key
@@ -51,7 +50,6 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
             for (let location of locations) {
                 try {
                     const res = lookUp(currKey, location)
-                    //TODO: check if res needs keys to be populated
                     if (res) {
                         parent = res
                     }
@@ -273,7 +271,7 @@ function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
 function attachFns(
     cadlObject: Record<string, any>, dispatch: Function
 ): Record<string, any> {
-    let output = Object.assign({}, cadlObject)
+    let output = _.cloneDeep(cadlObject)
     if (isObject(output)) {
         Object.keys(output).forEach((key) => {
             if (isObject(output[key])) {

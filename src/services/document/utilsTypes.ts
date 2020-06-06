@@ -1,7 +1,5 @@
 import { DATA_TYPE_LIST, MEDIA_TYPE_LIST } from '../../common/DType'
-import { Doc, Edge } from '../../types/lvl2SDK'
-
-import { XOR } from '../../types/utils'
+import { CommonTypes,XOR } from '../../common/types'
 
 import * as NoteTypes from '../Note/types'
 
@@ -42,8 +40,8 @@ export interface ProduceGzipData {
 }
 
 export type DocumentToNoteParams = {
-  document: Doc
-  edge?: Edge
+  document: CommonTypes.Doc
+  edge?: CommonTypes.Edge
   esakOfCurrentUser?: Uint8Array
 }
 // DocumentToNote
@@ -53,7 +51,7 @@ export interface DocumentToNote {
 
 // RetrieveNote
 export interface RetrieveNote {
-  (id: string | Uint8Array, edge?: Edge): Promise<NoteTypes.Note>
+  (id: string | Uint8Array, edge?: CommonTypes.Edge): Promise<NoteTypes.Note>
 }
 
 // UpdateNote
@@ -89,5 +87,5 @@ export interface ListDocsOptions {
   // tags?: string[]
 }
 export interface ListDocs {
-  (edge: Edge, options?: ListDocsOptions): Promise<Doc[]>
+  (edge: CommonTypes.Edge, options?: ListDocsOptions): Promise<CommonTypes.Doc[]>
 }

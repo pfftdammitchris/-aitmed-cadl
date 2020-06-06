@@ -1,4 +1,4 @@
-import { Response, Level2Error } from '../../types/lvl2SDK'
+import { Response, Level2Error } from '../../common/types'
 import * as CommonTypes from '../types'
 export * from '../types'
 

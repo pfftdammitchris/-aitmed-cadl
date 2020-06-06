@@ -3,7 +3,7 @@ import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
 import AiTmedError from '../../common/AiTmedError'
 
 import DType from '../../common/DType'
-import { Doc } from '../../types/lvl2SDK'
+import { CommonTypes } from '../../common/types'
 
 import * as NoteTypes from './types'
 
@@ -99,7 +99,7 @@ export const create: NoteTypes.Create = async ({
         })
     }
 
-    const document: Doc = response.data
+    const document: CommonTypes.Doc = response.data
     const { deat } = document
 
     if (!dType.isOnServer && deat !== null && deat && deat.url && deat.sig) {
