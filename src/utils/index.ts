@@ -25,7 +25,13 @@ export const ungzip = (data: Uint8Array) => {
     return pako.ungzip(data)
 }
 
-export function isObject(item) {
+/**
+ * 
+ * @param item any
+ * @returns    boolean
+ * - checks if given value is a valid object {}
+ */
+export function isObject(item: any): boolean {
     if (item === null) return false
     if (item === undefined) return false
     return (item && typeof item === 'object' && !Array.isArray(item))

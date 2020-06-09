@@ -38,6 +38,15 @@ function replaceEidWithId(edge: Record<string, any>) {
     }
 }
 
+/**
+ * 
+ * @param params {}
+ * @param params.source Record<string, any>
+ * @param params.lookFor string
+ * @param params.locations Record<string, any>[]
+ * @returns Record<string, any>
+ * - merges source object with objects in locations where keys match lookFor
+ */
 function populateKeys({ source, lookFor, locations }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[] }) {
     let output = _.cloneDeep(source)
     Object.keys(output).forEach((key) => {
@@ -359,24 +368,38 @@ function attachFns(
     return output
 }
 
-function updateState(updateObject: Record<string, any>, dispatch: Function) {
+/**
+ * 
+ * @param updateObject Record<string, any>
+ * @param dispatch Function
+ * @returns Function
+ *
+ *  - returns a function that is used to update the global state of the CADL class
+ */
+function updateState(updateObject: Record<string, any>, dispatch: Function): Function {
     return (response: Record<string, any>): void => {
         dispatch({ type: 'update-global', payload: { updateObject, response } })
         return
     }
 }
 
+/**
+ * 
+ * @param cadlObject Record<string, any>
+ * @param dispatch Function
+ * @returns Record<string, any>
+ * 
+ * - replaces the update object, if any, with a function that performs the the actions detailed in the update object 
+ */
 function replaceUpdate(cadlObject: Record<string, any>, dispatch: Function) {
     const cadlCopy = _.cloneDeep(cadlObject)
-    if (isObject(cadlCopy)) {
-        Object.keys(cadlCopy).forEach((key) => {
-            if (key === 'update') {
-                cadlCopy[key] = updateState(cadlCopy[key], dispatch)
-            } else if (isObject(cadlCopy[key])) {
-                cadlCopy[key] = replaceUpdate(cadlCopy[key], dispatch)
-            }
-        })
-    }
+    Object.keys(cadlCopy).forEach((key) => {
+        if (key === 'update') {
+            cadlCopy[key] = updateState(cadlCopy[key], dispatch)
+        } else if (isObject(cadlCopy[key])) {
+            cadlCopy[key] = replaceUpdate(cadlCopy[key], dispatch)
+        }
+    })
     return cadlCopy
 }
 

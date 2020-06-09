@@ -78,6 +78,7 @@ export default class CADL {
 
         if (preload && preload.length) {
             //populate baseDataModel keys
+            //TODO: refactor to reduce redundancy
             for (let pageName of preload) {
                 switch (pageName) {
                     case ('BaseDataModel'): {
@@ -192,7 +193,6 @@ export default class CADL {
     public async getPage(pageName): Promise<CADL_OBJECT> {
         let pageCADL
         try {
-
             let url = `${this.baseUrl}${pageName}_en.yml`
             pageCADL = await this.defaultObject(url)
             // this.dispatch({ type: 'set-page', payload: pageCADL })
