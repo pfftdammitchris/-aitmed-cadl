@@ -27,6 +27,7 @@ export default class CADL {
     private _baseDataModel: BASE_DATA_MODEL
     private _baseCSS: Record<string, any>
     private _cadlEndpoint: CADL_OBJECT
+    private _cadlBaseUrl: string
     private _baseUrl: string
     private _assetsUrl: string
     private _global: Record<string, any>
@@ -56,43 +57,61 @@ export default class CADL {
         let config = store.getConfig()
         if (config === null) {
             //@ts-ignore
-            config = await store.level2SDK.loadConfigData('aitmedAlpha')
+            config = await store.level2SDK.loadConfigData('aitmed')
         }
         //@ts-ignore
-        const { cadlEndpoint: cadlEndpointUrl, web } = config
+        const { cadlEndpoint: cadlEndpointUrl, web, cadlBaseUrl, cadlMain } = config
 
         //set cadlVersion
         this.cadlVersion = web.cadlVersion[this.cadlVersion]
-        const cadlEndpointUrlWithCadlVersion = cadlEndpointUrl.replace('${cadlVersion}', this.cadlVersion)
+        this.cadlBaseUrl = cadlBaseUrl
 
-        //set cadlEndpoint
-        const cadlEndpoint = await this.defaultObject(cadlEndpointUrlWithCadlVersion)
+
+        let cadlEndpoint = await this.defaultObject(`${this.cadlBaseUrl}${cadlMain}`)
         this.cadlEndpoint = cadlEndpoint
-        const { baseUrl, assetsUrl } = cadlEndpoint
+
+        const { baseUrl, assetsUrl, preload } = cadlEndpoint
 
         //set baseUrl and assets Url
         this.baseUrl = baseUrl
         this.assetsUrl = assetsUrl
 
-        //populate baseDataModel keys
-        const rawBaseDataModel = await this.getPage('BaseDataModel')
-        const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
+        if (preload && preload.length) {
+            //populate baseDataModel keys
+            for (let pageName of preload) {
+                switch (pageName) {
+                    case ('BaseDataModel'): {
+                        const rawBaseDataModel = await this.getPage('BaseDataModel')
+                        const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
+                        //populate baseDataModel vals
+                        const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
+                        this.baseDataModel = populatedBaseDataModelVals
 
-        //populate baseDataModel vals
-        const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
+                        this.global = _.cloneDeep(populatedBaseDataModelVals.global)
+                        break
+                    }
+                    case ('BaseCSS'): {
+                        //populate baseCSS keys
+                        const rawBaseCSS = await this.getPage('BaseCSS')
+                        const populatedBaseCSSKeys = populateKeys({ source: rawBaseCSS, lookFor: '.', locations: [rawBaseCSS] })
 
-        this.baseDataModel = populatedBaseDataModelVals
+                        //populate baseCSS vals
+                        const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
 
-        this.global = _.cloneDeep(populatedBaseDataModelVals.global)
+                        this.baseCSS = populatedBaseCSSVals
+                        break
+                    }
+                    default: {
+                        const rawPage = await this.getPage(pageName)
+                        const populatedKeys = populateKeys({ source: rawPage, lookFor: '.', locations: [rawPage] })
+                        const populatedVals = populateObject({ source: populatedKeys, lookFor: '.', locations: [populatedKeys] })
 
-        //populate baseCSS keys
-        const rawBaseCSS = await this.getPage('BaseCSS')
-        const populatedBaseCSSKeys = populateKeys({ source: rawBaseCSS, lookFor: '.', locations: [rawBaseCSS] })
-
-        //populate baseCSS vals
-        const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
-
-        this.baseCSS = populatedBaseCSSVals
+                        this.pages = { ...this.pages, ...populatedVals }
+                        break
+                    }
+                }
+            }
+        }
     }
 
 
@@ -111,10 +130,10 @@ export default class CADL {
 
         //make a copy of the CADL object
         let cadlCopy = _.cloneDeep(pageCADL)
-        
+
         //populate keys 
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
-        
+
         //replace any update object with Fn
         const boundDispatch = this.dispatch.bind(this)
         let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
@@ -299,14 +318,24 @@ export default class CADL {
     }
 
     public set baseUrl(baseUrl) {
-        this._baseUrl = baseUrl.replace('${cadlVersion}', this.cadlVersion)
+        this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
+
+
     }
+    public get cadlBaseUrl() {
+        return this._cadlBaseUrl
+    }
+
+    public set cadlBaseUrl(cadlBaseUrl) {
+        this._cadlBaseUrl = cadlBaseUrl.replace('${cadlVersion}', this.cadlVersion)
+    }
+
     public get assetsUrl() {
         return this._assetsUrl
     }
 
     public set assetsUrl(assetsUrl) {
-        this._assetsUrl = assetsUrl
+        this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
     }
 
     public get baseDataModel() {
