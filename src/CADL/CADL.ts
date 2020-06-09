@@ -127,10 +127,10 @@ export default class CADL {
         if (!this.cadlEndpoint) await this.init()
 
         let pageCADL = await this.getPage(pageName)
-
+        
         //make a copy of the CADL object
         let cadlCopy = _.cloneDeep(pageCADL)
-
+        
         //populate keys 
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
 

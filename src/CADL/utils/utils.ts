@@ -62,8 +62,12 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
                     }
                 }
             }
-            if (Object.keys(parent).length) {
+            if (Object.keys(parent).length && output[key]) {
                 const mergedObjects = mergeDeep(populateKeys({ source: parent, lookFor, locations }), populateKeys({ source: output[key], lookFor, locations }))
+                output = { ...output, ...mergedObjects }
+                delete output[key]
+            } else if (Object.keys(parent).length) {
+                const mergedObjects = populateKeys({ source: parent, lookFor, locations })
                 output = { ...output, ...mergedObjects }
                 delete output[key]
             }

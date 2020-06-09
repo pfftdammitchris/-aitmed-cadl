@@ -26,6 +26,8 @@ export const ungzip = (data: Uint8Array) => {
 }
 
 export function isObject(item) {
+    if (item === null) return false
+    if (item === undefined) return false
     return (item && typeof item === 'object' && !Array.isArray(item))
 }
 
