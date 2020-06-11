@@ -106,6 +106,7 @@ export async function fetchAll(url) {
     let cadlEndpointObject
     let result: CADLResponse[] = []
 
+
     //fetch cadlEndpoint
     try {
         cadlEndpointObject = await fetchCADLObject(url)
@@ -114,21 +115,18 @@ export async function fetchAll(url) {
     }
 
     if (cadlEndpointObject) {
-        const { page: yamlList, baseUrl, fileSuffix } = cadlEndpointObject
+        const { page: yamlList, fileSuffix } = cadlEndpointObject
+        const baseUrlArr = url.split('/')
+        baseUrlArr.pop()
+        const baseUrl = baseUrlArr.join('/')
         //TODO: adjust to be more general
-        const baseUrlWithCADLVersion = baseUrl.replace('${cadlVersion}', '0.203')
         for (let page of yamlList) {
             const pageName = page.split('_').pop()
             let cadlYAML, cadlObject
             let isValid = false
             let err: Error[] = []
             try {
-                let url
-                if (pageName === 'BaseCSS') {
-                    url = `${baseUrlWithCADLVersion}${pageName}${fileSuffix}`
-                } else {
-                    url = `${baseUrlWithCADLVersion}${pageName}_en${fileSuffix}`
-                }
+                let url = `${baseUrl}/${pageName}_en${fileSuffix}`
                 const { data } = await axios.get(url)
                 cadlYAML = data
             } catch (error) {

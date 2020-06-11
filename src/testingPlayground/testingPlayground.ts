@@ -4,31 +4,10 @@
  * ****************
  * */
 
-import { fetchAll, fetchCADLObject, isObject } from '../utils'
+import { fetchAll, fetchCADLObject } from '../utils'
 import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
-import CADL from '../CADL'
-import { defaultConfig } from '../config'
 export default (async function () {
-    console.log(isObject(null))
-    console.log(isObject(1))
-    console.log(isObject(undefined))
-    const cadl = new CADL({ ...defaultConfig })
-    await cadl.init()
-    debugger
-    await cadl.initPage('SignIn')
-    await cadl.initPage('SignUp')
-    await cadl.initPage('ApplyBusiness')
-    await cadl.initPage('InboxPatient')
-    debugger
-    // await cadl.initPage('SignUp')
-    // cadl.pages['SignIn'].update({
-    //     UserVertex: 'hello',
-    //     JWT: 'pop'
-    // })
-    // debugger
-    await cadl.init()
-    debugger
 
 
     $(document).ready(function () {
