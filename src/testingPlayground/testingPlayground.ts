@@ -9,17 +9,21 @@ import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
 import CADL from '../CADL'
 import { defaultConfig } from '../config'
+import store from '../common/store'
 export default (async function () {
     console.log(isObject(null))
     console.log(isObject(1))
     console.log(isObject(undefined))
+    await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
+    await test_login({ password: 'letmein12' })
+    debugger
     const cadl = new CADL({ ...defaultConfig })
     await cadl.init()
     debugger
     await cadl.initPage('SignIn')
-    await cadl.initPage('SignUp')
+    // await cadl.initPage('SignUp')
     await cadl.initPage('ApplyBusiness')
-    await cadl.initPage('InboxPatient')
+    // await cadl.initPage('InboxPatient')
     debugger
     // await cadl.initPage('SignUp')
     // cadl.pages['SignIn'].update({
@@ -27,10 +31,49 @@ export default (async function () {
     //     JWT: 'pop'
     // })
     // debugger
-    await cadl.init()
-    debugger
 
-
+    async function test_LoginNewDevice({ phone_number }) {
+        console.log('Testing loginNewDevice')
+        try {
+            var {
+                data: { verification_code },
+            } = await store.level2SDK.Account.requestVerificationCode({
+                phone_number,
+            })
+            debugger
+        } catch (err) {
+            debugger
+            console.log(err)
+        }
+        try {
+            const loginResult = await store.level2SDK.Account.loginNewDevice({
+                phone_number,
+                verification_code,
+            }).catch((err) => {
+                console.log(err)
+                debugger
+            })
+            console.log(loginResult)
+        } catch (err) {
+            // debugger
+            console.log(err)
+        }
+    }
+    //**************************** */
+    //**************************** */
+    //**************************** */
+    async function test_login({ password }) {
+        debugger
+        console.log('Testing login')
+        try {
+            const loginResult = await store.level2SDK.Account.login({
+                password,
+            })
+            console.log(loginResult)
+        } catch (err) {
+            console.log(err)
+        }
+    }
     $(document).ready(function () {
 
         $('#cadlEndpoint-btn').click(function () {

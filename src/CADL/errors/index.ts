@@ -1,7 +1,7 @@
 import NoDataModelsFound from './NoDataModelsFound'
 import UnableToRetrieveCADL from './UnableToRetrieveCADL'
 import UnableToRetrieveBaseDataModel from './UnableToRetrieveBaseDataModel'
-import UnableToExecuteDataModelFn from './UnableToExecuteDataModelFn'
+import UnableToExecuteFn from './UnableToExecuteFn'
 import UnableToParseYAML from './UnableToParseYAML'
 import UnableToRetrieveYAML from './UnableToRetrieveYAML'
 import UnableToLocateValue from './UnableToLocateValue'
@@ -11,7 +11,7 @@ export {
     NoDataModelsFound,
     UnableToRetrieveCADL,
     UnableToRetrieveBaseDataModel,
-    UnableToExecuteDataModelFn,
+    UnableToExecuteFn,
     UnableToParseYAML,
     UnableToRetrieveYAML,
     UnableToLocateValue,

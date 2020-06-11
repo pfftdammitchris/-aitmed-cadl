@@ -282,16 +282,16 @@ function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
  * @returns Record<string,any>
  */
 function attachFns(
-    cadlObject: Record<string, any>, dispatch: Function
-): Record<string, any> {
+    cadlObject: Record<string, any>, dispatch: Function,
+    trail = ''): Record<string, any> {
     let output = _.cloneDeep(cadlObject)
     if (isObject(output)) {
         Object.keys(output).forEach((key) => {
             if (isObject(output[key])) {
-                output[key] = attachFns(output[key], dispatch)
+                output[key] = attachFns(output[key], dispatch,  trail + key)
             } else if (Array.isArray(output[key])) {
                 output[key] = output[key].map((elem) => {
-                    if (isObject(elem)) return attachFns(elem, dispatch)
+                    if (isObject(elem)) return attachFns(elem, dispatch, trail+key)
                     return elem
                 })
             } else if (typeof output[key] === 'string' && key === 'api') {
@@ -306,6 +306,7 @@ function attachFns(
                                 const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
                                 res = data
                             } catch (error) {
+                                console.log(error)
                                 throw error
                             }
                             if (res.length > 0) {
@@ -313,11 +314,12 @@ function attachFns(
                                     return replaceEidWithId(edge)
                                 })
                                 //TODO: handle populate
-                                // dispatch({
-                                //     type: 'update-data-dataModel',
-                                //     //TODO: handle case for data is an array or an object
-                                //     payload: { data: res[0] }
-                                // })
+                                debugger
+                                dispatch({
+                                    type: 'update-data',
+                                    //TODO: handle case for data is an array or an object
+                                    payload: { key:trail, data: res[0] }
+                                })
                                 //TODO: handle populate
                                 //dispatch({ type: 'populate' })
                                 return res

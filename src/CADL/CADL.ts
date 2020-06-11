@@ -14,6 +14,7 @@ import store, {
 import {
     UnableToParseYAML,
     UnableToRetrieveYAML,
+    UnableToExecuteFn
 } from './errors'
 import {
     CADL_OBJECT,
@@ -123,15 +124,16 @@ export default class CADL {
      * - initiates cadlObject for page specified
      * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
      * @throws UnableToParseYAML -if unable to parse yaml file
+     * @throws UnableToExecuteFn -if something goes wrong while executing any init function
      */
     async initPage(pageName: string) {
         if (!this.cadlEndpoint) await this.init()
 
         let pageCADL = await this.getPage(pageName)
-        
+
         //make a copy of the CADL object
         let cadlCopy = _.cloneDeep(pageCADL)
-        
+
         //populate keys 
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
 
@@ -145,44 +147,32 @@ export default class CADL {
         //populate the values from self
         const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]] })
 
-
-        //@ts-ignore
-        const { init } = Object.values(populatedSelfData)[0]
-
         //attach functions
         const withFNs = attachFns(populatedSelfData, boundDispatch)
 
-        this.pages = { ...this.pages, ...withFNs }
-        //TODO:implement init func 
-        // //iterate through dataModels.init
-        // if (Array.isArray(init) && init.length > 0) {
-        //     for (let command of init) {
-        //         const { dataModel: dataModelKey, ecosAction } = command
-        //         const currDataModel = cadlCopy.dataModels[dataModelKey]
+        let populatedPage = withFNs
+        //run init commands if any
+        const { init } = Object.values(populatedPage)[0]
 
-        //         //attach functions to dataModel
-        //         const dataModelWithFn = attachFns({
-        //             dataModelKey,
-        //             dataModel: currDataModel,
-        //             dispatch: boundDispatch
-        //         })
-        //         cadlCopy.dataModels[dataModelKey] = dataModelWithFn
-
-        //         //run init commands
-        //         if (typeof cadlCopy.dataModels[dataModelKey][ecosAction] === 'function') {
-        //             try {
-        //                 await cadlCopy.dataModels[dataModelKey][ecosAction]()
-        //             } catch (error) {
-        //                 throw new UnableToExecuteDataModelFn(`An error occured while executing ${dataModelKey}.${ecosAction}`, error)
-        //             }
-        //             //populateData again
-        //             const populatedData = populateData(cadlCopy.dataModels, [cadlCopy.dataModels, this.data.dataModels])
-        //             const populateAgain = populateData(populatedData, [cadlCopy.dataModels, this.data.dataModels])
-        //             cadlCopy.dataModels = populateAgain
-        //         }
-        //     }
-        // }
-        // this.cadl = cadlCopy
+        if (init) {
+            for (let [actionType, actions] of Object.entries(init)) {
+                if (Array.isArray(actions) && actions.length > 0) {
+                    for (let command of actions) {
+                        if (typeof command === 'function') {
+                            try {
+                                //TODO: check dispatch function/ side effects work accordingly
+                                await command()
+                            } catch (error) {
+                                throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init.${actionType}`, error)
+                            }
+                            //populateObject again
+                            populatedPage = populateObject({ source: populatedPage, lookFor: '..', locations: [cadlCopy] })
+                        }
+                    }
+                }
+            }
+        }
+        this.pages = { ...this.pages, ...populatedPage }
     }
 
     /**
@@ -244,7 +234,8 @@ export default class CADL {
             //     this.dataModels = populatedAgain
             //     return
             // }
-            case ('update-data-dataModel'): {
+            case ('update-data'): {
+                debugger
                 const dataCopy = Object.assign({}, this.data)
                 if (!dataCopy.dataModels) dataCopy.dataModels = {}
                 if (dataCopy.dataModels[action.payload.key]) {

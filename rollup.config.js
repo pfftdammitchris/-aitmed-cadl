@@ -4,6 +4,7 @@ import pkg from './package.json';
 import babel from 'rollup-plugin-babel'
 import json from 'rollup-plugin-json'
 import external from 'rollup-plugin-peer-deps-external'
+import globals from 'rollup-plugin-node-globals'
 
 
 const extensions = ['.js', '.ts']
@@ -36,6 +37,7 @@ export default [
 			}), // so Rollup can find `ms`
 			json(),
 			commonjs(), // so Rollup can convert `ms` to an ES module
+			globals(),
 			babel({
 				include: ['src/**/*'],
 				exclude: 'node_modules/**',
@@ -59,6 +61,7 @@ export default [
 				browser: true,
 			}), // so Rollup can find `ms`
 			commonjs(), // so Rollup can convert `ms` to an ES module
+			globals(),
 			babel({
 				include: ['src/**/*'],
 				exclude: 'node_modules/**',
