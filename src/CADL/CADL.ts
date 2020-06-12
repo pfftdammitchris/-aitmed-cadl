@@ -18,23 +18,18 @@ import {
 } from './errors'
 import {
     CADL_OBJECT,
-    BASE_DATA_MODEL,
     CADLARGS
 } from './types'
 
+import { mergeDeep } from '../utils'
 export default class CADL {
 
     private _cadlVersion: 'test' | 'stable'
-    private _baseDataModel: BASE_DATA_MODEL
-    private _baseCSS: Record<string, any>
     private _cadlEndpoint: CADL_OBJECT
     private _cadlBaseUrl: string
     private _baseUrl: string
     private _assetsUrl: string
-    private _global: Record<string, any>
-    private _pages: Record<string, any> = {}
-    private _data: Record<string, any> = {}
-
+    private _root: Record<string, any> = {}
 
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
@@ -87,9 +82,9 @@ export default class CADL {
                         const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
                         //populate baseDataModel vals
                         const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
-                        this.baseDataModel = populatedBaseDataModelVals
 
-                        this.global = _.cloneDeep(populatedBaseDataModelVals.global)
+                        this.root = { ...this.root, ...populatedBaseDataModelVals }
+
                         break
                     }
                     case ('BaseCSS'): {
@@ -100,7 +95,8 @@ export default class CADL {
                         //populate baseCSS vals
                         const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
 
-                        this.baseCSS = populatedBaseCSSVals
+                        this.root = { ...this.root, ...populatedBaseCSSVals }
+
                         break
                     }
                     default: {
@@ -108,7 +104,7 @@ export default class CADL {
                         const populatedKeys = populateKeys({ source: rawPage, lookFor: '.', locations: [rawPage] })
                         const populatedVals = populateObject({ source: populatedKeys, lookFor: '.', locations: [populatedKeys] })
 
-                        this.pages = { ...this.pages, ...populatedVals }
+                        this.root = { ...this.root, ...populatedVals }
                         break
                     }
                 }
@@ -135,20 +131,23 @@ export default class CADL {
         let cadlCopy = _.cloneDeep(pageCADL)
 
         //populate keys 
-        let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
+        let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.root] })
+
 
         //replace any update object with Fn
         const boundDispatch = this.dispatch.bind(this)
         let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
 
-        //populate the values from baseDataModels
-        const populatedBaseData = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.baseDataModel, this.baseCSS] })
 
+        //populate the values from baseDataModels
+        const populatedBaseData = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.root] })
+
+        //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
         const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]] })
 
         //attach functions
-        const withFNs = attachFns(populatedSelfData, boundDispatch)
+        const withFNs = attachFns({ cadlObject: populatedSelfData, dispatch: boundDispatch })
 
         let populatedPage = withFNs
         //run init commands if any
@@ -172,7 +171,8 @@ export default class CADL {
                 }
             }
         }
-        this.pages = { ...this.pages, ...populatedPage }
+        this.root = { ...this.root, ...populatedPage }
+
     }
 
     /**
@@ -225,49 +225,22 @@ export default class CADL {
      */
     private dispatch(action: { type: string, payload: any }) {
         switch (action.type) {
-            // case ('populate'): {
-            //     //populating twice because data must be filled from both the data.dataModels and the dataModels object
-            //     //TODO: refactor populate data to require populating once
-            //     const populatedData = populateData(this.dataModels, [this.data.dataModels, this.data.dataModels])
-
-            //     const populatedAgain = populateData(populatedData, [this.dataModels, this.data.dataModels])
-            //     this.dataModels = populatedAgain
-            //     return
-            // }
             case ('update-data'): {
-                debugger
-                const dataCopy = Object.assign({}, this.data)
-                if (!dataCopy.dataModels) dataCopy.dataModels = {}
-                if (dataCopy.dataModels[action.payload.key]) {
-                    dataCopy.dataModels[action.payload.key].dataModel = action.payload.data
+                const { pageName, dataKey, data } = action.payload
+                const firstCharacter = dataKey[0]
+                const pathArr = dataKey.split('.')
+                if (firstCharacter === firstCharacter.toUpperCase()) {
+                    //TODO: adjust baseDataModel to be at the root of class
+                    const currentVal = _.get(this.root, pathArr)
+                    const mergedVal = mergeDeep(currentVal, data)
+                    _.set(this.root, pathArr, mergedVal)
                 } else {
-                    dataCopy.dataModels[action.payload.key] = {}
-                    dataCopy.dataModels[action.payload.key].dataModel = action.payload.data
+                    const currentVal = _.get(this.root[pageName], pathArr)
+                    const mergedVal = mergeDeep(currentVal, data)
+                    _.set(this.root[pageName], pathArr, mergedVal)
                 }
-                this.data = dataCopy
                 return
             }
-            case ('set-page'): {
-                this.pages = { ...this.pages, ...action.payload }
-            }
-            // case ('attach-Fns'): {
-            //     const dataModelsCopy = Object.assign({}, this.dataModels)
-            //     delete dataModelsCopy.init
-            //     delete dataModelsCopy.const
-            //     delete dataModelsCopy.final
-            //     const boundDispatch = this.dispatch.bind(this)
-            //     for (let [dataModelKey, dataModel] of Object.entries(dataModelsCopy)) {
-
-            //         const dataModelWithFn = attachFns({
-            //             dataModelKey,
-            //             dataModel,
-            //             dispatch: boundDispatch
-            //         })
-            //         dataModelsCopy[dataModelKey] = dataModelWithFn
-            //     }
-            //     this.dataModels = { ...this.dataModels, dataModelsCopy }
-            //     return
-            // }
             case ('update-global'): {
                 const { updateObject, response } = action.payload
                 Object.keys(updateObject).forEach((key) => {
@@ -277,9 +250,8 @@ export default class CADL {
                     const trimVal = updateObject[key].substring(2, updateObject[key].length)
 
                     const valPath = trimVal.split('.')
-                    const val = _.get({ builtIn: response }, valPath) || _.get(this, valPath)
-                    _.set(this, pathArr, val)
-
+                    const val = _.get({ builtIn: response }, valPath) || _.get(this.root, valPath)
+                    _.set(this.root, pathArr, val)
                 })
                 break
             }
@@ -329,42 +301,15 @@ export default class CADL {
         this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
     }
 
-    public get baseDataModel() {
-        return this._baseDataModel
+
+    public get root() {
+        return this._root
     }
 
-    public set baseDataModel(dataModel) {
-        this._baseDataModel = dataModel || {}
-    }
-    public get baseCSS() {
-        return this._baseCSS
+    public set root(root) {
+        this._root = root || {}
     }
 
-    public set baseCSS(baseCSS) {
-        this._baseCSS = baseCSS || {}
-    }
-
-    public get data() {
-        return this._data
-    }
-
-    public set data(data) {
-        this._data = data || {}
-    }
-    public get pages() {
-        return this._pages
-    }
-
-    public set pages(pages) {
-        this._pages = pages || {}
-    }
-    public get global() {
-        return this._global
-    }
-
-    public set global(global) {
-        this._global = global || {}
-    }
     set apiVersion(apiVersion) {
         store.apiVersion = apiVersion
     }

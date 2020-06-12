@@ -64,7 +64,6 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
                     }
                 } catch (error) {
                     if (error instanceof UnableToLocateValue) {
-                        parent = {}
                         continue
                     } else {
                         throw error
@@ -76,8 +75,11 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
                 output = { ...output, ...mergedObjects }
                 delete output[key]
             } else if (Object.keys(parent).length) {
+
+                //TODO: test why it is undefined when .Edge:""
+                //check SignUp page
                 const mergedObjects = populateKeys({ source: parent, lookFor, locations })
-                output = { ...output, ...mergedObjects }
+                output = { ...mergedObjects, ...output }
                 delete output[key]
             }
         } else if (isObject(output[key])) {
@@ -281,93 +283,148 @@ function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
  * @param dispatch Function
  * @returns Record<string,any>
  */
-function attachFns(
-    cadlObject: Record<string, any>, dispatch: Function,
-    trail = ''): Record<string, any> {
-    let output = _.cloneDeep(cadlObject)
-    if (isObject(output)) {
-        Object.keys(output).forEach((key) => {
-            if (isObject(output[key])) {
-                output[key] = attachFns(output[key], dispatch,  trail + key)
-            } else if (Array.isArray(output[key])) {
-                output[key] = output[key].map((elem) => {
-                    if (isObject(elem)) return attachFns(elem, dispatch, trail+key)
-                    return elem
-                })
-            } else if (typeof output[key] === 'string' && key === 'api') {
-                const { api } = output
-                switch (api) {
-                    case ('re'): {
-                        const getFn = (output) => async () => {
-                            const options = _.cloneDeep(output)
-                            delete options.api
-                            let res: any[] = []
-                            try {
-                                const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
-                                res = data
-                            } catch (error) {
-                                console.log(error)
-                                throw error
-                            }
-                            if (res.length > 0) {
-                                res = res.map((edge) => {
-                                    return replaceEidWithId(edge)
-                                })
-                                //TODO: handle populate
-                                debugger
-                                dispatch({
-                                    type: 'update-data',
-                                    //TODO: handle case for data is an array or an object
-                                    payload: { key:trail, data: res[0] }
-                                })
-                                //TODO: handle populate
-                                //dispatch({ type: 'populate' })
-                                return res
-                            }
-                            //TODO:handle else case
-                            return null
-                        }
-                        output = getFn(output)
-                        break
-                    }
-                    case ('rd'): {
-                        const getFn = (output) => async () => {
-                            let res
-                            try {
-                                const { api, ids, type, ...rest } = output
-                                const parsedType = type.split('-')[1]
-                                const { data } = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest, type: parseInt(parsedType) } })
-                                res = data
-                            } catch (error) {
-                                throw error
-                            }
-                            if (res) {
-                                //TODO: handle case for data is an array or an object
-                                //TODO: handle update of data state
-                                // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res[0] } })
-                                //TODO: handle update of data state
-                                // dispatch({ type: 'populate' })
-                                return res
-                            }
-                            //TODO:handle else case
-                            return null
-                        }
+function attachFns({ cadlObject,
+    dispatch }) {
+    const localRoot = cadlObject
+    const pageName = Object.keys(cadlObject)[0]
 
-                        output = isPopulated(output) ? getFn(output) : output
-                        break
-                    }
-                    //TODO: fill with vertex functions
-                    case ('vertex'): {
-                        break
-                    }
-                    default: {
-                        return
+    return attachFnsHelper({
+        pageName,
+        cadlObject,
+        dispatch
+    })
+    function attachFnsHelper({
+        pageName,
+        cadlObject,
+        dispatch
+    }: {
+        pageName: string,
+        cadlObject: Record<string, any>,
+        dispatch: Function
+    }): Record<string, any> {
+        let output = _.cloneDeep(cadlObject)
+        if (isObject(output)) {
+            Object.keys(output).forEach((key) => {
+                if (isObject(output[key])) {
+                    output[key] = attachFnsHelper({ pageName, cadlObject: output[key], dispatch })
+                } else if (Array.isArray(output[key])) {
+                    output[key] = output[key].map((elem) => {
+                        if (isObject(elem)) return attachFnsHelper({ pageName, cadlObject: elem, dispatch })
+                        return elem
+                    })
+                } else if (typeof output[key] === 'string' && key === 'api') {
+                    const { api } = output
+                    switch (api) {
+                        case ('re'): {
+                            const getFn = (output) => async () => {
+                                const { api, dataKey, ...options } = _.cloneDeep(output)
+                                let res: any[] = []
+                                try {
+                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
+                                    res = data
+                                } catch (error) {
+                                    console.log(error)
+                                    throw error
+                                }
+                                if (res.length > 0) {
+                                    res = res.map((edge) => {
+                                        return replaceEidWithId(edge)
+                                    })
+                                    //TODO: handle populate
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res[0] }
+                                    })
+                                    //TODO: handle populate
+                                    //dispatch({ type: 'populate' })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = getFn(output)
+                            break
+                        }
+                        case ('ce'): {
+                            const storeFn = (output) => async (name, id = null) => {
+                                const { dataKey, ...cloneOutput } = _.cloneDeep(output)
+                                const pathArr = dataKey.split('.')
+                                const currentVal = _.get(localRoot[pageName], pathArr)
+                                const mergedVal = mergeDeep(currentVal, cloneOutput)
+                                const mergedName = mergeDeep({ name: mergedVal }, name)
+                                const { api, store: storeProp, get, ...options } = mergedVal
+
+
+                                let res
+                                if (id) {
+                                    try {
+                                        const { data } = await store.level2SDK.edgeServices.updateEdge({ ...options, mergedName, id })
+                                        res = data
+                                    } catch (error) {
+                                        throw error
+                                    }
+                                } else {
+                                    try {
+                                        const { data } = await store.level2SDK.edgeServices.createEdge({ ...options, name })
+                                        res = data
+                                    } catch (error) {
+                                        throw error
+                                    }
+                                }
+                                if (res) {
+                                    const replacedEidWithId = replaceEidWithId(res)
+                                    dispatch({ type: 'update-data-dataModel', payload: { key: dataKey, data: replacedEidWithId } })
+                                    // dispatch({ type: 'populate' })
+                                    // dispatch({ type: 'attach-Fns' })
+
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = storeFn(output)
+                            break
+                        }
+                        case ('rd'): {
+                            const getFn = (output) => async () => {
+                                let res
+                                try {
+                                    const { api, ids, type, ...rest } = output
+                                    const parsedType = type.split('-')[1]
+                                    const { data } = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest, type: parseInt(parsedType) } })
+                                    res = data
+                                } catch (error) {
+                                    throw error
+                                }
+                                if (res) {
+                                    //TODO: handle case for data is an array or an object
+                                    //TODO: handle update of data state
+                                    // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res[0] } })
+                                    //TODO: handle update of data state
+                                    // dispatch({ type: 'populate' })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+
+                            output = isPopulated(output) ? getFn(output) : output
+                            break
+                        }
+                        //TODO: fill with vertex functions
+                        case ('vertex'): {
+                            break
+                        }
+                        default: {
+                            return
+                        }
                     }
                 }
-            }
-        })
+            })
+        }
+        return output
     }
-    return output
 }
 
 /**

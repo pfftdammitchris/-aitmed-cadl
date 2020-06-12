@@ -4,27 +4,28 @@
  * ****************
  * */
 
-import { fetchAll, fetchCADLObject, isObject } from '../utils'
+import { fetchAll, fetchCADLObject } from '../utils'
 import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
 import CADL from '../CADL'
 import { defaultConfig } from '../config'
 import store from '../common/store'
 export default (async function () {
-    console.log(isObject(null))
-    console.log(isObject(1))
-    console.log(isObject(undefined))
     await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     await test_login({ password: 'letmein12' })
-    debugger
     const cadl = new CADL({ ...defaultConfig })
     await cadl.init()
-    debugger
     await cadl.initPage('SignIn')
+    await cadl.root['SignIn'].update({
+        UserVertex: 'hello',
+        JWT: 'pop'
+    })
     // await cadl.initPage('SignUp')
-    await cadl.initPage('ApplyBusiness')
-    // await cadl.initPage('InboxPatient')
+    // await cadl.initPage('ApplyBusiness')
+    console.log(cadl)
     debugger
+    // await cadl.initPage('ApplyBusiness')
+    // await cadl.initPage('InboxPatient')
     // await cadl.initPage('SignUp')
     // cadl.pages['SignIn'].update({
     //     UserVertex: 'hello',
@@ -40,7 +41,6 @@ export default (async function () {
             } = await store.level2SDK.Account.requestVerificationCode({
                 phone_number,
             })
-            debugger
         } catch (err) {
             debugger
             console.log(err)
@@ -63,7 +63,6 @@ export default (async function () {
     //**************************** */
     //**************************** */
     async function test_login({ password }) {
-        debugger
         console.log('Testing login')
         try {
             const loginResult = await store.level2SDK.Account.login({
