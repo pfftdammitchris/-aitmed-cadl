@@ -45,6 +45,7 @@
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-node-builtins": "^2.1.2",
+    "rollup-plugin-node-globals": "^1.4.0",
     "rollup-plugin-peer-deps-external": "^2.2.2",
     "serve": "^11.3.1",
     "ts-jest": "^26.1.0",
@@ -57,6 +58,7 @@
     "dist"
   ],
   "dependencies": {
+    "@aitmed/ecos-lvl2-sdk": "^1.4.84",
     "axios": "^0.19.2",
     "jest": "^26.0.1",
     "jquery": "^3.5.1",
