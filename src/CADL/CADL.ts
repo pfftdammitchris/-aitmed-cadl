@@ -29,7 +29,7 @@ export default class CADL {
     private _cadlBaseUrl: string
     private _baseUrl: string
     private _assetsUrl: string
-    private _root: Record<string, any> = {}
+    private _root: Record<string, any> = { builtIn: {} }
 
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
@@ -46,7 +46,11 @@ export default class CADL {
      * @throws UnableToParseYAML -if unable to parse yaml file
      */
     //TODO: add a force parameter to allow user to force init again
-    public async init(): Promise<void> {
+    public async init({ BaseDataModel, BaseCSS, BasePage }: {
+        BaseDataModel?: Record<string, any>,
+        BaseCSS?: Record<string, any>,
+        BasePage?: Record<string, any>
+    } = {}): Promise<void> {
         if (this.cadlEndpoint) return
 
         //get config
@@ -72,12 +76,37 @@ export default class CADL {
         this.baseUrl = baseUrl
         this.assetsUrl = assetsUrl
 
+        if (BaseDataModel) {
+            const populatedBaseDataModelKeys = populateKeys({ source: BaseDataModel, lookFor: '.', locations: [BaseDataModel] })
+            //populate baseDataModel vals
+            const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
+
+            this.root = { ...this.root, ...populatedBaseDataModelVals }
+        }
+        if (BaseCSS) {
+            const populatedBaseCSSKeys = populateKeys({ source: BaseCSS, lookFor: '.', locations: [BaseCSS] })
+
+            //populate baseCSS vals
+            const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
+
+            this.root = { ...this.root, ...populatedBaseCSSVals }
+        }
+        if (BasePage) {
+            const populatedBasePageKeys = populateKeys({ source: BasePage, lookFor: '.', locations: [BasePage] })
+
+            //populate BasePage vals
+            const populatedBasePageVals = populateObject({ source: populatedBasePageKeys, lookFor: '.', locations: [populatedBasePageKeys] })
+
+            this.root = { ...this.root, ...populatedBasePageVals }
+        }
+
         if (preload && preload.length) {
             //populate baseDataModel keys
             //TODO: refactor to reduce redundancy
             for (let pageName of preload) {
                 switch (pageName) {
                     case ('BaseDataModel'): {
+                        if (BaseDataModel) break
                         const rawBaseDataModel = await this.getPage('BaseDataModel')
                         const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
                         //populate baseDataModel vals
@@ -88,6 +117,7 @@ export default class CADL {
                         break
                     }
                     case ('BaseCSS'): {
+                        if (BaseCSS) break
                         //populate baseCSS keys
                         const rawBaseCSS = await this.getPage('BaseCSS')
                         const populatedBaseCSSKeys = populateKeys({ source: rawBaseCSS, lookFor: '.', locations: [rawBaseCSS] })
@@ -98,6 +128,16 @@ export default class CADL {
                         this.root = { ...this.root, ...populatedBaseCSSVals }
 
                         break
+                    }
+                    case ('BasePage'): {
+                        if (BasePage) break
+                        const rawBasePage = await this.getPage('BasePage')
+                        const populatedBasePageKeys = populateKeys({ source: rawBasePage, lookFor: '.', locations: [rawBasePage] })
+
+                        //populate BasePage vals
+                        const populatedBasePageVals = populateObject({ source: populatedBasePageKeys, lookFor: '.', locations: [populatedBasePageKeys] })
+
+                        this.root = { ...this.root, ...populatedBasePageVals }
                     }
                     default: {
                         const rawPage = await this.getPage(pageName)
@@ -134,8 +174,9 @@ export default class CADL {
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.root] })
 
 
-        //replace any update object with Fn
         const boundDispatch = this.dispatch.bind(this)
+        //TODO: find out who handles update
+        //replace any update object with Fn
         let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
 
 
