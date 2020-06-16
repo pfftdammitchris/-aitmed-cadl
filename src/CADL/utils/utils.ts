@@ -312,7 +312,8 @@ function attachFns({ cadlObject,
                         if (isObject(elem)) return attachFnsHelper({ pageName, cadlObject: elem, dispatch })
                         return elem
                     })
-                } else if (typeof output[key] === 'string' && key === 'api') {
+                }
+                else if (typeof output[key] === 'string' && key === 'api') {
                     const { api } = output
                     switch (api) {
                         case ('re'): {
@@ -412,8 +413,88 @@ function attachFns({ cadlObject,
                             output = isPopulated(output) ? getFn(output) : output
                             break
                         }
+                        case ('cd'): {
+                            const storeFn = (output) => async ({ data, type, id = null }) => {
+                                const { dataKey, ...cloneOutput } = _.cloneDeep(output)
+                                const pathArr = dataKey.split('.')
+                                const currentVal = _.get(localRoot[pageName], pathArr)
+                                const mergedVal = mergeDeep(currentVal, cloneOutput)
+                                const mergedName = mergeDeep({ name: mergedVal }, name)
+                                const { api, store: storeProp, get, ...options } = mergedVal
+
+                                let res
+                                if (id) {
+                                    try {
+                                        const { data } = await store.level2SDK.documentServices.updateDocument({ ...options, mergedName, id })
+                                        res = data
+                                    } catch (error) {
+                                        throw error
+                                    }
+                                } else {
+                                    //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
+                                    try {
+                                        const { type: appDataType, eid, name } = options
+                                        const response = await Document.create({
+                                            edge_id: eid,
+                                            dataType: parseInt(appDataType.applicationDataType),
+                                            content: data,
+                                            type,
+                                            title: name.title,
+                                        })
+                                        res = response
+                                    } catch (error) {
+                                        throw error
+                                    }
+                                }
+                                if (res) {
+                                    // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res } })
+                                    // dispatch({ type: 'populate' })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = isPopulated(output) ? storeFn(output) : output
+                            break
+                        }
                         //TODO: fill with vertex functions
-                        case ('vertex'): {
+                        case ('cv'): {
+                            const storeFn = (dataModel) => async ({ data, type, id = null }) => {
+                               
+                                const { dataKey, ...cloneOutput } = _.cloneDeep(output)
+                                const pathArr = dataKey.split('.')
+                                const currentVal = _.get(localRoot[pageName], pathArr)
+                                const mergedVal = mergeDeep(currentVal, cloneOutput)
+                                const mergedName = mergeDeep({ name: mergedVal }, name)
+                                const { api, store: storeProp, get, ...options } = mergedVal
+                                let res
+                                if (id) {
+                                    try {
+                                        const { data } = await store.level2SDK.vertexServices.updateVertex({ ...options, mergedName, id })
+                                        res = data
+                                    } catch (error) {
+                                        throw error
+                                    }
+                                } else {
+                                    //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
+                                    try {
+                                        const response = await store.level2SDK.vertexServices.createVertex({
+                                            ...options, name
+                                        })
+                                        res = response
+                                    } catch (error) {
+                                        throw error
+                                    }
+                                }
+                                if (res) {
+                                    // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res } })
+                                    // dispatch({ type: 'populate' })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = isPopulated(output) ? storeFn(output) : output
                             break
                         }
                         default: {
