@@ -7,8 +7,24 @@
 import { fetchAll, fetchCADLObject } from '../utils'
 import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
+import CADL from '../'
+import { defaultConfig } from '../config'
 export default (async function () {
-    
+
+    const cadl = new CADL({ ...defaultConfig })
+    await cadl.init()
+    await cadl.initPage('SignIn')
+    await cadl.initPage('SignUp')
+    await cadl.initPage('CreateNewAccount')
+    debugger
+    await cadl.root['CreateNewAccount'].formData.vertex.store({
+        confirmPassword: "confirmPassword",
+        countryCode: "+1",
+        password: "new password",
+        phoneNumber: "000-000-0002",
+        username: "username"
+    })
+    debugger
     $(document).ready(function () {
 
         $('#cadlEndpoint-btn').click(function () {
