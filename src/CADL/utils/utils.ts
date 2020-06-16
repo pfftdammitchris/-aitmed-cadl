@@ -429,7 +429,7 @@ function attachFns({ cadlObject,
                             const builtInFnsObj = builtInFns()
                             const builtInFn = _.get(builtInFnsObj, pathArr)
                             const fn = (output) => async (input?: any) => {
-                                const { api, dataKey, ...options } = _.cloneDeep(output)
+                                const { api, dataKey } = _.cloneDeep(output)
 
                                 let res: any
                                 try {
