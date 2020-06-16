@@ -21,7 +21,7 @@ export default (async function () {
     await cadl.initPage('SignIn')
     await cadl.initPage('SignUp')
     await cadl.initPage('CreateNewAccount')
-    debugger
+    
     const vc = await Account.requestVerificationCode('+1 1072562892')
     await cadl.root['CreateNewAccount'].formData.vertex.store({
         confirmPassword: "confirmPassword",
