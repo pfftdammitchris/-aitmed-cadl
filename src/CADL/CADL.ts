@@ -5,7 +5,8 @@ import {
     populateObject,
     attachFns,
     populateKeys,
-    replaceUpdate
+    replaceUpdate,
+    builtInFns
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -29,7 +30,8 @@ export default class CADL {
     private _cadlBaseUrl: string
     private _baseUrl: string
     private _assetsUrl: string
-    private _root: Record<string, any> = { builtIn: {} }
+    private _root: Record<string, any> = {}
+    private _builtIn: Record<string, any> = builtInFns()
 
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
@@ -179,7 +181,6 @@ export default class CADL {
         //replace any update object with Fn
         let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
 
-
         //populate the values from baseDataModels
         const populatedBaseData = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.root] })
 
@@ -226,7 +227,6 @@ export default class CADL {
         try {
             let url = `${this.baseUrl}${pageName}_en.yml`
             pageCADL = await this.defaultObject(url)
-            // this.dispatch({ type: 'set-page', payload: pageCADL })
         } catch (error) {
             throw error
         }
@@ -262,6 +262,27 @@ export default class CADL {
 
     /**
      * 
+     * @param dataKey string
+     * @returns any
+     * 
+     * -returns data associated with given pageName and dataKey
+     */
+    public getData(pageName: string, dataKey: string): any {
+        const firstCharacter = dataKey[0]
+        const pathArr = dataKey.split('.')
+        let currentVal
+        if (firstCharacter === firstCharacter.toUpperCase()) {
+
+            currentVal = _.get(this.root, pathArr)
+        } else {
+            currentVal = _.get(this.root[pageName], pathArr)
+        }
+        if (currentVal) return currentVal
+        return dataKey
+    }
+
+    /**
+     * 
      * @param action 
      */
     private dispatch(action: { type: string, payload: any }) {
@@ -271,7 +292,7 @@ export default class CADL {
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
                 if (firstCharacter === firstCharacter.toUpperCase()) {
-                    //TODO: adjust baseDataModel to be at the root of class
+
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root, pathArr, mergedVal)

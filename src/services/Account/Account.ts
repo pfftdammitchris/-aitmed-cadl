@@ -33,7 +33,7 @@ export const create: AccountTypes.Create = async (
   name,
 ) => {
   // Create User
-  await store.level2SDK.Account.createUser({
+  const { data } = await store.level2SDK.Account.createUser({
     phone_number,
     password,
     verification_code,
@@ -44,6 +44,7 @@ export const create: AccountTypes.Create = async (
 
   // Create Root Edge
   await accountUtils.createRootEdge()
+  return data
 }
 
 /**

@@ -3,10 +3,9 @@ import store from '../../common/store'
 import { mergeDeep, isObject } from '../../utils'
 import Document from '../../services/document'
 import { UnableToLocateValue } from '../errors'
+import { Account } from '../../services'
 
 export {
-    attachDocumentFns,
-    attachEdgeFns,
     isPopulated,
     replaceEidWithId,
     lookUp,
@@ -17,6 +16,7 @@ export {
     populateString,
     populateArray,
     populateObject,
+    builtInFns,
 }
 
 
@@ -79,7 +79,9 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
                 //TODO: test why it is undefined when .Edge:""
                 //check SignUp page
                 const mergedObjects = populateKeys({ source: parent, lookFor, locations })
-                output = { ...mergedObjects, ...output }
+                //TODO: pending unit test
+                output = mergeDeep(mergedObjects, output)
+                // output = { ...mergedObjects, ...output }
                 delete output[key]
             }
         } else if (isObject(output[key])) {
@@ -153,129 +155,6 @@ function isPopulated(item: string | Record<string, any>): boolean {
     return isPop
 }
 
-function attachDocumentFns({ dataModelKey, dataModel, dispatch }) {
-    let output = Object.assign({}, dataModel)
-
-    const storeFn = (dataModel) => async ({ data, type, id = null }) => {
-        let res
-        if (id) {
-            try {
-                const { data } = await store.level2SDK.documentServices.updateDocument({ ...dataModel.dataModel, name, id })
-                res = data
-            } catch (error) {
-                throw error
-            }
-        } else {
-            //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
-            try {
-                const { type: appDataType, eid, name } = dataModel.store
-                const response = await Document.create({
-                    edge_id: eid,
-                    dataType: parseInt(appDataType.applicationDataType),
-                    content: data,
-                    type,
-                    title: name.title,
-                })
-                res = response
-            } catch (error) {
-                throw error
-            }
-        }
-        if (res) {
-            dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res } })
-            dispatch({ type: 'populate' })
-            return res
-        }
-        //TODO:handle else case
-        return null
-    }
-
-    const getFn = (dataModel) => async () => {
-        let res
-        try {
-            const { api, ids, type, ...rest } = dataModel.get
-            const parsedType = type.split('-')[1]
-            const { data } = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest, type: parseInt(parsedType) } })
-            res = data
-        } catch (error) {
-            throw error
-        }
-        if (res) {
-            //TODO: handle case for data is an array or an object
-            dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res[0] } })
-            dispatch({ type: 'populate' })
-            return res
-        }
-        //TODO:handle else case
-        return null
-    }
-
-    output = { ...output, store: isPopulated(dataModel.store) ? storeFn(dataModel) : dataModel.store, get: isPopulated(dataModel.get) ? getFn(dataModel) : dataModel.get }
-    return output
-}
-
-
-function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
-    let output = Object.assign({}, dataModel)
-    const storeFn = (dataModel) => async (name, id = null) => {
-        let res
-        if (id) {
-            try {
-                const { data } = await store.level2SDK.edgeServices.updateEdge({ ...dataModel.dataModel, name, id })
-                res = data
-            } catch (error) {
-                throw error
-            }
-        } else {
-            try {
-                const { data } = await store.level2SDK.edgeServices.createEdge({ ...dataModel.dataModel, name })
-                res = data
-            } catch (error) {
-                throw error
-            }
-        }
-        if (res) {
-            const replacedEidWithId = replaceEidWithId(res)
-            dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: replacedEidWithId } })
-            dispatch({ type: 'populate' })
-            dispatch({ type: 'attach-Fns' })
-
-            return res
-        }
-        //TODO:handle else case
-        return null
-    }
-
-    const getFn = (dataModel) => async () => {
-        const { get } = dataModel
-        const options = Object.assign({}, get)
-        delete options.api
-        let res: any[] = []
-        try {
-            const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
-            res = data
-        } catch (error) {
-            throw error
-        }
-        if (res.length > 0) {
-            res = res.map((edge) => {
-                return replaceEidWithId(edge)
-            })
-            dispatch({
-                type: 'update-data-dataModel',
-                //TODO: handle case for data is an array or an object
-                payload: { key: dataModelKey, data: res[0] }
-            })
-            dispatch({ type: 'populate' })
-            return res
-        }
-        //TODO:handle else case
-        return null
-    }
-
-    output = { ...output, store: isPopulated(dataModel.store) ? storeFn(dataModel) : dataModel.store, get: isPopulated(dataModel.get) ? getFn(dataModel) : dataModel.get }
-    return output
-}
 
 /**
  * 
@@ -285,7 +164,11 @@ function attachEdgeFns({ dataModelKey, dataModel, dispatch }) {
  */
 function attachFns({ cadlObject,
     dispatch }) {
+    //the localRoot objec is the page object
     const localRoot = cadlObject
+
+    //we need the pageName to use as a key to store the data
+    //when using the dataKey
     const pageName = Object.keys(cadlObject)[0]
 
     return attachFnsHelper({
@@ -293,6 +176,7 @@ function attachFns({ cadlObject,
         cadlObject,
         dispatch
     })
+
     function attachFnsHelper({
         pageName,
         cadlObject,
@@ -302,6 +186,7 @@ function attachFns({ cadlObject,
         cadlObject: Record<string, any>,
         dispatch: Function
     }): Record<string, any> {
+        //traverse through the page object and look for the api keyword
         let output = _.cloneDeep(cadlObject)
         if (isObject(output)) {
             Object.keys(output).forEach((key) => {
@@ -314,8 +199,15 @@ function attachFns({ cadlObject,
                     })
                 }
                 else if (typeof output[key] === 'string' && key === 'api') {
+                    //when api keyword is found we attach the corresponding ecos function to the current output which should be the value of get or store 
+                    /**
+                     * get:output
+                     * store:output
+                     */
                     const { api } = output
-                    switch (api) {
+                    const apiSplit = api.split('.')
+                    const apiType = apiSplit[0]
+                    switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
                                 const { api, dataKey, ...options } = _.cloneDeep(output)
@@ -331,14 +223,12 @@ function attachFns({ cadlObject,
                                     res = res.map((edge) => {
                                         return replaceEidWithId(edge)
                                     })
-                                    //TODO: handle populate
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
                                         payload: { pageName, dataKey, data: res[0] }
                                     })
-                                    //TODO: handle populate
-                                    //dispatch({ type: 'populate' })
+
                                     return res
                                 }
                                 //TODO:handle else case
@@ -352,10 +242,14 @@ function attachFns({ cadlObject,
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
+                                //merging data to store and ecos base data
                                 const mergedVal = mergeDeep(currentVal, cloneOutput)
-                                const mergedName = mergeDeep({ name: mergedVal }, name)
-                                const { api, store: storeProp, get, ...options } = mergedVal
 
+                                //merging existing name field and incoming name field
+                                const mergedName = mergeDeep({ name: mergedVal }, name)
+
+                                //remove unwanted options before making ecos request
+                                const { api, store: storeProp, get, ...options } = mergedVal
 
                                 let res
                                 if (id) {
@@ -375,9 +269,11 @@ function attachFns({ cadlObject,
                                 }
                                 if (res) {
                                     const replacedEidWithId = replaceEidWithId(res)
-                                    dispatch({ type: 'update-data-dataModel', payload: { key: dataKey, data: replacedEidWithId } })
-                                    // dispatch({ type: 'populate' })
-                                    // dispatch({ type: 'attach-Fns' })
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: replacedEidWithId }
+                                    })
 
                                     return res
                                 }
@@ -390,8 +286,8 @@ function attachFns({ cadlObject,
                         case ('rd'): {
                             const getFn = (output) => async () => {
                                 let res
+                                const { api, dataKey, ids, type, ...rest } = _.cloneDeep(output)
                                 try {
-                                    const { api, ids, type, ...rest } = output
                                     const parsedType = type.split('-')[1]
                                     const { data } = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest, type: parseInt(parsedType) } })
                                     res = data
@@ -399,11 +295,11 @@ function attachFns({ cadlObject,
                                     throw error
                                 }
                                 if (res) {
-                                    //TODO: handle case for data is an array or an object
-                                    //TODO: handle update of data state
-                                    // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res[0] } })
-                                    //TODO: handle update of data state
-                                    // dispatch({ type: 'populate' })
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res[0] }
+                                    })
                                     return res
                                 }
                                 //TODO:handle else case
@@ -447,8 +343,11 @@ function attachFns({ cadlObject,
                                     }
                                 }
                                 if (res) {
-                                    // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res } })
-                                    // dispatch({ type: 'populate' })
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res }
+                                    })
                                     return res
                                 }
                                 //TODO:handle else case
@@ -457,10 +356,8 @@ function attachFns({ cadlObject,
                             output = isPopulated(output) ? storeFn(output) : output
                             break
                         }
-                        //TODO: fill with vertex functions
                         case ('cv'): {
                             const storeFn = (output) => async (name, id = null) => {
-
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
@@ -487,14 +384,72 @@ function attachFns({ cadlObject,
                                     }
                                 }
                                 if (res) {
-                                    // dispatch({ type: 'update-data-dataModel', payload: { key: dataModelKey, data: res } })
-                                    // dispatch({ type: 'populate' })
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res }
+                                    })
                                     return res
                                 }
                                 //TODO:handle else case
                                 return null
                             }
                             output = isPopulated(output) ? storeFn(output) : output
+                            break
+                        }
+                        case ('rv'): {
+                            const getFn = (output) => async () => {
+                                const { api, dataKey, ...options } = _.cloneDeep(output)
+
+                                let res: any[] = []
+                                try {
+                                    const { data } = await store.level2SDK.vertexServices.retrieveVertex({
+                                        idList: [], options
+                                    })
+                                    res = data
+                                } catch (error) {
+                                    throw error
+                                }
+                                if (res.length > 0) {
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res }
+                                    })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = isPopulated(output) ? getFn(output) : output
+                            break
+                        }
+                        case ('builtIn'): {
+                            const pathArr = api.split('.').slice(1)
+                            const builtInFnsObj = builtInFns()
+                            const builtInFn = _.get(builtInFnsObj, pathArr)
+                            const fn = (output) => async (input?: any) => {
+                                const { api, dataKey, ...options } = _.cloneDeep(output)
+
+                                let res: any
+                                try {
+                                    const data = await builtInFn(input)
+                                    res = data
+                                } catch (error) {
+                                    throw error
+                                }
+                                if (Array.isArray(res) && res.length > 0 || isObject(res)) {
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res }
+                                    })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = isPopulated(output) ? fn(output) : output
                             break
                         }
                         default: {
@@ -622,4 +577,21 @@ function populateObject({ source, lookFor, locations }: { source: Record<string,
     })
 
     return sourceCopy
+}
+
+function builtInFns() {
+    return {
+        async createNewAccount({
+            phoneNumber,
+            password,
+            verificationCode,
+            name,
+        }) {
+            const data = await Account.create(phoneNumber,
+                password,
+                verificationCode,
+                name)
+            return data
+        }
+    }
 }
