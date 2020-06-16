@@ -262,6 +262,27 @@ export default class CADL {
 
     /**
      * 
+     * @param dataKey string
+     * @returns any
+     * 
+     * -returns data associated with given pageName and dataKey
+     */
+    public getData(pageName: string, dataKey: string): any {
+        const firstCharacter = dataKey[0]
+        const pathArr = dataKey.split('.')
+        let currentVal
+        if (firstCharacter === firstCharacter.toUpperCase()) {
+
+            currentVal = _.get(this.root, pathArr)
+        } else {
+            currentVal = _.get(this.root[pageName], pathArr)
+        }
+        if (currentVal) return currentVal
+        return dataKey
+    }
+
+    /**
+     * 
      * @param action 
      */
     private dispatch(action: { type: string, payload: any }) {

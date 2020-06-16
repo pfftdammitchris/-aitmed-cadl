@@ -205,7 +205,7 @@ function attachFns({ cadlObject,
                      * store:output
                      */
                     const { api } = output
-                    const apiSplit =api.split('.')
+                    const apiSplit = api.split('.')
                     const apiType = apiSplit[0]
                     switch (apiType) {
                         case ('re'): {
@@ -426,19 +426,19 @@ function attachFns({ cadlObject,
                         }
                         case ('builtIn'): {
                             const pathArr = api.split('.').slice(1)
-                            const builtInFnsObj = builtInFns() 
+                            const builtInFnsObj = builtInFns()
                             const builtInFn = _.get(builtInFnsObj, pathArr)
-                            const fn = (output) => async (input?:any) => {
+                            const fn = (output) => async (input?: any) => {
                                 const { api, dataKey, ...options } = _.cloneDeep(output)
 
-                                let res: any[] = []
+                                let res: any
                                 try {
-                                    const { data } = await builtInFn(input)
+                                    const data = await builtInFn(input)
                                     res = data
                                 } catch (error) {
                                     throw error
                                 }
-                                if (res.length > 0) {
+                                if (Array.isArray(res) && res.length > 0 || isObject(res)) {
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
@@ -584,14 +584,14 @@ function builtInFns() {
         async createNewAccount({
             phoneNumber,
             password,
-            verification_code,
+            verificationCode,
             name,
         }) {
-            debugger
-            return await Account.create(phoneNumber,
+            const data = await Account.create(phoneNumber,
                 password,
-                verification_code,
+                verificationCode,
                 name)
+            return data
         }
     }
 }
