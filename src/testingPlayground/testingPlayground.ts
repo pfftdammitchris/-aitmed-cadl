@@ -7,73 +7,8 @@
 import { fetchAll, fetchCADLObject } from '../utils'
 import $ from 'jquery'
 import { CADLResponse } from '../common/Response'
-import CADL, { Account } from '../'
-import { defaultConfig } from '../config'
-// import store from '../common/store's
 export default (async function () {
-    await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
-    await test_login({ password: 'letmein12' })
-    const cadl = new CADL({ ...defaultConfig })
-    await cadl.init()
-    debugger
-    await cadl.initPage('SignIn')
-    await cadl.initPage('CreateNewAccount')
-    debugger
-    // await cadl.root['SignIn'].update({
-    //     UserVertex: 'hello',
-    //     JWT: 'pop'
-    // })
-    // await cadl.initPage('SignUp')
-    // await cadl.initPage('ApplyBusiness')
-    console.log(cadl)
-    // await cadl.initPage('ApplyBusiness')
-    // await cadl.initPage('InboxPatient')
-    // await cadl.initPage('SignUp')
-    // cadl.pages['SignIn'].update({
-    //     UserVertex: 'hello',
-    //     JWT: 'pop'
-    // })
-    // debugger
-
-    async function test_LoginNewDevice({ phone_number }) {
-        console.log('Testing loginNewDevice')
-        let verification_code
-        try {
-            verification_code = await Account.requestVerificationCode(
-                phone_number,
-            )
-        } catch (err) {
-            debugger
-            console.log(err)
-        }
-        try {
-            const loginResult = await Account.loginByVerificationCode(
-                phone_number,
-                verification_code,
-                ).catch((err) => {
-                    console.log(err)
-                    debugger
-                })
-            console.log(loginResult)
-        } catch (err) {
-            // debugger
-            console.log(err)
-        }
-    }
-    //**************************** */
-    //**************************** */
-    //**************************** */
-    async function test_login({ password }) {
-        console.log('Testing login')
-        try {
-            const loginResult = await Account.loginByPassword(
-                password,
-            )
-            console.log(loginResult)
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    
     $(document).ready(function () {
 
         $('#cadlEndpoint-btn').click(function () {
