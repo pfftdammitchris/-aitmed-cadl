@@ -1,7 +1,7 @@
 import { compareUint8Arrays } from '../../utils'
-import { Doc, Edge } from '../../types/lvl2SDK'
+import { CommonTypes } from '../types'
 
-export const mockEdge: Edge = {
+export const mockEdge: CommonTypes.Edge = {
   atime: 1575338814,
   atimes: 1575338814,
   besak: new Uint8Array(),
@@ -21,7 +21,7 @@ export const mockEdge: Edge = {
   subtype: 0,
 }
 
-export const mockDoc: Doc = {
+export const mockDoc: CommonTypes.Doc = {
   atime: 1575338814,
   atimes: 1,
   bsig: '',

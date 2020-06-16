@@ -459,8 +459,8 @@ function attachFns({ cadlObject,
                         }
                         //TODO: fill with vertex functions
                         case ('cv'): {
-                            const storeFn = (dataModel) => async ({ data, type, id = null }) => {
-                               
+                            const storeFn = (output) => async (name, id = null) => {
+
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
