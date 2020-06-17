@@ -164,7 +164,7 @@ function isPopulated(item: string | Record<string, any>): boolean {
  */
 function attachFns({ cadlObject,
     dispatch }) {
-    //the localRoot objec is the page object
+    //the localRoot object is the page object
     const localRoot = cadlObject
 
     //we need the pageName to use as a key to store the data
@@ -239,29 +239,26 @@ function attachFns({ cadlObject,
                         }
                         case ('ce'): {
                             const storeFn = (output) => async (name, id = null) => {
-                                const { dataKey, ...cloneOutput } = _.cloneDeep(output)
+                                const { dataKey } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
+
+                                //get current object name value
                                 const currentVal = _.get(localRoot[pageName], pathArr)
-                                //merging data to store and ecos base data
-                                const mergedVal = mergeDeep(currentVal, cloneOutput)
 
                                 //merging existing name field and incoming name field
-                                const mergedName = mergeDeep({ name: mergedVal }, name)
-
-                                //remove unwanted options before making ecos request
-                                const { api, store: storeProp, get, ...options } = mergedVal
+                                const mergedVal = mergeDeep(currentVal, { name })
 
                                 let res
                                 if (id) {
                                     try {
-                                        const { data } = await store.level2SDK.edgeServices.updateEdge({ ...options, mergedName, id })
+                                        const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
                                         res = data
                                     } catch (error) {
                                         throw error
                                     }
                                 } else {
                                     try {
-                                        const { data } = await store.level2SDK.edgeServices.createEdge({ ...options, name })
+                                        const { data } = await store.level2SDK.edgeServices.createEdge({ ...mergedVal })
                                         res = data
                                     } catch (error) {
                                         throw error
@@ -286,6 +283,7 @@ function attachFns({ cadlObject,
                         case ('rd'): {
                             const getFn = (output) => async () => {
                                 let res
+                                //TODO:update to new format
                                 const { api, dataKey, ids, type, ...rest } = _.cloneDeep(output)
                                 try {
                                     const parsedType = type.split('-')[1]
@@ -311,6 +309,7 @@ function attachFns({ cadlObject,
                         }
                         case ('cd'): {
                             const storeFn = (output) => async ({ data, type, id = null }) => {
+                                //TODO:update to new format after ApplyBusiness is updated
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
@@ -358,6 +357,8 @@ function attachFns({ cadlObject,
                         }
                         case ('cv'): {
                             const storeFn = (output) => async (name, id = null) => {
+
+                                //TODO: update to new format
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
@@ -431,10 +432,12 @@ function attachFns({ cadlObject,
                             const fn = (output) => async (input?: any) => {
                                 //@ts-ignore
                                 const { api, dataKey } = _.cloneDeep(output)
-
+                                const pathArr = dataKey.split('.')
+                                const currentVal = _.get(Object.values(localRoot)[0], pathArr)
                                 let res: any
                                 try {
-                                    const data = await builtInFn(input)
+                                    //TODO: make signature more generic
+                                    const data = await builtInFn({...input, name:{...currentVal.name, ...input}})
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -487,7 +490,7 @@ function updateState(updateObject: Record<string, any>, dispatch: Function): Fun
  * 
  * - replaces the update object, if any, with a function that performs the the actions detailed in the update object 
  */
-function replaceUpdate(cadlObject: Record<string, any>, dispatch: Function) {
+function replaceUpdate(cadlObject: Record<string, any>, dispatch: Function): Record<string, any> {
     const cadlCopy = _.cloneDeep(cadlObject)
     Object.keys(cadlCopy).forEach((key) => {
         if (key === 'update') {
@@ -511,6 +514,13 @@ function populateString({ source, lookFor, locations }: { source: string, lookFo
     let currVal = source
     if (lookFor === '..') {
         currVal = currVal.slice(1)
+    }
+    if (lookFor === '=') {
+        if (source.startsWith('=..')) {
+            currVal = currVal.slice(2)
+        } else if (source.startsWith('=.')) {
+            currVal = currVal.slice(1)
+        }
     }
     let replacement
     for (let location of locations) {
@@ -588,10 +598,12 @@ function builtInFns() {
             verificationCode,
             name,
         }) {
-            const data = await Account.create(phoneNumber,
+            const data = await Account.create(
+                phoneNumber,
                 password,
                 verificationCode,
-                name)
+                name
+            )
             return data
         }
     }

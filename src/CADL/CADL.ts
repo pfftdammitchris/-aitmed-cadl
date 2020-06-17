@@ -171,27 +171,27 @@ export default class CADL {
 
         //make a copy of the CADL object
         let cadlCopy = _.cloneDeep(pageCADL)
+        const boundDispatch = this.dispatch.bind(this)
 
         //populate keys 
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.root] })
-
-
-        const boundDispatch = this.dispatch.bind(this)
-        //TODO: find out who handles update
-        //replace any update object with Fn
-        let replaceUpdateJob = replaceUpdate(populatedKeysCadlCopy, boundDispatch)
-
+        
+      
         //populate the values from baseDataModels
-        const populatedBaseData = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.root] })
+        const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root] })
 
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
         const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]] })
 
-        //attach functions
-        const withFNs = attachFns({ cadlObject: populatedSelfData, dispatch: boundDispatch })
+        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root] })
 
-        let populatedPage = withFNs
+        //attach functions
+        const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
+
+        let replaceUpdateJob = replaceUpdate(withFNs, boundDispatch)
+
+        let populatedPage = replaceUpdateJob
         //run init commands if any
         const { init } = Object.values(populatedPage)[0]
 
@@ -294,10 +294,12 @@ export default class CADL {
                 if (firstCharacter === firstCharacter.toUpperCase()) {
 
                     const currentVal = _.get(this.root, pathArr)
+                    console.log('this is the new top', currentVal)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root, pathArr, mergedVal)
                 } else {
                     const currentVal = _.get(this.root[pageName], pathArr)
+                    console.log('this is the new', currentVal)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
