@@ -37,7 +37,6 @@ export function isObject(item: any): boolean {
     return (item && typeof item === 'object' && !Array.isArray(item))
 }
 
-//TODO: write unit tests
 export function mergeDeep(target, source) {
     let output = Object.assign({}, target)
     if (isObject(target) && isObject(source)) {
