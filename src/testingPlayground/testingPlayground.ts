@@ -31,6 +31,7 @@ export default (async function () {
     cadl.root['CreateNewAccount'].update()
     debugger
 
+    //@ts-ignore
     const res = cadl.getData('CreateNewAccount', 'formData.vertex')
     debugger
 
