@@ -437,7 +437,7 @@ function attachFns({ cadlObject,
                                 let res: any
                                 try {
                                     //TODO: make signature more generic
-                                    const data = await builtInFn({...input, name:{...currentVal.name, ...input}})
+                                    const data = await builtInFn({ ...input, name: { ...currentVal.name, ...input } })
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -475,9 +475,9 @@ function attachFns({ cadlObject,
  *
  *  - returns a function that is used to update the global state of the CADL class
  */
-function updateState(updateObject: Record<string, any>, dispatch: Function): Function {
-    return (response: Record<string, any>): void => {
-        dispatch({ type: 'update-global', payload: { updateObject, response } })
+function updateState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
+    return (response?: Record<string, any>): void => {
+        dispatch({ type: 'update-global', payload: { pageName, updateObject, response } })
         return
     }
 }
@@ -490,13 +490,13 @@ function updateState(updateObject: Record<string, any>, dispatch: Function): Fun
  * 
  * - replaces the update object, if any, with a function that performs the the actions detailed in the update object 
  */
-function replaceUpdate(cadlObject: Record<string, any>, dispatch: Function): Record<string, any> {
+function replaceUpdate({ pageName, cadlObject, dispatch }: { pageName: string, cadlObject: Record<string, any>, dispatch: Function }): Record<string, any> {
     const cadlCopy = _.cloneDeep(cadlObject)
     Object.keys(cadlCopy).forEach((key) => {
         if (key === 'update') {
-            cadlCopy[key] = updateState(cadlCopy[key], dispatch)
+            cadlCopy[key] = updateState({ pageName, updateObject: cadlCopy[key], dispatch })
         } else if (isObject(cadlCopy[key])) {
-            cadlCopy[key] = replaceUpdate(cadlCopy[key], dispatch)
+            cadlCopy[key] = replaceUpdate({ pageName, cadlObject: cadlCopy[key], dispatch })
         }
     })
     return cadlCopy
@@ -512,17 +512,26 @@ function replaceUpdate(cadlObject: Record<string, any>, dispatch: Function): Rec
 function populateString({ source, lookFor, locations }: { source: string, lookFor: string, locations: Record<string, any>[] }) {
     if (!source.startsWith(lookFor)) return source
     let currVal = source
+    let replacement
     if (lookFor === '..') {
         currVal = currVal.slice(1)
     }
     if (lookFor === '=') {
         if (source.startsWith('=..')) {
             currVal = currVal.slice(2)
+        }
+        else if (source.startsWith('=.builtIn')) {
+            const builtInFuncs = builtInFns()
+            const pathArr = source.slice(2).split('.')[1]
+            const fn = _.get(builtInFuncs, pathArr)
+            if (fn) {
+                replacement = fn
+                return replacement
+            }
         } else if (source.startsWith('=.')) {
             currVal = currVal.slice(1)
         }
     }
-    let replacement
     for (let location of locations) {
         try {
             replacement = lookUp(currVal, location)
@@ -574,22 +583,27 @@ function populateArray({ source, lookFor, locations }: { source: any[], lookFor:
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateObject({ source, lookFor, locations }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[] }): Record<string, any> {
+function populateObject({ source, lookFor, locations, skip = [] }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[], skip?: string[] }): Record<string, any> {
     let sourceCopy = _.cloneDeep(source)
 
     Object.keys(sourceCopy).forEach((key) => {
-        if (isObject(sourceCopy[key])) {
-            sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations })
-        } else if (Array.isArray(sourceCopy[key])) {
-            sourceCopy[key] = populateArray({ source: sourceCopy[key], lookFor, locations })
-        } else if (typeof sourceCopy[key] === 'string') {
-            sourceCopy[key] = populateString({ source: sourceCopy[key], lookFor, locations })
+        if (!skip.includes(key)) {
+            if (isObject(sourceCopy[key])) {
+                sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip })
+            } else if (Array.isArray(sourceCopy[key])) {
+                sourceCopy[key] = populateArray({ source: sourceCopy[key], lookFor, locations })
+            } else if (typeof sourceCopy[key] === 'string') {
+                sourceCopy[key] = populateString({ source: sourceCopy[key], lookFor, locations })
+            }
         }
     })
 
     return sourceCopy
 }
 
+/**
+ * @returns Record<string, Function>
+ */
 function builtInFns() {
     return {
         async createNewAccount({
@@ -605,6 +619,7 @@ function builtInFns() {
                 name
             )
             return data
-        }
+        },
+        currentDateTime: (() => Date.now())()
     }
 }

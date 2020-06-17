@@ -6,7 +6,7 @@ import {
     attachFns,
     populateKeys,
     replaceUpdate,
-    builtInFns
+    builtInFns,
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -175,21 +175,20 @@ export default class CADL {
 
         //populate keys 
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.root] })
-        
-      
+
+
         //populate the values from baseDataModels
-        const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root] })
+        const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root], skip: ['update'] })
 
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
-        const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]] })
-
-        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root] })
+        const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update'] })
+        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update'] })
 
         //attach functions
         const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
 
-        let replaceUpdateJob = replaceUpdate(withFNs, boundDispatch)
+        let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: withFNs, dispatch: boundDispatch })
 
         let populatedPage = replaceUpdateJob
         //run init commands if any
@@ -294,28 +293,37 @@ export default class CADL {
                 if (firstCharacter === firstCharacter.toUpperCase()) {
 
                     const currentVal = _.get(this.root, pathArr)
-                    console.log('this is the new top', currentVal)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root, pathArr, mergedVal)
                 } else {
                     const currentVal = _.get(this.root[pageName], pathArr)
-                    console.log('this is the new', currentVal)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
                 return
+                [0]
             }
             case ('update-global'): {
-                const { updateObject, response } = action.payload
-                Object.keys(updateObject).forEach((key) => {
-                    const trimPath = key.substring(1, key.length - 1)
-                    const pathArr = trimPath.split('.')
+                const { pageName, updateObject, response } = action.payload
 
-                    const trimVal = updateObject[key].substring(2, updateObject[key].length)
-
-                    const valPath = trimVal.split('.')
-                    const val = _.get({ builtIn: response }, valPath) || _.get(this.root, valPath)
-                    _.set(this.root, pathArr, val)
+                const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
+                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
+                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+                Object.keys(populateAfterInheriting).forEach((key) => {
+                    //TODO: add case for key that starts with =
+                    if (!key.startsWith('=')) {
+                        const trimPath = key.substring(1, key.length - 1)
+                        const pathArr = trimPath.split('.')
+                        if (response) {
+                            const trimVal = populateAfterInheriting[key].substring(2, populateAfterInheriting[key].length)
+                            const valPath = trimVal.split('.')
+                            const val = _.get({ builtIn: response }, valPath) || _.get(this.root, valPath)
+                            _.set(this.root, pathArr, val)
+                        } else {
+                            const val = populateAfterInheriting[key]
+                            _.set(this.root, pathArr, val)
+                        }
+                    }
                 })
                 break
             }

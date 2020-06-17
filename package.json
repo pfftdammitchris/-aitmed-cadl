@@ -15,7 +15,7 @@
     "test:start": "serve test_public",
     "start": "serve public",
     "dev": "npm-run-all --parallel start watch",
-    "test:dev": "npm-run-all --parallel start watch",
+    "test:dev": "npm-run-all --parallel test:start watch",
     "test": "jest",
     "bump-version": "npm version patch",
     "prepublish:public": "npm run build && npm run bump-version",
