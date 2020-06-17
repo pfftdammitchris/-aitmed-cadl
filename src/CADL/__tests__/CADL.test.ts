@@ -60,4 +60,19 @@ describe('CADL', () => {
     })
 
     })
+
+    describe('initPage', () => {
+      xit('should correctly populate dotted references in the initiated page', () => {
+         //
+      })
+      
+      xit('should correctly populate evaluated references in the initiated page', () => {
+         //
+      })
+
+      xit('should correctly populate @ references in the initiated page', () => {
+         //
+      })
+
+    })
 })
