@@ -86403,7 +86403,8 @@
 	        case 20:
 	          debugger;
 	          cadl.root['CreateNewAccount'].update();
-	          debugger;
+	          debugger; //@ts-ignore
+
 	          res = cadl.getData('CreateNewAccount', 'formData.vertex');
 	          debugger;
 	          console.log(cadl);
