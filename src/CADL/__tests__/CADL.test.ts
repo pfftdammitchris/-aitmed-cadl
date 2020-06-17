@@ -11,7 +11,7 @@ describe('CADL', () => {
         test('defaultObject returns an Object', () => {
             const cadl = new CADL({ ...defaultConfig })
 
-            return cadl['defaultObject']('https://s3.us-east-2.amazonaws.com/public.aitmed.com/cadl/aitmed_0.203/BaseDataModel_en.yml').then(data => {
+            return cadl['defaultObject']('https://s3.us-east-2.amazonaws.com/public.aitmed.com/cadl/aitmed_0.203.1/BaseDataModel_en.yml').then(data => {
                 expect(isObject(data)).toBe(true)
             })
         })

@@ -11,26 +11,26 @@ import { CADLResponse } from '../common/Response'
 // import { defaultConfig } from '../config'
 // import { Account } from '../services'
 export default (async function () {
-
     // debugger
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
     // const cadl = new CADL({ ...defaultConfig })
     // await cadl.init()
-    // await cadl.initPage('SignIn')
-    // await cadl.initPage('SignUp')
+    // // await cadl.initPage('DashboardPatient')
+    // // await cadl.initPage('SignUp')
     // await cadl.initPage('CreateNewAccount')
-    
-    // const vc = await Account.requestVerificationCode('+1 1072562892')
-    // await cadl.root['CreateNewAccount'].formData.vertex.store({
+    // debugger
+    // const vc = await Account.requestVerificationCode('+1 100000091')
+    // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
     //     confirmPassword: "confirmPassword",
     //     countryCode: "+1",
     //     password: "new password",
-    //     phoneNumber: "+1 1072562892",
+    //     phoneNumber: "+1 100000091",
     //     username: "username",
     //     verificationCode: vc
     // })
+    // debugger
 
     // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
     // debugger

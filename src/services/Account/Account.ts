@@ -37,7 +37,7 @@ export const create: AccountTypes.Create = async (
     phone_number,
     password,
     verification_code,
-    userInfo: { name },
+    userInfo: name,
   })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
