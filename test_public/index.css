@@ -1,0 +1,15 @@
+.pagename{
+    font-weight: 500;
+}
+.error{
+    color: red;
+}
+#val-endpoint-text{
+    display:none;
+}
+#val-page-text{
+    display:none;
+}
+input{
+    width: 600px;
+}

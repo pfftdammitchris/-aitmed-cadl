@@ -48,7 +48,7 @@ export default [
 		]
 	},
 	{
-		input: 'src/testingPlayground',
+		input: 'src/validator',
 		output: {
 			file: 'public/bundle.js',
 			format: 'iife', // immediately-invoked function expression — suitable for <script> tags
@@ -71,6 +71,30 @@ export default [
 			json()
 
 		],
+	},
+	{
+		input: 'src/testingPlayground',
+		output: {
+			file: 'test_public/bundle.js',
+			format: 'iife', // immediately-invoked function expression — suitable for <script> tags
+			sourcemap: true
+		},
+		plugins: [
+			resolve({
+				extensions,
+				preferBuiltins: true,
+				browser: true,
+			}), // so Rollup can find `ms`
+			commonjs(), // so Rollup can convert `ms` to an ES module
+			globals(),
+			babel({
+				include: ['src/**/*'],
+				exclude: 'node_modules/**',
+				runtimeHelpers: true,
+				extensions,
+			}),
+			json()
 
+		],
 	}
 ];
