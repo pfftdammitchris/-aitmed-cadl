@@ -85779,7 +85779,11 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
+<<<<<<< HEAD
 	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedPage, init, _i, _Object$entries, _Object$entries$_i, actionType, actions, _iterator2, _step2, command;
+=======
+	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedBaseDataComp, populatedSelfDataComp, populatedAfterInheritingComp, populatedPage, init, _i, _Object$entries, _Object$entries$_i, actionType, actions, _iterator2, _step2, command;
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
@@ -85813,7 +85817,11 @@
 	                  source: populatedKeysCadlCopy,
 	                  lookFor: '.',
 	                  locations: [this.root],
+<<<<<<< HEAD
 	                  skip: ['update']
+=======
+	                  skip: ['update', 'components']
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                }); //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
 	                //populate the values from self
 
@@ -85821,13 +85829,21 @@
 	                  source: populatedBaseData,
 	                  lookFor: '..',
 	                  locations: [Object.values(populatedBaseData)[0]],
+<<<<<<< HEAD
 	                  skip: ['update']
+=======
+	                  skip: ['update', 'components']
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                });
 	                populatedAfterInheriting = populateObject({
 	                  source: populatedSelfData,
 	                  lookFor: '=',
 	                  locations: [Object.values(populatedSelfData)[0], this.root],
+<<<<<<< HEAD
 	                  skip: ['update']
+=======
+	                  skip: ['update', 'components']
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                }); //attach functions
 
 	                withFNs = attachFns({
@@ -85838,32 +85854,73 @@
 	                  pageName: pageName,
 	                  cadlObject: withFNs,
 	                  dispatch: boundDispatch
+<<<<<<< HEAD
 	                });
 	                populatedPage = replaceUpdateJob; //run init commands if any
+=======
+	                }); //populate the values from baseDataModels
+
+	                populatedBaseDataComp = populateObject({
+	                  source: replaceUpdateJob,
+	                  lookFor: '.',
+	                  locations: [this.root],
+	                  skip: ['update', 'formData']
+	                }); //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
+	                //populate the values from self
+
+	                populatedSelfDataComp = populateObject({
+	                  source: populatedBaseDataComp,
+	                  lookFor: '..',
+	                  locations: [Object.values(populatedBaseDataComp)[0]],
+	                  skip: ['update', 'formData']
+	                });
+	                populatedAfterInheritingComp = populateObject({
+	                  source: populatedSelfDataComp,
+	                  lookFor: '=',
+	                  locations: [Object.values(populatedSelfDataComp)[0], this.root],
+	                  skip: ['update', 'formData']
+	                });
+	                populatedPage = populatedAfterInheritingComp; //run init commands if any
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 
 	                init = Object.values(populatedPage)[0].init;
 
 	                if (!init) {
+<<<<<<< HEAD
 	                  _context2.next = 49;
+=======
+	                  _context2.next = 52;
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                _i = 0, _Object$entries = Object.entries(init);
 
+<<<<<<< HEAD
 	              case 18:
 	                if (!(_i < _Object$entries.length)) {
 	                  _context2.next = 49;
+=======
+	              case 21:
+	                if (!(_i < _Object$entries.length)) {
+	                  _context2.next = 52;
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                _Object$entries$_i = slicedToArray(_Object$entries[_i], 2), actionType = _Object$entries$_i[0], actions = _Object$entries$_i[1];
 
 	                if (!(Array.isArray(actions) && actions.length > 0)) {
+<<<<<<< HEAD
 	                  _context2.next = 46;
+=======
+	                  _context2.next = 49;
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                _iterator2 = _createForOfIteratorHelper$h(actions);
+<<<<<<< HEAD
 	                _context2.prev = 22;
 
 	                _iterator2.s();
@@ -85871,12 +85928,22 @@
 	              case 24:
 	                if ((_step2 = _iterator2.n()).done) {
 	                  _context2.next = 38;
+=======
+	                _context2.prev = 25;
+
+	                _iterator2.s();
+
+	              case 27:
+	                if ((_step2 = _iterator2.n()).done) {
+	                  _context2.next = 41;
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                command = _step2.value;
 
 	                if (!(typeof command === 'function')) {
+<<<<<<< HEAD
 	                  _context2.next = 36;
 	                  break;
 	                }
@@ -85895,6 +85962,26 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init.").concat(actionType), _context2.t0);
 
 	              case 35:
+=======
+	                  _context2.next = 39;
+	                  break;
+	                }
+
+	                _context2.prev = 30;
+	                _context2.next = 33;
+	                return command();
+
+	              case 33:
+	                _context2.next = 38;
+	                break;
+
+	              case 35:
+	                _context2.prev = 35;
+	                _context2.t0 = _context2["catch"](30);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init.").concat(actionType), _context2.t0);
+
+	              case 38:
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                //populateObject again
 	                populatedPage = populateObject({
 	                  source: populatedPage,
@@ -85902,6 +85989,7 @@
 	                  locations: [cadlCopy]
 	                });
 
+<<<<<<< HEAD
 	              case 36:
 	                _context2.next = 24;
 	                break;
@@ -85932,11 +86020,47 @@
 	                this.root = _objectSpread$c(_objectSpread$c({}, this.root), populatedPage);
 
 	              case 50:
+=======
+	              case 39:
+	                _context2.next = 27;
+	                break;
+
+	              case 41:
+	                _context2.next = 46;
+	                break;
+
+	              case 43:
+	                _context2.prev = 43;
+	                _context2.t1 = _context2["catch"](25);
+
+	                _iterator2.e(_context2.t1);
+
+	              case 46:
+	                _context2.prev = 46;
+
+	                _iterator2.f();
+
+	                return _context2.finish(46);
+
+	              case 49:
+	                _i++;
+	                _context2.next = 21;
+	                break;
+
+	              case 52:
+	                this.root = _objectSpread$c(_objectSpread$c({}, this.root), populatedPage);
+
+	              case 53:
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
+<<<<<<< HEAD
 	        }, _callee2, this, [[22, 40, 43, 46], [27, 32]]);
+=======
+	        }, _callee2, this, [[25, 43, 46, 49], [30, 35]]);
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	      }));
 
 	      function initPage(_x) {
@@ -86466,10 +86590,20 @@
 	          return cadl.init();
 
 	        case 12:
+<<<<<<< HEAD
 	          _context3.next = 14;
 	          return cadl.initPage('ApplyBusiness');
 
 	        case 14:
+=======
+	          // await cadl.initPage('DashboardPatient')
+	          // await cadl.initPage('SignUp')
+	          debugger;
+	          _context3.next = 15;
+	          return cadl.initPage('CreateNewAccount');
+
+	        case 15:
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	          debugger; // const vc = await Account.requestVerificationCode('+1 196360039')
 	          // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
 	          //     confirmPassword: "confirmPassword",
@@ -86488,7 +86622,11 @@
 
 	          console.log(cadl);
 
+<<<<<<< HEAD
 	        case 16:
+=======
+	        case 17:
+>>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	        case "end":
 	          return _context3.stop();
 	      }

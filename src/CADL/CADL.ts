@@ -178,19 +178,28 @@ export default class CADL {
 
 
         //populate the values from baseDataModels
-        const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root], skip: ['update'] })
+        const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root], skip: ['update', 'components'] })
 
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
-        const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update'] })
-        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update'] })
+        const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update', 'components'] })
+        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update','components'] })
 
         //attach functions
         const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
 
         let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: withFNs, dispatch: boundDispatch })
 
-        let populatedPage = replaceUpdateJob
+
+        //populate the values from baseDataModels
+        const populatedBaseDataComp = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.root], skip: ['update', 'formData'] })
+
+        //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
+        //populate the values from self
+        const populatedSelfDataComp = populateObject({ source: populatedBaseDataComp, lookFor: '..', locations: [Object.values(populatedBaseDataComp)[0]], skip: ['update', 'formData'] })
+        const populatedAfterInheritingComp = populateObject({ source: populatedSelfDataComp, lookFor: '=', locations: [Object.values(populatedSelfDataComp)[0], this.root], skip: ['update', 'formData'] })
+
+        let populatedPage = populatedAfterInheritingComp
         //run init commands if any
         const { init } = Object.values(populatedPage)[0]
 

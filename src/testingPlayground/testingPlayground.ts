@@ -16,7 +16,8 @@ export default (async function () {
     await cadl.init()
     // await cadl.initPage('DashboardPatient')
     // await cadl.initPage('SignUp')
-    await cadl.initPage('ApplyBusiness')
+    debugger
+    await cadl.initPage('CreateNewAccount')
     debugger
     // const vc = await Account.requestVerificationCode('+1 196360039')
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
