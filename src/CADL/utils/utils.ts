@@ -210,19 +210,23 @@ function attachFns({ cadlObject,
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
+                                
                                 const { api, dataKey, ...options } = _.cloneDeep(output)
                                 let res: any[] = []
                                 try {
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
+                                    
                                     res = data
                                 } catch (error) {
                                     console.log(error)
                                     throw error
                                 }
+                                
                                 if (res.length > 0) {
                                     res = res.map((edge) => {
                                         return replaceEidWithId(edge)
                                     })
+                                    
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
@@ -476,8 +480,9 @@ function attachFns({ cadlObject,
  *  - returns a function that is used to update the global state of the CADL class
  */
 function updateState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
-    return (response?: Record<string, any>): void => {
-        dispatch({ type: 'update-global', payload: { pageName, updateObject, response } })
+    return async (response?: Record<string, any>): Promise<void> => {
+        
+        await dispatch({ type: 'update-global', payload: { pageName, updateObject, response } })
         return
     }
 }

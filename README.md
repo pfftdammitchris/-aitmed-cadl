@@ -14,17 +14,23 @@ This package contains the CADL class used to process CADL objects in addition to
 
 ## To run the CADL validation UI locally run the following command
 
-### Expect the following errors if a CADL Object is invalid
-
--InvalidDestination
-    -when page jump destination is not a valid page
--UnableToRetrieveYAML
-    -when something goes wrong in retrieving the yaml file form S3
--UnableToParseYAML
-    -if there is a parsing error
-
 ```
     npm run dev
 ```
 
 then navigate to http://localhost:5000/
+
+### Expect the following errors if a CADL Object is invalid
+
+-InvalidDestination
+-when page jump destination is not a valid page
+-UnableToRetrieveYAML
+-when something goes wrong in retrieving the yaml file form S3
+-UnableToParseYAML
+-if there is a parsing error
+
+## To run the CADL test page UI locally run the following command
+
+```
+    npm run test:dev
+```

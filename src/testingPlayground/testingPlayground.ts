@@ -18,17 +18,17 @@ export default (async function () {
     // await cadl.initPage('SignUp')
     await cadl.initPage('CreateNewAccount')
     debugger
-    const vc = await Account.requestVerificationCode('+1 109700034')
+    const vc = await Account.requestVerificationCode('+1 196360039')
     await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
         confirmPassword: "confirmPassword",
         countryCode: "+1",
         password: "new password",
-        phoneNumber: "+1 109700034",
+        phoneNumber: "+1 196360039",
         username: "username",
         verificationCode: vc
     })
     debugger
-    cadl.root['CreateNewAccount'].update()
+    await cadl.root['CreateNewAccount'].update()
     debugger
 
     //@ts-ignore

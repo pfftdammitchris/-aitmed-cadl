@@ -309,7 +309,7 @@ export default class CADL {
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
                 const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
-                Object.keys(populateAfterInheriting).forEach((key) => {
+                Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
                         const trimPath = key.substring(1, key.length - 1)
@@ -323,6 +323,24 @@ export default class CADL {
                             const val = populateAfterInheriting[key]
                             _.set(this.root, pathArr, val)
                         }
+                    } else if (key.startsWith('=')) {
+                        const trimPath = key.substring(2, key.length)
+                        const pathArr = trimPath.split('.')
+                        const val = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
+
+                        const populateWithRoot = populateObject({ source: val, lookFor: '.', locations: [this.root, this.root[pageName]] })
+
+                        const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
+
+                        const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+
+                        const boundDispatch = this.dispatch.bind(this)
+                        const withFn = attachFns({ cadlObject: populateAfterInheriting, dispatch: boundDispatch })
+                        if (typeof withFn === 'function') {
+                            await withFn()
+                            console.log(this)
+                        }
+                        console.log(withFn)
                     }
                 })
                 break
