@@ -71059,6 +71059,7 @@
 	}
 
 	function createEdgeService(_request) {
+	  debugger
 	  return new Promise(function (resolve, reject) {
 	    store$2.grpcClient.ce(_request, null, callback);
 
@@ -84615,54 +84616,55 @@
 	                              mergedVal = mergeDeep(currentVal, {
 	                                name: name
 	                              });
+	                              mergedVal.type = parseInt(mergedVal.type);
 
 	                              if (!id) {
-	                                _context2.next = 19;
+	                                _context2.next = 20;
 	                                break;
 	                              }
 
-	                              _context2.prev = 6;
-	                              _context2.next = 9;
+	                              _context2.prev = 7;
+	                              _context2.next = 10;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$b(_objectSpread$b({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 9:
+	                            case 10:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              _context2.next = 17;
+	                              _context2.next = 18;
 	                              break;
 
-	                            case 14:
-	                              _context2.prev = 14;
-	                              _context2.t0 = _context2["catch"](6);
+	                            case 15:
+	                              _context2.prev = 15;
+	                              _context2.t0 = _context2["catch"](7);
 	                              throw _context2.t0;
 
-	                            case 17:
-	                              _context2.next = 30;
+	                            case 18:
+	                              _context2.next = 31;
 	                              break;
 
-	                            case 19:
-	                              _context2.prev = 19;
-	                              _context2.next = 22;
+	                            case 20:
+	                              _context2.prev = 20;
+	                              _context2.next = 23;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$b({}, mergedVal));
 
-	                            case 22:
+	                            case 23:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 30;
+	                              _context2.next = 31;
 	                              break;
 
-	                            case 27:
-	                              _context2.prev = 27;
-	                              _context2.t1 = _context2["catch"](19);
+	                            case 28:
+	                              _context2.prev = 28;
+	                              _context2.t1 = _context2["catch"](20);
 	                              throw _context2.t1;
 
-	                            case 30:
+	                            case 31:
 	                              if (!res) {
-	                                _context2.next = 34;
+	                                _context2.next = 36;
 	                                break;
 	                              }
 
@@ -84675,18 +84677,26 @@
 	                                  dataKey: dataKey,
 	                                  data: replacedEidWithId
 	                                }
+	                              }); //dispatch action to update state that is dependant of this response
+	                              //TODO: optimize by updating a slice rather than entire object
+
+	                              dispatch({
+	                                type: 'populate',
+	                                payload: {
+	                                  pageName: pageName
+	                                }
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 34:
+	                            case 36:
 	                              return _context2.abrupt("return", null);
 
-	                            case 35:
+	                            case 37:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[6, 14], [19, 27]]);
+	                      }, _callee2, null, [[7, 15], [20, 28]]);
 	                    }));
 
 	                    return function (_x) {
@@ -85779,11 +85789,7 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
-<<<<<<< HEAD
-	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedPage, init, _i, _Object$entries, _Object$entries$_i, actionType, actions, _iterator2, _step2, command;
-=======
 	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedBaseDataComp, populatedSelfDataComp, populatedAfterInheritingComp, populatedPage, init, _i, _Object$entries, _Object$entries$_i, actionType, actions, _iterator2, _step2, command;
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
@@ -85817,11 +85823,7 @@
 	                  source: populatedKeysCadlCopy,
 	                  lookFor: '.',
 	                  locations: [this.root],
-<<<<<<< HEAD
-	                  skip: ['update']
-=======
 	                  skip: ['update', 'components']
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                }); //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
 	                //populate the values from self
 
@@ -85829,21 +85831,13 @@
 	                  source: populatedBaseData,
 	                  lookFor: '..',
 	                  locations: [Object.values(populatedBaseData)[0]],
-<<<<<<< HEAD
-	                  skip: ['update']
-=======
 	                  skip: ['update', 'components']
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                });
 	                populatedAfterInheriting = populateObject({
 	                  source: populatedSelfData,
 	                  lookFor: '=',
 	                  locations: [Object.values(populatedSelfData)[0], this.root],
-<<<<<<< HEAD
-	                  skip: ['update']
-=======
 	                  skip: ['update', 'components']
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                }); //attach functions
 
 	                withFNs = attachFns({
@@ -85854,10 +85848,6 @@
 	                  pageName: pageName,
 	                  cadlObject: withFNs,
 	                  dispatch: boundDispatch
-<<<<<<< HEAD
-	                });
-	                populatedPage = replaceUpdateJob; //run init commands if any
-=======
 	                }); //populate the values from baseDataModels
 
 	                populatedBaseDataComp = populateObject({
@@ -85881,54 +85871,30 @@
 	                  skip: ['update', 'formData']
 	                });
 	                populatedPage = populatedAfterInheritingComp; //run init commands if any
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 
 	                init = Object.values(populatedPage)[0].init;
 
 	                if (!init) {
-<<<<<<< HEAD
-	                  _context2.next = 49;
-=======
 	                  _context2.next = 52;
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                _i = 0, _Object$entries = Object.entries(init);
 
-<<<<<<< HEAD
-	              case 18:
-	                if (!(_i < _Object$entries.length)) {
-	                  _context2.next = 49;
-=======
 	              case 21:
 	                if (!(_i < _Object$entries.length)) {
 	                  _context2.next = 52;
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                _Object$entries$_i = slicedToArray(_Object$entries[_i], 2), actionType = _Object$entries$_i[0], actions = _Object$entries$_i[1];
 
 	                if (!(Array.isArray(actions) && actions.length > 0)) {
-<<<<<<< HEAD
-	                  _context2.next = 46;
-=======
 	                  _context2.next = 49;
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                _iterator2 = _createForOfIteratorHelper$h(actions);
-<<<<<<< HEAD
-	                _context2.prev = 22;
-
-	                _iterator2.s();
-
-	              case 24:
-	                if ((_step2 = _iterator2.n()).done) {
-	                  _context2.next = 38;
-=======
 	                _context2.prev = 25;
 
 	                _iterator2.s();
@@ -85936,33 +85902,12 @@
 	              case 27:
 	                if ((_step2 = _iterator2.n()).done) {
 	                  _context2.next = 41;
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                  break;
 	                }
 
 	                command = _step2.value;
 
 	                if (!(typeof command === 'function')) {
-<<<<<<< HEAD
-	                  _context2.next = 36;
-	                  break;
-	                }
-
-	                _context2.prev = 27;
-	                _context2.next = 30;
-	                return command();
-
-	              case 30:
-	                _context2.next = 35;
-	                break;
-
-	              case 32:
-	                _context2.prev = 32;
-	                _context2.t0 = _context2["catch"](27);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init.").concat(actionType), _context2.t0);
-
-	              case 35:
-=======
 	                  _context2.next = 39;
 	                  break;
 	                }
@@ -85981,7 +85926,6 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init.").concat(actionType), _context2.t0);
 
 	              case 38:
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	                //populateObject again
 	                populatedPage = populateObject({
 	                  source: populatedPage,
@@ -85989,38 +85933,6 @@
 	                  locations: [cadlCopy]
 	                });
 
-<<<<<<< HEAD
-	              case 36:
-	                _context2.next = 24;
-	                break;
-
-	              case 38:
-	                _context2.next = 43;
-	                break;
-
-	              case 40:
-	                _context2.prev = 40;
-	                _context2.t1 = _context2["catch"](22);
-
-	                _iterator2.e(_context2.t1);
-
-	              case 43:
-	                _context2.prev = 43;
-
-	                _iterator2.f();
-
-	                return _context2.finish(43);
-
-	              case 46:
-	                _i++;
-	                _context2.next = 18;
-	                break;
-
-	              case 49:
-	                this.root = _objectSpread$c(_objectSpread$c({}, this.root), populatedPage);
-
-	              case 50:
-=======
 	              case 39:
 	                _context2.next = 27;
 	                break;
@@ -86051,16 +85963,11 @@
 	                this.root = _objectSpread$c(_objectSpread$c({}, this.root), populatedPage);
 
 	              case 53:
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-<<<<<<< HEAD
-	        }, _callee2, this, [[22, 40, 43, 46], [27, 32]]);
-=======
 	        }, _callee2, this, [[25, 43, 46, 49], [30, 35]]);
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
 	      }));
 
 	      function initPage(_x) {
@@ -86215,10 +86122,35 @@
 	      var _this = this;
 
 	      switch (action.type) {
+	        case 'populate':
+	          {
+	            var pageName = action.payload.pageName;
+
+	            var pageObjectCopy = lodash.cloneDeep(this.root[pageName]);
+
+	            var populateWithRoot = populateObject({
+	              source: pageObjectCopy,
+	              lookFor: '.',
+	              locations: [this.root, this.root[pageName]]
+	            });
+	            var populateWithSelf = populateObject({
+	              source: populateWithRoot,
+	              lookFor: '..',
+	              locations: [this.root, this.root[pageName]]
+	            });
+	            var populateAfterInheriting = populateObject({
+	              source: populateWithSelf,
+	              lookFor: '=',
+	              locations: [this.root, this.root[pageName]]
+	            });
+	            this.root[pageName] = populateAfterInheriting;
+	            break;
+	          }
+
 	        case 'update-data':
 	          {
 	            var _action$payload = action.payload,
-	                pageName = _action$payload.pageName,
+	                _pageName = _action$payload.pageName,
 	                dataKey = _action$payload.dataKey,
 	                data = _action$payload.data;
 	            var firstCharacter = dataKey[0];
@@ -86231,11 +86163,11 @@
 
 	              lodash.set(this.root, pathArr, mergedVal);
 	            } else {
-	              var _currentVal = lodash.get(this.root[pageName], pathArr);
+	              var _currentVal = lodash.get(this.root[_pageName], pathArr);
 
 	              var _mergedVal = mergeDeep(_currentVal, data);
 
-	              lodash.set(this.root[pageName], pathArr, _mergedVal);
+	              lodash.set(this.root[_pageName], pathArr, _mergedVal);
 	            }
 
 	            return;
@@ -86244,27 +86176,31 @@
 	        case 'update-global':
 	          {
 	            var _action$payload2 = action.payload,
-	                _pageName = _action$payload2.pageName,
+	                _pageName2 = _action$payload2.pageName,
 	                updateObject = _action$payload2.updateObject,
 	                response = _action$payload2.response;
-	            var populateWithRoot = populateObject({
+
+	            var _populateWithRoot = populateObject({
 	              source: updateObject,
 	              lookFor: '.',
-	              locations: [this.root, this.root[_pageName]]
+	              locations: [this.root, this.root[_pageName2]]
 	            });
-	            var populateWithSelf = populateObject({
-	              source: populateWithRoot,
+
+	            var _populateWithSelf = populateObject({
+	              source: _populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, this.root[_pageName]]
+	              locations: [this.root, this.root[_pageName2]]
 	            });
-	            var populateAfterInheriting = populateObject({
-	              source: populateWithSelf,
+
+	            var _populateAfterInheriting = populateObject({
+	              source: _populateWithSelf,
 	              lookFor: '=',
-	              locations: [this.root, this.root[_pageName]]
+	              locations: [this.root, this.root[_pageName2]]
 	            });
-	            Object.keys(populateAfterInheriting).forEach( /*#__PURE__*/function () {
+
+	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
 	              var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                var trimPath, _pathArr, trimVal, valPath, val, _val, _trimPath, _pathArr2, _val2, _populateWithRoot, _populateWithSelf, _populateAfterInheriting, boundDispatch, withFn;
+	                var trimPath, _pathArr, trimVal, valPath, val, _val, _trimPath, _pathArr2, _val2, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, boundDispatch, withFn;
 
 	                return regenerator.wrap(function _callee5$(_context5) {
 	                  while (1) {
@@ -86279,7 +86215,7 @@
 	                        _pathArr = trimPath.split('.');
 
 	                        if (response) {
-	                          trimVal = populateAfterInheriting[key].substring(2, populateAfterInheriting[key].length);
+	                          trimVal = _populateAfterInheriting[key].substring(2, _populateAfterInheriting[key].length);
 	                          valPath = trimVal.split('.');
 	                          val = lodash.get({
 	                            builtIn: response
@@ -86287,7 +86223,7 @@
 
 	                          lodash.set(_this.root, _pathArr, val);
 	                        } else {
-	                          _val = populateAfterInheriting[key];
+	                          _val = _populateAfterInheriting[key];
 
 	                          lodash.set(_this.root, _pathArr, _val);
 	                        }
@@ -86303,25 +86239,25 @@
 
 	                        _trimPath = key.substring(2, key.length);
 	                        _pathArr2 = _trimPath.split('.');
-	                        _val2 = lodash.get(_this.root, _pathArr2) || lodash.get(_this.root[_pageName], _pathArr2);
-	                        _populateWithRoot = populateObject({
+	                        _val2 = lodash.get(_this.root, _pathArr2) || lodash.get(_this.root[_pageName2], _pathArr2);
+	                        _populateWithRoot2 = populateObject({
 	                          source: _val2,
 	                          lookFor: '.',
-	                          locations: [_this.root, _this.root[_pageName]]
+	                          locations: [_this.root, _this.root[_pageName2]]
 	                        });
-	                        _populateWithSelf = populateObject({
-	                          source: _populateWithRoot,
+	                        _populateWithSelf2 = populateObject({
+	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this.root, _this.root[_pageName]]
+	                          locations: [_this.root, _this.root[_pageName2]]
 	                        });
-	                        _populateAfterInheriting = populateObject({
-	                          source: _populateWithSelf,
+	                        _populateAfterInheriting2 = populateObject({
+	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this.root, _this.root[_pageName]]
+	                          locations: [_this.root, _this.root[_pageName2]]
 	                        });
 	                        boundDispatch = _this.dispatch.bind(_this);
 	                        withFn = attachFns({
-	                          cadlObject: _populateAfterInheriting,
+	                          cadlObject: _populateAfterInheriting2,
 	                          dispatch: boundDispatch
 	                        });
 
@@ -86470,163 +86406,65 @@
 
 	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-	  var cadl, test_LoginNewDevice, _test_LoginNewDevice, test_login, _test_login;
+	  var cadl, vc;
 
 	  return regenerator.wrap(function _callee3$(_context3) {
 	    while (1) {
 	      switch (_context3.prev = _context3.next) {
 	        case 0:
-	          _test_login = function _test_login3() {
-	            _test_login = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(_ref3) {
-	              var password, loginResult;
-	              return regenerator.wrap(function _callee2$(_context2) {
-	                while (1) {
-	                  switch (_context2.prev = _context2.next) {
-	                    case 0:
-	                      password = _ref3.password;
-	                      console.log('Testing login');
-	                      _context2.prev = 2;
-	                      _context2.next = 5;
-	                      return Account$1.loginByPassword(password);
 
-	                    case 5:
-	                      loginResult = _context2.sent;
-	                      console.log(loginResult);
-	                      _context2.next = 12;
-	                      break;
-
-	                    case 9:
-	                      _context2.prev = 9;
-	                      _context2.t0 = _context2["catch"](2);
-	                      console.log(_context2.t0);
-
-	                    case 12:
-	                    case "end":
-	                      return _context2.stop();
-	                  }
-	                }
-	              }, _callee2, null, [[2, 9]]);
-	            }));
-	            return _test_login.apply(this, arguments);
-	          };
-
-	          test_login = function _test_login2(_x2) {
-	            return _test_login.apply(this, arguments);
-	          };
-
-	          _test_LoginNewDevice = function _test_LoginNewDevice3() {
-	            _test_LoginNewDevice = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref2) {
-	              var phone_number, verification_code, loginResult;
-	              return regenerator.wrap(function _callee$(_context) {
-	                while (1) {
-	                  switch (_context.prev = _context.next) {
-	                    case 0:
-	                      phone_number = _ref2.phone_number;
-	                      console.log('Testing loginNewDevice');
-	                      _context.prev = 2;
-	                      _context.next = 5;
-	                      return Account$1.requestVerificationCode(phone_number);
-
-	                    case 5:
-	                      verification_code = _context.sent;
-	                      _context.next = 12;
-	                      break;
-
-	                    case 8:
-	                      _context.prev = 8;
-	                      _context.t0 = _context["catch"](2);
-	                      debugger;
-	                      console.log(_context.t0);
-
-	                    case 12:
-	                      _context.prev = 12;
-	                      _context.next = 15;
-	                      return Account$1.loginByVerificationCode(phone_number, verification_code)["catch"](function (err) {
-	                        console.log(err);
-	                        debugger;
-	                      });
-
-	                    case 15:
-	                      loginResult = _context.sent;
-	                      console.log(loginResult);
-	                      _context.next = 22;
-	                      break;
-
-	                    case 19:
-	                      _context.prev = 19;
-	                      _context.t1 = _context["catch"](12);
-	                      // debugger
-	                      console.log(_context.t1);
-
-	                    case 22:
-	                    case "end":
-	                      return _context.stop();
-	                  }
-	                }
-	              }, _callee, null, [[2, 8], [12, 19]]);
-	            }));
-	            return _test_LoginNewDevice.apply(this, arguments);
-	          };
-
-	          test_LoginNewDevice = function _test_LoginNewDevice2(_x) {
-	            return _test_LoginNewDevice.apply(this, arguments);
-	          };
-
-	          debugger;
+	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
+	          // await test_login({ password: 'letmein12' })
+	          cadl = new CADL(_objectSpread$d({}, defaultConfig$1));
 	          _context3.next = 7;
-	          return test_LoginNewDevice({
-	            phone_number: '+1 3238677306'
-	          });
+	          return cadl.init();
 
 	        case 7:
 	          _context3.next = 9;
-	          return test_login({
-	            password: 'letmein12'
-	          });
-
-	        case 9:
-	          cadl = new CADL(_objectSpread$d({}, defaultConfig$1));
-	          _context3.next = 12;
-	          return cadl.init();
-
-	        case 12:
-<<<<<<< HEAD
-	          _context3.next = 14;
-	          return cadl.initPage('ApplyBusiness');
-
-	        case 14:
-=======
-	          // await cadl.initPage('DashboardPatient')
-	          // await cadl.initPage('SignUp')
-	          debugger;
-	          _context3.next = 15;
 	          return cadl.initPage('CreateNewAccount');
 
+	        case 9:
+	          debugger;
+	          _context3.next = 12;
+	          return Account$1.requestVerificationCode('+1 3009665139');
+
+	        case 12:
+	          vc = _context3.sent;
+	          _context3.next = 15;
+	          return cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+	            confirmPassword: "letmein123",
+	            countryCode: "+1",
+	            password: "letmein123",
+	            phoneNumber: "+1 3009665139",
+	            username: "stanman",
+	            verificationCode: vc
+	          });
+
 	        case 15:
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
-	          debugger; // const vc = await Account.requestVerificationCode('+1 196360039')
-	          // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-	          //     confirmPassword: "confirmPassword",
-	          //     countryCode: "+1",
-	          //     password: "new password",
-	          //     phoneNumber: "+1 196360039",
-	          //     username: "username",
-	          //     verificationCode: vc
-	          // })
-	          // debugger
-	          // await cadl.root['CreateNewAccount'].update()
-	          // debugger
-	          // //@ts-ignore
+	          debugger;
+	          _context3.next = 18;
+	          return cadl.root['CreateNewAccount'].update();
+
+	        case 18:
+	          debugger;
+	          _context3.next = 21;
+	          return cadl.initPage('ApplyBusiness');
+
+	        case 21:
+	          debugger;
+	          _context3.next = 24;
+	          return cadl.root['ApplyBusiness'].formData.edgeAPI.store({
+	            companyPhone: "+1 3009665139"
+	          });
+
+	        case 24:
+	          debugger; // //@ts-ignore
 	          // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
 	          // debugger
 
 	          console.log(cadl);
 
-<<<<<<< HEAD
-	        case 16:
-=======
-	        case 17:
->>>>>>> dfbdd78c5ac2db65976ed217ee62fe7c1322b96f
+	        case 26:
 	        case "end":
 	          return _context3.stop();
 	      }

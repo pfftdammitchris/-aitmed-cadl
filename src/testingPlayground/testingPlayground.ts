@@ -8,29 +8,30 @@ import CADL from '../'
 import { defaultConfig } from '../config'
 import { Account } from '../services'
 export default (async function () {
-    debugger
-    await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
-    await test_login({ password: 'letmein12' })
+    // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
+    // await test_login({ password: 'letmein12' })
 
     const cadl = new CADL({ ...defaultConfig })
     await cadl.init()
-    // await cadl.initPage('DashboardPatient')
-    // await cadl.initPage('SignUp')
-    debugger
     await cadl.initPage('CreateNewAccount')
     debugger
-    // const vc = await Account.requestVerificationCode('+1 196360039')
-    // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-    //     confirmPassword: "confirmPassword",
-    //     countryCode: "+1",
-    //     password: "new password",
-    //     phoneNumber: "+1 196360039",
-    //     username: "username",
-    //     verificationCode: vc
-    // })
-    // debugger
-    // await cadl.root['CreateNewAccount'].update()
-    // debugger
+    const vc = await Account.requestVerificationCode('+1 3009665139')
+    await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+        confirmPassword: "letmein123",
+        countryCode: "+1",
+        password: "letmein123",
+        phoneNumber: "+1 3009665139",
+        username: "stanman",
+        verificationCode: vc
+    })
+    debugger
+    await cadl.root['CreateNewAccount'].update()
+    debugger
+    await cadl.initPage('ApplyBusiness')
+    debugger
+    await cadl.root['ApplyBusiness'].formData.edgeAPI.store({ companyPhone: "+1 3009665139" })
+    debugger
+
 
     // //@ts-ignore
     // const res = cadl.getData('CreateNewAccount', 'formData.vertex')

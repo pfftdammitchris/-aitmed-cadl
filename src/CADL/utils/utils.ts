@@ -210,23 +210,23 @@ function attachFns({ cadlObject,
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
-                                
+
                                 const { api, dataKey, ...options } = _.cloneDeep(output)
                                 let res: any[] = []
                                 try {
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
-                                    
+
                                     res = data
                                 } catch (error) {
                                     console.log(error)
                                     throw error
                                 }
-                                
+
                                 if (res.length > 0) {
                                     res = res.map((edge) => {
                                         return replaceEidWithId(edge)
                                     })
-                                    
+
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
@@ -251,7 +251,7 @@ function attachFns({ cadlObject,
 
                                 //merging existing name field and incoming name field
                                 const mergedVal = mergeDeep(currentVal, { name })
-
+                                mergedVal.type = parseInt(mergedVal.type)
                                 let res
                                 if (id) {
                                     try {
@@ -274,6 +274,13 @@ function attachFns({ cadlObject,
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
                                         payload: { pageName, dataKey, data: replacedEidWithId }
+                                    })
+
+                                    //dispatch action to update state that is dependant of this response
+                                    //TODO: optimize by updating a slice rather than entire object
+                                    dispatch({
+                                        type: 'populate',
+                                        payload: { pageName }
                                     })
 
                                     return res
@@ -481,7 +488,7 @@ function attachFns({ cadlObject,
  */
 function updateState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
     return async (response?: Record<string, any>): Promise<void> => {
-        
+
         await dispatch({ type: 'update-global', payload: { pageName, updateObject, response } })
         return
     }

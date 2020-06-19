@@ -183,7 +183,7 @@ export default class CADL {
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
         const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update', 'components'] })
-        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update','components'] })
+        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update', 'components'] })
 
         //attach functions
         const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
@@ -295,6 +295,17 @@ export default class CADL {
      */
     private dispatch(action: { type: string, payload: any }) {
         switch (action.type) {
+            case ('populate'): {
+                const { pageName } = action.payload
+                const pageObjectCopy = _.cloneDeep(this.root[pageName])
+
+                const populateWithRoot = populateObject({ source: pageObjectCopy, lookFor: '.', locations: [this.root, this.root[pageName]] })
+                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
+                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+
+                this.root[pageName] = populateAfterInheriting
+                break
+            }
             case ('update-data'): {
                 const { pageName, dataKey, data } = action.payload
                 const firstCharacter = dataKey[0]
