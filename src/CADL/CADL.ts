@@ -31,7 +31,7 @@ export default class CADL {
     private _baseUrl: string
     private _assetsUrl: string
     private _root: Record<string, any> = {}
-    private _builtIn: Record<string, any> = builtInFns()
+    private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
 
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
@@ -183,7 +183,7 @@ export default class CADL {
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
         const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update', 'components'] })
-        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update','components'] })
+        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update', 'components'] })
 
         //attach functions
         const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
@@ -299,7 +299,9 @@ export default class CADL {
                 const { pageName, dataKey, data } = action.payload
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
-                if (firstCharacter === firstCharacter.toUpperCase()) {
+                if (pageName === 'builtIn') {
+                    _.set(this, pathArr, data)
+                } else if (firstCharacter === firstCharacter.toUpperCase()) {
 
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
@@ -310,28 +312,20 @@ export default class CADL {
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
                 return
-                [0]
             }
             case ('update-global'): {
-                const { pageName, updateObject, response } = action.payload
+                const { pageName, updateObject } = action.payload
 
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
-                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, this.root[pageName]] })
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
                         const trimPath = key.substring(1, key.length - 1)
                         const pathArr = trimPath.split('.')
-                        if (response) {
-                            const trimVal = populateAfterInheriting[key].substring(2, populateAfterInheriting[key].length)
-                            const valPath = trimVal.split('.')
-                            const val = _.get({ builtIn: response }, valPath) || _.get(this.root, valPath)
-                            _.set(this.root, pathArr, val)
-                        } else {
-                            const val = populateAfterInheriting[key]
-                            _.set(this.root, pathArr, val)
-                        }
+                        const val = populateAfterInheriting[key]
+                        _.set(this.root, pathArr, val)
                     } else if (key.startsWith('=')) {
                         const trimPath = key.substring(2, key.length)
                         const pathArr = trimPath.split('.')
