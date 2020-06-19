@@ -48,44 +48,44 @@ export default (async function () {
 
     console.log(cadl)
 
-    async function test_LoginNewDevice({ phone_number }) {
-        console.log('Testing loginNewDevice')
-        let verification_code
-        try {
-            verification_code = await Account.requestVerificationCode(
-                phone_number,
-            )
-        } catch (err) {
-            debugger
-            console.log(err)
-        }
-        try {
-            const loginResult = await Account.loginByVerificationCode(
-                phone_number,
-                verification_code,
-            ).catch((err) => {
-                console.log(err)
-                debugger
-            })
-            console.log(loginResult)
-        } catch (err) {
-            // debugger
-            console.log(err)
-        }
-    }
+    // async function test_LoginNewDevice({ phone_number }) {
+    //     console.log('Testing loginNewDevice')
+    //     let verification_code
+    //     try {
+    //         verification_code = await Account.requestVerificationCode(
+    //             phone_number,
+    //         )
+    //     } catch (err) {
+    //         debugger
+    //         console.log(err)
+    //     }
+    //     try {
+    //         const loginResult = await Account.loginByVerificationCode(
+    //             phone_number,
+    //             verification_code,
+    //         ).catch((err) => {
+    //             console.log(err)
+    //             debugger
+    //         })
+    //         console.log(loginResult)
+    //     } catch (err) {
+    //         // debugger
+    //         console.log(err)
+    //     }
+    // }
     //**************************** */
     //**************************** */
     //**************************** */
-    async function test_login({ password }) {
-        console.log('Testing login')
-        try {
-            const loginResult = await Account.loginByPassword(
-                password,
-            )
-            console.log(loginResult)
-        } catch (err) {
-            console.log(err)
-        }
-    }
+    // async function test_login({ password }) {
+    //     console.log('Testing login')
+    //     try {
+    //         const loginResult = await Account.loginByPassword(
+    //             password,
+    //         )
+    //         console.log(loginResult)
+    //     } catch (err) {
+    //         console.log(err)
+    //     }
+    // }
 
 })()
