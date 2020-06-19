@@ -86428,32 +86428,30 @@
 	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
+	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
 	  var cadl, vc;
-
-	  return regenerator.wrap(function _callee3$(_context3) {
+	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
-	      switch (_context3.prev = _context3.next) {
+	      switch (_context.prev = _context.next) {
 	        case 0:
-
 	          // debugger
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$d({}, defaultConfig$1));
-	          _context3.next = 7;
+	          _context.next = 3;
 	          return cadl.init();
 
-	        case 7:
-	          _context3.next = 9;
+	        case 3:
+	          _context.next = 5;
 	          return cadl.initPage('SignIn');
 
-	        case 9:
-	          _context3.next = 11;
+	        case 5:
+	          _context.next = 7;
 	          return Account$1.requestVerificationCode('+1 196360039');
 
-	        case 11:
-	          vc = _context3.sent;
-	          _context3.next = 14;
+	        case 7:
+	          vc = _context.sent;
+	          _context.next = 10;
 	          return cadl.builtIn['signIn']({
 	            confirmPassword: "confirmPassword",
 	            countryCode: "+1",
@@ -86463,12 +86461,12 @@
 	            verificationCode: vc
 	          });
 
-	        case 14:
+	        case 10:
 	          cadl.root['SignIn'].update();
-	          _context3.next = 17;
+	          _context.next = 13;
 	          return cadl.initPage('ApplyBusiness');
 
-	        case 17:
+	        case 13:
 	          // await cadl.initPage('SignUp')
 	          // debugger
 	          // debugger
@@ -86487,14 +86485,52 @@
 	          // //@ts-ignore
 	          // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
 	          // debugger
-	          console.log(cadl);
+	          console.log(cadl); // async function test_LoginNewDevice({ phone_number }) {
+	          //     console.log('Testing loginNewDevice')
+	          //     let verification_code
+	          //     try {
+	          //         verification_code = await Account.requestVerificationCode(
+	          //             phone_number,
+	          //         )
+	          //     } catch (err) {
+	          //         debugger
+	          //         console.log(err)
+	          //     }
+	          //     try {
+	          //         const loginResult = await Account.loginByVerificationCode(
+	          //             phone_number,
+	          //             verification_code,
+	          //         ).catch((err) => {
+	          //             console.log(err)
+	          //             debugger
+	          //         })
+	          //         console.log(loginResult)
+	          //     } catch (err) {
+	          //         // debugger
+	          //         console.log(err)
+	          //     }
+	          // }
+	          //**************************** */
+	          //**************************** */
+	          //**************************** */
+	          // async function test_login({ password }) {
+	          //     console.log('Testing login')
+	          //     try {
+	          //         const loginResult = await Account.loginByPassword(
+	          //             password,
+	          //         )
+	          //         console.log(loginResult)
+	          //     } catch (err) {
+	          //         console.log(err)
+	          //     }
+	          // }
 
-	        case 18:
+	        case 14:
 	        case "end":
-	          return _context3.stop();
+	          return _context.stop();
 	      }
 	    }
-	  }, _callee3);
+	  }, _callee);
 	}))();
 
 	return testingPlayground;
