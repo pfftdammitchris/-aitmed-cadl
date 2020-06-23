@@ -15,6 +15,7 @@ import {
     populateObject,
     populateArray,
     populateString,
+    populateKeys,
 } from '../utils'
 import { UnableToLocateValue } from '../../errors'
 
@@ -84,6 +85,31 @@ describe('utils', () => {
             expect(() => lookUp(directions, location)).toThrowError(UnableToLocateValue)
         })
     })
+
+    describe('populateKeys', () => {
+      it('it populates the object', () => {
+        const root = { Style: { border: { style: '2'}}}
+        const source = { type: 'abc', style: { '.Style': { width: '0.50'}} }
+        const lookFor = '.Style'
+        expect(populateKeys({ source, lookFor, locations:[root] })).toEqual({
+            ...source,
+            style: { ...root.Style, ...source.style[".Style"]}
+        })
+      })
+      
+      it('it should not be equal to this wrongly merged object', () => {
+        const root = { Style: { border: { style: '2'}}}
+        const source = { type: 'abc', style: { '.Style': { width: '0.50'}} }
+        const lookFor = '.Style'
+        expect(populateKeys({ source, lookFor, locations:[root] })).not.toEqual({
+            ...source,
+            style: {  ...source.style[".Style"], border: { style: '3'}}
+        })
+      })
+
+
+    })
+
     describe('populateString', () => {
         test('it replaces string with val in a given location', () => {
             const source = '.dataModel.firstName'

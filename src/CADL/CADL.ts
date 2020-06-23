@@ -407,11 +407,11 @@ export default class CADL {
     public set cadlVersion(cadlVersion) {
         this._cadlVersion = cadlVersion
     }
-    private get cadlEndpoint() {
+    public get cadlEndpoint() {
         return this._cadlEndpoint
     }
 
-    private set cadlEndpoint(cadlEndpoint) {
+    public set cadlEndpoint(cadlEndpoint) {
         this._cadlEndpoint = cadlEndpoint
     }
     public get baseUrl() {
