@@ -84867,6 +84867,7 @@
 	                            case 0:
 	                              data = _ref9.data, type = _ref9.type, _ref9$id = _ref9.id, id = _ref9$id === void 0 ? null : _ref9$id;
 	                              //TODO:update to new format after ApplyBusiness is updated
+	                              //@ts-ignore
 	                              _$cloneDeep4 = lodash.cloneDeep(output), dataKey = _$cloneDeep4.dataKey, cloneOutput = objectWithoutProperties(_$cloneDeep4, ["dataKey"]); // const pathArr = dataKey.split('.')
 	                              // const currentVal = _.get(localRoot[pageName], pathArr)
 
@@ -85262,6 +85263,7 @@
 	                                    _key = _Object$entries$_i[0],
 	                                    val = _Object$entries$_i[1];
 
+	                                //@ts-ignore
 	                                if (elem.type[_key] !== parseInt(val)) {
 	                                  return false;
 	                                }
@@ -86077,6 +86079,7 @@
 	                  break;
 	                }
 
+	                //@ts-ignore
 	                this.callQueue = init.map(function (command, index) {
 	                  return index;
 	                });
