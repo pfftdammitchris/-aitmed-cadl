@@ -45,7 +45,7 @@ export interface Create {
 // Login
 export interface Login {
   (phone_number: string, password: string, verification_code: string): Promise<
-    User
+    any
   >
 }
 

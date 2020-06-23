@@ -31,7 +31,8 @@ export default class CADL {
     private _baseUrl: string
     private _assetsUrl: string
     private _root: Record<string, any> = {}
-    private _builtIn: Record<string, any> = builtInFns()
+    private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
+    private _callQueue: any[]
 
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
@@ -140,6 +141,7 @@ export default class CADL {
                         const populatedBasePageVals = populateObject({ source: populatedBasePageKeys, lookFor: '.', locations: [populatedBasePageKeys] })
 
                         this.root = { ...this.root, ...populatedBasePageVals }
+                        break
                     }
                     default: {
                         const rawPage = await this.getPage(pageName)
@@ -176,22 +178,23 @@ export default class CADL {
         //populate keys 
         let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.root] })
 
-
-        //populate the values from baseDataModels
+        //FOR FORMDATA
+        //populate the values from baseDataModels for formData
         const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root], skip: ['update', 'components'] })
 
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
         const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update', 'components'] })
         const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update', 'components'] })
-
+        //TODO: add skip prop
         //attach functions
         const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
 
         let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: withFNs, dispatch: boundDispatch })
 
 
-        //populate the values from baseDataModels
+        //FOR COMPONENTS
+        //populate the values from baseDataModels for components
         const populatedBaseDataComp = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.root], skip: ['update', 'formData'] })
 
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
@@ -200,24 +203,37 @@ export default class CADL {
         const populatedAfterInheritingComp = populateObject({ source: populatedSelfDataComp, lookFor: '=', locations: [Object.values(populatedSelfDataComp)[0], this.root], skip: ['update', 'formData'] })
 
         let populatedPage = populatedAfterInheritingComp
+        this.root = { ...this.root, ...populatedPage }
         //run init commands if any
-        const { init } = Object.values(populatedPage)[0]
-
+        let init = Object.values(populatedPage)[0].init
         if (init) {
-            for (let [actionType, actions] of Object.entries(init)) {
-                if (Array.isArray(actions) && actions.length > 0) {
-                    for (let command of actions) {
-                        if (typeof command === 'function') {
-                            try {
-                                //TODO: check dispatch function/ side effects work accordingly
-                                await command()
-                            } catch (error) {
-                                throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init.${actionType}`, error)
-                            }
-                            //populateObject again
-                            populatedPage = populateObject({ source: populatedPage, lookFor: '..', locations: [cadlCopy] })
-                        }
+            this.callQueue = init.map((command, index) => index)
+            while (this.callQueue.length > 0) {
+                const currIndex = this.callQueue.shift()
+                const command = init[currIndex]
+                if (typeof command === 'function') {
+                    try {
+                        //TODO: check dispatch function/ side effects work accordingly
+                        await command()
+                    } catch (error) {
+                        throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
+
+                    
+                    const updatePage = this.root[pageName]
+                    
+                    //populateObject again
+                    let populatedPageAgain = populateObject({ source: updatePage, lookFor: '..', locations: [this.root[pageName]] })
+                    
+                    const withFNs2 = attachFns({ cadlObject: { [pageName]: populatedPageAgain }, dispatch: boundDispatch })
+                    
+
+                    populatedPage = Object.values(withFNs2)[0]
+                    
+                    init = Object.values(withFNs2)[0].init
+                    
+                    this.root[pageName] = { ...this.root[pageName], ...Object.values(withFNs2)[0] }
+                    
                 }
             }
         }
@@ -298,51 +314,63 @@ export default class CADL {
             case ('populate'): {
                 const { pageName } = action.payload
                 const pageObjectCopy = _.cloneDeep(this.root[pageName])
+                const boundDispatch = this.dispatch.bind(this)
 
                 const populateWithRoot = populateObject({ source: pageObjectCopy, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
                 const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
 
-                this.root[pageName] = populateAfterInheriting
+                const withFNs = attachFns({ cadlObject: populateAfterInheriting, dispatch: boundDispatch })
+
+                this.root[pageName] = withFNs
                 break
             }
             case ('update-data'): {
                 const { pageName, dataKey, data } = action.payload
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
-                if (firstCharacter === firstCharacter.toUpperCase()) {
+                if (pageName === 'builtIn') {
+                    _.set(this, pathArr, data)
+                } else if (firstCharacter === firstCharacter.toUpperCase()) {
 
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root, pathArr, mergedVal)
                 } else {
                     const currentVal = _.get(this.root[pageName], pathArr)
-                    const mergedVal = mergeDeep(currentVal, data)
+                    let mergedVal
+                    if (Array.isArray(currentVal)) {
+                        if (Array.isArray(data)) {
+                            mergedVal = data
+                        } else {
+                            mergedVal = [data]
+                        }
+                    } else {
+                        mergedVal = data
+                    }
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
                 return
-                [0]
+            }
+            case ('get-data'): {
+                const { pageName, dataKey } = action.payload
+                const pathArr = dataKey.split('.')
+                const currentVal = _.get(this.root[pageName], pathArr)
+                return currentVal
             }
             case ('update-global'): {
-                const { pageName, updateObject, response } = action.payload
+                const { pageName, updateObject } = action.payload
 
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
-                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, this.root[pageName]] })
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
                         const trimPath = key.substring(1, key.length - 1)
                         const pathArr = trimPath.split('.')
-                        if (response) {
-                            const trimVal = populateAfterInheriting[key].substring(2, populateAfterInheriting[key].length)
-                            const valPath = trimVal.split('.')
-                            const val = _.get({ builtIn: response }, valPath) || _.get(this.root, valPath)
-                            _.set(this.root, pathArr, val)
-                        } else {
-                            const val = populateAfterInheriting[key]
-                            _.set(this.root, pathArr, val)
-                        }
+                        const val = populateAfterInheriting[key]
+                        _.set(this.root, pathArr, val)
                     } else if (key.startsWith('=')) {
                         const trimPath = key.substring(2, key.length)
                         const pathArr = trimPath.split('.')
@@ -433,6 +461,13 @@ export default class CADL {
 
     get apiVersion() {
         return store.apiVersion
+    }
+    set callQueue(callQueue) {
+        this._callQueue = callQueue
+    }
+
+    get callQueue() {
+        return this._callQueue
     }
 
     public getConfig() {

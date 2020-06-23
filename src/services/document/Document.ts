@@ -82,7 +82,6 @@ export const create: NoteTypes.Create = async ({
 
     // data must be base64 in name field
     if (dType.isOnServer) name.data = bs64Data
-
     const response = await store.level2SDK.documentServices
         .createDocument({
             eid: edge.eid,
@@ -109,6 +108,8 @@ export const create: NoteTypes.Create = async ({
             .catch(store.errorCatcher)
     }
 
+    //TODO: convert document type to be read like documentToNote
+    //type has to be converted in order to use filter
     const note = await documentToNote({ document })
     return note
 
