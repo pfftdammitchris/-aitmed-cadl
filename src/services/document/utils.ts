@@ -74,7 +74,9 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
 
     // Get data
     let content: string | Blob | Record<any, any> | null = null,
-        isBroken = false,
+    //@ts-ignore
+    isBroken = false,
+    //@ts-ignore
         error: AiTmedError | null = null
     try {
         let data: Uint8Array

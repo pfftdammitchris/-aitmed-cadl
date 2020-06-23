@@ -207,6 +207,7 @@ export default class CADL {
         //run init commands if any
         let init = Object.values(populatedPage)[0].init
         if (init) {
+            //@ts-ignore
             this.callQueue = init.map((command, index) => index)
             while (this.callQueue.length > 0) {
                 const currIndex = this.callQueue.shift()

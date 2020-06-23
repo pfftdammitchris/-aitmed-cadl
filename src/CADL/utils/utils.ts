@@ -335,6 +335,7 @@ function attachFns({ cadlObject,
                         case ('cd'): {
                             const storeFn = (output) => async ({ data, type, id = null }) => {
                                 //TODO:update to new format after ApplyBusiness is updated
+                                //@ts-ignore
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
                                 // const pathArr = dataKey.split('.')
                                 // const currentVal = _.get(localRoot[pageName], pathArr)
@@ -494,6 +495,7 @@ function attachFns({ cadlObject,
                                     const data = source.filter((elem) => {
                                         //TODO: make filter more universal
                                         for (let [key, val] of Object.entries(filter)) {
+                                            //@ts-ignore
                                             if (elem.type[key] !== parseInt(val)) {
                                                 return false
                                             }
