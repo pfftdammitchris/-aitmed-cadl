@@ -3,7 +3,7 @@
 import AiTmedError from '../../common/AiTmedError'
 import { retrieveEdge } from '../../common/retrieve'
 import store from '../../common/store'
-import {  ungzip } from '../../utils'
+import { ungzip } from '../../utils'
 
 import DType from '../../common/DType'
 
@@ -170,11 +170,8 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
         isBroken = true
     }
     return {
-        id: store.utils.idToBase64(document.id),
-        owner_id: store.utils.idToBase64(edge.bvid),
-        edge_id: store.utils.idToBase64(document.eid),
-
-        info: {
+        ...document,
+        name: {
             title: name.title,
             type: contentType,
             content,
@@ -183,15 +180,15 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
 
         created_at: document.ctime * 1000,
         modified_at: document.mtime * 1000,
-
-        isEditable: dType.isEditable,
-
-        isEncrypt: dType.isEncrypted,
-        isGzip: dType.isGzip,
-        isOnServer: dType.isOnServer,
-        size: document.size,
-
-        isBroken,
-        error,
+        type: {
+            isOnServer: dType.isOnServer,
+            isZipped: dType.isGzip,
+            isBinary: dType.isBinary,
+            isEncrypted: dType.isEncrypted,
+            isEditable: dType.isEditable,
+            applicationDataType: dType.dataType,
+            mediaType: dType.mediaType,
+            size: document.size,
+        },
     }
 }

@@ -122,8 +122,8 @@ class DType {
 
   // Application Data Type
   public set dataType(_type: number) {
-    const type = _type < 0 || _type >= DATA_TYPE_LIST.length ? 0 : _type
-    this._dataType = type
+    // const type = _type < 0 || _type >= DATA_TYPE_LIST.length ? 0 : _type
+    this._dataType = _type
   }
   public get dataType() {
     return this._dataType

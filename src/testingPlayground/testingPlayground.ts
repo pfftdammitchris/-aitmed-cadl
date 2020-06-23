@@ -8,39 +8,41 @@ import CADL from '../'
 import { defaultConfig } from '../config'
 import { Account } from '../services'
 export default (async function () {
-    // debugger
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
     const cadl = new CADL({ ...defaultConfig })
     await cadl.init()
     await cadl.initPage('SignIn')
-    const vc = await Account.requestVerificationCode('+1 196360039')
-    await cadl.builtIn['signIn']({
-        confirmPassword: "confirmPassword",
-        countryCode: "+1",
-        password: "new password",
-        phoneNumber: "+1 196360039",
-        username: "username",
-        verificationCode: vc
-    })
-    cadl.root['SignIn'].update()
-    await cadl.initPage('ApplyBusiness')
-    // await cadl.initPage('SignUp')
-    // debugger
-    // debugger
-    // const vc = await Account.requestVerificationCode('+1 196360039')
+    // await cadl.initPage('CreateNewAccount')
+
+    const vc = await Account.requestVerificationCode('+1 8858687687')
+
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-    //     confirmPassword: "confirmPassword",
+    //     confirmPassword: "letmein123",
     //     countryCode: "+1",
-    //     password: "new password",
-    //     phoneNumber: "+1 196360039",
+    //     password: "letmein123",
+    //     phoneNumber: "+1 8858687687",
     //     username: "username",
     //     verificationCode: vc
     // })
-    // debugger
-    // await cadl.root['CreateNewAccount'].update()
-    // debugger
+
+    await cadl.builtIn['signIn']({
+        password: "letmein123",
+        phoneNumber: "+1 8858687687",
+        verificationCode: vc
+    })
+
+    cadl.root['SignIn'].update()
+    await cadl.initPage('ApplyBusiness')
+    debugger
+    await cadl.root['ApplyBusiness'].formData.edgeAPI.store({ companyPhone: "+1 3431111dsd42ssadsd1daf39" })
+    debugger
+    await cadl.root['ApplyBusiness'].formData.wciAPI.store({ type: 'text/plain', data: "+1 3009665sassadsdsd1daf39" })
+    debugger
+    await cadl.root['ApplyBusiness'].formData.w9API.store({ type: 'text/plain', data: "+1 hellow" })
+    debugger
+
 
     // //@ts-ignore
     // const res = cadl.getData('CreateNewAccount', 'formData.vertex')

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import store from '../../common/store'
 import { mergeDeep, isObject } from '../../utils'
 import Document from '../../services/document'
+import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
 
@@ -249,9 +250,14 @@ function attachFns({ cadlObject,
                                 //get current object name value
                                 const currentVal = _.get(localRoot[pageName], pathArr)
 
+                                //TODO: remove when backend fixes message type problem
+                                if (currentVal.name && currentVal.name.message) {
+                                    currentVal.name.message = "temp"
+                                }
+
                                 //merging existing name field and incoming name field
                                 const mergedVal = mergeDeep(currentVal, { name })
-
+                                // mergedVal.type = parseInt(mergedVal.type)
                                 let res
                                 if (id) {
                                     try {
@@ -276,6 +282,13 @@ function attachFns({ cadlObject,
                                         payload: { pageName, dataKey, data: replacedEidWithId }
                                     })
 
+                                    //dispatch action to update state that is dependant of this response
+                                    //TODO: optimize by updating a slice rather than entire object
+                                    dispatch({
+                                        type: 'populate',
+                                        payload: { pageName }
+                                    })
+
                                     return res
                                 }
                                 //TODO:handle else case
@@ -288,10 +301,18 @@ function attachFns({ cadlObject,
                             const getFn = (output) => async () => {
                                 let res
                                 //TODO:update to new format
-                                const { api, dataKey, ids, type, ...rest } = _.cloneDeep(output)
+                                const { api, dataKey, ids, ...rest } = _.cloneDeep(output)
                                 try {
-                                    const parsedType = type.split('-')[1]
-                                    const { data } = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest, type: parseInt(parsedType) } })
+                                    // const parsedType = type.split('-')[1]
+                                    const data = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest } }).then(({ data }) => {
+                                        return Promise.all(data.map(async (document) => {
+                                            const note = await documentToNote({ document })
+                                            return note
+                                        }))
+                                    }).then((res) => {
+                                        return res
+                                    }).catch((err) => { console.log(err) })
+
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -300,7 +321,7 @@ function attachFns({ cadlObject,
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res[0] }
+                                        payload: { pageName, dataKey, data: res }
                                     })
                                     return res
                                 }
@@ -315,16 +336,17 @@ function attachFns({ cadlObject,
                             const storeFn = (output) => async ({ data, type, id = null }) => {
                                 //TODO:update to new format after ApplyBusiness is updated
                                 const { dataKey, ...cloneOutput } = _.cloneDeep(output)
-                                const pathArr = dataKey.split('.')
-                                const currentVal = _.get(localRoot[pageName], pathArr)
-                                const mergedVal = mergeDeep(currentVal, cloneOutput)
-                                const mergedName = mergeDeep({ name: mergedVal }, name)
-                                const { api, store: storeProp, get, ...options } = mergedVal
+                                // const pathArr = dataKey.split('.')
+                                // const currentVal = _.get(localRoot[pageName], pathArr)
+                                const currentVal = dispatch({ type: 'get-data', payload: { dataKey, pageName } })
+
+                                const mergedVal = mergeDeep(currentVal, { name: { data, type } })
+                                const { api, ...options } = mergedVal
 
                                 let res
                                 if (id) {
                                     try {
-                                        const { data } = await store.level2SDK.documentServices.updateDocument({ ...options, mergedName, id })
+                                        const { data } = await store.level2SDK.documentServices.updateDocument({ ...options, id })
                                         res = data
                                     } catch (error) {
                                         throw error
@@ -451,6 +473,42 @@ function attachFns({ cadlObject,
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
                                         payload: { pageName, dataKey, data: res }
+                                    })
+                                    return res
+                                }
+                                //TODO:handle else case
+                                return null
+                            }
+                            output = isPopulated(output) ? fn(output) : output
+                            break
+                        }
+                        case ('localSearch'): {
+
+                            const fn = (output) => async () => {
+                                //@ts-ignore
+                                const { api, dataKey, filter, source: sourcePath } = _.cloneDeep(output)
+                                let res: any
+                                try {
+                                    const source = dispatch({ type: 'get-data', payload: { pageName, dataKey: sourcePath } })
+                                    //TODO: make signature more generic
+                                    const data = source.filter((elem) => {
+                                        //TODO: make filter more universal
+                                        for (let [key, val] of Object.entries(filter)) {
+                                            if (elem.type[key] !== parseInt(val)) {
+                                                return false
+                                            }
+                                        }
+                                        return true
+                                    })
+                                    res = data
+                                } catch (error) {
+                                    throw error
+                                }
+                                if (Array.isArray(res) && res.length > 0 ) {
+                                    dispatch({
+                                        type: 'update-data',
+                                        //TODO: handle case for data is an array or an object
+                                        payload: { pageName, dataKey, data: res[0] }
                                     })
                                     return res
                                 }
