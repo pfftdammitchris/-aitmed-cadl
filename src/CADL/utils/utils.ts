@@ -506,7 +506,7 @@ function attachFns({ cadlObject,
                                 } catch (error) {
                                     throw error
                                 }
-                                if (Array.isArray(res) && res.length > 0 ) {
+                                if (Array.isArray(res) && res.length > 0) {
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object

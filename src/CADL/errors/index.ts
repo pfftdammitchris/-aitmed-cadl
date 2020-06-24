@@ -6,6 +6,7 @@ import UnableToParseYAML from './UnableToParseYAML'
 import UnableToRetrieveYAML from './UnableToRetrieveYAML'
 import UnableToLocateValue from './UnableToLocateValue'
 import InvalidDestination from './InvalidDestination'
+import UnableToLoadConfig from './UnableToLoadConfig'
 
 export {
     NoDataModelsFound,
@@ -15,5 +16,6 @@ export {
     UnableToParseYAML,
     UnableToRetrieveYAML,
     UnableToLocateValue,
-    InvalidDestination
+    InvalidDestination,
+    UnableToLoadConfig
 }

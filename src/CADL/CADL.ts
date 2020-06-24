@@ -15,7 +15,8 @@ import store, {
 import {
     UnableToParseYAML,
     UnableToRetrieveYAML,
-    UnableToExecuteFn
+    UnableToExecuteFn,
+    UnableToLoadConfig
 } from './errors'
 import {
     CADL_OBJECT,
@@ -32,7 +33,7 @@ export default class CADL {
     private _assetsUrl: string
     private _root: Record<string, any> = {}
     private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
-    private _callQueue: any[]
+    private _initCallQueue: any[]
 
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
@@ -44,9 +45,10 @@ export default class CADL {
     /**
      * -loads config if not already loaded
      * 
-     * -sets CADL version, baseUrl, assetsUrl, baseDataModel, baseCSS
+     * -sets CADL version, baseUrl, assetsUrl, and root
      * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
      * @throws UnableToParseYAML -if unable to parse yaml file
+     * @throws UnableToLoadConfig -if unable to load config data
      */
     //TODO: add a force parameter to allow user to force init again
     public async init({ BaseDataModel, BaseCSS, BasePage }: {
@@ -57,20 +59,24 @@ export default class CADL {
         if (this.cadlEndpoint) return
 
         //get config
-        let config = store.getConfig()
+        let config: any = store.getConfig()
         if (config === null) {
-            //@ts-ignore
-            config = await store.level2SDK.loadConfigData('aitmed')
+            try {
+                config = await store.level2SDK.loadConfigData('aitmed')
+            } catch (error) {
+                throw new UnableToLoadConfig('An error occured while trying to load the config', error)
+            }
         }
-        //@ts-ignore
-        const { cadlEndpoint: cadlEndpointUrl, web, cadlBaseUrl, cadlMain } = config
+
+        const { web, cadlBaseUrl, cadlMain } = config
 
         //set cadlVersion
         this.cadlVersion = web.cadlVersion[this.cadlVersion]
         this.cadlBaseUrl = cadlBaseUrl
 
-
-        let cadlEndpoint = await this.defaultObject(`${this.cadlBaseUrl}${cadlMain}`)
+        //set cadlEndpoint
+        let cadlEndpointUrl = `${cadlBaseUrl}${cadlMain}`
+        let cadlEndpoint = await this.defaultObject(cadlEndpointUrl)
         this.cadlEndpoint = cadlEndpoint
 
         const { baseUrl, assetsUrl, preload } = cadlEndpoint
@@ -80,37 +86,64 @@ export default class CADL {
         this.assetsUrl = assetsUrl
 
         if (BaseDataModel) {
-            const populatedBaseDataModelKeys = populateKeys({ source: BaseDataModel, lookFor: '.', locations: [BaseDataModel] })
-            //populate baseDataModel vals
-            const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
+            //populate keys
+            const populatedBaseDataModelKeys = populateKeys({
+                source: BaseDataModel,
+                lookFor: '.',
+                locations: [BaseDataModel]
+            })
+            //populate vals
+            const populatedBaseDataModelVals = populateObject({
+                source: populatedBaseDataModelKeys,
+                lookFor: '.',
+                locations: [populatedBaseDataModelKeys]
+            })
 
             this.root = { ...this.root, ...populatedBaseDataModelVals }
         }
         if (BaseCSS) {
-            const populatedBaseCSSKeys = populateKeys({ source: BaseCSS, lookFor: '.', locations: [BaseCSS] })
+            //populate keys
+            const populatedBaseCSSKeys = populateKeys({
+                source: BaseCSS,
+                lookFor: '.',
+                locations: [BaseCSS]
+            })
 
-            //populate baseCSS vals
-            const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
+            //populate vals
+            const populatedBaseCSSVals = populateObject({
+                source: populatedBaseCSSKeys,
+                lookFor: '.',
+                locations: [populatedBaseCSSKeys]
+            })
 
             this.root = { ...this.root, ...populatedBaseCSSVals }
         }
         if (BasePage) {
-            const populatedBasePageKeys = populateKeys({ source: BasePage, lookFor: '.', locations: [BasePage] })
+            //populate keys
+            const populatedBasePageKeys = populateKeys({
+                source: BasePage,
+                lookFor: '.',
+                locations: [BasePage]
+            })
 
-            //populate BasePage vals
-            const populatedBasePageVals = populateObject({ source: populatedBasePageKeys, lookFor: '.', locations: [populatedBasePageKeys] })
+            //populate vals
+            const populatedBasePageVals = populateObject({
+                source: populatedBasePageKeys,
+                lookFor: '.',
+                locations: [populatedBasePageKeys]
+            })
 
             this.root = { ...this.root, ...populatedBasePageVals }
         }
 
         if (preload && preload.length) {
-            //populate baseDataModel keys
             //TODO: refactor to reduce redundancy
             for (let pageName of preload) {
                 switch (pageName) {
                     case ('BaseDataModel'): {
                         if (BaseDataModel) break
                         const rawBaseDataModel = await this.getPage('BaseDataModel')
+                        //populate baseDataModel keys
                         const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
                         //populate baseDataModel vals
                         const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
@@ -135,6 +168,7 @@ export default class CADL {
                     case ('BasePage'): {
                         if (BasePage) break
                         const rawBasePage = await this.getPage('BasePage')
+                        //populate BasePage keys
                         const populatedBasePageKeys = populateKeys({ source: rawBasePage, lookFor: '.', locations: [rawBasePage] })
 
                         //populate BasePage vals
@@ -176,41 +210,79 @@ export default class CADL {
         const boundDispatch = this.dispatch.bind(this)
 
         //populate keys 
-        let populatedKeysCadlCopy = populateKeys({ source: cadlCopy, lookFor: '.', locations: [this.root] })
+        let populatedKeysCadlCopy = populateKeys({
+            source: cadlCopy,
+            lookFor: '.',
+            locations: [this.root]
+        })
 
         //FOR FORMDATA
         //populate the values from baseDataModels for formData
-        const populatedBaseData = populateObject({ source: populatedKeysCadlCopy, lookFor: '.', locations: [this.root], skip: ['update', 'components'] })
+        const populatedBaseData = populateObject({
+            source: populatedKeysCadlCopy,
+            lookFor: '.',
+            locations: [this.root],
+            skip: ['update', 'components']
+        })
 
-        //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
-        const populatedSelfData = populateObject({ source: populatedBaseData, lookFor: '..', locations: [Object.values(populatedBaseData)[0]], skip: ['update', 'components'] })
-        const populatedAfterInheriting = populateObject({ source: populatedSelfData, lookFor: '=', locations: [Object.values(populatedSelfData)[0], this.root], skip: ['update', 'components'] })
-        //TODO: add skip prop
+        const populatedSelfData = populateObject({
+            source: populatedBaseData,
+            lookFor: '..',
+            locations: [Object.values(populatedBaseData)[0]],
+            skip: ['update', 'components']
+        })
+
+        //populate after inheriting
+        const populatedAfterInheriting = populateObject({
+            source: populatedSelfData,
+            lookFor: '=',
+            locations: [Object.values(populatedSelfData)[0], this.root],
+            skip: ['update', 'components']
+        })
+
+        //TODO: add skip prop to attachFns
         //attach functions
         const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
 
+        //replace updateObj with Fn
         let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: withFNs, dispatch: boundDispatch })
 
 
         //FOR COMPONENTS
         //populate the values from baseDataModels for components
-        const populatedBaseDataComp = populateObject({ source: replaceUpdateJob, lookFor: '.', locations: [this.root], skip: ['update', 'formData'] })
+        const populatedBaseDataComp = populateObject({
+            source: replaceUpdateJob,
+            lookFor: '.',
+            locations: [this.root],
+            skip: ['update', 'formData']
+        })
 
-        //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
-        const populatedSelfDataComp = populateObject({ source: populatedBaseDataComp, lookFor: '..', locations: [Object.values(populatedBaseDataComp)[0]], skip: ['update', 'formData'] })
-        const populatedAfterInheritingComp = populateObject({ source: populatedSelfDataComp, lookFor: '=', locations: [Object.values(populatedSelfDataComp)[0], this.root], skip: ['update', 'formData'] })
+        const populatedSelfDataComp = populateObject({
+            source: populatedBaseDataComp,
+            lookFor: '..',
+            locations: [Object.values(populatedBaseDataComp)[0]],
+            skip: ['update', 'formData']
+        })
+
+        //populate after inheriting
+        const populatedAfterInheritingComp = populateObject({
+            source: populatedSelfDataComp,
+            lookFor: '=',
+            locations: [Object.values(populatedSelfDataComp)[0], this.root],
+            skip: ['update', 'formData']
+        })
 
         let populatedPage = populatedAfterInheritingComp
         this.root = { ...this.root, ...populatedPage }
+
         //run init commands if any
         let init = Object.values(populatedPage)[0].init
         if (init) {
-            //@ts-ignore
-            this.callQueue = init.map((command, index) => index)
-            while (this.callQueue.length > 0) {
-                const currIndex = this.callQueue.shift()
+            this.initCallQueue = init.map((_command, index) => index)
+            while (this.initCallQueue.length > 0) {
+                const currIndex = this.initCallQueue.shift()
                 const command = init[currIndex]
                 if (typeof command === 'function') {
                     try {
@@ -220,26 +292,28 @@ export default class CADL {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
 
-                    
+                    //updating page after command has been called
                     const updatePage = this.root[pageName]
-                    
-                    //populateObject again
-                    let populatedPageAgain = populateObject({ source: updatePage, lookFor: '..', locations: [this.root[pageName]] })
-                    
+
+                    //populateObject again to populate any data that was dependant on the command call
+                    let populatedPageAgain = populateObject({
+                        source: updatePage,
+                        lookFor: '..',
+                        locations: [this.root[pageName]]
+                    })
+
                     const withFNs2 = attachFns({ cadlObject: { [pageName]: populatedPageAgain }, dispatch: boundDispatch })
-                    
 
                     populatedPage = Object.values(withFNs2)[0]
-                    
+
                     init = Object.values(withFNs2)[0].init
-                    
+
                     this.root[pageName] = { ...this.root[pageName], ...Object.values(withFNs2)[0] }
-                    
+
                 }
             }
         }
         this.root = { ...this.root, ...populatedPage }
-
     }
 
     /**
@@ -317,11 +391,26 @@ export default class CADL {
                 const pageObjectCopy = _.cloneDeep(this.root[pageName])
                 const boundDispatch = this.dispatch.bind(this)
 
-                const populateWithRoot = populateObject({ source: pageObjectCopy, lookFor: '.', locations: [this.root, this.root[pageName]] })
-                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
-                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+                const populateWithRoot = populateObject({
+                    source: pageObjectCopy,
+                    lookFor: '.',
+                    locations: [this.root, this.root[pageName]]
+                })
+                const populateWithSelf = populateObject({
+                    source: populateWithRoot,
+                    lookFor: '..',
+                    locations: [this.root, this.root[pageName]]
+                })
+                const populateAfterInheriting = populateObject({
+                    source: populateWithSelf,
+                    lookFor: '=',
+                    locations: [this.root, this.root[pageName]]
+                })
 
-                const withFNs = attachFns({ cadlObject: populateAfterInheriting, dispatch: boundDispatch })
+                const withFNs = attachFns({
+                    cadlObject: populateAfterInheriting,
+                    dispatch: boundDispatch
+                })
 
                 this.root[pageName] = withFNs
                 break
@@ -333,13 +422,13 @@ export default class CADL {
                 if (pageName === 'builtIn') {
                     _.set(this, pathArr, data)
                 } else if (firstCharacter === firstCharacter.toUpperCase()) {
-
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
                     _.set(this.root, pathArr, mergedVal)
                 } else {
                     const currentVal = _.get(this.root[pageName], pathArr)
                     let mergedVal
+                    //TODO:unit test for data response shape
                     if (Array.isArray(currentVal)) {
                         if (Array.isArray(data)) {
                             mergedVal = data
@@ -377,19 +466,32 @@ export default class CADL {
                         const pathArr = trimPath.split('.')
                         const val = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
 
-                        const populateWithRoot = populateObject({ source: val, lookFor: '.', locations: [this.root, this.root[pageName]] })
+                        const populateWithRoot = populateObject({
+                            source: val,
+                            lookFor: '.',
+                            locations: [this.root, this.root[pageName]]
+                        })
 
-                        const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
+                        const populateWithSelf = populateObject({
+                            source: populateWithRoot,
+                            lookFor: '..',
+                            locations: [this.root, this.root[pageName]]
+                        })
 
-                        const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this.root, this.root[pageName]] })
+                        const populateAfterInheriting = populateObject({
+                            source: populateWithSelf,
+                            lookFor: '=',
+                            locations: [this.root, this.root[pageName]]
+                        })
 
                         const boundDispatch = this.dispatch.bind(this)
-                        const withFn = attachFns({ cadlObject: populateAfterInheriting, dispatch: boundDispatch })
+                        const withFn = attachFns({
+                            cadlObject: populateAfterInheriting,
+                            dispatch: boundDispatch
+                        })
                         if (typeof withFn === 'function') {
                             await withFn()
-                            console.log(this)
                         }
-                        console.log(withFn)
                     }
                 })
                 break
@@ -463,12 +565,12 @@ export default class CADL {
     get apiVersion() {
         return store.apiVersion
     }
-    set callQueue(callQueue) {
-        this._callQueue = callQueue
+    set initCallQueue(initCallQueue) {
+        this._initCallQueue = initCallQueue
     }
 
-    get callQueue() {
-        return this._callQueue
+    get initCallQueue() {
+        return this._initCallQueue
     }
 
     public getConfig() {
