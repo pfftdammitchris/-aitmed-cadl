@@ -85735,7 +85735,7 @@
 	                }
 
 	                _context.next = 7;
-	                return store$3.level2SDK.loadConfigData('aitmedmeeting');
+	                return store$3.level2SDK.loadConfigData('meet');
 
 	              case 7:
 	                config = _context.sent;

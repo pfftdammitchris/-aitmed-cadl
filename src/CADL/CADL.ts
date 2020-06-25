@@ -60,7 +60,7 @@ export default class CADL {
         let config = store.getConfig()
         if (config === null) {
             //@ts-ignore
-            config = await store.level2SDK.loadConfigData('aitmedmeeting')
+            config = await store.level2SDK.loadConfigData('meet')
         }
         //@ts-ignore
         const { cadlEndpoint: cadlEndpointUrl, web, cadlBaseUrl, cadlMain } = config
