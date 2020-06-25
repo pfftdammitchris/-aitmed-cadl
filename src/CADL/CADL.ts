@@ -7,6 +7,7 @@ import {
     populateKeys,
     replaceUpdate,
     builtInFns,
+    populateVals
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -75,114 +76,85 @@ export default class CADL {
         this.cadlBaseUrl = cadlBaseUrl
 
         //set cadlEndpoint
-        let cadlEndpointUrl = `${cadlBaseUrl}${cadlMain}`
+        let cadlEndpointUrl = `${this.cadlBaseUrl}${cadlMain}`
         let cadlEndpoint = await this.defaultObject(cadlEndpointUrl)
         this.cadlEndpoint = cadlEndpoint
 
-        const { baseUrl, assetsUrl, preload } = cadlEndpoint
+        const { baseUrl, assetsUrl, preload } = this.cadlEndpoint
 
         //set baseUrl and assets Url
         this.baseUrl = baseUrl
         this.assetsUrl = assetsUrl
 
         if (BaseDataModel) {
-            //populate keys
-            const populatedBaseDataModelKeys = populateKeys({
+            const processedBaseDataModel = this.processPopulate({
                 source: BaseDataModel,
-                lookFor: '.',
+                lookFor: ['.', '..', '='],
                 locations: [BaseDataModel]
             })
-            //populate vals
-            const populatedBaseDataModelVals = populateObject({
-                source: populatedBaseDataModelKeys,
-                lookFor: '.',
-                locations: [populatedBaseDataModelKeys]
-            })
-
-            this.root = { ...this.root, ...populatedBaseDataModelVals }
+            this.root = { ...this.root, ...processedBaseDataModel }
         }
         if (BaseCSS) {
-            //populate keys
-            const populatedBaseCSSKeys = populateKeys({
+            const processedBaseCSS = this.processPopulate({
                 source: BaseCSS,
-                lookFor: '.',
+                lookFor: ['.', '..', '='],
                 locations: [BaseCSS]
             })
-
-            //populate vals
-            const populatedBaseCSSVals = populateObject({
-                source: populatedBaseCSSKeys,
-                lookFor: '.',
-                locations: [populatedBaseCSSKeys]
-            })
-
-            this.root = { ...this.root, ...populatedBaseCSSVals }
+            this.root = { ...this.root, ...processedBaseCSS }
         }
         if (BasePage) {
-            //populate keys
-            const populatedBasePageKeys = populateKeys({
+            const processedBasePage = this.processPopulate({
                 source: BasePage,
-                lookFor: '.',
+                lookFor: ['.', '..', '='],
                 locations: [BasePage]
             })
-
-            //populate vals
-            const populatedBasePageVals = populateObject({
-                source: populatedBasePageKeys,
-                lookFor: '.',
-                locations: [populatedBasePageKeys]
-            })
-
-            this.root = { ...this.root, ...populatedBasePageVals }
+            this.root = { ...this.root, ...processedBasePage }
         }
 
         if (preload && preload.length) {
-            //TODO: refactor to reduce redundancy
             for (let pageName of preload) {
                 switch (pageName) {
                     case ('BaseDataModel'): {
                         if (BaseDataModel) break
                         const rawBaseDataModel = await this.getPage('BaseDataModel')
-                        //populate baseDataModel keys
-                        const populatedBaseDataModelKeys = populateKeys({ source: rawBaseDataModel, lookFor: '.', locations: [rawBaseDataModel] })
-                        //populate baseDataModel vals
-                        const populatedBaseDataModelVals = populateObject({ source: populatedBaseDataModelKeys, lookFor: '.', locations: [populatedBaseDataModelKeys] })
-
-                        this.root = { ...this.root, ...populatedBaseDataModelVals }
-
+                        const processedBaseDataModel = this.processPopulate({
+                            source: rawBaseDataModel,
+                            lookFor: ['.', '..', '='],
+                            locations: [rawBaseDataModel]
+                        })
+                        this.root = { ...this.root, ...processedBaseDataModel }
                         break
                     }
                     case ('BaseCSS'): {
                         if (BaseCSS) break
-                        //populate baseCSS keys
                         const rawBaseCSS = await this.getPage('BaseCSS')
-                        const populatedBaseCSSKeys = populateKeys({ source: rawBaseCSS, lookFor: '.', locations: [rawBaseCSS] })
-
-                        //populate baseCSS vals
-                        const populatedBaseCSSVals = populateObject({ source: populatedBaseCSSKeys, lookFor: '.', locations: [populatedBaseCSSKeys] })
-
-                        this.root = { ...this.root, ...populatedBaseCSSVals }
-
+                        const processedBaseCSS = this.processPopulate({
+                            source: rawBaseCSS,
+                            lookFor: ['.', '..', '='],
+                            locations: [rawBaseCSS]
+                        })
+                        this.root = { ...this.root, ...processedBaseCSS }
                         break
                     }
                     case ('BasePage'): {
                         if (BasePage) break
                         const rawBasePage = await this.getPage('BasePage')
-                        //populate BasePage keys
-                        const populatedBasePageKeys = populateKeys({ source: rawBasePage, lookFor: '.', locations: [rawBasePage] })
-
-                        //populate BasePage vals
-                        const populatedBasePageVals = populateObject({ source: populatedBasePageKeys, lookFor: '.', locations: [populatedBasePageKeys] })
-
-                        this.root = { ...this.root, ...populatedBasePageVals }
+                        const processedBasePage = this.processPopulate({
+                            source: rawBasePage,
+                            lookFor: ['.', '..', '='],
+                            locations: [rawBasePage]
+                        })
+                        this.root = { ...this.root, ...processedBasePage }
                         break
                     }
                     default: {
                         const rawPage = await this.getPage(pageName)
-                        const populatedKeys = populateKeys({ source: rawPage, lookFor: '.', locations: [rawPage] })
-                        const populatedVals = populateObject({ source: populatedKeys, lookFor: '.', locations: [populatedKeys] })
-
-                        this.root = { ...this.root, ...populatedVals }
+                        const processedRawPage = this.processPopulate({
+                            source: rawPage,
+                            lookFor: ['.', '..', '='],
+                            locations: [rawPage]
+                        })
+                        this.root = { ...this.root, ...processedRawPage }
                         break
                     }
                 }
@@ -205,80 +177,35 @@ export default class CADL {
 
         let pageCADL = await this.getPage(pageName)
 
-        //make a copy of the CADL object
-        let cadlCopy = _.cloneDeep(pageCADL)
-        const boundDispatch = this.dispatch.bind(this)
-
-        //populate keys 
-        let populatedKeysCadlCopy = populateKeys({
-            source: cadlCopy,
-            lookFor: '.',
-            locations: [this.root]
-        })
-
         //FOR FORMDATA
-        //populate the values from baseDataModels for formData
-        const populatedBaseData = populateObject({
-            source: populatedKeysCadlCopy,
-            lookFor: '.',
-            locations: [this.root],
-            skip: ['update', 'components']
+        //process formData
+        const processedFormData = this.processPopulate({
+            source: pageCADL,
+            lookFor: ['.', '..', '='],
+            locations: [this.root, pageCADL],
+            skip: ['update', 'components'],
+            withFns: true
         })
-
-        //populate the values from self
-        const populatedSelfData = populateObject({
-            source: populatedBaseData,
-            lookFor: '..',
-            locations: [Object.values(populatedBaseData)[0]],
-            skip: ['update', 'components']
-        })
-
-        //populate after inheriting
-        const populatedAfterInheriting = populateObject({
-            source: populatedSelfData,
-            lookFor: '=',
-            locations: [Object.values(populatedSelfData)[0], this.root],
-            skip: ['update', 'components']
-        })
-
-        //TODO: add skip prop to attachFns
-        //attach functions
-        const withFNs = attachFns({ cadlObject: populatedAfterInheriting, dispatch: boundDispatch })
 
         //replace updateObj with Fn
-        let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: withFNs, dispatch: boundDispatch })
-
+        const boundDispatch = this.dispatch.bind(this)
+        let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
 
         //FOR COMPONENTS
-        //populate the values from baseDataModels for components
-        const populatedBaseDataComp = populateObject({
+        //process components
+        const processedComponents = this.processPopulate({
             source: replaceUpdateJob,
-            lookFor: '.',
-            locations: [this.root],
-            skip: ['update', 'formData']
+            lookFor: ['.', '..', '='],
+            locations: [this.root, replaceUpdateJob],
+            skip: ['update', 'formData'],
+            withFns: true
         })
 
-        //populate the values from self
-        const populatedSelfDataComp = populateObject({
-            source: populatedBaseDataComp,
-            lookFor: '..',
-            locations: [Object.values(populatedBaseDataComp)[0]],
-            skip: ['update', 'formData']
-        })
-
-        //populate after inheriting
-        const populatedAfterInheritingComp = populateObject({
-            source: populatedSelfDataComp,
-            lookFor: '=',
-            locations: [Object.values(populatedSelfDataComp)[0], this.root],
-            skip: ['update', 'formData']
-        })
-
-        let populatedPage = populatedAfterInheritingComp
-        this.root = { ...this.root, ...populatedPage }
+        let processedPage = processedComponents
+        this.root = { ...this.root, ...processedPage }
 
         //run init commands if any
-        let init = Object.values(populatedPage)[0].init
+        let init = Object.values(processedPage)[0].init
         if (init) {
             this.initCallQueue = init.map((_command, index) => index)
             while (this.initCallQueue.length > 0) {
@@ -293,27 +220,27 @@ export default class CADL {
                     }
 
                     //updating page after command has been called
-                    const updatePage = this.root[pageName]
+                    const updatedPage = this.root[pageName]
 
                     //populateObject again to populate any data that was dependant on the command call
-                    let populatedPageAgain = populateObject({
-                        source: updatePage,
+                    let populatedUpdatedPage = populateObject({
+                        source: updatedPage,
                         lookFor: '..',
                         locations: [this.root[pageName]]
                     })
 
-                    const withFNs2 = attachFns({ cadlObject: { [pageName]: populatedPageAgain }, dispatch: boundDispatch })
+                    const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
 
-                    populatedPage = Object.values(withFNs2)[0]
+                    processedPage = Object.values(populatedUpdatedPageWithFns)[0]
 
-                    init = Object.values(withFNs2)[0].init
+                    init = Object.values(populatedUpdatedPageWithFns)[0].init
 
-                    this.root[pageName] = { ...this.root[pageName], ...Object.values(withFNs2)[0] }
+                    this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
 
                 }
             }
         }
-        this.root = { ...this.root, ...populatedPage }
+        this.root = { ...this.root, ...processedPage }
     }
 
     /**
@@ -378,6 +305,49 @@ export default class CADL {
         }
         if (currentVal) return currentVal
         return dataKey
+    }
+
+    /**
+     * 
+     * @param action 
+     */
+    private processPopulate({
+        source,
+        lookFor,
+        locations,
+        skip,
+        withFns = false
+    }: {
+        source: Record<string, any>,
+        lookFor: string[],
+        locations: any[],
+        skip?: string[],
+        withFns?: boolean
+    }): Record<string, any> {
+        let sourceCopy = _.cloneDeep(source)
+
+        const sourceCopyWithKeys = populateKeys({
+            source: sourceCopy,
+            lookFor: '.',
+            locations
+        })
+
+        const sourceCopyWithVals = populateVals({
+            source: sourceCopyWithKeys,
+            lookFor,
+            skip,
+            locations
+        })
+
+        let populatedResponse = sourceCopyWithVals
+        if (withFns) {
+            const boundDispatch = this.dispatch.bind(this)
+            populatedResponse = attachFns({
+                cadlObject: sourceCopyWithVals,
+                dispatch: boundDispatch
+            })
+        }
+        return populatedResponse
     }
 
     /**

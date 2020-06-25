@@ -36,9 +36,9 @@ export default (async function () {
     cadl.root['SignIn'].update()
     await cadl.initPage('ApplyBusiness')
     debugger
-    await cadl.root['ApplyBusiness'].formData.edgeAPI.store({ companyPhone: "+1 3431111dsd42ssadsd1daf39" })
+    await cadl.root['ApplyBusiness'].formData.edgeAPI.store({ companyPhone: "+1 3431111dsdffsdfd42ssadsd1daf39" })
     debugger
-    await cadl.root['ApplyBusiness'].formData.wciAPI.store({ type: 'text/plain', data: "+1 3009665sassadsdsd1daf39" })
+    await cadl.root['ApplyBusiness'].formData.wciAPI.store({ type: 'text/plain', data: "+1 3009665sassadsdsd1ffsdfdaf39" })
     debugger
     await cadl.root['ApplyBusiness'].formData.w9API.store({ type: 'text/plain', data: "+1 hellow" })
     debugger

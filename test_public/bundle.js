@@ -79987,6 +79987,35 @@
 	  return UnableToLocateValue;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
+	function _createSuper$s(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$t(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$t() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToLoadConfig = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToLoadConfig, _Error);
+
+	  var _super = _createSuper$s(UnableToLoadConfig);
+
+	  function UnableToLoadConfig(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToLoadConfig);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToLoadConfig';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLoadConfig.prototype);
+	    return _this;
+	  }
+
+	  return UnableToLoadConfig;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
 	var compareUint8Arrays = function compareUint8Arrays(u8a1, u8a2) {
 	  if (u8a1.length !== u8a2.length) return false;
 
@@ -85631,6 +85660,36 @@
 	  };
 	}
 
+	function populateVals(_ref23) {
+	  var source = _ref23.source,
+	      lookFor = _ref23.lookFor,
+	      locations = _ref23.locations,
+	      skip = _ref23.skip;
+
+	  var sourceCopy = lodash.cloneDeep(source);
+
+	  var _iterator3 = _createForOfIteratorHelper$g(lookFor),
+	      _step3;
+
+	  try {
+	    for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+	      var symbol = _step3.value;
+	      sourceCopy = populateObject({
+	        source: sourceCopy,
+	        lookFor: symbol,
+	        skip: skip,
+	        locations: locations
+	      });
+	    }
+	  } catch (err) {
+	    _iterator3.e(err);
+	  } finally {
+	    _iterator3.f();
+	  }
+
+	  return sourceCopy;
+	}
+
 	function _createForOfIteratorHelper$h(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$i(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 	function _unsupportedIterableToArray$i(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$i(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$i(o, minLen); }
@@ -85663,7 +85722,7 @@
 
 	    defineProperty(this, "_builtIn", builtInFns(this.dispatch.bind(this)));
 
-	    defineProperty(this, "_callQueue", void 0);
+	    defineProperty(this, "_initCallQueue", void 0);
 
 	    //replace default arguments
 	    store$3.env = env;
@@ -85673,9 +85732,10 @@
 	  /**
 	   * -loads config if not already loaded
 	   * 
-	   * -sets CADL version, baseUrl, assetsUrl, baseDataModel, baseCSS
+	   * -sets CADL version, baseUrl, assetsUrl, and root
 	   * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
 	   * @throws UnableToParseYAML -if unable to parse yaml file
+	   * @throws UnableToLoadConfig -if unable to load config data
 	   */
 	  //TODO: add a force parameter to allow user to force init again
 
@@ -85690,35 +85750,29 @@
 	            BasePage,
 	            config,
 	            _config,
-	            cadlEndpointUrl,
 	            web,
 	            cadlBaseUrl,
 	            cadlMain,
+	            cadlEndpointUrl,
 	            cadlEndpoint,
+	            _this$cadlEndpoint,
 	            baseUrl,
 	            assetsUrl,
 	            preload,
-	            populatedBaseDataModelKeys,
-	            populatedBaseDataModelVals,
-	            populatedBaseCSSKeys,
-	            populatedBaseCSSVals,
-	            populatedBasePageKeys,
-	            populatedBasePageVals,
+	            processedBaseDataModel,
+	            processedBaseCSS,
+	            processedBasePage,
 	            _iterator,
 	            _step,
 	            pageName,
 	            rawBaseDataModel,
-	            _populatedBaseDataModelKeys,
-	            _populatedBaseDataModelVals,
+	            _processedBaseDataModel,
 	            rawBaseCSS,
-	            _populatedBaseCSSKeys,
-	            _populatedBaseCSSVals,
+	            _processedBaseCSS,
 	            rawBasePage,
-	            _populatedBasePageKeys,
-	            _populatedBasePageVals,
+	            _processedBasePage,
 	            rawPage,
-	            populatedKeys,
-	            populatedVals,
+	            processedRawPage,
 	            _args = arguments;
 
 	        return regenerator.wrap(function _callee$(_context) {
@@ -85739,231 +85793,197 @@
 	                config = store$3.getConfig();
 
 	                if (!(config === null)) {
-	                  _context.next = 8;
+	                  _context.next = 14;
 	                  break;
 	                }
 
-	                _context.next = 7;
+	                _context.prev = 5;
+	                _context.next = 8;
 	                return store$3.level2SDK.loadConfigData('aitmed');
 
-	              case 7:
-	                config = _context.sent;
-
 	              case 8:
-	                //@ts-ignore
-	                _config = config, cadlEndpointUrl = _config.cadlEndpoint, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain; //set cadlVersion
+	                config = _context.sent;
+	                _context.next = 14;
+	                break;
+
+	              case 11:
+	                _context.prev = 11;
+	                _context.t0 = _context["catch"](5);
+	                throw new UnableToLoadConfig('An error occured while trying to load the config', _context.t0);
+
+	              case 14:
+	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
-	                this.cadlBaseUrl = cadlBaseUrl;
-	                _context.next = 13;
-	                return this.defaultObject("".concat(this.cadlBaseUrl).concat(cadlMain));
+	                this.cadlBaseUrl = cadlBaseUrl; //set cadlEndpoint
 
-	              case 13:
+	                cadlEndpointUrl = "".concat(this.cadlBaseUrl).concat(cadlMain);
+	                _context.next = 20;
+	                return this.defaultObject(cadlEndpointUrl);
+
+	              case 20:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
-	                baseUrl = cadlEndpoint.baseUrl, assetsUrl = cadlEndpoint.assetsUrl, preload = cadlEndpoint.preload; //set baseUrl and assets Url
+	                _this$cadlEndpoint = this.cadlEndpoint, baseUrl = _this$cadlEndpoint.baseUrl, assetsUrl = _this$cadlEndpoint.assetsUrl, preload = _this$cadlEndpoint.preload; //set baseUrl and assets Url
 
 	                this.baseUrl = baseUrl;
 	                this.assetsUrl = assetsUrl;
 
 	                if (BaseDataModel) {
-	                  populatedBaseDataModelKeys = populateKeys({
+	                  processedBaseDataModel = this.processPopulate({
 	                    source: BaseDataModel,
-	                    lookFor: '.',
+	                    lookFor: ['.', '..', '='],
 	                    locations: [BaseDataModel]
-	                  }); //populate baseDataModel vals
-
-	                  populatedBaseDataModelVals = populateObject({
-	                    source: populatedBaseDataModelKeys,
-	                    lookFor: '.',
-	                    locations: [populatedBaseDataModelKeys]
 	                  });
-	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedBaseDataModelVals);
+	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedBaseDataModel);
 	                }
 
 	                if (BaseCSS) {
-	                  populatedBaseCSSKeys = populateKeys({
+	                  processedBaseCSS = this.processPopulate({
 	                    source: BaseCSS,
-	                    lookFor: '.',
+	                    lookFor: ['.', '..', '='],
 	                    locations: [BaseCSS]
-	                  }); //populate baseCSS vals
-
-	                  populatedBaseCSSVals = populateObject({
-	                    source: populatedBaseCSSKeys,
-	                    lookFor: '.',
-	                    locations: [populatedBaseCSSKeys]
 	                  });
-	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedBaseCSSVals);
+	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedBaseCSS);
 	                }
 
 	                if (BasePage) {
-	                  populatedBasePageKeys = populateKeys({
+	                  processedBasePage = this.processPopulate({
 	                    source: BasePage,
-	                    lookFor: '.',
+	                    lookFor: ['.', '..', '='],
 	                    locations: [BasePage]
-	                  }); //populate BasePage vals
-
-	                  populatedBasePageVals = populateObject({
-	                    source: populatedBasePageKeys,
-	                    lookFor: '.',
-	                    locations: [populatedBasePageKeys]
 	                  });
-	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedBasePageVals);
+	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedBasePage);
 	                }
 
 	                if (!(preload && preload.length)) {
-	                  _context.next = 74;
+	                  _context.next = 77;
 	                  break;
 	                }
 
-	                //populate baseDataModel keys
-	                //TODO: refactor to reduce redundancy
 	                _iterator = _createForOfIteratorHelper$h(preload);
-	                _context.prev = 23;
+	                _context.prev = 30;
 
 	                _iterator.s();
 
-	              case 25:
+	              case 32:
 	                if ((_step = _iterator.n()).done) {
-	                  _context.next = 66;
+	                  _context.next = 69;
 	                  break;
 	                }
 
 	                pageName = _step.value;
-	                _context.t0 = pageName;
-	                _context.next = _context.t0 === 'BaseDataModel' ? 30 : _context.t0 === 'BaseCSS' ? 39 : _context.t0 === 'BasePage' ? 48 : 57;
+	                _context.t1 = pageName;
+	                _context.next = _context.t1 === 'BaseDataModel' ? 37 : _context.t1 === 'BaseCSS' ? 45 : _context.t1 === 'BasePage' ? 53 : 61;
 	                break;
 
-	              case 30:
+	              case 37:
 	                if (!BaseDataModel) {
-	                  _context.next = 32;
+	                  _context.next = 39;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 64);
-
-	              case 32:
-	                _context.next = 34;
-	                return this.getPage('BaseDataModel');
-
-	              case 34:
-	                rawBaseDataModel = _context.sent;
-	                _populatedBaseDataModelKeys = populateKeys({
-	                  source: rawBaseDataModel,
-	                  lookFor: '.',
-	                  locations: [rawBaseDataModel]
-	                }); //populate baseDataModel vals
-
-	                _populatedBaseDataModelVals = populateObject({
-	                  source: _populatedBaseDataModelKeys,
-	                  lookFor: '.',
-	                  locations: [_populatedBaseDataModelKeys]
-	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _populatedBaseDataModelVals);
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 67);
 
 	              case 39:
-	                if (!BaseCSS) {
-	                  _context.next = 41;
-	                  break;
-	                }
-
-	                return _context.abrupt("break", 64);
+	                _context.next = 41;
+	                return this.getPage('BaseDataModel');
 
 	              case 41:
-	                _context.next = 43;
-	                return this.getPage('BaseCSS');
-
-	              case 43:
-	                rawBaseCSS = _context.sent;
-	                _populatedBaseCSSKeys = populateKeys({
-	                  source: rawBaseCSS,
-	                  lookFor: '.',
-	                  locations: [rawBaseCSS]
-	                }); //populate baseCSS vals
-
-	                _populatedBaseCSSVals = populateObject({
-	                  source: _populatedBaseCSSKeys,
-	                  lookFor: '.',
-	                  locations: [_populatedBaseCSSKeys]
+	                rawBaseDataModel = _context.sent;
+	                _processedBaseDataModel = this.processPopulate({
+	                  source: rawBaseDataModel,
+	                  lookFor: ['.', '..', '='],
+	                  locations: [rawBaseDataModel]
 	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _populatedBaseCSSVals);
-	                return _context.abrupt("break", 64);
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _processedBaseDataModel);
+	                return _context.abrupt("break", 67);
 
-	              case 48:
-	                if (!BasePage) {
-	                  _context.next = 50;
+	              case 45:
+	                if (!BaseCSS) {
+	                  _context.next = 47;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 67);
 
-	              case 50:
-	                _context.next = 52;
+	              case 47:
+	                _context.next = 49;
+	                return this.getPage('BaseCSS');
+
+	              case 49:
+	                rawBaseCSS = _context.sent;
+	                _processedBaseCSS = this.processPopulate({
+	                  source: rawBaseCSS,
+	                  lookFor: ['.', '..', '='],
+	                  locations: [rawBaseCSS]
+	                });
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _processedBaseCSS);
+	                return _context.abrupt("break", 67);
+
+	              case 53:
+	                if (!BasePage) {
+	                  _context.next = 55;
+	                  break;
+	                }
+
+	                return _context.abrupt("break", 67);
+
+	              case 55:
+	                _context.next = 57;
 	                return this.getPage('BasePage');
 
-	              case 52:
-	                rawBasePage = _context.sent;
-	                _populatedBasePageKeys = populateKeys({
-	                  source: rawBasePage,
-	                  lookFor: '.',
-	                  locations: [rawBasePage]
-	                }); //populate BasePage vals
-
-	                _populatedBasePageVals = populateObject({
-	                  source: _populatedBasePageKeys,
-	                  lookFor: '.',
-	                  locations: [_populatedBasePageKeys]
-	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _populatedBasePageVals);
-	                return _context.abrupt("break", 64);
-
 	              case 57:
-	                _context.next = 59;
+	                rawBasePage = _context.sent;
+	                _processedBasePage = this.processPopulate({
+	                  source: rawBasePage,
+	                  lookFor: ['.', '..', '='],
+	                  locations: [rawBasePage]
+	                });
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _processedBasePage);
+	                return _context.abrupt("break", 67);
+
+	              case 61:
+	                _context.next = 63;
 	                return this.getPage(pageName);
 
-	              case 59:
+	              case 63:
 	                rawPage = _context.sent;
-	                populatedKeys = populateKeys({
+	                processedRawPage = this.processPopulate({
 	                  source: rawPage,
-	                  lookFor: '.',
+	                  lookFor: ['.', '..', '='],
 	                  locations: [rawPage]
 	                });
-	                populatedVals = populateObject({
-	                  source: populatedKeys,
-	                  lookFor: '.',
-	                  locations: [populatedKeys]
-	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedVals);
-	                return _context.abrupt("break", 64);
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedRawPage);
+	                return _context.abrupt("break", 67);
 
-	              case 64:
-	                _context.next = 25;
+	              case 67:
+	                _context.next = 32;
 	                break;
 
-	              case 66:
-	                _context.next = 71;
+	              case 69:
+	                _context.next = 74;
 	                break;
-
-	              case 68:
-	                _context.prev = 68;
-	                _context.t1 = _context["catch"](23);
-
-	                _iterator.e(_context.t1);
 
 	              case 71:
 	                _context.prev = 71;
+	                _context.t2 = _context["catch"](30);
+
+	                _iterator.e(_context.t2);
+
+	              case 74:
+	                _context.prev = 74;
 
 	                _iterator.f();
 
-	                return _context.finish(71);
+	                return _context.finish(74);
 
-	              case 74:
+	              case 77:
 	              case "end":
 	                return _context.stop();
 	            }
 	          }
-	        }, _callee, this, [[23, 68, 71, 74]]);
+	        }, _callee, this, [[5, 11], [30, 71, 74, 77]]);
 	      }));
 
 	      function init() {
@@ -85986,7 +86006,7 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
-	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedBaseDataComp, populatedSelfDataComp, populatedAfterInheritingComp, populatedPage, init, currIndex, command, updatePage, populatedPageAgain, withFNs2;
+	        var pageCADL, processedFormData, boundDispatch, replaceUpdateJob, processedComponents, processedPage, init, currIndex, command, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -86005,141 +86025,102 @@
 
 	              case 5:
 	                pageCADL = _context2.sent;
-	                //make a copy of the CADL object
-	                cadlCopy = lodash.cloneDeep(pageCADL);
-	                boundDispatch = this.dispatch.bind(this); //populate keys 
+	                //FOR FORMDATA
+	                //process formData
+	                processedFormData = this.processPopulate({
+	                  source: pageCADL,
+	                  lookFor: ['.', '..', '='],
+	                  locations: [this.root, pageCADL],
+	                  skip: ['update', 'components'],
+	                  withFns: true
+	                }); //replace updateObj with Fn
 
-	                populatedKeysCadlCopy = populateKeys({
-	                  source: cadlCopy,
-	                  lookFor: '.',
-	                  locations: [this.root]
-	                }); //FOR FORMDATA
-	                //populate the values from baseDataModels for formData
-
-	                populatedBaseData = populateObject({
-	                  source: populatedKeysCadlCopy,
-	                  lookFor: '.',
-	                  locations: [this.root],
-	                  skip: ['update', 'components']
-	                }); //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
-	                //populate the values from self
-
-	                populatedSelfData = populateObject({
-	                  source: populatedBaseData,
-	                  lookFor: '..',
-	                  locations: [Object.values(populatedBaseData)[0]],
-	                  skip: ['update', 'components']
-	                });
-	                populatedAfterInheriting = populateObject({
-	                  source: populatedSelfData,
-	                  lookFor: '=',
-	                  locations: [Object.values(populatedSelfData)[0], this.root],
-	                  skip: ['update', 'components']
-	                }); //TODO: add skip prop
-	                //attach functions
-
-	                withFNs = attachFns({
-	                  cadlObject: populatedAfterInheriting,
-	                  dispatch: boundDispatch
-	                });
+	                boundDispatch = this.dispatch.bind(this);
 	                replaceUpdateJob = replaceUpdate({
 	                  pageName: pageName,
-	                  cadlObject: withFNs,
+	                  cadlObject: processedFormData,
 	                  dispatch: boundDispatch
 	                }); //FOR COMPONENTS
-	                //populate the values from baseDataModels for components
+	                //process components
 
-	                populatedBaseDataComp = populateObject({
+	                processedComponents = this.processPopulate({
 	                  source: replaceUpdateJob,
-	                  lookFor: '.',
-	                  locations: [this.root],
-	                  skip: ['update', 'formData']
-	                }); //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
-	                //populate the values from self
-
-	                populatedSelfDataComp = populateObject({
-	                  source: populatedBaseDataComp,
-	                  lookFor: '..',
-	                  locations: [Object.values(populatedBaseDataComp)[0]],
-	                  skip: ['update', 'formData']
+	                  lookFor: ['.', '..', '='],
+	                  locations: [this.root, replaceUpdateJob],
+	                  skip: ['update', 'formData'],
+	                  withFns: true
 	                });
-	                populatedAfterInheritingComp = populateObject({
-	                  source: populatedSelfDataComp,
-	                  lookFor: '=',
-	                  locations: [Object.values(populatedSelfDataComp)[0], this.root],
-	                  skip: ['update', 'formData']
-	                });
-	                populatedPage = populatedAfterInheritingComp;
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedPage); //run init commands if any
+	                processedPage = processedComponents;
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage); //run init commands if any
 
-	                init = Object.values(populatedPage)[0].init;
+	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 42;
+	                  _context2.next = 35;
 	                  break;
 	                }
 
-	                //@ts-ignore
-	                this.callQueue = init.map(function (command, index) {
+	                this.initCallQueue = init.map(function (_command, index) {
 	                  return index;
 	                });
 
-	              case 22:
-	                if (!(this.callQueue.length > 0)) {
-	                  _context2.next = 42;
+	              case 15:
+	                if (!(this.initCallQueue.length > 0)) {
+	                  _context2.next = 35;
 	                  break;
 	                }
 
-	                currIndex = this.callQueue.shift();
+	                currIndex = this.initCallQueue.shift();
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 40;
+	                  _context2.next = 33;
 	                  break;
 	                }
 
-	                _context2.prev = 26;
-	                _context2.next = 29;
+	                _context2.prev = 19;
+	                _context2.next = 22;
 	                return command();
 
-	              case 29:
-	                _context2.next = 34;
+	              case 22:
+	                _context2.next = 27;
 	                break;
 
-	              case 31:
-	                _context2.prev = 31;
-	                _context2.t0 = _context2["catch"](26);
+	              case 24:
+	                _context2.prev = 24;
+	                _context2.t0 = _context2["catch"](19);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
-	              case 34:
-	                updatePage = this.root[pageName]; //populateObject again
+	              case 27:
+	                //updating page after command has been called
+	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
-	                populatedPageAgain = populateObject({
-	                  source: updatePage,
+	                populatedUpdatedPage = populateObject({
+	                  source: updatedPage,
 	                  lookFor: '..',
 	                  locations: [this.root[pageName]]
 	                });
-	                withFNs2 = attachFns({
-	                  cadlObject: defineProperty({}, pageName, populatedPageAgain),
+	                populatedUpdatedPageWithFns = attachFns({
+	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
 	                  dispatch: boundDispatch
 	                });
-	                populatedPage = Object.values(withFNs2)[0];
-	                init = Object.values(withFNs2)[0].init;
-	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(withFNs2)[0]);
+	                processedPage = Object.values(populatedUpdatedPageWithFns)[0];
+	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
+	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
 
-	              case 40:
-	                _context2.next = 22;
+	              case 33:
+	                _context2.next = 15;
 	                break;
 
-	              case 42:
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedPage);
+	              case 35:
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage);
 
-	              case 43:
+	              case 36:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[26, 31]]);
+	        }, _callee2, this, [[19, 24]]);
 	      }));
 
 	      function initPage(_x) {
@@ -86289,6 +86270,46 @@
 	     */
 
 	  }, {
+	    key: "processPopulate",
+	    value: function processPopulate(_ref3) {
+	      var source = _ref3.source,
+	          lookFor = _ref3.lookFor,
+	          locations = _ref3.locations,
+	          skip = _ref3.skip,
+	          _ref3$withFns = _ref3.withFns,
+	          withFns = _ref3$withFns === void 0 ? false : _ref3$withFns;
+
+	      var sourceCopy = lodash.cloneDeep(source);
+
+	      var sourceCopyWithKeys = populateKeys({
+	        source: sourceCopy,
+	        lookFor: '.',
+	        locations: locations
+	      });
+	      var sourceCopyWithVals = populateVals({
+	        source: sourceCopyWithKeys,
+	        lookFor: lookFor,
+	        skip: skip,
+	        locations: locations
+	      });
+	      var populatedResponse = sourceCopyWithVals;
+
+	      if (withFns) {
+	        var boundDispatch = this.dispatch.bind(this);
+	        populatedResponse = attachFns({
+	          cadlObject: sourceCopyWithVals,
+	          dispatch: boundDispatch
+	        });
+	      }
+
+	      return populatedResponse;
+	    }
+	    /**
+	     * 
+	     * @param action 
+	     */
+
+	  }, {
 	    key: "dispatch",
 	    value: function dispatch(action) {
 	      var _this = this;
@@ -86344,7 +86365,8 @@
 	            } else {
 	              var _currentVal = lodash.get(this.root[_pageName], pathArr);
 
-	              var _mergedVal;
+	              var _mergedVal; //TODO:unit test for data response shape
+
 
 	              if (Array.isArray(_currentVal)) {
 	                if (Array.isArray(data)) {
@@ -86400,7 +86422,7 @@
 	            });
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
-	              var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
+	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
 	                var trimPath, _pathArr2, val, _trimPath, _pathArr3, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
 
 	                return regenerator.wrap(function _callee5$(_context5) {
@@ -86418,12 +86440,12 @@
 
 	                        lodash.set(_this.root, _pathArr2, val);
 
-	                        _context5.next = 21;
+	                        _context5.next = 19;
 	                        break;
 
 	                      case 7:
 	                        if (!key.startsWith('=')) {
-	                          _context5.next = 21;
+	                          _context5.next = 19;
 	                          break;
 	                        }
 
@@ -86452,7 +86474,7 @@
 	                        });
 
 	                        if (!(typeof withFn === 'function')) {
-	                          _context5.next = 20;
+	                          _context5.next = 19;
 	                          break;
 	                        }
 
@@ -86460,12 +86482,6 @@
 	                        return withFn();
 
 	                      case 19:
-	                        console.log(_this);
-
-	                      case 20:
-	                        console.log(withFn);
-
-	                      case 21:
 	                      case "end":
 	                        return _context5.stop();
 	                    }
@@ -86474,7 +86490,7 @@
 	              }));
 
 	              return function (_x4) {
-	                return _ref3.apply(this, arguments);
+	                return _ref4.apply(this, arguments);
 	              };
 	            }());
 	            break;
@@ -86576,12 +86592,12 @@
 	      return store$3.apiVersion;
 	    }
 	  }, {
-	    key: "callQueue",
-	    set: function set(callQueue) {
-	      this._callQueue = callQueue;
+	    key: "initCallQueue",
+	    set: function set(initCallQueue) {
+	      this._initCallQueue = initCallQueue;
 	    },
 	    get: function get() {
-	      return this._callQueue;
+	      return this._initCallQueue;
 	    }
 	  }]);
 
@@ -86641,7 +86657,7 @@
 	          debugger;
 	          _context.next = 16;
 	          return cadl.root['ApplyBusiness'].formData.edgeAPI.store({
-	            companyPhone: "+1 3431111dsd42ssadsd1daf39"
+	            companyPhone: "+1 3431111dsdffsdfd42ssadsd1daf39"
 	          });
 
 	        case 16:
@@ -86649,7 +86665,7 @@
 	          _context.next = 19;
 	          return cadl.root['ApplyBusiness'].formData.wciAPI.store({
 	            type: 'text/plain',
-	            data: "+1 3009665sassadsdsd1daf39"
+	            data: "+1 3009665sassadsdsd1ffsdfdaf39"
 	          });
 
 	        case 19:

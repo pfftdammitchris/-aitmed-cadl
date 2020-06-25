@@ -18,6 +18,7 @@ export {
     populateArray,
     populateObject,
     builtInFns,
+    populateVals
 }
 
 
@@ -706,4 +707,30 @@ function builtInFns(dispatch?: Function) {
         },
         currentDateTime: (() => Date.now())()
     }
+}
+
+
+function populateVals({
+    source,
+    lookFor,
+    locations,
+    skip
+}: {
+    source: Record<string, any>,
+    lookFor: string[],
+    skip?: string[],
+    locations: any[]
+}): Record<string, any> {
+    let sourceCopy = _.cloneDeep(source)
+
+    for (let symbol of lookFor) {
+        sourceCopy = populateObject({
+            source: sourceCopy,
+            lookFor: symbol,
+            skip,
+            locations
+        })
+    }
+
+    return sourceCopy
 }
