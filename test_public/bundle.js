@@ -70046,7 +70046,6 @@
 	function retrieveEdgeService(_request) {
 	  return new Promise(function (resolve, reject) {
 	    store$2.grpcClient.re(_request, null, callback);
-
 	    function callback(_error, _response) {
 	      return retrieveEdgeCallBack(_error, _response, resolve, reject);
 	    }
@@ -70071,7 +70070,6 @@
 	            serverError = response.getError();
 	            translatedCode = translateErrorCode(serverResponseCode);
 	            errorIsUnknown = translatedCode === -1;
-
 	            if (!errorIsUnknown) {
 	              _context.next = 9;
 	              break;
@@ -80883,13 +80881,12 @@
 	            content = blob;
 
 	          case 95:
-	            _context3.next = 103;
+	            _context3.next = 102;
 	            break;
 
 	          case 97:
 	            _context3.prev = 97;
 	            _context3.t3 = _context3["catch"](18);
-	            console.log(_context3.t3);
 
 	            if (typeof _context3.t3 === 'string') {
 	              error = new AiTmedError({
@@ -80903,7 +80900,7 @@
 	            content = null;
 	            isBroken = true;
 
-	          case 103:
+	          case 102:
 	            return _context3.abrupt("return", {
 	              id: store$3.utils.idToBase64(document.id),
 	              owner_id: store$3.utils.idToBase64(edge.bvid),
@@ -80925,7 +80922,7 @@
 	              error: error
 	            });
 
-	          case 104:
+	          case 103:
 	          case "end":
 	            return _context3.stop();
 	        }
@@ -82333,13 +82330,12 @@
 	            content = blob;
 
 	          case 95:
-	            _context.next = 103;
+	            _context.next = 102;
 	            break;
 
 	          case 97:
 	            _context.prev = 97;
 	            _context.t3 = _context["catch"](18);
-	            console.log(_context.t3);
 
 	            if (typeof _context.t3 === 'string') {
 	              error = new AiTmedError({
@@ -82352,7 +82348,7 @@
 
 	            content = null;
 
-	          case 103:
+	          case 102:
 	            return _context.abrupt("return", _objectSpread$7(_objectSpread$7({}, document), {}, {
 	              name: {
 	                title: name.title,
@@ -82374,7 +82370,7 @@
 	              }
 	            }));
 
-	          case 104:
+	          case 103:
 	          case "end":
 	            return _context.stop();
 	        }
@@ -84583,39 +84579,34 @@
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
 	                            res = data;
-	                            _context.next = 14;
+	                            _context.next = 13;
 	                            break;
 
 	                          case 10:
 	                            _context.prev = 10;
 	                            _context.t0 = _context["catch"](2);
-	                            console.log(_context.t0);
 	                            throw _context.t0;
 
-	                          case 14:
-	                            if (!(res.length > 0)) {
-	                              _context.next = 18;
-	                              break;
-	                            }
+	                          case 13:
+	                            if (res.length > 0) {
+	                              res = res.map(function (edge) {
+	                                return replaceEidWithId(edge);
+	                              });
+	                              dispatch({
+	                                type: 'update-data',
+	                                //TODO: handle case for data is an array or an object
+	                                payload: {
+	                                  pageName: pageName,
+	                                  dataKey: dataKey,
+	                                  data: res[0]
+	                                }
+	                              });
+	                            } //TODO:handle else case
 
-	                            res = res.map(function (edge) {
-	                              return replaceEidWithId(edge);
-	                            });
-	                            dispatch({
-	                              type: 'update-data',
-	                              //TODO: handle case for data is an array or an object
-	                              payload: {
-	                                pageName: pageName,
-	                                dataKey: dataKey,
-	                                data: res[0]
-	                              }
-	                            });
+
 	                            return _context.abrupt("return", res);
 
-	                          case 18:
-	                            return _context.abrupt("return", null);
-
-	                          case 19:
+	                          case 15:
 	                          case "end":
 	                            return _context.stop();
 	                        }
@@ -85744,7 +85735,7 @@
 	                }
 
 	                _context.next = 7;
-	                return store$3.level2SDK.loadConfigData('aitmed');
+	                return store$3.level2SDK.loadConfigData('aitmedmeeting');
 
 	              case 7:
 	                config = _context.sent;
@@ -85986,7 +85977,7 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
-	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedBaseDataComp, populatedSelfDataComp, populatedAfterInheritingComp, populatedPage, init, currIndex, command, updatePage, populatedPageAgain, withFNs2;
+	        var pageCADL, cadlCopy, boundDispatch, populatedKeysCadlCopy, populatedBaseData, populatedSelfData, populatedAfterInheriting, withFNs, replaceUpdateJob, populatedBaseDataComp, populatedSelfDataComp, populatedPage, init, currIndex, command, updatePage, populatedPageAgain, withFNs2;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -86062,20 +86053,15 @@
 	                  lookFor: '..',
 	                  locations: [Object.values(populatedBaseDataComp)[0]],
 	                  skip: ['update', 'formData']
-	                });
-	                populatedAfterInheritingComp = populateObject({
-	                  source: populatedSelfDataComp,
-	                  lookFor: '=',
-	                  locations: [Object.values(populatedSelfDataComp)[0], this.root],
-	                  skip: ['update', 'formData']
-	                });
-	                populatedPage = populatedAfterInheritingComp;
+	                }); // const populatedAfterInheritingComp = populateObject({ source: populatedSelfDataComp, lookFor: '=', locations: [Object.values(populatedSelfDataComp)[0], this.root], skip: ['update', 'formData', 'lastTop'] })
+
+	                populatedPage = populatedSelfDataComp;
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedPage); //run init commands if any
 
 	                init = Object.values(populatedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 42;
+	                  _context2.next = 41;
 	                  break;
 	                }
 
@@ -86084,9 +86070,9 @@
 	                  return index;
 	                });
 
-	              case 22:
+	              case 21:
 	                if (!(this.callQueue.length > 0)) {
-	                  _context2.next = 42;
+	                  _context2.next = 41;
 	                  break;
 	                }
 
@@ -86094,24 +86080,24 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 40;
+	                  _context2.next = 39;
 	                  break;
 	                }
 
-	                _context2.prev = 26;
-	                _context2.next = 29;
+	                _context2.prev = 25;
+	                _context2.next = 28;
 	                return command();
 
-	              case 29:
-	                _context2.next = 34;
+	              case 28:
+	                _context2.next = 33;
 	                break;
 
-	              case 31:
-	                _context2.prev = 31;
-	                _context2.t0 = _context2["catch"](26);
+	              case 30:
+	                _context2.prev = 30;
+	                _context2.t0 = _context2["catch"](25);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
-	              case 34:
+	              case 33:
 	                updatePage = this.root[pageName]; //populateObject again
 
 	                populatedPageAgain = populateObject({
@@ -86127,19 +86113,19 @@
 	                init = Object.values(withFNs2)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(withFNs2)[0]);
 
-	              case 40:
-	                _context2.next = 22;
+	              case 39:
+	                _context2.next = 21;
 	                break;
 
-	              case 42:
+	              case 41:
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), populatedPage);
 
-	              case 43:
+	              case 42:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[26, 31]]);
+	        }, _callee2, this, [[25, 30]]);
 	      }));
 
 	      function initPage(_x) {
@@ -86418,12 +86404,12 @@
 
 	                        lodash.set(_this.root, _pathArr2, val);
 
-	                        _context5.next = 21;
+	                        _context5.next = 19;
 	                        break;
 
 	                      case 7:
 	                        if (!key.startsWith('=')) {
-	                          _context5.next = 21;
+	                          _context5.next = 19;
 	                          break;
 	                        }
 
@@ -86452,7 +86438,7 @@
 	                        });
 
 	                        if (!(typeof withFn === 'function')) {
-	                          _context5.next = 20;
+	                          _context5.next = 19;
 	                          break;
 	                        }
 
@@ -86460,12 +86446,6 @@
 	                        return withFn();
 
 	                      case 19:
-	                        console.log(_this);
-
-	                      case 20:
-	                        console.log(withFn);
-
-	                      case 21:
 	                      case "end":
 	                        return _context5.stop();
 	                    }
@@ -86635,13 +86615,13 @@
 	        case 10:
 	          cadl.root['SignIn'].update();
 	          _context.next = 13;
-	          return cadl.initPage('ApplyBusiness');
+	          return cadl.initPage('DashboardMeetingroom');
 
 	        case 13:
 	          debugger;
 	          _context.next = 16;
 	          return cadl.root['ApplyBusiness'].formData.edgeAPI.store({
-	            companyPhone: "+1 3431111dsd42ssadsd1daf39"
+	            companyPhone: "+1 3431111dsd42ssadfsdfsdsd1daf39"
 	          });
 
 	        case 16:
@@ -86649,7 +86629,7 @@
 	          _context.next = 19;
 	          return cadl.root['ApplyBusiness'].formData.wciAPI.store({
 	            type: 'text/plain',
-	            data: "+1 3009665sassadsdsd1daf39"
+	            data: "+1 3009665sassadsdsd1dafsdfsdff39"
 	          });
 
 	        case 19:

@@ -239,7 +239,6 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
       content = blob
     }
   } catch (reason) {
-    console.log(reason)
     if (typeof reason === 'string') {
       error = new AiTmedError({
         name: 'DOWNLOAD_FROM_S3_FAIL',

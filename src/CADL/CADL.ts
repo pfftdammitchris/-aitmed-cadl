@@ -60,7 +60,7 @@ export default class CADL {
         let config = store.getConfig()
         if (config === null) {
             //@ts-ignore
-            config = await store.level2SDK.loadConfigData('aitmed')
+            config = await store.level2SDK.loadConfigData('aitmedmeeting')
         }
         //@ts-ignore
         const { cadlEndpoint: cadlEndpointUrl, web, cadlBaseUrl, cadlMain } = config
@@ -200,9 +200,9 @@ export default class CADL {
         //TODO: refac to keep reference to local object within the root e.g SignIn, SignUp
         //populate the values from self
         const populatedSelfDataComp = populateObject({ source: populatedBaseDataComp, lookFor: '..', locations: [Object.values(populatedBaseDataComp)[0]], skip: ['update', 'formData'] })
-        const populatedAfterInheritingComp = populateObject({ source: populatedSelfDataComp, lookFor: '=', locations: [Object.values(populatedSelfDataComp)[0], this.root], skip: ['update', 'formData'] })
+        // const populatedAfterInheritingComp = populateObject({ source: populatedSelfDataComp, lookFor: '=', locations: [Object.values(populatedSelfDataComp)[0], this.root], skip: ['update', 'formData', 'lastTop'] })
 
-        let populatedPage = populatedAfterInheritingComp
+        let populatedPage = populatedSelfDataComp
         this.root = { ...this.root, ...populatedPage }
         //run init commands if any
         let init = Object.values(populatedPage)[0].init
@@ -387,9 +387,7 @@ export default class CADL {
                         const withFn = attachFns({ cadlObject: populateAfterInheriting, dispatch: boundDispatch })
                         if (typeof withFn === 'function') {
                             await withFn()
-                            console.log(this)
                         }
-                        console.log(withFn)
                     }
                 })
                 break
