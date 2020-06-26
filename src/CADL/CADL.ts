@@ -7,7 +7,7 @@ import {
     populateKeys,
     replaceUpdate,
     builtInFns,
-    populateVals
+    populateVals,
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -63,7 +63,7 @@ export default class CADL {
         let config: any = store.getConfig()
         if (config === null) {
             try {
-                config = await store.level2SDK.loadConfigData('aitmed')
+                config = await store.level2SDK.loadConfigData('meet')
             } catch (error) {
                 throw new UnableToLoadConfig('An error occured while trying to load the config', error)
             }
@@ -90,7 +90,6 @@ export default class CADL {
             const processedBaseDataModel = this.processPopulate({
                 source: BaseDataModel,
                 lookFor: ['.', '..', '='],
-                locations: [BaseDataModel]
             })
             this.root = { ...this.root, ...processedBaseDataModel }
         }
@@ -98,7 +97,6 @@ export default class CADL {
             const processedBaseCSS = this.processPopulate({
                 source: BaseCSS,
                 lookFor: ['.', '..', '='],
-                locations: [BaseCSS]
             })
             this.root = { ...this.root, ...processedBaseCSS }
         }
@@ -106,7 +104,6 @@ export default class CADL {
             const processedBasePage = this.processPopulate({
                 source: BasePage,
                 lookFor: ['.', '..', '='],
-                locations: [BasePage]
             })
             this.root = { ...this.root, ...processedBasePage }
         }
@@ -120,7 +117,6 @@ export default class CADL {
                         const processedBaseDataModel = this.processPopulate({
                             source: rawBaseDataModel,
                             lookFor: ['.', '..', '='],
-                            locations: [rawBaseDataModel]
                         })
                         this.root = { ...this.root, ...processedBaseDataModel }
                         break
@@ -131,7 +127,6 @@ export default class CADL {
                         const processedBaseCSS = this.processPopulate({
                             source: rawBaseCSS,
                             lookFor: ['.', '..', '='],
-                            locations: [rawBaseCSS]
                         })
                         this.root = { ...this.root, ...processedBaseCSS }
                         break
@@ -142,7 +137,6 @@ export default class CADL {
                         const processedBasePage = this.processPopulate({
                             source: rawBasePage,
                             lookFor: ['.', '..', '='],
-                            locations: [rawBasePage]
                         })
                         this.root = { ...this.root, ...processedBasePage }
                         break
@@ -152,7 +146,6 @@ export default class CADL {
                         const processedRawPage = this.processPopulate({
                             source: rawPage,
                             lookFor: ['.', '..', '='],
-                            locations: [rawPage]
                         })
                         this.root = { ...this.root, ...processedRawPage }
                         break
@@ -172,19 +165,19 @@ export default class CADL {
      * @throws UnableToParseYAML -if unable to parse yaml file
      * @throws UnableToExecuteFn -if something goes wrong while executing any init function
      */
-    async initPage(pageName: string) {
+    async initPage(pageName: string, skip: string[] = []) {
         if (!this.cadlEndpoint) await this.init()
 
-        let pageCADL = await this.getPage(pageName)
+        const pageCADL = await this.getPage(pageName)
 
         //FOR FORMDATA
         //process formData
         const processedFormData = this.processPopulate({
             source: pageCADL,
             lookFor: ['.', '..', '='],
-            locations: [this.root, pageCADL],
-            skip: ['update', 'components'],
-            withFns: true
+            skip: ['update', 'components', 'init', ...skip],
+            withFns: true,
+            pageName
         })
 
         //replace updateObj with Fn
@@ -196,9 +189,9 @@ export default class CADL {
         const processedComponents = this.processPopulate({
             source: replaceUpdateJob,
             lookFor: ['.', '..', '='],
-            locations: [this.root, replaceUpdateJob],
-            skip: ['update', 'formData'],
-            withFns: true
+            skip: ['update', 'formData', ...skip],
+            withFns: true,
+            pageName
         })
 
         let processedPage = processedComponents
@@ -236,6 +229,8 @@ export default class CADL {
                     init = Object.values(populatedUpdatedPageWithFns)[0].init
 
                     this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+
+                } else {
 
                 }
             }
@@ -314,31 +309,32 @@ export default class CADL {
     private processPopulate({
         source,
         lookFor,
-        locations,
         skip,
+        pageName,
         withFns = false
     }: {
         source: Record<string, any>,
         lookFor: string[],
-        locations: any[],
+        pageName?: string,
         skip?: string[],
         withFns?: boolean
     }): Record<string, any> {
         let sourceCopy = _.cloneDeep(source)
-
+        let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
         const sourceCopyWithKeys = populateKeys({
             source: sourceCopy,
             lookFor: '.',
-            locations
+            locations: [this.root, sourceCopy]
         })
+        localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys
 
         const sourceCopyWithVals = populateVals({
             source: sourceCopyWithKeys,
             lookFor,
             skip,
-            locations
+            locations: [this.root, localRoot]
         })
-
+        localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys
         let populatedResponse = sourceCopyWithVals
         if (withFns) {
             const boundDispatch = this.dispatch.bind(this)
