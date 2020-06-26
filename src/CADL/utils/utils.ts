@@ -18,6 +18,7 @@ export {
     populateArray,
     populateObject,
     builtInFns,
+    populateVals
 }
 
 
@@ -171,7 +172,6 @@ function attachFns({ cadlObject,
     //we need the pageName to use as a key to store the data
     //when using the dataKey
     const pageName = Object.keys(cadlObject)[0]
-
     return attachFnsHelper({
         pageName,
         cadlObject,
@@ -570,7 +570,8 @@ function replaceUpdate({ pageName, cadlObject, dispatch }: { pageName: string, c
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateString({ source, lookFor, locations }: { source: string, lookFor: string, locations: Record<string, any>[] }) {
+function populateString({ source, lookFor, skip, locations }: { source: string, lookFor: string, skip?: string[], locations: Record<string, any>[] }) {
+    if (skip && skip.includes(source)) return source
     if (!source.startsWith(lookFor)) return source
     let currVal = source
     let replacement
@@ -598,7 +599,7 @@ function populateString({ source, lookFor, locations }: { source: string, lookFo
             replacement = lookUp(currVal, location)
             if (replacement && replacement !== source) {
                 if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
-                    return populateString({ source: replacement, lookFor, locations })
+                    return populateString({ source: replacement, lookFor, skip, locations })
                 }
                 return replacement
             }
@@ -620,16 +621,16 @@ function populateString({ source, lookFor, locations }: { source: string, lookFo
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateArray({ source, lookFor, locations }: { source: any[], lookFor: string, locations: Record<string, any>[] }) {
+function populateArray({ source, lookFor, skip, locations }: { source: any[], lookFor: string, skip?: string[], locations: Record<string, any>[] }) {
     let sourceCopy = _.cloneDeep(source)
 
     let replacement = sourceCopy.map((elem) => {
         if (Array.isArray(elem)) {
-            return populateArray({ source: elem, lookFor, locations })
+            return populateArray({ source: elem, skip, lookFor, locations })
         } else if (isObject(elem)) {
-            return populateObject({ source: elem, lookFor, locations })
+            return populateObject({ source: elem, skip, lookFor, locations })
         } else if (typeof elem === 'string') {
-            return populateString({ source: elem, lookFor, locations })
+            return populateString({ source: elem, skip, lookFor, locations })
         }
         return elem
     })
@@ -652,9 +653,9 @@ function populateObject({ source, lookFor, locations, skip = [] }: { source: Rec
             if (isObject(sourceCopy[key])) {
                 sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip })
             } else if (Array.isArray(sourceCopy[key])) {
-                sourceCopy[key] = populateArray({ source: sourceCopy[key], lookFor, locations })
+                sourceCopy[key] = populateArray({ source: sourceCopy[key], skip, lookFor, locations })
             } else if (typeof sourceCopy[key] === 'string') {
-                sourceCopy[key] = populateString({ source: sourceCopy[key], lookFor, locations })
+                sourceCopy[key] = populateString({ source: sourceCopy[key], skip, lookFor, locations })
             }
         }
     })
@@ -702,4 +703,30 @@ function builtInFns(dispatch?: Function) {
         },
         currentDateTime: (() => Date.now())()
     }
+}
+
+
+function populateVals({
+    source,
+    lookFor,
+    locations,
+    skip
+}: {
+    source: Record<string, any>,
+    lookFor: string[],
+    skip?: string[],
+    locations: any[]
+}): Record<string, any> {
+    let sourceCopy = _.cloneDeep(source)
+
+    for (let symbol of lookFor) {
+        sourceCopy = populateObject({
+            source: sourceCopy,
+            lookFor: symbol,
+            skip,
+            locations
+        })
+    }
+
+    return sourceCopy
 }
