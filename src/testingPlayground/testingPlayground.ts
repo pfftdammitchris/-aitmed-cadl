@@ -34,17 +34,17 @@ export default (async function () {
     })
 
     cadl.root['SignIn'].update()
-    // await cadl.initPage('ApplyBusiness')
-    // debugger
-    // await cadl.root['ApplyBusiness'].formData.edgeAPI.store({ companyPhone: "+1 3431111dsdffsddsfd42ssadfsdfsdsd1daf39" })
-    // debugger
-    // await cadl.root['ApplyBusiness'].formData.wciAPI.store({ type: 'text/plain', data: "+1 3009665sdsassadsdsd1ffsdffsdfddaf39" })
-    // debugger
-    // await cadl.root['ApplyBusiness'].formData.w9API.store({ type: 'text/plain', data: "+1 hellow" })
-    // debugger
-
-    await cadl.initPage('DashboardMeetingroom', ['=..lastTop'])
+    await cadl.initPage('ApplyBusiness')
     debugger
+    await cadl.root['ApplyBusiness'].formData.edgeAPI.store({ companyPhone: "+1 3431111dsdffsddsfd42essadfsdfsdsd1daf39" })
+    debugger
+    await cadl.root['ApplyBusiness'].formData.wciAPI.store({ type: 'text/plain', data: "+1 3009665sdsassaddsdsdsd1ffsdffsdfddaf39" })
+    debugger
+    await cadl.root['ApplyBusiness'].formData.w9API.store({ type: 'text/plain', data: "+1 hellow" })
+    debugger
+
+    // await cadl.initPage('DashboardMeetingroom', ['=..lastTop'])
+    // debugger
 
     // //@ts-ignore
     // const res = cadl.getData('CreateNewAccount', 'formData.vertex')

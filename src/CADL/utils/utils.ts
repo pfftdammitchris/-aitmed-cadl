@@ -211,12 +211,10 @@ function attachFns({ cadlObject,
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
-
                                 const { api, dataKey, ...options } = _.cloneDeep(output)
                                 let res: any[] = []
                                 try {
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
-
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -233,10 +231,9 @@ function attachFns({ cadlObject,
                                         payload: { pageName, dataKey, data: res[0] }
                                     })
 
-                                    return res
                                 }
                                 //TODO:handle else case
-                                return null
+                                return res
                             }
                             output = getFn(output)
                             break
