@@ -6,23 +6,11 @@
 
 import CADL from '../'
 import { defaultConfig } from '../config'
-import { Account } from '../services'
 import DashboardMeetingroom from '../CADL/__mocks__/DashboardMeetingroom'
 
 import dot from 'dot-object'
 
-let js = {
-    pop: {
-        dad: {
-            child: {
-                eyes: "green",
-                hair: "blue"
-            },
-            eyes: 'black'
-        },
-        hair: 'bald'
-    }
-}
+
 
 console.log(dot.dot(DashboardMeetingroom))
 export default (async function () {

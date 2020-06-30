@@ -25,7 +25,6 @@ import {
     CADL_OBJECT,
     CADLARGS
 } from './types'
-import DashboardMeetingroom from './__mocks__/DashboardMeetingroom'
 
 import { mergeDeep } from '../utils'
 export default class CADL {

@@ -1,4 +1,4 @@
-import _, { isArray } from 'lodash'
+import _ from 'lodash'
 import dot from 'dot-object'
 import store from '../../common/store'
 import { mergeDeep, isObject } from '../../utils'
@@ -6,7 +6,6 @@ import Document from '../../services/document'
 import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
-import { retrieve } from 'services/Note/Note'
 
 export {
     isPopulated,
