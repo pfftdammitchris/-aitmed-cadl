@@ -1,10 +1,12 @@
-import _ from 'lodash'
+import _, { isArray } from 'lodash'
+import dot from 'dot-object'
 import store from '../../common/store'
 import { mergeDeep, isObject } from '../../utils'
 import Document from '../../services/document'
 import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
+import { retrieve } from 'services/Note/Note'
 
 export {
     isPopulated,
@@ -556,8 +558,17 @@ function replaceUpdate({ pageName, cadlObject, dispatch }: { pageName: string, c
     Object.keys(cadlCopy).forEach((key) => {
         if (key === 'update') {
             cadlCopy[key] = updateState({ pageName, updateObject: cadlCopy[key], dispatch })
+        } else if (key === 'object' && cadlCopy.actionType === 'updateObject') {
+            cadlCopy[key] = updateState({ pageName, updateObject: cadlCopy[key], dispatch })
         } else if (isObject(cadlCopy[key])) {
             cadlCopy[key] = replaceUpdate({ pageName, cadlObject: cadlCopy[key], dispatch })
+        } else if (Array.isArray(cadlCopy[key])) {
+            cadlCopy[key] = cadlCopy[key].map((elem) => {
+                if (isObject(elem)) {
+                    return replaceUpdate({ pageName, cadlObject: elem, dispatch })
+                }
+                return elem
+            })
         }
     })
     return cadlCopy
@@ -570,38 +581,58 @@ function replaceUpdate({ pageName, cadlObject, dispatch }: { pageName: string, c
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateString({ source, lookFor, skip, locations }: { source: string, lookFor: string, skip?: string[], locations: Record<string, any>[] }) {
+function populateString({ source, lookFor, skip, locations, path }: { source: string, lookFor: string, skip?: string[], locations: Record<string, any>[], path?: string[] }) {
     if (skip && skip.includes(source)) return source
     if (!source.startsWith(lookFor)) return source
     let currVal = source
     let replacement
-    if (lookFor === '..') {
+    if (lookFor === '_' && currVal.includes('.')) {
+        let charArr = currVal.split('')
+        let copyPath = _.clone(path) || []
+        let currChar = charArr.shift()
+        while (currChar !== '.' && charArr.length > 0) {
+            if (currChar === '_') {
+                copyPath.pop()
+            }
+            currChar = charArr.shift()
+        }
+        replacement = '.' + copyPath.concat(charArr.join('')).join('.')
+        return replacement
+    }
+    else if (lookFor === '..') {
         currVal = currVal.slice(1)
     }
-    if (lookFor === '=') {
+    else if (lookFor === '=') {
         if (source.startsWith('=..')) {
             currVal = currVal.slice(2)
         }
-        else if (source.startsWith('=.builtIn')) {
-            const builtInFuncs = builtInFns()
-            const pathArr = source.slice(2).split('.')[1]
-            const fn = _.get(builtInFuncs, pathArr)
-            if (fn) {
-                replacement = fn
-                return replacement
-            }
-        } else if (source.startsWith('=.')) {
+        // else if (source.startsWith('=.builtIn')) {
+        //     const builtInFuncs = builtInFns()
+        //     const pathArr = source.slice(2).split('.')[1]
+        //     const fn = _.get(builtInFuncs, pathArr)
+        //     if (fn) {
+        //         replacement = fn
+        //         return replacement
+        //     }
+        // } 
+        else if (source.startsWith('=.')) {
             currVal = currVal.slice(1)
         }
     }
+    if (currVal.startsWith('.')) {
+        currVal = currVal.slice(1)
+    }
     for (let location of locations) {
         try {
-            replacement = lookUp(currVal, location)
+            replacement = dot.pick(currVal, location)
+
+            // replacement = lookUp(currVal, location)
             if (replacement && replacement !== source) {
                 if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
-                    return populateString({ source: replacement, lookFor, skip, locations })
+                    return populateString({ source: replacement, lookFor, skip, locations, path })
+                } else {
+                    break
                 }
-                return replacement
             }
         } catch (error) {
             if (error instanceof UnableToLocateValue) {
@@ -610,6 +641,9 @@ function populateString({ source, lookFor, skip, locations }: { source: string, 
                 throw error
             }
         }
+    }
+    if (replacement && replacement !== source) {
+        return replacement
     }
     return source
 }
@@ -621,16 +655,17 @@ function populateString({ source, lookFor, skip, locations }: { source: string, 
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateArray({ source, lookFor, skip, locations }: { source: any[], lookFor: string, skip?: string[], locations: Record<string, any>[] }) {
+function populateArray({ source, lookFor, skip, locations, path }: { source: any[], lookFor: string, skip?: string[], locations: Record<string, any>[], path: string[] }) {
     let sourceCopy = _.cloneDeep(source)
-
-    let replacement = sourceCopy.map((elem) => {
+    var previousKey = path[path.length - 1] || ''
+    let replacement = sourceCopy.map((elem, i) => {
+        let index = '[' + i + ']'
         if (Array.isArray(elem)) {
-            return populateArray({ source: elem, skip, lookFor, locations })
+            return populateArray({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index) })
         } else if (isObject(elem)) {
-            return populateObject({ source: elem, skip, lookFor, locations })
+            return populateObject({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index) })
         } else if (typeof elem === 'string') {
-            return populateString({ source: elem, skip, lookFor, locations })
+            return populateString({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index) })
         }
         return elem
     })
@@ -645,17 +680,17 @@ function populateArray({ source, lookFor, skip, locations }: { source: any[], lo
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateObject({ source, lookFor, locations, skip = [] }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[], skip?: string[] }): Record<string, any> {
+function populateObject({ source, lookFor, locations, skip = [], path = [] }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[], skip?: string[], path?: string[] }): Record<string, any> {
     let sourceCopy = _.cloneDeep(source)
-
     Object.keys(sourceCopy).forEach((key) => {
+        let index = key
         if (!skip.includes(key)) {
             if (isObject(sourceCopy[key])) {
-                sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip })
+                sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip, path: path.concat(index) })
             } else if (Array.isArray(sourceCopy[key])) {
-                sourceCopy[key] = populateArray({ source: sourceCopy[key], skip, lookFor, locations })
+                sourceCopy[key] = populateArray({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index) })
             } else if (typeof sourceCopy[key] === 'string') {
-                sourceCopy[key] = populateString({ source: sourceCopy[key], skip, lookFor, locations })
+                sourceCopy[key] = populateString({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index) })
             }
         }
     })
@@ -730,3 +765,4 @@ function populateVals({
 
     return sourceCopy
 }
+

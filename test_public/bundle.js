@@ -29216,6 +29216,590 @@
 	}.call(commonjsGlobal));
 	});
 
+	function _process (v, mod) {
+	  var i;
+	  var r;
+
+	  if (typeof mod === 'function') {
+	    r = mod(v);
+	    if (r !== undefined) {
+	      v = r;
+	    }
+	  } else if (Array.isArray(mod)) {
+	    for (i = 0; i < mod.length; i++) {
+	      r = mod[i](v);
+	      if (r !== undefined) {
+	        v = r;
+	      }
+	    }
+	  }
+
+	  return v
+	}
+
+	function parseKey (key, val) {
+	  // detect negative index notation
+	  if (key[0] === '-' && Array.isArray(val) && /^-\d+$/.test(key)) {
+	    return val.length + parseInt(key, 10)
+	  }
+	  return key
+	}
+
+	function isIndex (k) {
+	  return /^\d+$/.test(k)
+	}
+
+	function isObject$1 (val) {
+	  return Object.prototype.toString.call(val) === '[object Object]'
+	}
+
+	function isArrayOrObject (val) {
+	  return Object(val) === val
+	}
+
+	function isEmptyObject (val) {
+	  return Object.keys(val).length === 0
+	}
+
+	var blacklist = ['__proto__', 'prototype', 'constructor'];
+	var blacklistFilter = function (part) { return blacklist.indexOf(part) === -1 };
+
+	function parsePath (path, sep) {
+	  if (path.indexOf('[') >= 0) {
+	    path = path.replace(/\[/g, '.').replace(/]/g, '');
+	  }
+
+	  var parts = path.split(sep);
+
+	  var check = parts.filter(blacklistFilter);
+
+	  if (check.length !== parts.length) {
+	    throw Error('Refusing to update blacklisted property ' + path)
+	  }
+
+	  return parts
+	}
+
+	var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+	function DotObject (separator, override, useArray, useBrackets) {
+	  if (!(this instanceof DotObject)) {
+	    return new DotObject(separator, override, useArray, useBrackets)
+	  }
+
+	  if (typeof override === 'undefined') override = false;
+	  if (typeof useArray === 'undefined') useArray = true;
+	  if (typeof useBrackets === 'undefined') useBrackets = true;
+	  this.separator = separator || '.';
+	  this.override = override;
+	  this.useArray = useArray;
+	  this.useBrackets = useBrackets;
+	  this.keepArray = false;
+
+	  // contains touched arrays
+	  this.cleanup = [];
+	}
+
+	var dotDefault = new DotObject('.', false, true, true);
+	function wrap (method) {
+	  return function () {
+	    return dotDefault[method].apply(dotDefault, arguments)
+	  }
+	}
+
+	DotObject.prototype._fill = function (a, obj, v, mod) {
+	  var k = a.shift();
+
+	  if (a.length > 0) {
+	    obj[k] = obj[k] || (this.useArray && isIndex(a[0]) ? [] : {});
+
+	    if (!isArrayOrObject(obj[k])) {
+	      if (this.override) {
+	        obj[k] = {};
+	      } else {
+	        if (!(isArrayOrObject(v) && isEmptyObject(v))) {
+	          throw new Error(
+	            'Trying to redefine `' + k + '` which is a ' + typeof obj[k]
+	          )
+	        }
+
+	        return
+	      }
+	    }
+
+	    this._fill(a, obj[k], v, mod);
+	  } else {
+	    if (!this.override && isArrayOrObject(obj[k]) && !isEmptyObject(obj[k])) {
+	      if (!(isArrayOrObject(v) && isEmptyObject(v))) {
+	        throw new Error("Trying to redefine non-empty obj['" + k + "']")
+	      }
+
+	      return
+	    }
+
+	    obj[k] = _process(v, mod);
+	  }
+	};
+
+	/**
+	 *
+	 * Converts an object with dotted-key/value pairs to it's expanded version
+	 *
+	 * Optionally transformed by a set of modifiers.
+	 *
+	 * Usage:
+	 *
+	 *   var row = {
+	 *     'nr': 200,
+	 *     'doc.name': '  My Document  '
+	 *   }
+	 *
+	 *   var mods = {
+	 *     'doc.name': [_s.trim, _s.underscored]
+	 *   }
+	 *
+	 *   dot.object(row, mods)
+	 *
+	 * @param {Object} obj
+	 * @param {Object} mods
+	 */
+	DotObject.prototype.object = function (obj, mods) {
+	  var self = this;
+
+	  Object.keys(obj).forEach(function (k) {
+	    var mod = mods === undefined ? null : mods[k];
+	    // normalize array notation.
+	    var ok = parsePath(k, self.separator).join(self.separator);
+
+	    if (ok.indexOf(self.separator) !== -1) {
+	      self._fill(ok.split(self.separator), obj, obj[k], mod);
+	      delete obj[k];
+	    } else {
+	      obj[k] = _process(obj[k], mod);
+	    }
+	  });
+
+	  return obj
+	};
+
+	/**
+	 * @param {String} path dotted path
+	 * @param {String} v value to be set
+	 * @param {Object} obj object to be modified
+	 * @param {Function|Array} mod optional modifier
+	 */
+	DotObject.prototype.str = function (path, v, obj, mod) {
+	  var ok = parsePath(path, this.separator).join(this.separator);
+
+	  if (path.indexOf(this.separator) !== -1) {
+	    this._fill(ok.split(this.separator), obj, v, mod);
+	  } else {
+	    obj[path] = _process(v, mod);
+	  }
+
+	  return obj
+	};
+
+	/**
+	 *
+	 * Pick a value from an object using dot notation.
+	 *
+	 * Optionally remove the value
+	 *
+	 * @param {String} path
+	 * @param {Object} obj
+	 * @param {Boolean} remove
+	 */
+	DotObject.prototype.pick = function (path, obj, remove, reindexArray) {
+	  var i;
+	  var keys;
+	  var val;
+	  var key;
+	  var cp;
+
+	  keys = parsePath(path, this.separator);
+	  for (i = 0; i < keys.length; i++) {
+	    key = parseKey(keys[i], obj);
+	    if (obj && typeof obj === 'object' && key in obj) {
+	      if (i === keys.length - 1) {
+	        if (remove) {
+	          val = obj[key];
+	          if (reindexArray && Array.isArray(obj)) {
+	            obj.splice(key, 1);
+	          } else {
+	            delete obj[key];
+	          }
+	          if (Array.isArray(obj)) {
+	            cp = keys.slice(0, -1).join('.');
+	            if (this.cleanup.indexOf(cp) === -1) {
+	              this.cleanup.push(cp);
+	            }
+	          }
+	          return val
+	        } else {
+	          return obj[key]
+	        }
+	      } else {
+	        obj = obj[key];
+	      }
+	    } else {
+	      return undefined
+	    }
+	  }
+	  if (remove && Array.isArray(obj)) {
+	    obj = obj.filter(function (n) {
+	      return n !== undefined
+	    });
+	  }
+	  return obj
+	};
+	/**
+	 *
+	 * Delete value from an object using dot notation.
+	 *
+	 * @param {String} path
+	 * @param {Object} obj
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.delete = function (path, obj) {
+	  return this.remove(path, obj, true)
+	};
+
+	/**
+	 *
+	 * Remove value from an object using dot notation.
+	 *
+	 * Will remove multiple items if path is an array.
+	 * In this case array indexes will be retained until all
+	 * removals have been processed.
+	 *
+	 * Use dot.delete() to automatically  re-index arrays.
+	 *
+	 * @param {String|Array<String>} path
+	 * @param {Object} obj
+	 * @param {Boolean} reindexArray
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.remove = function (path, obj, reindexArray) {
+	  var i;
+
+	  this.cleanup = [];
+	  if (Array.isArray(path)) {
+	    for (i = 0; i < path.length; i++) {
+	      this.pick(path[i], obj, true, reindexArray);
+	    }
+	    if (!reindexArray) {
+	      this._cleanup(obj);
+	    }
+	    return obj
+	  } else {
+	    return this.pick(path, obj, true, reindexArray)
+	  }
+	};
+
+	DotObject.prototype._cleanup = function (obj) {
+	  var ret;
+	  var i;
+	  var keys;
+	  var root;
+	  if (this.cleanup.length) {
+	    for (i = 0; i < this.cleanup.length; i++) {
+	      keys = this.cleanup[i].split('.');
+	      root = keys.splice(0, -1).join('.');
+	      ret = root ? this.pick(root, obj) : obj;
+	      ret = ret[keys[0]].filter(function (v) {
+	        return v !== undefined
+	      });
+	      this.set(this.cleanup[i], ret, obj);
+	    }
+	    this.cleanup = [];
+	  }
+	};
+
+	/**
+	 * Alias method  for `dot.remove`
+	 *
+	 * Note: this is not an alias for dot.delete()
+	 *
+	 * @param {String|Array<String>} path
+	 * @param {Object} obj
+	 * @param {Boolean} reindexArray
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.del = DotObject.prototype.remove;
+
+	/**
+	 *
+	 * Move a property from one place to the other.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the target property will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.move = function (source, target, obj, mods, merge) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(target, _process(this.pick(source, obj, true), mods), obj, merge);
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj, true), obj, merge);
+	  }
+
+	  return obj
+	};
+
+	/**
+	 *
+	 * Transfer a property from one object to another object.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the property on the other object will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj1
+	 * @param {Object} obj2
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.transfer = function (
+	  source,
+	  target,
+	  obj1,
+	  obj2,
+	  mods,
+	  merge
+	) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(
+	      target,
+	      _process(this.pick(source, obj1, true), mods),
+	      obj2,
+	      merge
+	    );
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj1, true), obj2, merge);
+	  }
+
+	  return obj2
+	};
+
+	/**
+	 *
+	 * Copy a property from one object to another object.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the property on the other object will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj1
+	 * @param {Object} obj2
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.copy = function (source, target, obj1, obj2, mods, merge) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(
+	      target,
+	      _process(
+	        // clone what is picked
+	        JSON.parse(JSON.stringify(this.pick(source, obj1, false))),
+	        mods
+	      ),
+	      obj2,
+	      merge
+	    );
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj1, false), obj2, merge);
+	  }
+
+	  return obj2
+	};
+
+	/**
+	 *
+	 * Set a property on an object using dot notation.
+	 *
+	 * @param {String} path
+	 * @param {any} val
+	 * @param {Object} obj
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.set = function (path, val, obj, merge) {
+	  var i;
+	  var k;
+	  var keys;
+	  var key;
+
+	  // Do not operate if the value is undefined.
+	  if (typeof val === 'undefined') {
+	    return obj
+	  }
+	  keys = parsePath(path, this.separator);
+
+	  for (i = 0; i < keys.length; i++) {
+	    key = keys[i];
+	    if (i === keys.length - 1) {
+	      if (merge && isObject$1(val) && isObject$1(obj[key])) {
+	        for (k in val) {
+	          if (hasOwnProperty.call(val, k)) {
+	            obj[key][k] = val[k];
+	          }
+	        }
+	      } else if (merge && Array.isArray(obj[key]) && Array.isArray(val)) {
+	        for (var j = 0; j < val.length; j++) {
+	          obj[keys[i]].push(val[j]);
+	        }
+	      } else {
+	        obj[key] = val;
+	      }
+	    } else if (
+	      // force the value to be an object
+	      !hasOwnProperty.call(obj, key) ||
+	      (!isObject$1(obj[key]) && !Array.isArray(obj[key]))
+	    ) {
+	      // initialize as array if next key is numeric
+	      if (/^\d+$/.test(keys[i + 1])) {
+	        obj[key] = [];
+	      } else {
+	        obj[key] = {};
+	      }
+	    }
+	    obj = obj[key];
+	  }
+	  return obj
+	};
+
+	/**
+	 *
+	 * Transform an object
+	 *
+	 * Usage:
+	 *
+	 *   var obj = {
+	 *     "id": 1,
+	 *    "some": {
+	 *      "thing": "else"
+	 *    }
+	 *   }
+	 *
+	 *   var transform = {
+	 *     "id": "nr",
+	 *    "some.thing": "name"
+	 *   }
+	 *
+	 *   var tgt = dot.transform(transform, obj)
+	 *
+	 * @param {Object} recipe Transform recipe
+	 * @param {Object} obj Object to be transformed
+	 * @param {Array} mods modifiers for the target
+	 */
+	DotObject.prototype.transform = function (recipe, obj, tgt) {
+	  obj = obj || {};
+	  tgt = tgt || {};
+	  Object.keys(recipe).forEach(
+	    function (key) {
+	      this.set(recipe[key], this.pick(key, obj), tgt);
+	    }.bind(this)
+	  );
+	  return tgt
+	};
+
+	/**
+	 *
+	 * Convert object to dotted-key/value pair
+	 *
+	 * Usage:
+	 *
+	 *   var tgt = dot.dot(obj)
+	 *
+	 *   or
+	 *
+	 *   var tgt = {}
+	 *   dot.dot(obj, tgt)
+	 *
+	 * @param {Object} obj source object
+	 * @param {Object} tgt target object
+	 * @param {Array} path path array (internal)
+	 */
+	DotObject.prototype.dot = function (obj, tgt, path) {
+	  tgt = tgt || {};
+	  path = path || [];
+	  var isArray = Array.isArray(obj);
+
+	  Object.keys(obj).forEach(
+	    function (key) {
+	      var index = isArray && this.useBrackets ? '[' + key + ']' : key;
+	      if (
+	        isArrayOrObject(obj[key]) &&
+	        ((isObject$1(obj[key]) && !isEmptyObject(obj[key])) ||
+	          (Array.isArray(obj[key]) && !this.keepArray && obj[key].length !== 0))
+	      ) {
+	        if (isArray && this.useBrackets) {
+	          var previousKey = path[path.length - 1] || '';
+	          return this.dot(
+	            obj[key],
+	            tgt,
+	            path.slice(0, -1).concat(previousKey + index)
+	          )
+	        } else {
+	          return this.dot(obj[key], tgt, path.concat(index))
+	        }
+	      } else {
+	        if (isArray && this.useBrackets) {
+	          tgt[path.join(this.separator).concat('[' + key + ']')] = obj[key];
+	        } else {
+	          tgt[path.concat(index).join(this.separator)] = obj[key];
+	        }
+	      }
+	    }.bind(this)
+	  );
+	  return tgt
+	};
+
+	DotObject.pick = wrap('pick');
+	DotObject.move = wrap('move');
+	DotObject.transfer = wrap('transfer');
+	DotObject.transform = wrap('transform');
+	DotObject.copy = wrap('copy');
+	DotObject.object = wrap('object');
+	DotObject.str = wrap('str');
+	DotObject.set = wrap('set');
+	DotObject.delete = wrap('delete');
+	DotObject.del = DotObject.remove = wrap('remove');
+	DotObject.dot = wrap('dot');
+	['override', 'overwrite'].forEach(function (prop) {
+	  Object.defineProperty(DotObject, prop, {
+	    get: function () {
+	      return dotDefault.override
+	    },
+	    set: function (val) {
+	      dotDefault.override = !!val;
+	    }
+	  });
+	});
+	['useArray', 'keepArray', 'useBrackets'].forEach(function (prop) {
+	  Object.defineProperty(DotObject, prop, {
+	    get: function () {
+	      return dotDefault[prop]
+	    },
+	    set: function (val) {
+	      dotDefault[prop] = val;
+	    }
+	  });
+	});
+
+	DotObject._process = _process;
+
+	var dotObject = DotObject;
+
 	function _objectWithoutPropertiesLoose(source, excluded) {
 	  if (source == null) return {};
 	  var target = {};
@@ -29339,7 +29923,7 @@
 	  return indexedObject(requireObjectCoercible(it));
 	};
 
-	var isObject$1 = function (it) {
+	var isObject$2 = function (it) {
 	  return typeof it === 'object' ? it !== null : typeof it === 'function';
 	};
 
@@ -29348,23 +29932,23 @@
 	// instead of the ES6 spec version, we didn't implement @@toPrimitive case
 	// and the second argument - flag - preferred type is a string
 	var toPrimitive = function (input, PREFERRED_STRING) {
-	  if (!isObject$1(input)) return input;
+	  if (!isObject$2(input)) return input;
 	  var fn, val;
-	  if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$1(val = fn.call(input))) return val;
-	  if (typeof (fn = input.valueOf) == 'function' && !isObject$1(val = fn.call(input))) return val;
-	  if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$1(val = fn.call(input))) return val;
+	  if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$2(val = fn.call(input))) return val;
+	  if (typeof (fn = input.valueOf) == 'function' && !isObject$2(val = fn.call(input))) return val;
+	  if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$2(val = fn.call(input))) return val;
 	  throw TypeError("Can't convert object to primitive value");
 	};
 
-	var hasOwnProperty = {}.hasOwnProperty;
+	var hasOwnProperty$1 = {}.hasOwnProperty;
 
 	var has = function (it, key) {
-	  return hasOwnProperty.call(it, key);
+	  return hasOwnProperty$1.call(it, key);
 	};
 
 	var document$1 = global_1.document;
 	// typeof document.createElement is 'object' in old IE
-	var EXISTS = isObject$1(document$1) && isObject$1(document$1.createElement);
+	var EXISTS = isObject$2(document$1) && isObject$2(document$1.createElement);
 
 	var documentCreateElement = function (it) {
 	  return EXISTS ? document$1.createElement(it) : {};
@@ -29395,7 +29979,7 @@
 	};
 
 	var anObject = function (it) {
-	  if (!isObject$1(it)) {
+	  if (!isObject$2(it)) {
 	    throw TypeError(String(it) + ' is not an object');
 	  } return it;
 	};
@@ -29492,7 +30076,7 @@
 	var getterFor = function (TYPE) {
 	  return function (it) {
 	    var state;
-	    if (!isObject$1(it) || (state = get$1(it)).type !== TYPE) {
+	    if (!isObject$2(it) || (state = get$1(it)).type !== TYPE) {
 	      throw TypeError('Incompatible receiver, ' + TYPE + ' required');
 	    } return state;
 	  };
@@ -29988,7 +30572,7 @@
 	    C = originalArray.constructor;
 	    // cross-realm fallback
 	    if (typeof C == 'function' && (C === Array || isArray$2(C.prototype))) C = undefined;
-	    else if (isObject$1(C)) {
+	    else if (isObject$2(C)) {
 	      C = C[SPECIES];
 	      if (C === null) C = undefined;
 	    }
@@ -30093,7 +30677,7 @@
 	  }
 	} : nativeDefineProperty$1;
 
-	var wrap = function (tag, description) {
+	var wrap$1 = function (tag, description) {
 	  var symbol = AllSymbols[tag] = objectCreate($Symbol[PROTOTYPE$1]);
 	  setInternalState(symbol, {
 	    type: SYMBOL,
@@ -30192,7 +30776,7 @@
 	      setSymbolDescriptor(this, tag, createPropertyDescriptor(1, value));
 	    };
 	    if (descriptors && USE_SETTER) setSymbolDescriptor(ObjectPrototype, tag, { configurable: true, set: setter });
-	    return wrap(tag, description);
+	    return wrap$1(tag, description);
 	  };
 
 	  redefine($Symbol[PROTOTYPE$1], 'toString', function toString() {
@@ -30200,7 +30784,7 @@
 	  });
 
 	  redefine($Symbol, 'withoutSetter', function (description) {
-	    return wrap(uid(description), description);
+	    return wrap$1(uid(description), description);
 	  });
 
 	  objectPropertyIsEnumerable.f = $propertyIsEnumerable;
@@ -30210,7 +30794,7 @@
 	  objectGetOwnPropertySymbols.f = $getOwnPropertySymbols;
 
 	  wellKnownSymbolWrapped.f = function (name) {
-	    return wrap(wellKnownSymbol(name), name);
+	    return wrap$1(wellKnownSymbol(name), name);
 	  };
 
 	  if (descriptors) {
@@ -30309,7 +30893,7 @@
 	      var $replacer;
 	      while (arguments.length > index) args.push(arguments[index++]);
 	      $replacer = replacer;
-	      if (!isObject$1(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+	      if (!isObject$2(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
 	      if (!isArray$2(replacer)) replacer = function (key, value) {
 	        if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
 	        if (!isSymbol(value)) return value;
@@ -30365,7 +30949,7 @@
 	  defineProperty$3(symbolPrototype, 'description', {
 	    configurable: true,
 	    get: function description() {
-	      var symbol = isObject$1(this) ? this.valueOf() : this;
+	      var symbol = isObject$2(this) ? this.valueOf() : this;
 	      var string = symbolToString.call(symbol);
 	      if (has(EmptyStringDescriptionStore, symbol)) return '';
 	      var desc = native ? string.slice(7, -1) : string.replace(regexp, '$1');
@@ -30558,7 +31142,7 @@
 
 	var fastKey = function (it, create) {
 	  // return a primitive with prefix
-	  if (!isObject$1(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+	  if (!isObject$2(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
 	  if (!has(it, METADATA)) {
 	    // can't set metadata to uncaught frozen object
 	    if (!isExtensible(it)) return 'F';
@@ -30611,7 +31195,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.freeze
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES, sham: !freezing }, {
 	  freeze: function freeze(it) {
-	    return nativeFreeze && isObject$1(it) ? nativeFreeze(onFreeze(it)) : it;
+	    return nativeFreeze && isObject$2(it) ? nativeFreeze(onFreeze(it)) : it;
 	  }
 	});
 
@@ -30823,7 +31407,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.isextensible
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$4 }, {
 	  isExtensible: function isExtensible(it) {
-	    return isObject$1(it) ? nativeIsExtensible ? nativeIsExtensible(it) : true : false;
+	    return isObject$2(it) ? nativeIsExtensible ? nativeIsExtensible(it) : true : false;
 	  }
 	});
 
@@ -30834,7 +31418,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.isfrozen
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$5 }, {
 	  isFrozen: function isFrozen(it) {
-	    return isObject$1(it) ? nativeIsFrozen ? nativeIsFrozen(it) : false : true;
+	    return isObject$2(it) ? nativeIsFrozen ? nativeIsFrozen(it) : false : true;
 	  }
 	});
 
@@ -30845,7 +31429,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.issealed
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$6 }, {
 	  isSealed: function isSealed(it) {
-	    return isObject$1(it) ? nativeIsSealed ? nativeIsSealed(it) : false : true;
+	    return isObject$2(it) ? nativeIsSealed ? nativeIsSealed(it) : false : true;
 	  }
 	});
 
@@ -30870,7 +31454,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.preventextensions
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$8, sham: !freezing }, {
 	  preventExtensions: function preventExtensions(it) {
-	    return nativePreventExtensions && isObject$1(it) ? nativePreventExtensions(onFreeze$1(it)) : it;
+	    return nativePreventExtensions && isObject$2(it) ? nativePreventExtensions(onFreeze$1(it)) : it;
 	  }
 	});
 
@@ -30885,12 +31469,12 @@
 	// https://tc39.github.io/ecma262/#sec-object.seal
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$9, sham: !freezing }, {
 	  seal: function seal(it) {
-	    return nativeSeal && isObject$1(it) ? nativeSeal(onFreeze$2(it)) : it;
+	    return nativeSeal && isObject$2(it) ? nativeSeal(onFreeze$2(it)) : it;
 	  }
 	});
 
 	var aPossiblePrototype = function (it) {
-	  if (!isObject$1(it) && it !== null) {
+	  if (!isObject$2(it) && it !== null) {
 	    throw TypeError("Can't set " + String(it) + ' as a prototype');
 	  } return it;
 	};
@@ -31028,7 +31612,7 @@
 	    var args = partArgs.concat(slice.call(arguments));
 	    return this instanceof boundFunction ? construct$1(fn, args.length, args) : fn.apply(that, args);
 	  };
-	  if (isObject$1(fn.prototype)) boundFunction.prototype = fn.prototype;
+	  if (isObject$2(fn.prototype)) boundFunction.prototype = fn.prototype;
 	  return boundFunction;
 	};
 
@@ -31067,8 +31651,8 @@
 	// https://tc39.github.io/ecma262/#sec-function.prototype-@@hasinstance
 	if (!(HAS_INSTANCE in FunctionPrototype$1)) {
 	  objectDefineProperty.f(FunctionPrototype$1, HAS_INSTANCE, { value: function (O) {
-	    if (typeof this != 'function' || !isObject$1(O)) return false;
-	    if (!isObject$1(this.prototype)) return O instanceof this;
+	    if (typeof this != 'function' || !isObject$2(O)) return false;
+	    if (!isObject$2(this.prototype)) return O instanceof this;
 	    // for environment w/o native `@@hasInstance` logic enough `instanceof`, but add this:
 	    while (O = objectGetPrototypeOf(O)) if (this.prototype === O) return true;
 	    return false;
@@ -31238,7 +31822,7 @@
 	var SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('concat');
 
 	var isConcatSpreadable = function (O) {
-	  if (!isObject$1(O)) return false;
+	  if (!isObject$2(O)) return false;
 	  var spreadable = O[IS_CONCAT_SPREADABLE];
 	  return spreadable !== undefined ? !!spreadable : isArray$2(O);
 	};
@@ -31728,7 +32312,7 @@
 	      // cross-realm fallback
 	      if (typeof Constructor == 'function' && (Constructor === Array || isArray$2(Constructor.prototype))) {
 	        Constructor = undefined;
-	      } else if (isObject$1(Constructor)) {
+	      } else if (isObject$2(Constructor)) {
 	        Constructor = Constructor[SPECIES$2];
 	        if (Constructor === null) Constructor = undefined;
 	      }
@@ -32127,7 +32711,7 @@
 	// https://tc39.github.io/ecma262/#sec-isregexp
 	var isRegexp = function (it) {
 	  var isRegExp;
-	  return isObject$1(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
+	  return isObject$2(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
 	};
 
 	var notARegexp = function (it) {
@@ -33240,7 +33824,7 @@
 	    // we haven't completely correct pre-ES6 way for getting `new.target`, so use this
 	    typeof (NewTarget = dummy.constructor) == 'function' &&
 	    NewTarget !== Wrapper &&
-	    isObject$1(NewTargetPrototype = NewTarget.prototype) &&
+	    isObject$2(NewTargetPrototype = NewTarget.prototype) &&
 	    NewTargetPrototype !== Wrapper.prototype
 	  ) objectSetPrototypeOf($this, NewTargetPrototype);
 	  return $this;
@@ -33382,7 +33966,7 @@
 	      return nativeTest.call(this, str);
 	    }
 	    var result = this.exec(str);
-	    if (result !== null && !isObject$1(result)) {
+	    if (result !== null && !isObject$2(result)) {
 	      throw new Error('RegExp exec method returned something other than an Object or null');
 	    }
 	    return !!result;
@@ -33540,7 +34124,7 @@
 	// `Number.isInteger` method implementation
 	// https://tc39.github.io/ecma262/#sec-number.isinteger
 	var isInteger = function isInteger(it) {
-	  return !isObject$1(it) && isFinite(it) && floor$2(it) === it;
+	  return !isObject$2(it) && isFinite(it) && floor$2(it) === it;
 	};
 
 	// `Number.isInteger` method
@@ -34355,7 +34939,7 @@
 
 	var promiseResolve = function (C, x) {
 	  anObject(C);
-	  if (isObject$1(x) && x.constructor === C) return x;
+	  if (isObject$2(x) && x.constructor === C) return x;
 	  var promiseCapability = newPromiseCapability.f(C);
 	  var resolve = promiseCapability.resolve;
 	  resolve(x);
@@ -34442,7 +35026,7 @@
 	// helpers
 	var isThenable = function (it) {
 	  var then;
-	  return isObject$1(it) && typeof (then = it.then) == 'function' ? then : false;
+	  return isObject$2(it) && typeof (then = it.then) == 'function' ? then : false;
 	};
 
 	var notify$1 = function (promise, state, isReject) {
@@ -34817,11 +35401,11 @@
 	        nativeMethod.call(this, value === 0 ? 0 : value);
 	        return this;
 	      } : KEY == 'delete' ? function (key) {
-	        return IS_WEAK && !isObject$1(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
+	        return IS_WEAK && !isObject$2(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
 	      } : KEY == 'get' ? function get(key) {
-	        return IS_WEAK && !isObject$1(key) ? undefined : nativeMethod.call(this, key === 0 ? 0 : key);
+	        return IS_WEAK && !isObject$2(key) ? undefined : nativeMethod.call(this, key === 0 ? 0 : key);
 	      } : KEY == 'has' ? function has(key) {
-	        return IS_WEAK && !isObject$1(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
+	        return IS_WEAK && !isObject$2(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
 	      } : function set(key, value) {
 	        nativeMethod.call(this, key === 0 ? 0 : key, value);
 	        return this;
@@ -35164,7 +35748,7 @@
 	      // 23.4.3.3 WeakSet.prototype.delete(value)
 	      'delete': function (key) {
 	        var state = getInternalState(this);
-	        if (!isObject$1(key)) return false;
+	        if (!isObject$2(key)) return false;
 	        var data = getWeakData(key);
 	        if (data === true) return uncaughtFrozenStore(state)['delete'](key);
 	        return data && has(data, state.id) && delete data[state.id];
@@ -35173,7 +35757,7 @@
 	      // 23.4.3.4 WeakSet.prototype.has(value)
 	      has: function has$1(key) {
 	        var state = getInternalState(this);
-	        if (!isObject$1(key)) return false;
+	        if (!isObject$2(key)) return false;
 	        var data = getWeakData(key);
 	        if (data === true) return uncaughtFrozenStore(state).has(key);
 	        return data && has(data, state.id);
@@ -35184,7 +35768,7 @@
 	      // 23.3.3.3 WeakMap.prototype.get(key)
 	      get: function get(key) {
 	        var state = getInternalState(this);
-	        if (isObject$1(key)) {
+	        if (isObject$2(key)) {
 	          var data = getWeakData(key);
 	          if (data === true) return uncaughtFrozenStore(state).get(key);
 	          return data ? data[state.id] : undefined;
@@ -35242,28 +35826,28 @@
 	  var nativeSet = WeakMapPrototype.set;
 	  redefineAll(WeakMapPrototype, {
 	    'delete': function (key) {
-	      if (isObject$1(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        return nativeDelete.call(this, key) || state.frozen['delete'](key);
 	      } return nativeDelete.call(this, key);
 	    },
 	    has: function has(key) {
-	      if (isObject$1(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        return nativeHas.call(this, key) || state.frozen.has(key);
 	      } return nativeHas.call(this, key);
 	    },
 	    get: function get(key) {
-	      if (isObject$1(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        return nativeHas.call(this, key) ? nativeGet.call(this, key) : state.frozen.get(key);
 	      } return nativeGet.call(this, key);
 	    },
 	    set: function set(key, value) {
-	      if (isObject$1(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        nativeHas.call(this, key) ? nativeSet.call(this, key, value) : state.frozen.set(key, value);
@@ -35646,7 +36230,7 @@
 	};
 
 	var isTypedArray = function (it) {
-	  return isObject$1(it) && has(TypedArrayConstructorsList, classof(it));
+	  return isObject$2(it) && has(TypedArrayConstructorsList, classof(it));
 	};
 
 	var aTypedArray = function (it) {
@@ -35734,7 +36318,7 @@
 	if (descriptors && !has(TypedArrayPrototype, TO_STRING_TAG$3)) {
 	  TYPED_ARRAY_TAG_REQIRED = true;
 	  defineProperty$c(TypedArrayPrototype, TO_STRING_TAG$3, { get: function () {
-	    return isObject$1(this) ? this[TYPED_ARRAY_TAG] : undefined;
+	    return isObject$2(this) ? this[TYPED_ARRAY_TAG] : undefined;
 	  } });
 	  for (NAME$1 in TypedArrayConstructorsList) if (global_1[NAME$1]) {
 	    createNonEnumerableProperty(global_1[NAME$1], TYPED_ARRAY_TAG, NAME$1);
@@ -35938,7 +36522,7 @@
 
 	var wrappedDefineProperty = function defineProperty(target, key, descriptor) {
 	  if (isTypedArrayIndex(target, key = toPrimitive(key, true))
-	    && isObject$1(descriptor)
+	    && isObject$2(descriptor)
 	    && has(descriptor, 'value')
 	    && !has(descriptor, 'get')
 	    && !has(descriptor, 'set')
@@ -36006,7 +36590,7 @@
 	        var index = 0;
 	        var byteOffset = 0;
 	        var buffer, byteLength, length;
-	        if (!isObject$1(data)) {
+	        if (!isObject$2(data)) {
 	          length = toIndex(data);
 	          byteLength = length * BYTES;
 	          buffer = new ArrayBuffer(byteLength);
@@ -36044,7 +36628,7 @@
 	      TypedArrayConstructor = wrapper(function (dummy, data, typedArrayOffset, $length) {
 	        anInstance(dummy, TypedArrayConstructor, CONSTRUCTOR_NAME);
 	        return inheritIfRequired(function () {
-	          if (!isObject$1(data)) return new NativeTypedArrayConstructor(toIndex(data));
+	          if (!isObject$2(data)) return new NativeTypedArrayConstructor(toIndex(data));
 	          if (isArrayBuffer(data)) return $length !== undefined
 	            ? new NativeTypedArrayConstructor(data, toOffset(typedArrayOffset, BYTES), $length)
 	            : typedArrayOffset !== undefined
@@ -36578,9 +37162,9 @@
 	    }
 	    // with altered newTarget, not support built-in constructors
 	    var proto = newTarget.prototype;
-	    var instance = objectCreate(isObject$1(proto) ? proto : Object.prototype);
+	    var instance = objectCreate(isObject$2(proto) ? proto : Object.prototype);
 	    var result = Function.apply.call(Target, instance, args);
-	    return isObject$1(result) ? result : instance;
+	    return isObject$2(result) ? result : instance;
 	  }
 	});
 
@@ -36628,7 +37212,7 @@
 	    : descriptor.get === undefined
 	      ? undefined
 	      : descriptor.get.call(receiver);
-	  if (isObject$1(prototype = objectGetPrototypeOf(target))) return get$3(prototype, propertyKey, receiver);
+	  if (isObject$2(prototype = objectGetPrototypeOf(target))) return get$3(prototype, propertyKey, receiver);
 	}
 
 	_export({ target: 'Reflect', stat: true }, {
@@ -36698,13 +37282,13 @@
 	  var ownDescriptor = objectGetOwnPropertyDescriptor.f(anObject(target), propertyKey);
 	  var existingDescriptor, prototype;
 	  if (!ownDescriptor) {
-	    if (isObject$1(prototype = objectGetPrototypeOf(target))) {
+	    if (isObject$2(prototype = objectGetPrototypeOf(target))) {
 	      return set$4(prototype, propertyKey, V, receiver);
 	    }
 	    ownDescriptor = createPropertyDescriptor(0);
 	  }
 	  if (has(ownDescriptor, 'value')) {
-	    if (ownDescriptor.writable === false || !isObject$1(receiver)) return false;
+	    if (ownDescriptor.writable === false || !isObject$2(receiver)) return false;
 	    if (existingDescriptor = objectGetOwnPropertyDescriptor.f(receiver, propertyKey)) {
 	      if (existingDescriptor.get || existingDescriptor.set || existingDescriptor.writable === false) return false;
 	      existingDescriptor.value = V;
@@ -36844,7 +37428,7 @@
 	var slice$1 = [].slice;
 	var MSIE = /MSIE .\./.test(engineUserAgent); // <- dirty ie9- check
 
-	var wrap$1 = function (scheduler) {
+	var wrap$2 = function (scheduler) {
 	  return function (handler, timeout /* , ...arguments */) {
 	    var boundArgs = arguments.length > 2;
 	    var args = boundArgs ? slice$1.call(arguments, 2) : undefined;
@@ -36860,10 +37444,10 @@
 	_export({ global: true, bind: true, forced: MSIE }, {
 	  // `setTimeout` method
 	  // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout
-	  setTimeout: wrap$1(global_1.setTimeout),
+	  setTimeout: wrap$2(global_1.setTimeout),
 	  // `setInterval` method
 	  // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-setinterval
-	  setInterval: wrap$1(global_1.setInterval)
+	  setInterval: wrap$2(global_1.setInterval)
 	});
 
 	var ITERATOR$7 = wellKnownSymbol('iterator');
@@ -37209,7 +37793,7 @@
 	  });
 
 	  if (init !== undefined) {
-	    if (isObject$1(init)) {
+	    if (isObject$2(init)) {
 	      iteratorMethod = getIteratorMethod(init);
 	      if (typeof iteratorMethod === 'function') {
 	        iterator = iteratorMethod.call(init);
@@ -37394,7 +37978,7 @@
 	      var init, body, headers;
 	      if (arguments.length > 1) {
 	        init = arguments[1];
-	        if (isObject$1(init)) {
+	        if (isObject$2(init)) {
 	          body = init.body;
 	          if (classof(body) === URL_SEARCH_PARAMS) {
 	            headers = init.headers ? new Headers(init.headers) : new Headers();
@@ -39372,7 +39956,7 @@
 	 * @param {Object} val The value to test
 	 * @returns {boolean} True if value is an Object, otherwise false
 	 */
-	function isObject$2(val) {
+	function isObject$3(val) {
 	  return val !== null && typeof val === 'object';
 	}
 
@@ -39423,7 +40007,7 @@
 	 * @returns {boolean} True if value is a Stream, otherwise false
 	 */
 	function isStream$1(val) {
-	  return isObject$2(val) && isFunction$1(val.pipe);
+	  return isObject$3(val) && isFunction$1(val.pipe);
 	}
 
 	/**
@@ -39598,7 +40182,7 @@
 	  isArrayBufferView: isArrayBufferView$1,
 	  isString: isString$1,
 	  isNumber: isNumber$1,
-	  isObject: isObject$2,
+	  isObject: isObject$3,
 	  isUndefined: isUndefined$1,
 	  isDate: isDate$1,
 	  isFile: isFile$1,
@@ -80038,7 +80622,7 @@
 	 * - checks if given value is a valid object {}
 	 */
 
-	function isObject$3(item) {
+	function isObject$4(item) {
 	  if (item === null) return false;
 	  if (item === undefined) return false;
 	  return item && _typeof_1(item) === 'object' && !Array.isArray(item);
@@ -80046,12 +80630,12 @@
 	function mergeDeep(target, source) {
 	  var output = Object.assign({}, target);
 
-	  if (isObject$3(target) && isObject$3(source)) {
+	  if (isObject$4(target) && isObject$4(source)) {
 	    Object.keys(source).forEach(function (key) {
-	      if (isObject$3(source[key])) {
+	      if (isObject$4(source[key])) {
 	        if (!(key in target)) {
 	          Object.assign(output, defineProperty({}, key, source[key]));
-	        } else if (isObject$3(target[key])) {
+	        } else if (isObject$4(target[key])) {
 	          output[key] = mergeDeep(target[key], source[key]);
 	        } else {
 	          output[key] = source[key];
@@ -84440,7 +85024,7 @@
 
 	        delete output[key];
 	      }
-	    } else if (isObject$3(output[key])) {
+	    } else if (isObject$4(output[key])) {
 	      output[key] = populateKeys({
 	        source: output[key],
 	        lookFor: lookFor,
@@ -84448,7 +85032,7 @@
 	      });
 	    } else if (Array.isArray(output[key])) {
 	      output[key] = output[key].map(function (elem) {
-	        if (isObject$3(elem)) {
+	        if (isObject$4(elem)) {
 	          return populateKeys({
 	            source: elem,
 	            lookFor: lookFor,
@@ -84496,16 +85080,16 @@
 
 	  var isPop = true;
 
-	  if (isObject$3(itemCopy)) {
+	  if (isObject$4(itemCopy)) {
 	    for (var _i = 0, _Object$keys = Object.keys(itemCopy); _i < _Object$keys.length; _i++) {
 	      var key = _Object$keys[_i];
 	      if (!isPop) return isPop;
 
-	      if (isObject$3(itemCopy[key])) {
+	      if (isObject$4(itemCopy[key])) {
 	        isPop = isPopulated(itemCopy[key]);
 	      } else if (Array.isArray(itemCopy[key])) {
 	        isPop = itemCopy[key].forEach(function (elem) {
-	          if (isObject$3(elem)) {
+	          if (isObject$4(elem)) {
 	            isPop = isPopulated(elem);
 	          } else if (typeof elem === 'string') {
 	            if (elem.startsWith('.') || elem.startsWith('..')) {
@@ -84555,9 +85139,9 @@
 	    //traverse through the page object and look for the api keyword
 	    var output = lodash.cloneDeep(cadlObject);
 
-	    if (isObject$3(output)) {
+	    if (isObject$4(output)) {
 	      Object.keys(output).forEach(function (key) {
-	        if (isObject$3(output[key])) {
+	        if (isObject$4(output[key])) {
 	          output[key] = attachFnsHelper({
 	            pageName: pageName,
 	            cadlObject: output[key],
@@ -84565,7 +85149,7 @@
 	          });
 	        } else if (Array.isArray(output[key])) {
 	          output[key] = output[key].map(function (elem) {
-	            if (isObject$3(elem)) return attachFnsHelper({
+	            if (isObject$4(elem)) return attachFnsHelper({
 	              pageName: pageName,
 	              cadlObject: elem,
 	              dispatch: dispatch
@@ -85218,7 +85802,7 @@
 	                              throw _context8.t0;
 
 	                            case 13:
-	                              if (!(Array.isArray(res) && res.length > 0 || isObject$3(res))) {
+	                              if (!(Array.isArray(res) && res.length > 0 || isObject$4(res))) {
 	                                _context8.next = 16;
 	                                break;
 	                              }
@@ -85408,11 +85992,29 @@
 	        updateObject: cadlCopy[key],
 	        dispatch: dispatch
 	      });
-	    } else if (isObject$3(cadlCopy[key])) {
+	    } else if (key === 'object' && cadlCopy.actionType === 'updateObject') {
+	      cadlCopy[key] = updateState({
+	        pageName: pageName,
+	        updateObject: cadlCopy[key],
+	        dispatch: dispatch
+	      });
+	    } else if (isObject$4(cadlCopy[key])) {
 	      cadlCopy[key] = replaceUpdate({
 	        pageName: pageName,
 	        cadlObject: cadlCopy[key],
 	        dispatch: dispatch
+	      });
+	    } else if (Array.isArray(cadlCopy[key])) {
+	      cadlCopy[key] = cadlCopy[key].map(function (elem) {
+	        if (isObject$4(elem)) {
+	          return replaceUpdate({
+	            pageName: pageName,
+	            cadlObject: elem,
+	            dispatch: dispatch
+	          });
+	        }
+
+	        return elem;
 	      });
 	    }
 	  });
@@ -85431,32 +86033,49 @@
 	  var source = _ref18.source,
 	      lookFor = _ref18.lookFor,
 	      skip = _ref18.skip,
-	      locations = _ref18.locations;
+	      locations = _ref18.locations,
+	      path = _ref18.path;
 	  if (skip && skip.includes(source)) return source;
 	  if (!source.startsWith(lookFor)) return source;
 	  var currVal = source;
 	  var replacement;
 
-	  if (lookFor === '..') {
-	    currVal = currVal.slice(1);
-	  }
+	  if (lookFor === '_' && currVal.includes('.')) {
+	    var charArr = currVal.split('');
+	    var copyPath = lodash.clone(path) || [];
+	    var currChar = charArr.shift();
 
-	  if (lookFor === '=') {
+	    while (currChar !== '.' && charArr.length > 0) {
+	      if (currChar === '_') {
+	        copyPath.pop();
+	      }
+
+	      currChar = charArr.shift();
+	    }
+
+	    replacement = '.' + copyPath.concat(charArr.join('')).join('.');
+	    return replacement;
+	  } else if (lookFor === '..') {
+	    currVal = currVal.slice(1);
+	  } else if (lookFor === '=') {
 	    if (source.startsWith('=..')) {
 	      currVal = currVal.slice(2);
-	    } else if (source.startsWith('=.builtIn')) {
-	      var builtInFuncs = builtInFns();
-	      var pathArr = source.slice(2).split('.')[1];
-
-	      var fn = lodash.get(builtInFuncs, pathArr);
-
-	      if (fn) {
-	        replacement = fn;
-	        return replacement;
+	    } // else if (source.startsWith('=.builtIn')) {
+	    //     const builtInFuncs = builtInFns()
+	    //     const pathArr = source.slice(2).split('.')[1]
+	    //     const fn = _.get(builtInFuncs, pathArr)
+	    //     if (fn) {
+	    //         replacement = fn
+	    //         return replacement
+	    //     }
+	    // } 
+	    else if (source.startsWith('=.')) {
+	        currVal = currVal.slice(1);
 	      }
-	    } else if (source.startsWith('=.')) {
-	      currVal = currVal.slice(1);
-	    }
+	  }
+
+	  if (currVal.startsWith('.')) {
+	    currVal = currVal.slice(1);
 	  }
 
 	  var _iterator2 = _createForOfIteratorHelper$g(locations),
@@ -85467,7 +86086,7 @@
 	      var location = _step2.value;
 
 	      try {
-	        replacement = lookUp(currVal, location);
+	        replacement = dotObject.pick(currVal, location); // replacement = lookUp(currVal, location)
 
 	        if (replacement && replacement !== source) {
 	          if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
@@ -85475,11 +86094,12 @@
 	              source: replacement,
 	              lookFor: lookFor,
 	              skip: skip,
-	              locations: locations
+	              locations: locations,
+	              path: path
 	            });
+	          } else {
+	            break;
 	          }
-
-	          return replacement;
 	        }
 	      } catch (error) {
 	        if (error instanceof UnableToLocateValue) {
@@ -85493,6 +86113,10 @@
 	    _iterator2.e(err);
 	  } finally {
 	    _iterator2.f();
+	  }
+
+	  if (replacement && replacement !== source) {
+	    return replacement;
 	  }
 
 	  return source;
@@ -85510,31 +86134,38 @@
 	  var source = _ref19.source,
 	      lookFor = _ref19.lookFor,
 	      skip = _ref19.skip,
-	      locations = _ref19.locations;
+	      locations = _ref19.locations,
+	      path = _ref19.path;
 
 	  var sourceCopy = lodash.cloneDeep(source);
 
-	  var replacement = sourceCopy.map(function (elem) {
+	  var previousKey = path[path.length - 1] || '';
+	  var replacement = sourceCopy.map(function (elem, i) {
+	    var index = '[' + i + ']';
+
 	    if (Array.isArray(elem)) {
 	      return populateArray({
 	        source: elem,
 	        skip: skip,
 	        lookFor: lookFor,
-	        locations: locations
+	        locations: locations,
+	        path: path.slice(0, -1).concat(previousKey + index)
 	      });
-	    } else if (isObject$3(elem)) {
+	    } else if (isObject$4(elem)) {
 	      return populateObject({
 	        source: elem,
 	        skip: skip,
 	        lookFor: lookFor,
-	        locations: locations
+	        locations: locations,
+	        path: path.slice(0, -1).concat(previousKey + index)
 	      });
 	    } else if (typeof elem === 'string') {
 	      return populateString({
 	        source: elem,
 	        skip: skip,
 	        lookFor: lookFor,
-	        locations: locations
+	        locations: locations,
+	        path: path.slice(0, -1).concat(previousKey + index)
 	      });
 	    }
 
@@ -85556,32 +86187,39 @@
 	      lookFor = _ref20.lookFor,
 	      locations = _ref20.locations,
 	      _ref20$skip = _ref20.skip,
-	      skip = _ref20$skip === void 0 ? [] : _ref20$skip;
+	      skip = _ref20$skip === void 0 ? [] : _ref20$skip,
+	      _ref20$path = _ref20.path,
+	      path = _ref20$path === void 0 ? [] : _ref20$path;
 
 	  var sourceCopy = lodash.cloneDeep(source);
 
 	  Object.keys(sourceCopy).forEach(function (key) {
+	    var index = key;
+
 	    if (!skip.includes(key)) {
-	      if (isObject$3(sourceCopy[key])) {
+	      if (isObject$4(sourceCopy[key])) {
 	        sourceCopy[key] = populateObject({
 	          source: sourceCopy[key],
 	          lookFor: lookFor,
 	          locations: locations,
-	          skip: skip
+	          skip: skip,
+	          path: path.concat(index)
 	        });
 	      } else if (Array.isArray(sourceCopy[key])) {
 	        sourceCopy[key] = populateArray({
 	          source: sourceCopy[key],
 	          skip: skip,
 	          lookFor: lookFor,
-	          locations: locations
+	          locations: locations,
+	          path: path.concat(index)
 	        });
 	      } else if (typeof sourceCopy[key] === 'string') {
 	        sourceCopy[key] = populateString({
 	          source: sourceCopy[key],
 	          skip: skip,
 	          lookFor: lookFor,
-	          locations: locations
+	          locations: locations,
+	          path: path.concat(index)
 	        });
 	      }
 	    }
@@ -85717,6 +86355,8 @@
 	    defineProperty(this, "_baseUrl", void 0);
 
 	    defineProperty(this, "_assetsUrl", void 0);
+
+	    defineProperty(this, "_map", void 0);
 
 	    defineProperty(this, "_root", {});
 
@@ -85972,6 +86612,11 @@
 	                return _context.finish(74);
 
 	              case 77:
+	                this.dispatch({
+	                  type: 'update-map'
+	                });
+
+	              case 78:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -86003,8 +86648,8 @@
 	            pageCADL,
 	            processedFormData,
 	            boundDispatch,
-	            replaceUpdateJob,
 	            processedComponents,
+	            replaceUpdateJob2,
 	            processedPage,
 	            init,
 	            currIndex,
@@ -86041,24 +86686,25 @@
 	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                }); //replace updateObj with Fn
+	                }); // //replace updateObj with Fn
 
-	                boundDispatch = this.dispatch.bind(this);
-	                replaceUpdateJob = replaceUpdate({
-	                  pageName: pageName,
-	                  cadlObject: processedFormData,
-	                  dispatch: boundDispatch
-	                }); //FOR COMPONENTS
+	                boundDispatch = this.dispatch.bind(this); // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
+	                //FOR COMPONENTS
 	                //process components
 
 	                processedComponents = this.processPopulate({
-	                  source: replaceUpdateJob,
-	                  lookFor: ['.', '..', '='],
+	                  source: processedFormData,
+	                  lookFor: ['.', '..', '=', '_'],
 	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
 	                });
-	                processedPage = processedComponents;
+	                replaceUpdateJob2 = replaceUpdate({
+	                  pageName: pageName,
+	                  cadlObject: processedComponents,
+	                  dispatch: boundDispatch
+	                });
+	                processedPage = replaceUpdateJob2;
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage); //run init commands if any
 
 	                init = Object.values(processedPage)[0].init;
@@ -86124,8 +86770,11 @@
 
 	              case 38:
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage);
+	                this.dispatch({
+	                  type: 'update-map'
+	                });
 
-	              case 39:
+	              case 40:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -86436,7 +87085,7 @@
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
 	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                var trimPath, _pathArr2, val, _trimPath, _pathArr3, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
+	                var trimPath, location, _pathArr2, val, _trimPath, _pathArr3, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
 
 	                return regenerator.wrap(function _callee5$(_context5) {
 	                  while (1) {
@@ -86447,11 +87096,18 @@
 	                          break;
 	                        }
 
-	                        trimPath = key.substring(1, key.length - 1);
+	                        if (key.startsWith('..')) {
+	                          trimPath = key.substring(2, key.length - 1);
+	                          location = _this.root[_pageName3];
+	                        } else if (key.startsWith('.')) {
+	                          trimPath = key.substring(1, key.length - 1);
+	                          location = _this.root;
+	                        }
+
 	                        _pathArr2 = trimPath.split('.');
 	                        val = _populateAfterInheriting[key];
 
-	                        lodash.set(_this.root, _pathArr2, val);
+	                        lodash.set(location, _pathArr2, val);
 
 	                        _context5.next = 19;
 	                        break;
@@ -86506,6 +87162,13 @@
 	                return _ref4.apply(this, arguments);
 	              };
 	            }());
+	            break;
+	          }
+
+	        case 'update-map':
+	          {
+	            //TODO: consider adding update-page-map
+	            this.map = dotObject.dot(this.root);
 	            break;
 	          }
 
@@ -86605,6 +87268,14 @@
 	      return store$3.apiVersion;
 	    }
 	  }, {
+	    key: "map",
+	    set: function set(map) {
+	      this._map = map;
+	    },
+	    get: function get() {
+	      return this._map;
+	    }
+	  }, {
 	    key: "initCallQueue",
 	    set: function set(initCallQueue) {
 	      this._initCallQueue = initCallQueue;
@@ -86629,11 +87300,382 @@
 	  configUrl: 'https://public.aitmed.com/config'
 	};
 
+	var DashboardMeetingroom = {
+	  "DashboardMeetingroom": {
+	    "module": "meetingroom",
+	    "pageNumber": "90",
+	    "init": ["..listData.invitedroom.get", "..listData.hostroom.get"],
+	    "save": ["..meetroom.edgeAPI.store"],
+	    "lastTop": "0.0",
+	    "listData": {
+	      "invitedroom": {
+	        "links": [".Edge"],
+	        "get": {
+	          ".EdgeAPI.get": "",
+	          "dataKey": "listData.invitedroom.links",
+	          "id": ".Global.currentUser.vertex.id",
+	          "type": "1053",
+	          "xfname": "evid"
+	        }
+	      },
+	      "hostroom": {
+	        "links": [".Edge"],
+	        "get": {
+	          ".EdgeAPI.get": "",
+	          "dataKey": "listData.hostroom.links",
+	          "id": ".Global.currentUser.vertex.id",
+	          "type": "40000",
+	          "xfname": "bvid",
+	          "scondition": "refid=null"
+	        }
+	      }
+	    },
+	    "mockData": {
+	      "mockList1": [{
+	        "roomName": "1.Gary Chen Meeting Room"
+	      }, {
+	        "roomName": "2.Dr Smith Meeting Room"
+	      }],
+	      "mockList2": [{
+	        "roomName": "1.Room Created 1"
+	      }, {
+	        "roomName": "2.Room Created 2"
+	      }]
+	    },
+	    "roomlink": ".Edge",
+	    "meetroom": {
+	      "edge": {
+	        ".Edge": "",
+	        "type": "40000",
+	        "name": {
+	          "roomName": "Exam Room 1",
+	          "videoProvider": "twilio"
+	        },
+	        "refid": "",
+	        "deat": {
+	          "roomId": "",
+	          "accessToken": ""
+	        }
+	      },
+	      "edgeAPI": {
+	        ".EdgeAPI": "",
+	        "store": {
+	          "dataKey": "meetroom.edge"
+	        }
+	      }
+	    },
+	    "components": [{
+	      "type": "scrollView",
+	      "style": {
+	        "left": "0",
+	        "top": "0.0599",
+	        "width": "1",
+	        "height": "0.94",
+	        "backgroundColor": "0xffffffff"
+	      },
+	      "children": [{
+	        "type": "view",
+	        "style": {
+	          "left": "0",
+	          "top": "0",
+	          "width": "1",
+	          "height": "0.2"
+	        },
+	        "children": [{
+	          "type": "image",
+	          "path": "aitmedLogo.png",
+	          "style": {
+	            "left": "0",
+	            "top": "0",
+	            "width": "0.21333",
+	            "height": "0.10899"
+	          }
+	        }, {
+	          "type": "label",
+	          "text": "Welcome to AiTmed \n TeleMeeting Room",
+	          "style": {
+	            "left": "0.22",
+	            "top": "0",
+	            "width": "0.6",
+	            "height": "0.1"
+	          }
+	        }, {
+	          "type": "label",
+	          "text": "Invite to Join",
+	          "style": {
+	            "left": "0",
+	            "top": "0.16",
+	            "width": "0.6",
+	            "height": "0.04"
+	          }
+	        }]
+	      }, {
+	        "type": "list",
+	        "contentType": "listObject",
+	        "listObject": "..listData.invitedroom.links",
+	        "iteratorVar": "itemObject",
+	        "mockData": "..mockData.mockList1",
+	        "style": {
+	          "left": "0",
+	          "top": "0.21",
+	          "width": "1",
+	          "height": "0"
+	        },
+	        "children": [{
+	          "type": "listItem",
+	          "itemObject": "jojo",
+	          "onClick": [{
+	            "actionType": "updateObject",
+	            "object": {
+	              "..roomlink@": "___.itemObject"
+	            }
+	          }, {
+	            "actionType": "pageJump",
+	            "destination": "VideoChat"
+	          }],
+	          "style": {
+	            "left": "0",
+	            "top": "0",
+	            "width": "1",
+	            "height": "0.04",
+	            "border": {
+	              "style": "2",
+	              "color": "0x00000018"
+	            },
+	            "borderWidth": "1"
+	          },
+	          "children": [{
+	            "type": "label",
+	            "dataKey": "itemObject.name.roomName",
+	            "dataName": "roomName",
+	            "style": {
+	              "left": "0",
+	              "top": "0.005",
+	              "width": "1",
+	              "height": "0.03",
+	              "fontSize": "13",
+	              "color": "0x3185c7ff"
+	            }
+	          }]
+	        }]
+	      }, {
+	        "type": "view",
+	        "style": {
+	          "left": "0",
+	          "top": "0.395",
+	          "width": "1",
+	          "height": "0.04"
+	        },
+	        "children": [{
+	          "type": "label",
+	          "text": "Create new meeting",
+	          "style": {
+	            "left": "0",
+	            "top": "0",
+	            "width": "1",
+	            "height": "0.04",
+	            "fontSize": "18",
+	            "fontStyle": "bold",
+	            "color": "0x3185c7ff"
+	          }
+	        }, {
+	          "type": "button",
+	          "text": "+",
+	          "onClick": [{
+	            "actionType": "saveObject",
+	            "object": "..save"
+	          }, {
+	            "actionType": "updateObject",
+	            "object": {
+	              "..roomlink@": "..meetroom.edge"
+	            }
+	          }, {
+	            "actionType": "pageJump",
+	            "destination": "VideoChat"
+	          }],
+	          "style": {
+	            "left": "0.8",
+	            "top": "0",
+	            "width": "0.07246",
+	            "height": "0.03",
+	            "color": "0x000000ff",
+	            "fontSize": "22",
+	            "backgroundColor": "0x00000000",
+	            "border": {
+	              "style": "5"
+	            },
+	            "borderRadius": "5",
+	            "display": "inline",
+	            "textAlign": {
+	              "x": "center",
+	              "y": "center"
+	            }
+	          }
+	        }]
+	      }, {
+	        "type": "list",
+	        "contentType": "listObject",
+	        "listObject": "..listData.hostroom.links",
+	        "iteratorVar": "itemObject",
+	        "mockData": "..mockData.mockList2",
+	        "style": {
+	          "left": "0",
+	          "top": "=..lastTop",
+	          "width": "1",
+	          "height": "0"
+	        },
+	        "children": [{
+	          "type": "listItem",
+	          "itemObject": "hello",
+	          "onClick": [{
+	            "actionType": "updateObject",
+	            "object": {
+	              "..roomlink@": "___.itemObject"
+	            }
+	          }, {
+	            "actionType": "pageJump",
+	            "destination": "VideoChat"
+	          }],
+	          "style": {
+	            "left": "0",
+	            "top": "0",
+	            "width": "1",
+	            "height": "0.04",
+	            "border": {
+	              "style": "2",
+	              "color": "0x00000018"
+	            },
+	            "borderWidth": "1"
+	          },
+	          "children": [{
+	            "type": "label",
+	            "dataKey": "itemObject.name.roomName",
+	            "dataName": "roomName",
+	            "style": {
+	              "left": "0",
+	              "top": "0.005",
+	              "width": "1",
+	              "height": "0.03",
+	              "fontSize": "13",
+	              "color": "0x3185c7ff"
+	            }
+	          }]
+	        }]
+	      }, {
+	        "type": "view",
+	        "onClick": [{
+	          "actionType": "pageJump",
+	          "destination": "CallHistory"
+	        }],
+	        "style": {
+	          "left": "0",
+	          "top": "=..lastTop",
+	          "width": "1",
+	          "height": "0.06"
+	        },
+	        "children": [{
+	          "type": "label",
+	          "text": "Call History",
+	          "style": {
+	            "left": "0",
+	            "top": "0",
+	            "width": "0.6",
+	            "height": "0.1",
+	            "color": "0x3185c7ff",
+	            "fontSize": "18",
+	            "fontStyle": "bold"
+	          }
+	        }, {
+	          "type": "image",
+	          "path": "rightArrow.png",
+	          "style": {
+	            "left": "0.75",
+	            "top": "0",
+	            "width": "0.08",
+	            "height": "0.05"
+	          }
+	        }]
+	      }]
+	    }, {
+	      "type": "view",
+	      "style": {
+	        "left": "0",
+	        "top": "0.85",
+	        "width": "0.74667",
+	        "height": "0.0408"
+	      },
+	      "children": [{
+	        "type": "image",
+	        "path": "logout.png",
+	        "style": {
+	          "left": "0",
+	          "top": "0",
+	          "width": "0.05333",
+	          "height": "0.02724"
+	        }
+	      }, {
+	        "type": "button",
+	        "text": "Log out",
+	        "onClick": [{
+	          "actionType": "pageJump",
+	          "destination": "Logout"
+	        }],
+	        "style": {
+	          "color": "0x0000008c",
+	          "fontSize": "13",
+	          "fontStyle": "bold",
+	          "left": "0.08",
+	          "top": "0",
+	          "width": "0.6667",
+	          "height": "0.02724",
+	          "backgroundColor": "0x00000000",
+	          "textAlign": {
+	            "x": "left",
+	            "y": "center"
+	          },
+	          "border": {
+	            "style": "1"
+	          }
+	        }
+	      }, {
+	        "type": "view",
+	        "style": {
+	          "left": "0.4",
+	          "top": "0",
+	          "width": "0.7",
+	          "height": "0.0408"
+	        },
+	        "children": [{
+	          "type": "image",
+	          "path": "membership.png",
+	          "style": {
+	            "left": "0",
+	            "top": "0",
+	            "width": "0.04",
+	            "height": "0.0408"
+	          }
+	        }, {
+	          "type": "label",
+	          "text": "Contact Support: 657-200-5555",
+	          "style": {
+	            "left": "0.06",
+	            "top": "0.01",
+	            "width": "0.6",
+	            "height": "0.0408",
+	            "fontSize": "12"
+	          }
+	        }]
+	      }]
+	    }]
+	  }
+	};
+
 	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	console.log(dotObject.dot(DashboardMeetingroom));
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	  var cadl, vc;
+	  var cadl;
 	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
@@ -86646,53 +87688,33 @@
 
 	        case 3:
 	          _context.next = 5;
-	          return cadl.initPage('SignIn');
-
-	        case 5:
-	          _context.next = 7;
-	          return Account$1.requestVerificationCode('+1 8858687687');
-
-	        case 7:
-	          vc = _context.sent;
-	          _context.next = 10;
-	          return cadl.builtIn['signIn']({
-	            password: "letmein123",
-	            phoneNumber: "+1 8858687687",
-	            verificationCode: vc
-	          });
-
-	        case 10:
-	          cadl.root['SignIn'].update();
-	          _context.next = 13;
 	          return cadl.initPage('ApplyBusiness');
 
-	        case 13:
+	        case 5:
 	          debugger;
-	          _context.next = 16;
+	          _context.next = 8;
 	          return cadl.root['ApplyBusiness'].formData.edgeAPI.store({
-	            companyPhone: "+1 3431111dsdffsddsfd42essadfsdfsdsd1daf39"
+	            companyPhone: "+1 3431111dsdffsddsfd42essfsdfadfsdfsdsd1daf39"
 	          });
 
-	        case 16:
+	        case 8:
 	          debugger;
-	          _context.next = 19;
+	          _context.next = 11;
 	          return cadl.root['ApplyBusiness'].formData.wciAPI.store({
 	            type: 'text/plain',
-	            data: "+1 3009665sdsassaddsdsdsd1ffsdffsdfddaf39"
+	            data: "+1 3009665sdsassaddsdsdsfsdfd1ffsdffsdfddaf39"
 	          });
 
-	        case 19:
+	        case 11:
 	          debugger;
-	          _context.next = 22;
+	          _context.next = 14;
 	          return cadl.root['ApplyBusiness'].formData.w9API.store({
 	            type: 'text/plain',
 	            data: "+1 hellow"
 	          });
 
-	        case 22:
-	          debugger; // await cadl.initPage('DashboardMeetingroom', ['=..lastTop'])
-	          // debugger
-	          // //@ts-ignore
+	        case 14:
+	          debugger; // //@ts-ignore
 	          // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
 	          // debugger
 
@@ -86736,7 +87758,7 @@
 	          //     }
 	          // }
 
-	        case 24:
+	        case 16:
 	        case "end":
 	          return _context.stop();
 	      }

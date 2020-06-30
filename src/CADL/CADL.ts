@@ -1,6 +1,8 @@
 import axios from 'axios'
 import YAML from 'yaml'
 import _ from 'lodash'
+import dot from 'dot-object'
+
 import {
     populateObject,
     attachFns,
@@ -23,6 +25,7 @@ import {
     CADL_OBJECT,
     CADLARGS
 } from './types'
+import DashboardMeetingroom from './__mocks__/DashboardMeetingroom'
 
 import { mergeDeep } from '../utils'
 export default class CADL {
@@ -32,6 +35,7 @@ export default class CADL {
     private _cadlBaseUrl: string
     private _baseUrl: string
     private _assetsUrl: string
+    private _map: Record<string, any>
     private _root: Record<string, any> = {}
     private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
     private _initCallQueue: any[]
@@ -153,6 +157,8 @@ export default class CADL {
                 }
             }
         }
+
+        this.dispatch({ type: 'update-map' })
     }
 
 
@@ -168,8 +174,7 @@ export default class CADL {
     async initPage(pageName: string, skip: string[] = []) {
         if (!this.cadlEndpoint) await this.init()
 
-        const pageCADL = await this.getPage(pageName)
-
+        let pageCADL = await this.getPage(pageName)
         //FOR FORMDATA
         //process formData
         const processedFormData = this.processPopulate({
@@ -180,21 +185,22 @@ export default class CADL {
             pageName
         })
 
-        //replace updateObj with Fn
+        // //replace updateObj with Fn
         const boundDispatch = this.dispatch.bind(this)
-        let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
+        // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
 
         //FOR COMPONENTS
         //process components
         const processedComponents = this.processPopulate({
-            source: replaceUpdateJob,
-            lookFor: ['.', '..', '='],
+            source: processedFormData,
+            lookFor: ['.', '..', '=', '_'],
             skip: ['update', 'formData', ...skip],
             withFns: true,
             pageName
         })
+        let replaceUpdateJob2 = replaceUpdate({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
 
-        let processedPage = processedComponents
+        let processedPage = replaceUpdateJob2
         this.root = { ...this.root, ...processedPage }
 
         //run init commands if any
@@ -236,6 +242,7 @@ export default class CADL {
             }
         }
         this.root = { ...this.root, ...processedPage }
+        this.dispatch({ type: 'update-map' })
     }
 
     /**
@@ -327,7 +334,6 @@ export default class CADL {
             locations: [this.root, sourceCopy]
         })
         localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys
-
         const sourceCopyWithVals = populateVals({
             source: sourceCopyWithKeys,
             lookFor,
@@ -350,7 +356,7 @@ export default class CADL {
      * 
      * @param action 
      */
-    private dispatch(action: { type: string, payload: any }) {
+    private dispatch(action: { type: string, payload?: any }) {
         switch (action.type) {
             case ('populate'): {
                 const { pageName } = action.payload
@@ -416,17 +422,23 @@ export default class CADL {
             }
             case ('update-global'): {
                 const { pageName, updateObject } = action.payload
-
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
                 const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, this.root[pageName]] })
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
-                        const trimPath = key.substring(1, key.length - 1)
+                        let trimPath, location
+                        if (key.startsWith('..')) {
+                            trimPath = key.substring(2, key.length - 1)
+                            location = this.root[pageName]
+                        } else if (key.startsWith('.')) {
+                            trimPath = key.substring(1, key.length - 1)
+                            location = this.root
+                        }
                         const pathArr = trimPath.split('.')
                         const val = populateAfterInheriting[key]
-                        _.set(this.root, pathArr, val)
+                        _.set(location, pathArr, val)
                     } else if (key.startsWith('=')) {
                         const trimPath = key.substring(2, key.length)
                         const pathArr = trimPath.split('.')
@@ -460,6 +472,11 @@ export default class CADL {
                         }
                     }
                 })
+                break
+            }
+            case ('update-map'): {
+                //TODO: consider adding update-page-map
+                this.map = dot.dot(this.root)
                 break
             }
             default: {
@@ -530,6 +547,13 @@ export default class CADL {
 
     get apiVersion() {
         return store.apiVersion
+    }
+    set map(map) {
+        this._map = map
+    }
+
+    get map() {
+        return this._map
     }
     set initCallQueue(initCallQueue) {
         this._initCallQueue = initCallQueue
