@@ -1,6 +1,5 @@
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
-import pkg from './package.json';
 import babel from 'rollup-plugin-babel'
 import json from 'rollup-plugin-json'
 import external from 'rollup-plugin-peer-deps-external'
@@ -21,11 +20,12 @@ export default [
 		input: 'src/index.ts',
 		output: [
 			{
-				file: pkg.main,
-				format: 'cjs',
+				dir: 'dist',
+				format: 'umd',
 				sourcemap: true,
-			},
-			{ file: pkg.module, format: 'es', sourcemap: true, }
+				globals: {},
+				name: 'aitmedCadl',
+			}
 		],
 		plugins: [
 			external(),
