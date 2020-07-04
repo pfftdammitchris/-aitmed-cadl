@@ -48,6 +48,12 @@ export default (async function () {
     debugger
     await cadl.initPage('CreateMeeting')
     debugger
+    
+    await cadl.root['CreateMeeting'].save[0]()
+    debugger
+    await cadl.initPage('InviteeInfo')
+    debugger
+    await cadl.root['InviteeInfo'].save[0]()
     // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
     // debugger
     // await cadl.initPage('ApplyBusiness')

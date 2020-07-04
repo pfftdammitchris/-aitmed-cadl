@@ -85124,7 +85124,14 @@
 	  var localRoot = cadlObject; //we need the pageName to use as a key to store the data
 	  //when using the dataKey
 
-	  var pageName = Object.keys(cadlObject)[0];
+	  var pageName;
+
+	  if (Object.keys(cadlObject).length > 1) {
+	    pageName = 'Global';
+	  } else {
+	    pageName = Object.keys(cadlObject)[0];
+	  }
+
 	  return attachFnsHelper({
 	    pageName: pageName,
 	    cadlObject: cadlObject,
@@ -85241,6 +85248,8 @@
 	                          _$cloneDeep2,
 	                          dataKey,
 	                          pathArr,
+	                          _ref6,
+	                          deat,
 	                          currentVal,
 	                          mergedVal,
 	                          res,
@@ -85259,64 +85268,77 @@
 	                              _$cloneDeep2 = lodash.cloneDeep(output), dataKey = _$cloneDeep2.dataKey;
 	                              pathArr = dataKey.split('.'); //get current object name value
 
-	                              currentVal = lodash.get(localRoot[pageName], pathArr); //TODO: remove when backend fixes message type problem
+	                              _ref6 = lodash.get(localRoot[pageName], pathArr) || dispatch({
+	                                type: 'get-data',
+	                                payload: {
+	                                  pageName: pageName,
+	                                  dataKey: dataKey
+	                                }
+	                              }), deat = _ref6.deat, currentVal = objectWithoutProperties(_ref6, ["deat"]); //TODO: remove when backend fixes message type problem
 
 	                              if (currentVal.name && currentVal.name.message) {
 	                                currentVal.name.message = "temp";
 	                              } //merging existing name field and incoming name field
 
 
-	                              mergedVal = mergeDeep(currentVal, {
-	                                name: name
-	                              }); // mergedVal.type = parseInt(mergedVal.type)
+	                              mergedVal = _objectSpread$c(_objectSpread$c({}, currentVal), {}, {
+	                                type: parseInt(currentVal.type)
+	                              });
+
+	                              if (name) {
+	                                mergedVal = mergeDeep(currentVal, {
+	                                  name: name
+	                                });
+	                              } // mergedVal.type = parseInt(mergedVal.type)
+
 
 	                              if (!id) {
-	                                _context2.next = 20;
+	                                _context2.next = 21;
 	                                break;
 	                              }
 
-	                              _context2.prev = 7;
-	                              _context2.next = 10;
+	                              _context2.prev = 8;
+	                              _context2.next = 11;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 10:
+	                            case 11:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              _context2.next = 18;
+	                              _context2.next = 19;
 	                              break;
 
-	                            case 15:
-	                              _context2.prev = 15;
-	                              _context2.t0 = _context2["catch"](7);
+	                            case 16:
+	                              _context2.prev = 16;
+	                              _context2.t0 = _context2["catch"](8);
 	                              throw _context2.t0;
 
-	                            case 18:
-	                              _context2.next = 31;
+	                            case 19:
+	                              _context2.next = 32;
 	                              break;
 
-	                            case 20:
-	                              _context2.prev = 20;
-	                              _context2.next = 23;
+	                            case 21:
+	                              _context2.prev = 21;
+	                              _context2.next = 24;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 23:
+	                            case 24:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 31;
+	                              _context2.next = 32;
 	                              break;
 
-	                            case 28:
-	                              _context2.prev = 28;
-	                              _context2.t1 = _context2["catch"](20);
+	                            case 29:
+	                              _context2.prev = 29;
+	                              _context2.t1 = _context2["catch"](21);
 	                              throw _context2.t1;
 
-	                            case 31:
+	                            case 32:
 	                              if (!res) {
-	                                _context2.next = 36;
+	                                _context2.next = 37;
 	                                break;
 	                              }
 
@@ -85340,15 +85362,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 36:
+	                            case 37:
 	                              return _context2.abrupt("return", null);
 
-	                            case 37:
+	                            case 38:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[7, 15], [20, 28]]);
+	                      }, _callee2, null, [[8, 16], [21, 29]]);
 	                    }));
 
 	                    return function (_x) {
@@ -85378,10 +85400,10 @@
 	                            return store$3.level2SDK.documentServices.retrieveDocument({
 	                              idList: [ids],
 	                              options: _objectSpread$c({}, rest)
-	                            }).then(function (_ref7) {
-	                              var data = _ref7.data;
+	                            }).then(function (_ref8) {
+	                              var data = _ref8.data;
 	                              return Promise.all(data.map( /*#__PURE__*/function () {
-	                                var _ref8 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(document) {
+	                                var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(document) {
 	                                  var note;
 	                                  return regenerator.wrap(function _callee3$(_context3) {
 	                                    while (1) {
@@ -85405,7 +85427,7 @@
 	                                }));
 
 	                                return function (_x2) {
-	                                  return _ref8.apply(this, arguments);
+	                                  return _ref9.apply(this, arguments);
 	                                };
 	                              }()));
 	                            }).then(function (res) {
@@ -85462,14 +85484,14 @@
 	              {
 	                var _storeFn = function _storeFn(output) {
 	                  return /*#__PURE__*/function () {
-	                    var _ref10 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(_ref9) {
-	                      var data, type, _ref9$id, id, _$cloneDeep4, dataKey, cloneOutput, currentVal, mergedVal, api, options, res, _yield$store$level2SD4, _data2, appDataType, eid, name, response;
+	                    var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(_ref10) {
+	                      var data, type, _ref10$id, id, _$cloneDeep4, dataKey, cloneOutput, currentVal, mergedVal, api, options, res, _yield$store$level2SD4, _data2, appDataType, eid, name, response;
 
 	                      return regenerator.wrap(function _callee5$(_context5) {
 	                        while (1) {
 	                          switch (_context5.prev = _context5.next) {
 	                            case 0:
-	                              data = _ref9.data, type = _ref9.type, _ref9$id = _ref9.id, id = _ref9$id === void 0 ? null : _ref9$id;
+	                              data = _ref10.data, type = _ref10.type, _ref10$id = _ref10.id, id = _ref10$id === void 0 ? null : _ref10$id;
 	                              //TODO:update to new format after ApplyBusiness is updated
 	                              //@ts-ignore
 	                              _$cloneDeep4 = lodash.cloneDeep(output), dataKey = _$cloneDeep4.dataKey, cloneOutput = objectWithoutProperties(_$cloneDeep4, ["dataKey"]); // const pathArr = dataKey.split('.')
@@ -85569,7 +85591,7 @@
 	                    }));
 
 	                    return function (_x3) {
-	                      return _ref10.apply(this, arguments);
+	                      return _ref11.apply(this, arguments);
 	                    };
 	                  }();
 	                };
@@ -85582,7 +85604,7 @@
 	              {
 	                var _storeFn2 = function _storeFn2(output) {
 	                  return /*#__PURE__*/function () {
-	                    var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(name) {
+	                    var _ref12 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(name) {
 	                      var id,
 	                          _$cloneDeep5,
 	                          dataKey,
@@ -85691,7 +85713,7 @@
 	                    }));
 
 	                    return function (_x4) {
-	                      return _ref11.apply(this, arguments);
+	                      return _ref12.apply(this, arguments);
 	                    };
 	                  }();
 	                };
@@ -85773,7 +85795,7 @@
 
 	                var fn = function fn(output) {
 	                  return /*#__PURE__*/function () {
-	                    var _ref13 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(input) {
+	                    var _ref14 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(input) {
 	                      var _$cloneDeep7, api, dataKey, pathArr, currentVal, res, data;
 
 	                      return regenerator.wrap(function _callee8$(_context8) {
@@ -85830,7 +85852,7 @@
 	                    }));
 
 	                    return function (_x5) {
-	                      return _ref13.apply(this, arguments);
+	                      return _ref14.apply(this, arguments);
 	                    };
 	                  }();
 	                };
@@ -85939,10 +85961,10 @@
 	 */
 
 
-	function updateState(_ref15) {
-	  var pageName = _ref15.pageName,
-	      updateObject = _ref15.updateObject,
-	      dispatch = _ref15.dispatch;
+	function updateState(_ref16) {
+	  var pageName = _ref16.pageName,
+	      updateObject = _ref16.updateObject,
+	      dispatch = _ref16.dispatch;
 	  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10() {
 	    return regenerator.wrap(function _callee10$(_context10) {
 	      while (1) {
@@ -85978,10 +86000,10 @@
 	 */
 
 
-	function replaceUpdate(_ref17) {
-	  var pageName = _ref17.pageName,
-	      cadlObject = _ref17.cadlObject,
-	      dispatch = _ref17.dispatch;
+	function replaceUpdate(_ref18) {
+	  var pageName = _ref18.pageName,
+	      cadlObject = _ref18.cadlObject,
+	      dispatch = _ref18.dispatch;
 
 	  var cadlCopy = lodash.cloneDeep(cadlObject);
 
@@ -86029,12 +86051,12 @@
 	 */
 
 
-	function populateString(_ref18) {
-	  var source = _ref18.source,
-	      lookFor = _ref18.lookFor,
-	      skip = _ref18.skip,
-	      locations = _ref18.locations,
-	      path = _ref18.path;
+	function populateString(_ref19) {
+	  var source = _ref19.source,
+	      lookFor = _ref19.lookFor,
+	      skip = _ref19.skip,
+	      locations = _ref19.locations,
+	      path = _ref19.path;
 	  if (skip && skip.includes(source)) return source;
 	  if (!source.startsWith(lookFor)) return source;
 	  var currVal = source;
@@ -86130,12 +86152,12 @@
 	 */
 
 
-	function populateArray(_ref19) {
-	  var source = _ref19.source,
-	      lookFor = _ref19.lookFor,
-	      skip = _ref19.skip,
-	      locations = _ref19.locations,
-	      path = _ref19.path;
+	function populateArray(_ref20) {
+	  var source = _ref20.source,
+	      lookFor = _ref20.lookFor,
+	      skip = _ref20.skip,
+	      locations = _ref20.locations,
+	      path = _ref20.path;
 
 	  var sourceCopy = lodash.cloneDeep(source);
 
@@ -86182,14 +86204,14 @@
 	 */
 
 
-	function populateObject(_ref20) {
-	  var source = _ref20.source,
-	      lookFor = _ref20.lookFor,
-	      locations = _ref20.locations,
-	      _ref20$skip = _ref20.skip,
-	      skip = _ref20$skip === void 0 ? [] : _ref20$skip,
-	      _ref20$path = _ref20.path,
-	      path = _ref20$path === void 0 ? [] : _ref20$path;
+	function populateObject(_ref21) {
+	  var source = _ref21.source,
+	      lookFor = _ref21.lookFor,
+	      locations = _ref21.locations,
+	      _ref21$skip = _ref21.skip,
+	      skip = _ref21$skip === void 0 ? [] : _ref21$skip,
+	      _ref21$path = _ref21.path,
+	      path = _ref21$path === void 0 ? [] : _ref21$path;
 
 	  var sourceCopy = lodash.cloneDeep(source);
 
@@ -86233,14 +86255,14 @@
 
 	function builtInFns(dispatch) {
 	  return {
-	    createNewAccount: function createNewAccount(_ref21) {
+	    createNewAccount: function createNewAccount(_ref22) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
 	        var phoneNumber, password, verificationCode, name, data;
 	        return regenerator.wrap(function _callee11$(_context11) {
 	          while (1) {
 	            switch (_context11.prev = _context11.next) {
 	              case 0:
-	                phoneNumber = _ref21.phoneNumber, password = _ref21.password, verificationCode = _ref21.verificationCode, name = _ref21.name;
+	                phoneNumber = _ref22.phoneNumber, password = _ref22.password, verificationCode = _ref22.verificationCode, name = _ref22.name;
 	                _context11.next = 3;
 	                return Account$1.create(phoneNumber, password, verificationCode, name);
 
@@ -86256,14 +86278,14 @@
 	        }, _callee11);
 	      }))();
 	    },
-	    signIn: function signIn(_ref22) {
+	    signIn: function signIn(_ref23) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12() {
 	        var phoneNumber, password, verificationCode, data;
 	        return regenerator.wrap(function _callee12$(_context12) {
 	          while (1) {
 	            switch (_context12.prev = _context12.next) {
 	              case 0:
-	                phoneNumber = _ref22.phoneNumber, password = _ref22.password, verificationCode = _ref22.verificationCode;
+	                phoneNumber = _ref23.phoneNumber, password = _ref23.password, verificationCode = _ref23.verificationCode;
 	                _context12.next = 3;
 	                return Account$1.login(phoneNumber, password, verificationCode);
 
@@ -86298,11 +86320,11 @@
 	  };
 	}
 
-	function populateVals(_ref23) {
-	  var source = _ref23.source,
-	      lookFor = _ref23.lookFor,
-	      locations = _ref23.locations,
-	      skip = _ref23.skip;
+	function populateVals(_ref24) {
+	  var source = _ref24.source,
+	      lookFor = _ref24.lookFor,
+	      locations = _ref24.locations,
+	      skip = _ref24.skip;
 
 	  var sourceCopy = lodash.cloneDeep(source);
 
@@ -87054,7 +87076,7 @@
 
 	            var _pathArr = _dataKey.split('.');
 
-	            var _currentVal2 = lodash.get(this.root[_pageName2], _pathArr);
+	            var _currentVal2 = lodash.get(this.root[_pageName2], _pathArr) || lodash.get(this.root, _pathArr);
 
 	            return _currentVal2;
 	          }
@@ -87162,6 +87184,12 @@
 	                return _ref4.apply(this, arguments);
 	              };
 	            }());
+	            this.dispatch({
+	              type: 'populate',
+	              payload: {
+	                pageName: 'Global'
+	              }
+	            });
 	            break;
 	          }
 
@@ -87712,7 +87740,22 @@
 	          return cadl.initPage('CreateMeeting');
 
 	        case 15:
-	          debugger; // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
+	          debugger;
+	          _context.next = 18;
+	          return cadl.root['CreateMeeting'].save[0]();
+
+	        case 18:
+	          debugger;
+	          _context.next = 21;
+	          return cadl.initPage('InviteeInfo');
+
+	        case 21:
+	          debugger;
+	          _context.next = 24;
+	          return cadl.root['InviteeInfo'].save[0]();
+
+	        case 24:
+	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
 	          // debugger
@@ -87725,7 +87768,6 @@
 	          // //@ts-ignore
 	          // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
 	          // debugger
-
 	          console.log(cadl); // async function test_LoginNewDevice({ phone_number }) {
 	          //     console.log('Testing loginNewDevice')
 	          //     let verification_code
@@ -87766,7 +87808,7 @@
 	          //     }
 	          // }
 
-	        case 17:
+	        case 25:
 	        case "end":
 	          return _context.stop();
 	      }

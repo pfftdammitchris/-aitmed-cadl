@@ -416,7 +416,7 @@ export default class CADL {
             case ('get-data'): {
                 const { pageName, dataKey } = action.payload
                 const pathArr = dataKey.split('.')
-                const currentVal = _.get(this.root[pageName], pathArr)
+                const currentVal = _.get(this.root[pageName], pathArr) ||  _.get(this.root, pathArr)
                 return currentVal
             }
             case ('update-global'): {
@@ -471,6 +471,7 @@ export default class CADL {
                         }
                     }
                 })
+                this.dispatch({type:'populate', payload:{pageName:'Global'}})
                 break
             }
             case ('update-map'): {

@@ -172,7 +172,12 @@ function attachFns({ cadlObject,
 
     //we need the pageName to use as a key to store the data
     //when using the dataKey
-    const pageName = Object.keys(cadlObject)[0]
+    let pageName
+    if (Object.keys(cadlObject).length > 1) {
+        pageName = 'Global'
+    } else {
+        pageName = Object.keys(cadlObject)[0]
+    }
     return attachFnsHelper({
         pageName,
         cadlObject,
@@ -245,7 +250,7 @@ function attachFns({ cadlObject,
                                 const pathArr = dataKey.split('.')
 
                                 //get current object name value
-                                const currentVal = _.get(localRoot[pageName], pathArr)
+                                const { deat, ...currentVal } = _.get(localRoot[pageName], pathArr) || dispatch({ type: 'get-data', payload: { pageName, dataKey } })
 
                                 //TODO: remove when backend fixes message type problem
                                 if (currentVal.name && currentVal.name.message) {
@@ -253,7 +258,10 @@ function attachFns({ cadlObject,
                                 }
 
                                 //merging existing name field and incoming name field
-                                const mergedVal = mergeDeep(currentVal, { name })
+                                let mergedVal = { ...currentVal, type: parseInt(currentVal.type) }
+                                if (name) {
+                                    mergedVal = mergeDeep(currentVal, { name })
+                                }
                                 // mergedVal.type = parseInt(mergedVal.type)
                                 let res
                                 if (id) {
