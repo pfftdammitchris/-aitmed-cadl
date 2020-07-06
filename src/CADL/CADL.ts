@@ -61,7 +61,6 @@ export default class CADL {
         BasePage?: Record<string, any>
     } = {}): Promise<void> {
         if (this.cadlEndpoint) return
-
         //get config
         let config: any = store.getConfig()
         if (config === null) {

@@ -3,9 +3,9 @@ import * as CommonTypes from '../types'
 export * from '../types'
 
 export interface ConfigParams {
-  apiVersion: CommonTypes.APIVersion
+  apiVersion?: CommonTypes.APIVersion
   env: CommonTypes.ENV
-  apiHost: string
+  apiHost?: string
   configUrl: string
 }
 

@@ -248,10 +248,9 @@ function attachFns({ cadlObject,
                             const storeFn = (output) => async (name, id = null) => {
                                 const { dataKey } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
-
                                 //get current object name value
                                 const { deat, ...currentVal } = _.get(localRoot[pageName], pathArr) || dispatch({ type: 'get-data', payload: { pageName, dataKey } })
-
+                                
                                 //TODO: remove when backend fixes message type problem
                                 if (currentVal.name && currentVal.name.message) {
                                     currentVal.name.message = "temp"

@@ -59237,8 +59237,6 @@
 	};
 
 	var defaultConfig = {
-	  apiHost: 'testapi2.aitmed.com',
-	  apiVersion: 'v1beta1',
 	  env: 'development',
 	  configUrl: 'https://public.aitmed.com/config'
 	};
@@ -59271,10 +59269,10 @@
 
 	    defineProperty$d(this, "grpcClient", void 0);
 
-	    this.apiHost = apiHost;
-	    this.apiVersion = apiVersion;
 	    this.env = env;
 	    this.configUrl = configUrl;
+	    if (apiHost) this.apiHost = apiHost;
+	    if (apiVersion) this.apiVersion = apiVersion;
 	    var config = this.getConfig();
 
 	    if (config) {
@@ -70648,6 +70646,7 @@
 	function retrieveEdgeService(_request) {
 	  return new Promise(function (resolve, reject) {
 	    store$2.grpcClient.re(_request, null, callback);
+
 	    function callback(_error, _response) {
 	      return retrieveEdgeCallBack(_error, _response, resolve, reject);
 	    }
@@ -70672,6 +70671,7 @@
 	            serverError = response.getError();
 	            translatedCode = translateErrorCode(serverResponseCode);
 	            errorIsUnknown = translatedCode === -1;
+
 	            if (!errorIsUnknown) {
 	              _context.next = 9;
 	              break;
@@ -73395,8 +73395,8 @@
 
 	    store$2.env = env;
 	    store$2.configUrl = configUrl;
-	    store$2.apiVersion = apiVersion;
-	    store$2.apiHost = apiHost;
+	    if (apiVersion) store$2.apiVersion = apiVersion;
+	    if (apiHost) store$2.apiHost = apiHost;
 	    this.Account = new Account();
 	    this.edgeServices = edgesServices;
 	    this.documentServices = documentServices;
@@ -80787,8 +80787,6 @@
 	}();
 
 	var store$3 = new Store$1({
-	  apiVersion: 'v1beta1',
-	  apiHost: 'testapi2.aitmed.com',
 	  env: 'development',
 	  configUrl: 'https://public.aitmed.com/config'
 	});
@@ -85266,7 +85264,8 @@
 	                            case 0:
 	                              id = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : null;
 	                              _$cloneDeep2 = lodash.cloneDeep(output), dataKey = _$cloneDeep2.dataKey;
-	                              pathArr = dataKey.split('.'); //get current object name value
+	                              pathArr = dataKey.split('.');
+	                              debugger; //get current object name value
 
 	                              _ref6 = lodash.get(localRoot[pageName], pathArr) || dispatch({
 	                                type: 'get-data',
@@ -85293,52 +85292,53 @@
 
 
 	                              if (!id) {
-	                                _context2.next = 21;
+	                                _context2.next = 22;
 	                                break;
 	                              }
 
-	                              _context2.prev = 8;
-	                              _context2.next = 11;
+	                              _context2.prev = 9;
+	                              _context2.next = 12;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 11:
+	                            case 12:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              _context2.next = 19;
+	                              _context2.next = 20;
 	                              break;
 
-	                            case 16:
-	                              _context2.prev = 16;
-	                              _context2.t0 = _context2["catch"](8);
+	                            case 17:
+	                              _context2.prev = 17;
+	                              _context2.t0 = _context2["catch"](9);
 	                              throw _context2.t0;
 
-	                            case 19:
-	                              _context2.next = 32;
+	                            case 20:
+	                              _context2.next = 34;
 	                              break;
 
-	                            case 21:
-	                              _context2.prev = 21;
-	                              _context2.next = 24;
+	                            case 22:
+	                              _context2.prev = 22;
+	                              debugger;
+	                              _context2.next = 26;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 24:
+	                            case 26:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 32;
+	                              _context2.next = 34;
 	                              break;
 
-	                            case 29:
-	                              _context2.prev = 29;
-	                              _context2.t1 = _context2["catch"](21);
+	                            case 31:
+	                              _context2.prev = 31;
+	                              _context2.t1 = _context2["catch"](22);
 	                              throw _context2.t1;
 
-	                            case 32:
+	                            case 34:
 	                              if (!res) {
-	                                _context2.next = 37;
+	                                _context2.next = 39;
 	                                break;
 	                              }
 
@@ -85362,15 +85362,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 37:
+	                            case 39:
 	                              return _context2.abrupt("return", null);
 
-	                            case 38:
+	                            case 40:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[8, 16], [21, 29]]);
+	                      }, _callee2, null, [[9, 17], [22, 31]]);
 	                    }));
 
 	                    return function (_x) {
@@ -87711,50 +87711,66 @@
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$e({}, defaultConfig$1));
-	          _context.next = 3;
+	          debugger;
+	          _context.next = 4;
 	          return cadl.init();
 
-	        case 3:
-	          _context.next = 5;
+	        case 4:
+	          _context.next = 6;
 	          return cadl.initPage('SignIn');
 
-	        case 5:
-	          _context.next = 7;
-	          return Account$1.requestVerificationCode('+1 8858687687');
+	        case 6:
+	          _context.next = 8;
+	          return cadl.initPage('CreateNewAccount');
 
-	        case 7:
+	        case 8:
+	          debugger;
+	          _context.next = 11;
+	          return Account$1.requestVerificationCode('+1 432423fda');
+
+	        case 11:
 	          vc = _context.sent;
-	          _context.next = 10;
+	          _context.next = 14;
 	          return cadl.builtIn['signIn']({
 	            password: "letmein123",
-	            phoneNumber: "+1 8858687687",
+	            phoneNumber: "+1 432423fda",
 	            verificationCode: vc
 	          });
 
-	        case 10:
+	        case 14:
 	          debugger;
 	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
 	          debugger;
-	          _context.next = 15;
+	          _context.next = 19;
+	          return cadl.initPage('MeetingRoomCreate');
+
+	        case 19:
+	          debugger;
+	          _context.next = 22;
+	          return cadl.root['MeetingRoomCreate'].save[0]();
+
+	        case 22:
+	          debugger;
+	          _context.next = 25;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 15:
+	        case 25:
 	          debugger;
-	          _context.next = 18;
-	          return cadl.root['CreateMeeting'].save[0]();
+	          _context.next = 28;
+	          return cadl.root['CreateMeeting'];
 
-	        case 18:
+	        case 28:
 	          debugger;
-	          _context.next = 21;
+	          _context.next = 31;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 21:
+	        case 31:
 	          debugger;
-	          _context.next = 24;
+	          _context.next = 34;
 	          return cadl.root['InviteeInfo'].save[0]();
 
-	        case 24:
+	        case 34:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
@@ -87808,7 +87824,7 @@
 	          //     }
 	          // }
 
-	        case 25:
+	        case 35:
 	        case "end":
 	          return _context.stop();
 	      }
