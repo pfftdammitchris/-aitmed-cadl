@@ -71028,34 +71028,45 @@
 	              {
 	                var getFn = function getFn(output) {
 	                  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	                    var _cloneDeep2, api, dataKey, options, res, _yield$store$level2SD, data;
+	                    var _cloneDeep2, api, dataKey, id, maxcount, type, options, res, idList, _yield$store$level2SD, data;
 
 	                    return regenerator.wrap(function _callee$(_context) {
 	                      while (1) {
 	                        switch (_context.prev = _context.next) {
 	                          case 0:
-	                            _cloneDeep2 = cloneDeep_1(output), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey"]);
+	                            _cloneDeep2 = cloneDeep_1(output), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, id = _cloneDeep2.id, maxcount = _cloneDeep2.maxcount, type = _cloneDeep2.type, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "id", "maxcount", "type"]);
 	                            res = [];
-	                            _context.prev = 2;
-	                            _context.next = 5;
+	                            idList = [];
+
+	                            if (id) {
+	                              idList = Array.isArray(id) ? toConsumableArray(id) : [id];
+	                              debugger;
+	                            }
+
+	                            _context.prev = 4;
+	                            _context.next = 7;
 	                            return store$3.level2SDK.edgeServices.retrieveEdge({
-	                              idList: [],
-	                              options: options
+	                              idList: idList,
+	                              options: _objectSpread$c(_objectSpread$c({}, options), {}, {
+	                                type: parseInt(type),
+	                                maxcount: parseInt(maxcount)
+	                              })
 	                            });
 
-	                          case 5:
+	                          case 7:
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
+	                            debugger;
 	                            res = data;
-	                            _context.next = 13;
+	                            _context.next = 16;
 	                            break;
 
-	                          case 10:
-	                            _context.prev = 10;
-	                            _context.t0 = _context["catch"](2);
+	                          case 13:
+	                            _context.prev = 13;
+	                            _context.t0 = _context["catch"](4);
 	                            throw _context.t0;
 
-	                          case 13:
+	                          case 16:
 	                            if (res.length > 0) {
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
@@ -71074,12 +71085,12 @@
 
 	                            return _context.abrupt("return", res);
 
-	                          case 15:
+	                          case 18:
 	                          case "end":
 	                            return _context.stop();
 	                        }
 	                      }
-	                    }, _callee, null, [[2, 10]]);
+	                    }, _callee, null, [[4, 13]]);
 	                  }));
 	                };
 
@@ -71227,7 +71238,7 @@
 	                  }();
 	                };
 
-	                output = storeFn(output);
+	                output = [output.dataKey, storeFn(output)];
 	                break;
 	              }
 
@@ -73568,57 +73579,62 @@
 	          return cadl.initPage('SignIn');
 
 	        case 6:
-	          _context.next = 8;
-	          return cadl.initPage('CreateNewAccount');
-
-	        case 8:
+	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
-	          _context.next = 11;
-	          return Account$1.requestVerificationCode('+1 432423fda');
+	          _context.next = 9;
+	          return Account$1.requestVerificationCode('+1 65322138556758');
 
-	        case 11:
+	        case 9:
 	          vc = _context.sent;
-	          _context.next = 14;
+	          _context.next = 12;
 	          return cadl.builtIn['signIn']({
 	            password: "letmein123",
-	            phoneNumber: "+1 432423fda",
+	            phoneNumber: "+1 65322138556758",
 	            verificationCode: vc
 	          });
 
-	        case 14:
+	        case 12:
 	          debugger;
 	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
-	          debugger;
-	          _context.next = 19;
+	          debugger; // await cadl.initPage('MeetingRoomInvited')
+
+	          _context.next = 17;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 19:
+	        case 17:
 	          debugger;
-	          _context.next = 22;
+	          _context.next = 20;
 	          return cadl.root['MeetingRoomCreate'].save[0]();
 
-	        case 22:
+	        case 20:
 	          debugger;
-	          _context.next = 25;
+	          _context.next = 23;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 25:
+	        case 23:
 	          debugger;
-	          _context.next = 28;
-	          return cadl.root['CreateMeeting'];
+	          _context.next = 26;
+	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 28:
+	        case 26:
 	          debugger;
-	          _context.next = 31;
+	          _context.next = 29;
+	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
+
+	        case 29:
+	          debugger; // await cadl.initPage('VideoChat')
+	          // debugger
+
+	          _context.next = 32;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 31:
+	        case 32:
 	          debugger;
-	          _context.next = 34;
+	          _context.next = 35;
 	          return cadl.root['InviteeInfo'].save[0]();
 
-	        case 34:
+	        case 35:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
@@ -73672,7 +73688,7 @@
 	          //     }
 	          // }
 
-	        case 35:
+	        case 36:
 	        case "end":
 	          return _context.stop();
 	      }

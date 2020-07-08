@@ -7,7 +7,7 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import DashboardMeetingroom from '../CADL/__mocks__/DashboardMeetingroom'
-import { Account } from '../services'
+import { Account } from '../'
 
 import dot from 'dot-object'
 
@@ -15,7 +15,6 @@ import dot from 'dot-object'
 
 console.log(dot.dot(DashboardMeetingroom))
 export default (async function () {
-
 
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
@@ -25,28 +24,29 @@ export default (async function () {
     await cadl.init()
 
     await cadl.initPage('SignIn')
-    await cadl.initPage('CreateNewAccount')
+    // await cadl.initPage('CreateNewAccount')
     debugger
-    const vc = await Account.requestVerificationCode('+1 432423fda')
+    const vc = await Account.requestVerificationCode('+1 65322138556758')
 
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
     //     confirmPassword: "letmein123",
     //     countryCode: "+1",
     //     password: "letmein123",
-    //     phoneNumber: "+1 432423fda",
+    //     phoneNumber: "+1 65322138556758",
     //     username: "username",
     //     verificationCode: vc
     // })
 
     await cadl.builtIn['signIn']({
         password: "letmein123",
-        phoneNumber: "+1 432423fda",
+        phoneNumber: "+1 65322138556758",
         verificationCode: vc
     })
     debugger
     cadl.root['SignIn'].update()
     // cadl.root['CreateNewAccount'].update()
     debugger
+    // await cadl.initPage('MeetingRoomInvited')
     await cadl.initPage('MeetingRoomCreate')
     debugger
     await cadl.root['MeetingRoomCreate'].save[0]()
@@ -54,8 +54,12 @@ export default (async function () {
     await cadl.initPage('CreateMeeting')
     debugger
 
-    await cadl.root['CreateMeeting']
+    await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
     debugger
+    await cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object()
+    debugger
+    // await cadl.initPage('VideoChat')
+    // debugger
     await cadl.initPage('InviteeInfo')
     debugger
     await cadl.root['InviteeInfo'].save[0]()

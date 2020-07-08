@@ -217,10 +217,14 @@ function attachFns({ cadlObject,
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
-                                const { api, dataKey, ...options } = _.cloneDeep(output)
+                                const { api, dataKey, id, maxcount, type, ...options } = _.cloneDeep(output)
                                 let res: any[] = []
+                                let idList: string[] | Uint8Array[] = []
+                                if (id) {
+                                    idList = Array.isArray(id) ? [...id] : [id]
+                                }
                                 try {
-                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList: [], options })
+                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options, type: parseInt(type), maxcount: parseInt(maxcount) } })
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -250,7 +254,7 @@ function attachFns({ cadlObject,
                                 const pathArr = dataKey.split('.')
                                 //get current object name value
                                 const { deat, ...currentVal } = _.get(localRoot[pageName], pathArr) || dispatch({ type: 'get-data', payload: { pageName, dataKey } })
-                                
+
                                 //TODO: remove when backend fixes message type problem
                                 if (currentVal.name && currentVal.name.message) {
                                     currentVal.name.message = "temp"
@@ -298,7 +302,7 @@ function attachFns({ cadlObject,
                                 //TODO:handle else case
                                 return null
                             }
-                            output = storeFn(output)
+                            output = [output.dataKey, storeFn(output)]
                             break
                         }
                         case ('rd'): {
