@@ -71040,7 +71040,6 @@
 
 	                            if (id) {
 	                              idList = Array.isArray(id) ? toConsumableArray(id) : [id];
-	                              debugger;
 	                            }
 
 	                            _context.prev = 4;
@@ -71056,17 +71055,16 @@
 	                          case 7:
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
-	                            debugger;
 	                            res = data;
-	                            _context.next = 16;
+	                            _context.next = 15;
 	                            break;
 
-	                          case 13:
-	                            _context.prev = 13;
+	                          case 12:
+	                            _context.prev = 12;
 	                            _context.t0 = _context["catch"](4);
 	                            throw _context.t0;
 
-	                          case 16:
+	                          case 15:
 	                            if (res.length > 0) {
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
@@ -71085,12 +71083,12 @@
 
 	                            return _context.abrupt("return", res);
 
-	                          case 18:
+	                          case 17:
 	                          case "end":
 	                            return _context.stop();
 	                        }
 	                      }
-	                    }, _callee, null, [[4, 13]]);
+	                    }, _callee, null, [[4, 12]]);
 	                  }));
 	                };
 
