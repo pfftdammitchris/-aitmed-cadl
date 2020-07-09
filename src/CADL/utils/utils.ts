@@ -19,7 +19,8 @@ export {
     populateArray,
     populateObject,
     builtInFns,
-    populateVals
+    populateVals,
+    replaceUint8ArrayWithBase64
 }
 
 
@@ -261,9 +262,10 @@ function attachFns({ cadlObject,
                                 }
 
                                 //merging existing name field and incoming name field
-                                let mergedVal = { ...currentVal, type: parseInt(currentVal.type) }
+                                let parsedType = parseInt(currentVal.type)
+                                let mergedVal = { ...currentVal, type: parsedType }
                                 if (name) {
-                                    mergedVal = mergeDeep(currentVal, { name })
+                                    mergedVal = mergeDeep(mergedVal, { name })
                                 }
                                 // mergedVal.type = parseInt(mergedVal.type)
                                 let res
@@ -302,7 +304,7 @@ function attachFns({ cadlObject,
                                 //TODO:handle else case
                                 return null
                             }
-                           
+
                             output = [output.dataKey, storeFn(output)]
                             break
                         }
@@ -744,7 +746,7 @@ function builtInFns(dispatch?: Function) {
                     //TODO: handle case for data is an array or an object
                     payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
                 })
-               
+
             }
             return data
         },
@@ -778,3 +780,19 @@ function populateVals({
     return sourceCopy
 }
 
+function replaceUint8ArrayWithBase64(source) {
+    let sourceCopy = _.cloneDeep(source)
+    if (isObject(source)) {
+
+        Object.keys(sourceCopy).forEach((key) => {
+            if (sourceCopy[key] instanceof Uint8Array) {
+                sourceCopy[key] = store.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key])
+            } else if (isObject(sourceCopy[key])) {
+                sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key])
+            } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
+                sourceCopy[key] = sourceCopy[key].map((elem) => replaceUint8ArrayWithBase64(elem))
+            } 
+        })
+    }
+    return sourceCopy
+}

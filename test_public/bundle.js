@@ -71108,6 +71108,7 @@
 	                          _ref6,
 	                          deat,
 	                          currentVal,
+	                          parsedType,
 	                          mergedVal,
 	                          res,
 	                          _yield$store$level2SD2,
@@ -71138,64 +71139,66 @@
 	                              } //merging existing name field and incoming name field
 
 
+	                              parsedType = parseInt(currentVal.type);
 	                              mergedVal = _objectSpread$c(_objectSpread$c({}, currentVal), {}, {
-	                                type: parseInt(currentVal.type)
+	                                type: parsedType
 	                              });
 
 	                              if (name) {
-	                                mergedVal = mergeDeep(currentVal, {
+	                                mergedVal = mergeDeep(mergedVal, {
 	                                  name: name
 	                                });
-	                              } // mergedVal.type = parseInt(mergedVal.type)
+	                              }
 
+	                              debugger; // mergedVal.type = parseInt(mergedVal.type)
 
 	                              if (!id) {
-	                                _context2.next = 21;
+	                                _context2.next = 23;
 	                                break;
 	                              }
 
-	                              _context2.prev = 8;
-	                              _context2.next = 11;
+	                              _context2.prev = 10;
+	                              _context2.next = 13;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 11:
+	                            case 13:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              _context2.next = 19;
+	                              _context2.next = 21;
 	                              break;
 
-	                            case 16:
-	                              _context2.prev = 16;
-	                              _context2.t0 = _context2["catch"](8);
+	                            case 18:
+	                              _context2.prev = 18;
+	                              _context2.t0 = _context2["catch"](10);
 	                              throw _context2.t0;
 
-	                            case 19:
-	                              _context2.next = 32;
+	                            case 21:
+	                              _context2.next = 34;
 	                              break;
 
-	                            case 21:
-	                              _context2.prev = 21;
-	                              _context2.next = 24;
+	                            case 23:
+	                              _context2.prev = 23;
+	                              _context2.next = 26;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 24:
+	                            case 26:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 32;
+	                              _context2.next = 34;
 	                              break;
 
-	                            case 29:
-	                              _context2.prev = 29;
-	                              _context2.t1 = _context2["catch"](21);
+	                            case 31:
+	                              _context2.prev = 31;
+	                              _context2.t1 = _context2["catch"](23);
 	                              throw _context2.t1;
 
-	                            case 32:
+	                            case 34:
 	                              if (!res) {
-	                                _context2.next = 37;
+	                                _context2.next = 39;
 	                                break;
 	                              }
 
@@ -71219,15 +71222,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 37:
+	                            case 39:
 	                              return _context2.abrupt("return", null);
 
-	                            case 38:
+	                            case 40:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[8, 16], [21, 29]]);
+	                      }, _callee2, null, [[10, 18], [23, 31]]);
 	                    }));
 
 	                    return function (_x) {
@@ -72207,6 +72210,27 @@
 	  return sourceCopy;
 	}
 
+	function replaceUint8ArrayWithBase64(source) {
+	  var sourceCopy = cloneDeep_1(source);
+
+	  if (isObject$5(source)) {
+	    Object.keys(sourceCopy).forEach(function (key) {
+	      if (sourceCopy[key] instanceof Uint8Array) {
+	        debugger;
+	        sourceCopy[key] = store$3.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key]);
+	      } else if (isObject$5(sourceCopy[key])) {
+	        sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key]);
+	      } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
+	        sourceCopy[key] = sourceCopy[key].map(function (elem) {
+	          return replaceUint8ArrayWithBase64(elem);
+	        });
+	      }
+	    });
+	  }
+
+	  return sourceCopy;
+	}
+
 	function _createForOfIteratorHelper$h(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$i(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 	function _unsupportedIterableToArray$i(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$i(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$i(o, minLen); }
@@ -72814,6 +72838,17 @@
 	          pageName = _ref3.pageName,
 	          _ref3$withFns = _ref3.withFns,
 	          withFns = _ref3$withFns === void 0 ? false : _ref3$withFns;
+	      var localStorageRoot = {};
+
+	      try {
+	        var root = localStorage.getItem('root');
+
+	        if (root) {
+	          localStorageRoot = JSON.parse(root);
+	        }
+	      } catch (error) {
+	        console.log(error);
+	      }
 
 	      var sourceCopy = cloneDeep_1(source);
 
@@ -72821,14 +72856,14 @@
 	      var sourceCopyWithKeys = populateKeys({
 	        source: sourceCopy,
 	        lookFor: '.',
-	        locations: [this.root, sourceCopy]
+	        locations: [this.root, localStorageRoot, sourceCopy]
 	      });
 	      localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys;
 	      var sourceCopyWithVals = populateVals({
 	        source: sourceCopyWithKeys,
 	        lookFor: lookFor,
 	        skip: skip,
-	        locations: [this.root, localRoot]
+	        locations: [this.root, localStorageRoot, localRoot]
 	      });
 	      localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys;
 	      var populatedResponse = sourceCopyWithVals;
@@ -72856,6 +72891,18 @@
 	      switch (action.type) {
 	        case 'populate':
 	          {
+	            var localStorageRoot = {};
+
+	            try {
+	              var root = localStorage.getItem('root');
+
+	              if (root) {
+	                localStorageRoot = JSON.parse(root);
+	              }
+	            } catch (error) {
+	              console.log(error);
+	            }
+
 	            var pageName = action.payload.pageName;
 
 	            var pageObjectCopy = cloneDeep_1(this.root[pageName]);
@@ -72864,17 +72911,17 @@
 	            var populateWithRoot = populateObject({
 	              source: pageObjectCopy,
 	              lookFor: '.',
-	              locations: [this.root, this.root[pageName]]
+	              locations: [this.root, localStorageRoot, this.root[pageName]]
 	            });
 	            var populateWithSelf = populateObject({
 	              source: populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, this.root[pageName]]
+	              locations: [this.root, localStorageRoot, this.root[pageName]]
 	            });
 	            var populateAfterInheriting = populateObject({
 	              source: populateWithSelf,
 	              lookFor: '=',
-	              locations: [this.root, this.root[pageName]]
+	              locations: [this.root, localStorageRoot, this.root[pageName]]
 	            });
 	            var withFNs = attachFns({
 	              cadlObject: populateAfterInheriting,
@@ -72889,7 +72936,8 @@
 	            var _action$payload = action.payload,
 	                _pageName = _action$payload.pageName,
 	                dataKey = _action$payload.dataKey,
-	                data = _action$payload.data;
+	                rawData = _action$payload.data;
+	            var data = replaceUint8ArrayWithBase64(rawData);
 	            var firstCharacter = dataKey[0];
 	            var pathArr = dataKey.split('.');
 
@@ -72938,6 +72986,18 @@
 
 	        case 'update-global':
 	          {
+	            var _localStorageRoot = {};
+
+	            try {
+	              var _root = localStorage.getItem('root');
+
+	              if (_root) {
+	                _localStorageRoot = JSON.parse(_root);
+	              }
+	            } catch (error) {
+	              console.log(error);
+	            }
+
 	            var _action$payload3 = action.payload,
 	                _pageName3 = _action$payload3.pageName,
 	                updateObject = _action$payload3.updateObject;
@@ -72945,19 +73005,19 @@
 	            var _populateWithRoot = populateObject({
 	              source: updateObject,
 	              lookFor: '.',
-	              locations: [this.root, this.root[_pageName3]]
+	              locations: [this.root, _localStorageRoot, this.root[_pageName3]]
 	            });
 
 	            var _populateWithSelf = populateObject({
 	              source: _populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, this.root[_pageName3]]
+	              locations: [this.root, _localStorageRoot, this.root[_pageName3]]
 	            });
 
 	            var _populateAfterInheriting = populateObject({
 	              source: _populateWithSelf,
 	              lookFor: '=',
-	              locations: [this, this.root, this.root[_pageName3]]
+	              locations: [this, this.root, _localStorageRoot, this.root[_pageName3]]
 	            });
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
@@ -73001,17 +73061,17 @@
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
 	                        });
 	                        _populateWithSelf2 = populateObject({
 	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
 	                        });
 	                        _populateAfterInheriting2 = populateObject({
 	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
 	                        });
 	                        _boundDispatch = _this.dispatch.bind(_this);
 	                        withFn = attachFns({
@@ -73044,12 +73104,10 @@
 	              payload: {
 	                pageName: 'Global'
 	              }
-	            }); // this.dispatch(
-	            //     {
-	            //         type: 'update-localStorage',
-	            //     }
-	            // )
-
+	            });
+	            this.dispatch({
+	              type: 'update-localStorage'
+	            });
 	            break;
 	          }
 
@@ -73582,72 +73640,70 @@
 	          return cadl.init();
 
 	        case 4:
-	          _context.next = 6;
+	          debugger;
+	          _context.next = 7;
 	          return cadl.initPage('SignIn');
 
-	        case 6:
+	        case 7:
 	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
-	          _context.next = 9;
+	          _context.next = 10;
 	          return Account$1.requestVerificationCode('+1 65322138556758');
 
-	        case 9:
+	        case 10:
 	          vc = _context.sent;
-	          _context.next = 12;
+	          _context.next = 13;
 	          return cadl.builtIn['signIn']({
 	            password: "letmein123",
 	            phoneNumber: "+1 65322138556758",
 	            verificationCode: vc
 	          });
 
-	        case 12:
+	        case 13:
 	          debugger;
 	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
 	          debugger; // await cadl.initPage('MeetingRoomInvited')
 
-	          _context.next = 17;
+	          _context.next = 18;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 17:
+	        case 18:
 	          debugger;
-	          _context.next = 20;
-	          return cadl.root['MeetingRoomCreate'].save[0][1]({
-	            roomName: 'Test room',
-	            videoProvider: 'Twilio test'
-	          });
+	          _context.next = 21;
+	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 20:
+	        case 21:
 	          debugger;
-	          _context.next = 23;
+	          _context.next = 24;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 23:
+	        case 24:
 	          debugger;
-	          _context.next = 26;
+	          _context.next = 27;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 26:
+	        case 27:
 	          debugger;
-	          _context.next = 29;
+	          _context.next = 30;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
 
-	        case 29:
+	        case 30:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
 
-	          _context.next = 32;
+	          _context.next = 33;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 32:
+	        case 33:
 	          debugger;
-	          _context.next = 35;
+	          _context.next = 36;
 	          return cadl.root['InviteeInfo'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 35:
+	        case 36:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
@@ -73701,7 +73757,7 @@
 	          //     }
 	          // }
 
-	        case 36:
+	        case 37:
 	        case "end":
 	          return _context.stop();
 	      }

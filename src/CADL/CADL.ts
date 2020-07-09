@@ -10,6 +10,7 @@ import {
     replaceUpdate,
     builtInFns,
     populateVals,
+    replaceUint8ArrayWithBase64
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -233,7 +234,7 @@ export default class CADL {
                     init = Object.values(populatedUpdatedPageWithFns)[0].init
 
                     this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
-                } 
+                }
             }
         }
         this.root = { ...this.root, ...processedPage }
@@ -321,19 +322,28 @@ export default class CADL {
         skip?: string[],
         withFns?: boolean
     }): Record<string, any> {
+        let localStorageRoot = {}
+        try {
+            const root = localStorage.getItem('root')
+            if (root) {
+                localStorageRoot = JSON.parse(root)
+            }
+        } catch (error) {
+            console.log(error)
+        }
         let sourceCopy = _.cloneDeep(source)
         let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
         const sourceCopyWithKeys = populateKeys({
             source: sourceCopy,
             lookFor: '.',
-            locations: [this.root, sourceCopy]
+            locations: [this.root, localStorageRoot, sourceCopy]
         })
         localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys
         const sourceCopyWithVals = populateVals({
             source: sourceCopyWithKeys,
             lookFor,
             skip,
-            locations: [this.root, localRoot]
+            locations: [this.root, localStorageRoot, localRoot]
         })
         localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys
         let populatedResponse = sourceCopyWithVals
@@ -354,6 +364,15 @@ export default class CADL {
     private dispatch(action: { type: string, payload?: any }) {
         switch (action.type) {
             case ('populate'): {
+                let localStorageRoot = {}
+                try {
+                    const root = localStorage.getItem('root')
+                    if (root) {
+                        localStorageRoot = JSON.parse(root)
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
                 const { pageName } = action.payload
                 const pageObjectCopy = _.cloneDeep(this.root[pageName])
                 const boundDispatch = this.dispatch.bind(this)
@@ -361,17 +380,17 @@ export default class CADL {
                 const populateWithRoot = populateObject({
                     source: pageObjectCopy,
                     lookFor: '.',
-                    locations: [this.root, this.root[pageName]]
+                    locations: [this.root, localStorageRoot, this.root[pageName]]
                 })
                 const populateWithSelf = populateObject({
                     source: populateWithRoot,
                     lookFor: '..',
-                    locations: [this.root, this.root[pageName]]
+                    locations: [this.root, localStorageRoot, this.root[pageName]]
                 })
                 const populateAfterInheriting = populateObject({
                     source: populateWithSelf,
                     lookFor: '=',
-                    locations: [this.root, this.root[pageName]]
+                    locations: [this.root, localStorageRoot, this.root[pageName]]
                 })
 
                 const withFNs = attachFns({
@@ -383,7 +402,8 @@ export default class CADL {
                 break
             }
             case ('update-data'): {
-                const { pageName, dataKey, data } = action.payload
+                const { pageName, dataKey, data: rawData } = action.payload
+                let data = replaceUint8ArrayWithBase64(rawData)
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
                 if (pageName === 'builtIn') {
@@ -407,7 +427,7 @@ export default class CADL {
                     }
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
-              
+
                 return
             }
             case ('get-data'): {
@@ -417,10 +437,19 @@ export default class CADL {
                 return currentVal
             }
             case ('update-global'): {
+                let localStorageRoot = {}
+                try {
+                    const root = localStorage.getItem('root')
+                    if (root) {
+                        localStorageRoot = JSON.parse(root)
+                    }
+                } catch (error) {
+                    console.log(error)
+                }
                 const { pageName, updateObject } = action.payload
-                const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
-                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
-                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, this.root[pageName]] })
+                const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, localStorageRoot, this.root[pageName]] })
+                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, localStorageRoot, this.root[pageName]] })
+                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, localStorageRoot, this.root[pageName]] })
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
@@ -443,19 +472,19 @@ export default class CADL {
                         const populateWithRoot = populateObject({
                             source: val,
                             lookFor: '.',
-                            locations: [this.root, this.root[pageName]]
+                            locations: [this.root, localStorageRoot, this.root[pageName]]
                         })
 
                         const populateWithSelf = populateObject({
                             source: populateWithRoot,
                             lookFor: '..',
-                            locations: [this.root, this.root[pageName]]
+                            locations: [this.root, localStorageRoot, this.root[pageName]]
                         })
 
                         const populateAfterInheriting = populateObject({
                             source: populateWithSelf,
                             lookFor: '=',
-                            locations: [this.root, this.root[pageName]]
+                            locations: [this.root, localStorageRoot, this.root[pageName]]
                         })
 
                         const boundDispatch = this.dispatch.bind(this)
@@ -469,11 +498,11 @@ export default class CADL {
                     }
                 })
                 this.dispatch({ type: 'populate', payload: { pageName: 'Global' } })
-                // this.dispatch(
-                //     {
-                //         type: 'update-localStorage',
-                //     }
-                // )
+                this.dispatch(
+                    {
+                        type: 'update-localStorage',
+                    }
+                )
                 break
             }
             case ('update-map'): {
