@@ -72589,7 +72589,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 38;
+	                  _context2.next = 36;
 	                  break;
 	                }
 
@@ -72599,7 +72599,7 @@
 
 	              case 16:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 38;
+	                  _context2.next = 36;
 	                  break;
 	                }
 
@@ -72607,7 +72607,7 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 36;
+	                  _context2.next = 34;
 	                  break;
 	                }
 
@@ -72637,23 +72637,21 @@
 	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
 	                  dispatch: boundDispatch
 	                });
-	                processedPage = Object.values(populatedUpdatedPageWithFns)[0];
+	                processedPage = populatedUpdatedPageWithFns;
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context2.next = 36;
-	                break;
 
-	              case 36:
+	              case 34:
 	                _context2.next = 16;
 	                break;
 
-	              case 38:
+	              case 36:
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage);
 	                this.dispatch({
 	                  type: 'update-map'
 	                });
 
-	              case 40:
+	              case 38:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -73046,7 +73044,12 @@
 	              payload: {
 	                pageName: 'Global'
 	              }
-	            });
+	            }); // this.dispatch(
+	            //     {
+	            //         type: 'update-localStorage',
+	            //     }
+	            // )
+
 	            break;
 	          }
 
@@ -73054,6 +73057,12 @@
 	          {
 	            //TODO: consider adding update-page-map
 	            this.map = dotObject.dot(this.root);
+	            break;
+	          }
+
+	        case 'update-localStorage':
+	          {
+	            localStorage.setItem('root', JSON.stringify(this.root));
 	            break;
 	          }
 
@@ -73603,7 +73612,10 @@
 	        case 17:
 	          debugger;
 	          _context.next = 20;
-	          return cadl.root['MeetingRoomCreate'].save[0]();
+	          return cadl.root['MeetingRoomCreate'].save[0][1]({
+	            roomName: 'Test room',
+	            videoProvider: 'Twilio test'
+	          });
 
 	        case 20:
 	          debugger;
@@ -73630,7 +73642,10 @@
 	        case 32:
 	          debugger;
 	          _context.next = 35;
-	          return cadl.root['InviteeInfo'].save[0]();
+	          return cadl.root['InviteeInfo'].save[0][1]({
+	            firstName: "Stan",
+	            lastName: "koko"
+	          });
 
 	        case 35:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()

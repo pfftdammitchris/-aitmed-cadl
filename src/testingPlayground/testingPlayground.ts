@@ -49,7 +49,7 @@ export default (async function () {
     // await cadl.initPage('MeetingRoomInvited')
     await cadl.initPage('MeetingRoomCreate')
     debugger
-    await cadl.root['MeetingRoomCreate'].save[0]()
+    await cadl.root['MeetingRoomCreate'].save[0][1]({roomName:'Test room', videoProvider:'Twilio test'})
     debugger
     await cadl.initPage('CreateMeeting')
     debugger
@@ -62,7 +62,7 @@ export default (async function () {
     // debugger
     await cadl.initPage('InviteeInfo')
     debugger
-    await cadl.root['InviteeInfo'].save[0]()
+    await cadl.root['InviteeInfo'].save[0][1]({firstName:"Stan", lastName:"koko"})
     // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
     // debugger
     // await cadl.initPage('ApplyBusiness')

@@ -228,15 +228,12 @@ export default class CADL {
 
                     const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
 
-                    processedPage = Object.values(populatedUpdatedPageWithFns)[0]
+                    processedPage = populatedUpdatedPageWithFns
 
                     init = Object.values(populatedUpdatedPageWithFns)[0].init
 
                     this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
-
-                } else {
-
-                }
+                } 
             }
         }
         this.root = { ...this.root, ...processedPage }
@@ -410,12 +407,13 @@ export default class CADL {
                     }
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
+              
                 return
             }
             case ('get-data'): {
                 const { pageName, dataKey } = action.payload
                 const pathArr = dataKey.split('.')
-                const currentVal = _.get(this.root[pageName], pathArr) ||  _.get(this.root, pathArr)
+                const currentVal = _.get(this.root[pageName], pathArr) || _.get(this.root, pathArr)
                 return currentVal
             }
             case ('update-global'): {
@@ -470,12 +468,21 @@ export default class CADL {
                         }
                     }
                 })
-                this.dispatch({type:'populate', payload:{pageName:'Global'}})
+                this.dispatch({ type: 'populate', payload: { pageName: 'Global' } })
+                // this.dispatch(
+                //     {
+                //         type: 'update-localStorage',
+                //     }
+                // )
                 break
             }
             case ('update-map'): {
                 //TODO: consider adding update-page-map
                 this.map = dot.dot(this.root)
+                break
+            }
+            case ('update-localStorage'): {
+                localStorage.setItem('root', JSON.stringify(this.root))
                 break
             }
             default: {

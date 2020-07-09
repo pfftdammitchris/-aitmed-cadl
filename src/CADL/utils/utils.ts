@@ -302,6 +302,7 @@ function attachFns({ cadlObject,
                                 //TODO:handle else case
                                 return null
                             }
+                           
                             output = [output.dataKey, storeFn(output)]
                             break
                         }
@@ -743,6 +744,7 @@ function builtInFns(dispatch?: Function) {
                     //TODO: handle case for data is an array or an object
                     payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
                 })
+               
             }
             return data
         },
