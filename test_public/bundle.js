@@ -71818,7 +71818,7 @@
 	 */
 
 
-	function updateState(_ref16) {
+	function evalState(_ref16) {
 	  var pageName = _ref16.pageName,
 	      updateObject = _ref16.updateObject,
 	      dispatch = _ref16.dispatch;
@@ -71829,7 +71829,7 @@
 	          case 0:
 	            _context10.next = 2;
 	            return dispatch({
-	              type: 'update-global',
+	              type: 'eval-global',
 	              payload: {
 	                pageName: pageName,
 	                updateObject: updateObject
@@ -71853,11 +71853,11 @@
 	 * @param dispatch Function
 	 * @returns Record<string, any>
 	 * 
-	 * - replaces the update object, if any, with a function that performs the the actions detailed in the update object 
+	 * - replaces the eval object, if any, with a function that performs the the actions detailed in the eval object 
 	 */
 
 
-	function replaceUpdate(_ref18) {
+	function replaceEvalObject(_ref18) {
 	  var pageName = _ref18.pageName,
 	      cadlObject = _ref18.cadlObject,
 	      dispatch = _ref18.dispatch;
@@ -71866,19 +71866,19 @@
 
 	  Object.keys(cadlCopy).forEach(function (key) {
 	    if (key === 'update') {
-	      cadlCopy[key] = updateState({
+	      cadlCopy[key] = evalState({
 	        pageName: pageName,
 	        updateObject: cadlCopy[key],
 	        dispatch: dispatch
 	      });
-	    } else if (key === 'object' && cadlCopy.actionType === 'updateObject') {
-	      cadlCopy[key] = updateState({
+	    } else if (key === 'object' && cadlCopy.actionType === 'evalObject') {
+	      cadlCopy[key] = evalState({
 	        pageName: pageName,
 	        updateObject: cadlCopy[key],
 	        dispatch: dispatch
 	      });
 	    } else if (isObject$5(cadlCopy[key])) {
-	      cadlCopy[key] = replaceUpdate({
+	      cadlCopy[key] = replaceEvalObject({
 	        pageName: pageName,
 	        cadlObject: cadlCopy[key],
 	        dispatch: dispatch
@@ -71886,7 +71886,7 @@
 	    } else if (Array.isArray(cadlCopy[key])) {
 	      cadlCopy[key] = cadlCopy[key].map(function (elem) {
 	        if (isObject$5(elem)) {
-	          return replaceUpdate({
+	          return replaceEvalObject({
 	            pageName: pageName,
 	            cadlObject: elem,
 	            dispatch: dispatch
@@ -72652,7 +72652,7 @@
 	                  withFns: true,
 	                  pageName: pageName
 	                });
-	                replaceUpdateJob2 = replaceUpdate({
+	                replaceUpdateJob2 = replaceEvalObject({
 	                  pageName: pageName,
 	                  cadlObject: processedComponents,
 	                  dispatch: boundDispatch
@@ -72947,7 +72947,7 @@
 	            return _currentVal2;
 	          }
 
-	        case 'update-global':
+	        case 'eval-object':
 	          {
 	            var _action$payload3 = action.payload,
 	                _pageName3 = _action$payload3.pageName,
@@ -73055,12 +73055,7 @@
 	              payload: {
 	                pageName: 'Global'
 	              }
-	            }); // this.dispatch(
-	            //     {
-	            //         type: 'update-localStorage',
-	            //     }
-	            // )
-
+	            });
 	            break;
 	          }
 
@@ -73071,17 +73066,36 @@
 	            break;
 	          }
 
-	        case 'update-localStorage':
-	          {
-	            localStorage.setItem('root', JSON.stringify(this.root));
-	            break;
-	          }
-
 	        default:
 	          {
 	            return;
 	          }
 	      }
+	    }
+	    /**
+	     * 
+	     * @param params
+	     *  params.dataKey string
+	     *  params.dataObject Record<string, any>
+	     *  params.dataObjectKey string
+	     */
+
+	  }, {
+	    key: "updateObject",
+	    value: function updateObject(_ref5) {
+	      var dataKey = _ref5.dataKey,
+	          dataObject = _ref5.dataObject,
+	          dataObjectKey = _ref5.dataObjectKey;
+	      var trimPath, location;
+
+	      if (dataKey.startsWith('.')) {
+	        trimPath = dataKey.substring(1, dataKey.length);
+	        location = this.root;
+	      }
+
+	      var pathArr = trimPath.split('.');
+
+	      set_1(location, pathArr, dataObject[dataObjectKey]);
 	    }
 	  }, {
 	    key: "getConfig",
@@ -73630,35 +73644,43 @@
 
 	        case 20:
 	          debugger;
-	          _context.next = 23;
+	          cadl.updateObject({
+	            dataKey: '.Global.meetroom.edge.refid',
+	            dataObject: {
+	              id: '123'
+	            },
+	            dataObjectKey: 'id'
+	          });
+	          debugger;
+	          _context.next = 25;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 23:
+	        case 25:
 	          debugger;
-	          _context.next = 26;
+	          _context.next = 28;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 26:
+	        case 28:
 	          debugger;
-	          _context.next = 29;
+	          _context.next = 31;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
 
-	        case 29:
+	        case 31:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
 
-	          _context.next = 32;
+	          _context.next = 34;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 32:
+	        case 34:
 	          debugger;
-	          _context.next = 35;
+	          _context.next = 37;
 	          return cadl.root['InviteeInfo'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 35:
+	        case 37:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
@@ -73712,7 +73734,7 @@
 	          //     }
 	          // }
 
-	        case 36:
+	        case 38:
 	        case "end":
 	          return _context.stop();
 	      }
