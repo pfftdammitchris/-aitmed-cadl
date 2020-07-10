@@ -13,13 +13,12 @@ export {
     lookUp,
     populateKeys,
     attachFns,
-    updateState,
-    replaceUpdate,
     populateString,
     populateArray,
     populateObject,
     builtInFns,
-    populateVals
+    populateVals,
+    replaceEvalObject,
 }
 
 
@@ -302,7 +301,7 @@ function attachFns({ cadlObject,
                                 //TODO:handle else case
                                 return null
                             }
-                           
+
                             output = [output.dataKey, storeFn(output)]
                             break
                         }
@@ -540,6 +539,8 @@ function attachFns({ cadlObject,
     }
 }
 
+
+
 /**
  * 
  * @param updateObject Record<string, any>
@@ -548,10 +549,10 @@ function attachFns({ cadlObject,
  *
  *  - returns a function that is used to update the global state of the CADL class
  */
-function updateState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
+function evalState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
     return async (): Promise<void> => {
 
-        await dispatch({ type: 'update-global', payload: { pageName, updateObject } })
+        await dispatch({ type: 'eval-global', payload: { pageName, updateObject } })
         return
     }
 }
@@ -562,21 +563,21 @@ function updateState({ pageName, updateObject, dispatch }: { pageName: string, u
  * @param dispatch Function
  * @returns Record<string, any>
  * 
- * - replaces the update object, if any, with a function that performs the the actions detailed in the update object 
+ * - replaces the eval object, if any, with a function that performs the the actions detailed in the eval object 
  */
-function replaceUpdate({ pageName, cadlObject, dispatch }: { pageName: string, cadlObject: Record<string, any>, dispatch: Function }): Record<string, any> {
+function replaceEvalObject({ pageName, cadlObject, dispatch }: { pageName: string, cadlObject: Record<string, any>, dispatch: Function }): Record<string, any> {
     const cadlCopy = _.cloneDeep(cadlObject)
     Object.keys(cadlCopy).forEach((key) => {
         if (key === 'update') {
-            cadlCopy[key] = updateState({ pageName, updateObject: cadlCopy[key], dispatch })
-        } else if (key === 'object' && cadlCopy.actionType === 'updateObject') {
-            cadlCopy[key] = updateState({ pageName, updateObject: cadlCopy[key], dispatch })
+            cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
+        } else if (key === 'object' && cadlCopy.actionType === 'evalObject') {
+            cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
         } else if (isObject(cadlCopy[key])) {
-            cadlCopy[key] = replaceUpdate({ pageName, cadlObject: cadlCopy[key], dispatch })
+            cadlCopy[key] = replaceEvalObject({ pageName, cadlObject: cadlCopy[key], dispatch })
         } else if (Array.isArray(cadlCopy[key])) {
             cadlCopy[key] = cadlCopy[key].map((elem) => {
                 if (isObject(elem)) {
-                    return replaceUpdate({ pageName, cadlObject: elem, dispatch })
+                    return replaceEvalObject({ pageName, cadlObject: elem, dispatch })
                 }
                 return elem
             })
@@ -584,6 +585,7 @@ function replaceUpdate({ pageName, cadlObject, dispatch }: { pageName: string, c
     })
     return cadlCopy
 }
+
 
 /**
  * 
@@ -744,7 +746,7 @@ function builtInFns(dispatch?: Function) {
                     //TODO: handle case for data is an array or an object
                     payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
                 })
-               
+
             }
             return data
         },

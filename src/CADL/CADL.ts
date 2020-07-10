@@ -7,9 +7,9 @@ import {
     populateObject,
     attachFns,
     populateKeys,
-    replaceUpdate,
     builtInFns,
     populateVals,
+    replaceEvalObject,
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -188,7 +188,7 @@ export default class CADL {
         const processedWithFns = this.processPopulate({
             source: processedFormData,
             lookFor: ['.', '..', '=', '_'],
-            skip: ['update', 'formData', 'components',...skip],
+            skip: ['update', 'formData', 'components', ...skip],
             withFns: true,
             pageName
         })
@@ -223,7 +223,7 @@ export default class CADL {
                     let populatedUpdatedPage = populateObject({
                         source: updatedPage,
                         lookFor: '..',
-                        skip:['components'],
+                        skip: ['components'],
                         locations: [this.root[pageName]]
                     })
 
@@ -246,7 +246,7 @@ export default class CADL {
             withFns: true,
             pageName
         })
-        let replaceUpdateJob2 = replaceUpdate({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
+        let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
         this.root = { ...this.root, ...replaceUpdateJob2 }
         this.dispatch({ type: 'update-map' })
     }
@@ -427,7 +427,7 @@ export default class CADL {
                 const currentVal = _.get(this.root[pageName], pathArr) || _.get(this.root, pathArr)
                 return currentVal
             }
-            case ('update-global'): {
+            case ('eval-object'): {
                 const { pageName, updateObject } = action.payload
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
@@ -480,11 +480,7 @@ export default class CADL {
                     }
                 })
                 this.dispatch({ type: 'populate', payload: { pageName: 'Global' } })
-                // this.dispatch(
-                //     {
-                //         type: 'update-localStorage',
-                //     }
-                // )
+
                 break
             }
             case ('update-map'): {
@@ -492,14 +488,28 @@ export default class CADL {
                 this.map = dot.dot(this.root)
                 break
             }
-            case ('update-localStorage'): {
-                localStorage.setItem('root', JSON.stringify(this.root))
-                break
-            }
+
             default: {
                 return
             }
         }
+    }
+
+    /**
+     * 
+     * @param params
+     *  params.dataKey string
+     *  params.dataObject Record<string, any>
+     *  params.dataObjectKey string
+     */
+    public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: Record<string, any>, dataObjectKey: string }) {
+        let trimPath, location
+        if (dataKey.startsWith('.')) {
+            trimPath = dataKey.substring(1, dataKey.length )
+            location = this.root
+        }
+        const pathArr = trimPath.split('.')
+        _.set(location, pathArr, dataObject[dataObjectKey])
     }
 
 
