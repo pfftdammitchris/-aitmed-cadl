@@ -71148,57 +71148,56 @@
 	                                mergedVal = mergeDeep(mergedVal, {
 	                                  name: name
 	                                });
-	                              }
+	                              } // mergedVal.type = parseInt(mergedVal.type)
 
-	                              debugger; // mergedVal.type = parseInt(mergedVal.type)
 
 	                              if (!id) {
-	                                _context2.next = 23;
+	                                _context2.next = 22;
 	                                break;
 	                              }
 
-	                              _context2.prev = 10;
-	                              _context2.next = 13;
+	                              _context2.prev = 9;
+	                              _context2.next = 12;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 13:
+	                            case 12:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              _context2.next = 21;
+	                              _context2.next = 20;
 	                              break;
 
-	                            case 18:
-	                              _context2.prev = 18;
-	                              _context2.t0 = _context2["catch"](10);
+	                            case 17:
+	                              _context2.prev = 17;
+	                              _context2.t0 = _context2["catch"](9);
 	                              throw _context2.t0;
 
-	                            case 21:
-	                              _context2.next = 34;
+	                            case 20:
+	                              _context2.next = 33;
 	                              break;
 
-	                            case 23:
-	                              _context2.prev = 23;
-	                              _context2.next = 26;
+	                            case 22:
+	                              _context2.prev = 22;
+	                              _context2.next = 25;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 26:
+	                            case 25:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 34;
+	                              _context2.next = 33;
 	                              break;
 
-	                            case 31:
-	                              _context2.prev = 31;
-	                              _context2.t1 = _context2["catch"](23);
+	                            case 30:
+	                              _context2.prev = 30;
+	                              _context2.t1 = _context2["catch"](22);
 	                              throw _context2.t1;
 
-	                            case 34:
+	                            case 33:
 	                              if (!res) {
-	                                _context2.next = 39;
+	                                _context2.next = 38;
 	                                break;
 	                              }
 
@@ -71222,15 +71221,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 39:
+	                            case 38:
 	                              return _context2.abrupt("return", null);
 
-	                            case 40:
+	                            case 39:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[10, 18], [23, 31]]);
+	                      }, _callee2, null, [[9, 17], [22, 30]]);
 	                    }));
 
 	                    return function (_x) {
@@ -71821,7 +71820,7 @@
 	 */
 
 
-	function updateState(_ref16) {
+	function evalState(_ref16) {
 	  var pageName = _ref16.pageName,
 	      updateObject = _ref16.updateObject,
 	      dispatch = _ref16.dispatch;
@@ -71832,7 +71831,7 @@
 	          case 0:
 	            _context10.next = 2;
 	            return dispatch({
-	              type: 'update-global',
+	              type: 'eval-object',
 	              payload: {
 	                pageName: pageName,
 	                updateObject: updateObject
@@ -71856,11 +71855,11 @@
 	 * @param dispatch Function
 	 * @returns Record<string, any>
 	 * 
-	 * - replaces the update object, if any, with a function that performs the the actions detailed in the update object 
+	 * - replaces the eval object, if any, with a function that performs the the actions detailed in the eval object 
 	 */
 
 
-	function replaceUpdate(_ref18) {
+	function replaceEvalObject(_ref18) {
 	  var pageName = _ref18.pageName,
 	      cadlObject = _ref18.cadlObject,
 	      dispatch = _ref18.dispatch;
@@ -71869,19 +71868,19 @@
 
 	  Object.keys(cadlCopy).forEach(function (key) {
 	    if (key === 'update') {
-	      cadlCopy[key] = updateState({
+	      cadlCopy[key] = evalState({
 	        pageName: pageName,
 	        updateObject: cadlCopy[key],
 	        dispatch: dispatch
 	      });
-	    } else if (key === 'object' && cadlCopy.actionType === 'updateObject') {
-	      cadlCopy[key] = updateState({
+	    } else if (key === 'object' && cadlCopy.actionType === 'evalObject') {
+	      cadlCopy[key] = evalState({
 	        pageName: pageName,
 	        updateObject: cadlCopy[key],
 	        dispatch: dispatch
 	      });
 	    } else if (isObject$5(cadlCopy[key])) {
-	      cadlCopy[key] = replaceUpdate({
+	      cadlCopy[key] = replaceEvalObject({
 	        pageName: pageName,
 	        cadlObject: cadlCopy[key],
 	        dispatch: dispatch
@@ -71889,7 +71888,7 @@
 	    } else if (Array.isArray(cadlCopy[key])) {
 	      cadlCopy[key] = cadlCopy[key].map(function (elem) {
 	        if (isObject$5(elem)) {
-	          return replaceUpdate({
+	          return replaceEvalObject({
 	            pageName: pageName,
 	            cadlObject: elem,
 	            dispatch: dispatch
@@ -72216,7 +72215,6 @@
 	  if (isObject$5(source)) {
 	    Object.keys(sourceCopy).forEach(function (key) {
 	      if (sourceCopy[key] instanceof Uint8Array) {
-	        debugger;
 	        sourceCopy[key] = store$3.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key]);
 	      } else if (isObject$5(sourceCopy[key])) {
 	        sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key]);
@@ -72550,9 +72548,8 @@
 	        var skip,
 	            pageCADL,
 	            processedFormData,
+	            processedWithFns,
 	            boundDispatch,
-	            processedComponents,
-	            replaceUpdateJob2,
 	            processedPage,
 	            init,
 	            currIndex,
@@ -72560,6 +72557,8 @@
 	            updatedPage,
 	            populatedUpdatedPage,
 	            populatedUpdatedPageWithFns,
+	            processedComponents,
+	            replaceUpdateJob2,
 	            _args2 = arguments;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
@@ -72589,31 +72588,26 @@
 	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
+	                }); //FOR FNS
+	                //process components
+
+	                processedWithFns = this.processPopulate({
+	                  source: processedFormData,
+	                  lookFor: ['.', '..', '=', '_'],
+	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
+	                  withFns: true,
+	                  pageName: pageName
 	                }); // //replace updateObj with Fn
 
 	                boundDispatch = this.dispatch.bind(this); // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
-	                //FOR COMPONENTS
-	                //process components
 
-	                processedComponents = this.processPopulate({
-	                  source: processedFormData,
-	                  lookFor: ['.', '..', '=', '_'],
-	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
-	                  withFns: true,
-	                  pageName: pageName
-	                });
-	                replaceUpdateJob2 = replaceUpdate({
-	                  pageName: pageName,
-	                  cadlObject: processedComponents,
-	                  dispatch: boundDispatch
-	                });
-	                processedPage = replaceUpdateJob2;
+	                processedPage = processedWithFns;
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage); //run init commands if any
 
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 36;
+	                  _context2.next = 35;
 	                  break;
 	                }
 
@@ -72621,9 +72615,9 @@
 	                  return index;
 	                });
 
-	              case 16:
+	              case 15:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 36;
+	                  _context2.next = 35;
 	                  break;
 	                }
 
@@ -72631,30 +72625,31 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 34;
+	                  _context2.next = 33;
 	                  break;
 	                }
 
-	                _context2.prev = 20;
-	                _context2.next = 23;
+	                _context2.prev = 19;
+	                _context2.next = 22;
 	                return command();
 
-	              case 23:
-	                _context2.next = 28;
+	              case 22:
+	                _context2.next = 27;
 	                break;
 
-	              case 25:
-	                _context2.prev = 25;
-	                _context2.t0 = _context2["catch"](20);
+	              case 24:
+	                _context2.prev = 24;
+	                _context2.t0 = _context2["catch"](19);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
-	              case 28:
+	              case 27:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
 	                populatedUpdatedPage = populateObject({
 	                  source: updatedPage,
 	                  lookFor: '..',
+	                  skip: ['components'],
 	                  locations: [this.root[pageName]]
 	                });
 	                populatedUpdatedPageWithFns = attachFns({
@@ -72665,22 +72660,36 @@
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
 
-	              case 34:
-	                _context2.next = 16;
+	              case 33:
+	                _context2.next = 15;
 	                break;
 
-	              case 36:
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage);
+	              case 35:
+	                //FOR COMPONENTS
+	                //process components
+	                processedComponents = this.processPopulate({
+	                  source: processedPage,
+	                  lookFor: ['.', '..', '=', '_'],
+	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
+	                  withFns: true,
+	                  pageName: pageName
+	                });
+	                replaceUpdateJob2 = replaceEvalObject({
+	                  pageName: pageName,
+	                  cadlObject: processedComponents,
+	                  dispatch: boundDispatch
+	                });
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), replaceUpdateJob2);
 	                this.dispatch({
 	                  type: 'update-map'
 	                });
 
-	              case 38:
+	              case 39:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[20, 25]]);
+	        }, _callee2, this, [[19, 24]]);
 	      }));
 
 	      function initPage(_x) {
@@ -72984,7 +72993,7 @@
 	            return _currentVal2;
 	          }
 
-	        case 'update-global':
+	        case 'eval-object':
 	          {
 	            var _localStorageRoot = {};
 
@@ -73111,16 +73120,16 @@
 	            break;
 	          }
 
+	        case 'update-localStorage':
+	          {
+	            localStorage.setItem('root', JSON.stringify(this.root));
+	            break;
+	          }
+
 	        case 'update-map':
 	          {
 	            //TODO: consider adding update-page-map
 	            this.map = dotObject.dot(this.root);
-	            break;
-	          }
-
-	        case 'update-localStorage':
-	          {
-	            localStorage.setItem('root', JSON.stringify(this.root));
 	            break;
 	          }
 
@@ -73129,6 +73138,31 @@
 	            return;
 	          }
 	      }
+	    }
+	    /**
+	     * 
+	     * @param params
+	     *  params.dataKey string
+	     *  params.dataObject Record<string, any>
+	     *  params.dataObjectKey string
+	     */
+
+	  }, {
+	    key: "updateObject",
+	    value: function updateObject(_ref5) {
+	      var dataKey = _ref5.dataKey,
+	          dataObject = _ref5.dataObject,
+	          dataObjectKey = _ref5.dataObjectKey;
+	      var trimPath, location;
+
+	      if (dataKey.startsWith('.')) {
+	        trimPath = dataKey.substring(1, dataKey.length);
+	        location = this.root;
+	      }
+
+	      var pathArr = trimPath.split('.');
+
+	      set_1(location, pathArr, dataObject[dataObjectKey]);
 	    }
 	  }, {
 	    key: "getConfig",
@@ -73674,7 +73708,9 @@
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
 	        case 21:
-	          debugger;
+	          debugger; // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // debugger
+
 	          _context.next = 24;
 	          return cadl.initPage('CreateMeeting');
 

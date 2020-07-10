@@ -52,6 +52,8 @@ export default (async function () {
     debugger
     await cadl.root['MeetingRoomCreate'].save[0][1]()
     debugger
+    // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+    // debugger
     await cadl.initPage('CreateMeeting')
     debugger
 

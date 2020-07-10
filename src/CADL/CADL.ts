@@ -7,10 +7,10 @@ import {
     populateObject,
     attachFns,
     populateKeys,
-    replaceUpdate,
     builtInFns,
     populateVals,
-    replaceUint8ArrayWithBase64
+    replaceUint8ArrayWithBase64,
+    replaceEvalObject,
 } from './utils'
 import store, {
     ResponseCatcher,
@@ -184,22 +184,22 @@ export default class CADL {
             pageName
         })
 
+        //FOR FNS
+        //process components
+        const processedWithFns = this.processPopulate({
+            source: processedFormData,
+            lookFor: ['.', '..', '=', '_'],
+            skip: ['update', 'formData', 'components', ...skip],
+            withFns: true,
+            pageName
+        })
+
         // //replace updateObj with Fn
         const boundDispatch = this.dispatch.bind(this)
         // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
 
-        //FOR COMPONENTS
-        //process components
-        const processedComponents = this.processPopulate({
-            source: processedFormData,
-            lookFor: ['.', '..', '=', '_'],
-            skip: ['update', 'formData', ...skip],
-            withFns: true,
-            pageName
-        })
-        let replaceUpdateJob2 = replaceUpdate({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
 
-        let processedPage = replaceUpdateJob2
+        let processedPage = processedWithFns
         this.root = { ...this.root, ...processedPage }
 
         //run init commands if any
@@ -224,6 +224,7 @@ export default class CADL {
                     let populatedUpdatedPage = populateObject({
                         source: updatedPage,
                         lookFor: '..',
+                        skip: ['components'],
                         locations: [this.root[pageName]]
                     })
 
@@ -237,7 +238,17 @@ export default class CADL {
                 }
             }
         }
-        this.root = { ...this.root, ...processedPage }
+        //FOR COMPONENTS
+        //process components
+        const processedComponents = this.processPopulate({
+            source: processedPage,
+            lookFor: ['.', '..', '=', '_'],
+            skip: ['update', 'formData', ...skip],
+            withFns: true,
+            pageName
+        })
+        let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
+        this.root = { ...this.root, ...replaceUpdateJob2 }
         this.dispatch({ type: 'update-map' })
     }
 
@@ -436,7 +447,7 @@ export default class CADL {
                 const currentVal = _.get(this.root[pageName], pathArr) || _.get(this.root, pathArr)
                 return currentVal
             }
-            case ('update-global'): {
+            case ('eval-object'): {
                 let localStorageRoot = {}
                 try {
                     const root = localStorage.getItem('root')
@@ -505,19 +516,37 @@ export default class CADL {
                 )
                 break
             }
+            case ('update-localStorage'): {
+                localStorage.setItem('root', JSON.stringify(this.root))
+                break
+            }
             case ('update-map'): {
                 //TODO: consider adding update-page-map
                 this.map = dot.dot(this.root)
                 break
             }
-            case ('update-localStorage'): {
-                localStorage.setItem('root', JSON.stringify(this.root))
-                break
-            }
+
             default: {
                 return
             }
         }
+    }
+
+    /**
+     * 
+     * @param params
+     *  params.dataKey string
+     *  params.dataObject Record<string, any>
+     *  params.dataObjectKey string
+     */
+    public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: Record<string, any>, dataObjectKey: string }) {
+        let trimPath, location
+        if (dataKey.startsWith('.')) {
+            trimPath = dataKey.substring(1, dataKey.length)
+            location = this.root
+        }
+        const pathArr = trimPath.split('.')
+        _.set(location, pathArr, dataObject[dataObjectKey])
     }
 
 
