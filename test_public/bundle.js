@@ -72526,9 +72526,8 @@
 	        var skip,
 	            pageCADL,
 	            processedFormData,
+	            processedWithFns,
 	            boundDispatch,
-	            processedComponents,
-	            replaceUpdateJob2,
 	            processedPage,
 	            init,
 	            currIndex,
@@ -72536,6 +72535,8 @@
 	            updatedPage,
 	            populatedUpdatedPage,
 	            populatedUpdatedPageWithFns,
+	            processedComponents,
+	            replaceUpdateJob2,
 	            _args2 = arguments;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
@@ -72565,31 +72566,26 @@
 	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
+	                }); //FOR FNS
+	                //process components
+
+	                processedWithFns = this.processPopulate({
+	                  source: processedFormData,
+	                  lookFor: ['.', '..', '=', '_'],
+	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
+	                  withFns: true,
+	                  pageName: pageName
 	                }); // //replace updateObj with Fn
 
 	                boundDispatch = this.dispatch.bind(this); // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
-	                //FOR COMPONENTS
-	                //process components
 
-	                processedComponents = this.processPopulate({
-	                  source: processedFormData,
-	                  lookFor: ['.', '..', '=', '_'],
-	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
-	                  withFns: true,
-	                  pageName: pageName
-	                });
-	                replaceUpdateJob2 = replaceUpdate({
-	                  pageName: pageName,
-	                  cadlObject: processedComponents,
-	                  dispatch: boundDispatch
-	                });
-	                processedPage = replaceUpdateJob2;
+	                processedPage = processedWithFns;
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage); //run init commands if any
 
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 36;
+	                  _context2.next = 35;
 	                  break;
 	                }
 
@@ -72597,9 +72593,9 @@
 	                  return index;
 	                });
 
-	              case 16:
+	              case 15:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 36;
+	                  _context2.next = 35;
 	                  break;
 	                }
 
@@ -72607,30 +72603,31 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 34;
+	                  _context2.next = 33;
 	                  break;
 	                }
 
-	                _context2.prev = 20;
-	                _context2.next = 23;
+	                _context2.prev = 19;
+	                _context2.next = 22;
 	                return command();
 
-	              case 23:
-	                _context2.next = 28;
+	              case 22:
+	                _context2.next = 27;
 	                break;
 
-	              case 25:
-	                _context2.prev = 25;
-	                _context2.t0 = _context2["catch"](20);
+	              case 24:
+	                _context2.prev = 24;
+	                _context2.t0 = _context2["catch"](19);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
-	              case 28:
+	              case 27:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
 	                populatedUpdatedPage = populateObject({
 	                  source: updatedPage,
 	                  lookFor: '..',
+	                  skip: ['components'],
 	                  locations: [this.root[pageName]]
 	                });
 	                populatedUpdatedPageWithFns = attachFns({
@@ -72641,22 +72638,36 @@
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
 
-	              case 34:
-	                _context2.next = 16;
+	              case 33:
+	                _context2.next = 15;
 	                break;
 
-	              case 36:
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage);
+	              case 35:
+	                //FOR COMPONENTS
+	                //process components
+	                processedComponents = this.processPopulate({
+	                  source: processedPage,
+	                  lookFor: ['.', '..', '=', '_'],
+	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
+	                  withFns: true,
+	                  pageName: pageName
+	                });
+	                replaceUpdateJob2 = replaceUpdate({
+	                  pageName: pageName,
+	                  cadlObject: processedComponents,
+	                  dispatch: boundDispatch
+	                });
+	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), replaceUpdateJob2);
 	                this.dispatch({
 	                  type: 'update-map'
 	                });
 
-	              case 38:
+	              case 39:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[20, 25]]);
+	        }, _callee2, this, [[19, 24]]);
 	      }));
 
 	      function initPage(_x) {
