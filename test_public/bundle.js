@@ -73643,44 +73643,38 @@
 	          });
 
 	        case 20:
-	          debugger;
-	          cadl.updateObject({
-	            dataKey: '.Global.meetroom.edge.refid',
-	            dataObject: {
-	              id: '123'
-	            },
-	            dataObjectKey: 'id'
-	          });
-	          debugger;
-	          _context.next = 25;
+	          debugger; // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // debugger
+
+	          _context.next = 23;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 25:
+	        case 23:
 	          debugger;
-	          _context.next = 28;
+	          _context.next = 26;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 28:
+	        case 26:
 	          debugger;
-	          _context.next = 31;
+	          _context.next = 29;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
 
-	        case 31:
+	        case 29:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
 
-	          _context.next = 34;
+	          _context.next = 32;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 34:
+	        case 32:
 	          debugger;
-	          _context.next = 37;
+	          _context.next = 35;
 	          return cadl.root['InviteeInfo'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 37:
+	        case 35:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
@@ -73734,7 +73728,7 @@
 	          //     }
 	          // }
 
-	        case 38:
+	        case 36:
 	        case "end":
 	          return _context.stop();
 	      }

@@ -51,8 +51,8 @@ export default (async function () {
     debugger
     await cadl.root['MeetingRoomCreate'].save[0][1]({roomName:'Test room', videoProvider:'Twilio test'})
     debugger
-    cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
-    debugger
+    // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+    // debugger
     await cadl.initPage('CreateMeeting')
     debugger
 
