@@ -183,22 +183,22 @@ export default class CADL {
             pageName
         })
 
+        //FOR FNS
+        //process components
+        const processedWithFns = this.processPopulate({
+            source: processedFormData,
+            lookFor: ['.', '..', '=', '_'],
+            skip: ['update', 'formData', 'components',...skip],
+            withFns: true,
+            pageName
+        })
+
         // //replace updateObj with Fn
         const boundDispatch = this.dispatch.bind(this)
         // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
 
-        //FOR COMPONENTS
-        //process components
-        const processedComponents = this.processPopulate({
-            source: processedFormData,
-            lookFor: ['.', '..', '=', '_'],
-            skip: ['update', 'formData', ...skip],
-            withFns: true,
-            pageName
-        })
-        let replaceUpdateJob2 = replaceUpdate({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
 
-        let processedPage = replaceUpdateJob2
+        let processedPage = processedWithFns
         this.root = { ...this.root, ...processedPage }
 
         //run init commands if any
@@ -223,6 +223,7 @@ export default class CADL {
                     let populatedUpdatedPage = populateObject({
                         source: updatedPage,
                         lookFor: '..',
+                        skip:['components'],
                         locations: [this.root[pageName]]
                     })
 
@@ -233,10 +234,20 @@ export default class CADL {
                     init = Object.values(populatedUpdatedPageWithFns)[0].init
 
                     this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
-                } 
+                }
             }
         }
-        this.root = { ...this.root, ...processedPage }
+        //FOR COMPONENTS
+        //process components
+        const processedComponents = this.processPopulate({
+            source: processedPage,
+            lookFor: ['.', '..', '=', '_'],
+            skip: ['update', 'formData', ...skip],
+            withFns: true,
+            pageName
+        })
+        let replaceUpdateJob2 = replaceUpdate({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
+        this.root = { ...this.root, ...replaceUpdateJob2 }
         this.dispatch({ type: 'update-map' })
     }
 
@@ -407,7 +418,7 @@ export default class CADL {
                     }
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
-              
+
                 return
             }
             case ('get-data'): {
