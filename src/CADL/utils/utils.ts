@@ -18,6 +18,7 @@ export {
     populateObject,
     builtInFns,
     populateVals,
+    replaceUint8ArrayWithBase64,
     replaceEvalObject,
 }
 
@@ -260,9 +261,10 @@ function attachFns({ cadlObject,
                                 }
 
                                 //merging existing name field and incoming name field
-                                let mergedVal = { ...currentVal, type: parseInt(currentVal.type) }
+                                let parsedType = parseInt(currentVal.type)
+                                let mergedVal = { ...currentVal, type: parsedType }
                                 if (name) {
-                                    mergedVal = mergeDeep(currentVal, { name })
+                                    mergedVal = mergeDeep(mergedVal, { name })
                                 }
                                 // mergedVal.type = parseInt(mergedVal.type)
                                 let res
@@ -551,8 +553,7 @@ function attachFns({ cadlObject,
  */
 function evalState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
     return async (): Promise<void> => {
-
-        await dispatch({ type: 'eval-global', payload: { pageName, updateObject } })
+        await dispatch({ type: 'eval-object', payload: { pageName, updateObject } })
         return
     }
 }
@@ -780,3 +781,19 @@ function populateVals({
     return sourceCopy
 }
 
+function replaceUint8ArrayWithBase64(source) {
+    let sourceCopy = _.cloneDeep(source)
+    if (isObject(source)) {
+
+        Object.keys(sourceCopy).forEach((key) => {
+            if (sourceCopy[key] instanceof Uint8Array) {
+                sourceCopy[key] = store.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key])
+            } else if (isObject(sourceCopy[key])) {
+                sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key])
+            } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
+                sourceCopy[key] = sourceCopy[key].map((elem) => replaceUint8ArrayWithBase64(elem))
+            } 
+        })
+    }
+    return sourceCopy
+}

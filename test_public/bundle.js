@@ -71108,6 +71108,7 @@
 	                          _ref6,
 	                          deat,
 	                          currentVal,
+	                          parsedType,
 	                          mergedVal,
 	                          res,
 	                          _yield$store$level2SD2,
@@ -71138,64 +71139,65 @@
 	                              } //merging existing name field and incoming name field
 
 
+	                              parsedType = parseInt(currentVal.type);
 	                              mergedVal = _objectSpread$c(_objectSpread$c({}, currentVal), {}, {
-	                                type: parseInt(currentVal.type)
+	                                type: parsedType
 	                              });
 
 	                              if (name) {
-	                                mergedVal = mergeDeep(currentVal, {
+	                                mergedVal = mergeDeep(mergedVal, {
 	                                  name: name
 	                                });
 	                              } // mergedVal.type = parseInt(mergedVal.type)
 
 
 	                              if (!id) {
-	                                _context2.next = 21;
+	                                _context2.next = 22;
 	                                break;
 	                              }
 
-	                              _context2.prev = 8;
-	                              _context2.next = 11;
+	                              _context2.prev = 9;
+	                              _context2.next = 12;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 11:
+	                            case 12:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              _context2.next = 19;
+	                              _context2.next = 20;
 	                              break;
 
-	                            case 16:
-	                              _context2.prev = 16;
-	                              _context2.t0 = _context2["catch"](8);
+	                            case 17:
+	                              _context2.prev = 17;
+	                              _context2.t0 = _context2["catch"](9);
 	                              throw _context2.t0;
 
-	                            case 19:
-	                              _context2.next = 32;
+	                            case 20:
+	                              _context2.next = 33;
 	                              break;
 
-	                            case 21:
-	                              _context2.prev = 21;
-	                              _context2.next = 24;
+	                            case 22:
+	                              _context2.prev = 22;
+	                              _context2.next = 25;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 24:
+	                            case 25:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 32;
+	                              _context2.next = 33;
 	                              break;
 
-	                            case 29:
-	                              _context2.prev = 29;
-	                              _context2.t1 = _context2["catch"](21);
+	                            case 30:
+	                              _context2.prev = 30;
+	                              _context2.t1 = _context2["catch"](22);
 	                              throw _context2.t1;
 
-	                            case 32:
+	                            case 33:
 	                              if (!res) {
-	                                _context2.next = 37;
+	                                _context2.next = 38;
 	                                break;
 	                              }
 
@@ -71219,15 +71221,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 37:
+	                            case 38:
 	                              return _context2.abrupt("return", null);
 
-	                            case 38:
+	                            case 39:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[8, 16], [21, 29]]);
+	                      }, _callee2, null, [[9, 17], [22, 30]]);
 	                    }));
 
 	                    return function (_x) {
@@ -71829,7 +71831,7 @@
 	          case 0:
 	            _context10.next = 2;
 	            return dispatch({
-	              type: 'eval-global',
+	              type: 'eval-object',
 	              payload: {
 	                pageName: pageName,
 	                updateObject: updateObject
@@ -72202,6 +72204,26 @@
 	    _iterator3.e(err);
 	  } finally {
 	    _iterator3.f();
+	  }
+
+	  return sourceCopy;
+	}
+
+	function replaceUint8ArrayWithBase64(source) {
+	  var sourceCopy = cloneDeep_1(source);
+
+	  if (isObject$5(source)) {
+	    Object.keys(sourceCopy).forEach(function (key) {
+	      if (sourceCopy[key] instanceof Uint8Array) {
+	        sourceCopy[key] = store$3.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key]);
+	      } else if (isObject$5(sourceCopy[key])) {
+	        sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key]);
+	      } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
+	        sourceCopy[key] = sourceCopy[key].map(function (elem) {
+	          return replaceUint8ArrayWithBase64(elem);
+	        });
+	      }
+	    });
 	  }
 
 	  return sourceCopy;
@@ -72825,6 +72847,17 @@
 	          pageName = _ref3.pageName,
 	          _ref3$withFns = _ref3.withFns,
 	          withFns = _ref3$withFns === void 0 ? false : _ref3$withFns;
+	      var localStorageRoot = {};
+
+	      try {
+	        var root = localStorage.getItem('root');
+
+	        if (root) {
+	          localStorageRoot = JSON.parse(root);
+	        }
+	      } catch (error) {
+	        console.log(error);
+	      }
 
 	      var sourceCopy = cloneDeep_1(source);
 
@@ -72832,14 +72865,14 @@
 	      var sourceCopyWithKeys = populateKeys({
 	        source: sourceCopy,
 	        lookFor: '.',
-	        locations: [this.root, sourceCopy]
+	        locations: [this.root, localStorageRoot, sourceCopy]
 	      });
 	      localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys;
 	      var sourceCopyWithVals = populateVals({
 	        source: sourceCopyWithKeys,
 	        lookFor: lookFor,
 	        skip: skip,
-	        locations: [this.root, localRoot]
+	        locations: [this.root, localStorageRoot, localRoot]
 	      });
 	      localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys;
 	      var populatedResponse = sourceCopyWithVals;
@@ -72867,6 +72900,18 @@
 	      switch (action.type) {
 	        case 'populate':
 	          {
+	            var localStorageRoot = {};
+
+	            try {
+	              var root = localStorage.getItem('root');
+
+	              if (root) {
+	                localStorageRoot = JSON.parse(root);
+	              }
+	            } catch (error) {
+	              console.log(error);
+	            }
+
 	            var pageName = action.payload.pageName;
 
 	            var pageObjectCopy = cloneDeep_1(this.root[pageName]);
@@ -72875,17 +72920,17 @@
 	            var populateWithRoot = populateObject({
 	              source: pageObjectCopy,
 	              lookFor: '.',
-	              locations: [this.root, this.root[pageName]]
+	              locations: [this.root, localStorageRoot, this.root[pageName]]
 	            });
 	            var populateWithSelf = populateObject({
 	              source: populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, this.root[pageName]]
+	              locations: [this.root, localStorageRoot, this.root[pageName]]
 	            });
 	            var populateAfterInheriting = populateObject({
 	              source: populateWithSelf,
 	              lookFor: '=',
-	              locations: [this.root, this.root[pageName]]
+	              locations: [this.root, localStorageRoot, this.root[pageName]]
 	            });
 	            var withFNs = attachFns({
 	              cadlObject: populateAfterInheriting,
@@ -72900,7 +72945,8 @@
 	            var _action$payload = action.payload,
 	                _pageName = _action$payload.pageName,
 	                dataKey = _action$payload.dataKey,
-	                data = _action$payload.data;
+	                rawData = _action$payload.data;
+	            var data = replaceUint8ArrayWithBase64(rawData);
 	            var firstCharacter = dataKey[0];
 	            var pathArr = dataKey.split('.');
 
@@ -72949,6 +72995,18 @@
 
 	        case 'eval-object':
 	          {
+	            var _localStorageRoot = {};
+
+	            try {
+	              var _root = localStorage.getItem('root');
+
+	              if (_root) {
+	                _localStorageRoot = JSON.parse(_root);
+	              }
+	            } catch (error) {
+	              console.log(error);
+	            }
+
 	            var _action$payload3 = action.payload,
 	                _pageName3 = _action$payload3.pageName,
 	                updateObject = _action$payload3.updateObject;
@@ -72956,19 +73014,19 @@
 	            var _populateWithRoot = populateObject({
 	              source: updateObject,
 	              lookFor: '.',
-	              locations: [this.root, this.root[_pageName3]]
+	              locations: [this.root, _localStorageRoot, this.root[_pageName3]]
 	            });
 
 	            var _populateWithSelf = populateObject({
 	              source: _populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, this.root[_pageName3]]
+	              locations: [this.root, _localStorageRoot, this.root[_pageName3]]
 	            });
 
 	            var _populateAfterInheriting = populateObject({
 	              source: _populateWithSelf,
 	              lookFor: '=',
-	              locations: [this, this.root, this.root[_pageName3]]
+	              locations: [this, this.root, _localStorageRoot, this.root[_pageName3]]
 	            });
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
@@ -73012,17 +73070,17 @@
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
 	                        });
 	                        _populateWithSelf2 = populateObject({
 	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
 	                        });
 	                        _populateAfterInheriting2 = populateObject({
 	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
 	                        });
 	                        _boundDispatch = _this.dispatch.bind(_this);
 	                        withFn = attachFns({
@@ -73056,6 +73114,15 @@
 	                pageName: 'Global'
 	              }
 	            });
+	            this.dispatch({
+	              type: 'update-localStorage'
+	            });
+	            break;
+	          }
+
+	        case 'update-localStorage':
+	          {
+	            localStorage.setItem('root', JSON.stringify(this.root));
 	            break;
 	          }
 
@@ -73607,74 +73674,72 @@
 	          return cadl.init();
 
 	        case 4:
-	          _context.next = 6;
+	          debugger;
+	          _context.next = 7;
 	          return cadl.initPage('SignIn');
 
-	        case 6:
+	        case 7:
 	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
-	          _context.next = 9;
+	          _context.next = 10;
 	          return Account$1.requestVerificationCode('+1 65322138556758');
 
-	        case 9:
+	        case 10:
 	          vc = _context.sent;
-	          _context.next = 12;
+	          _context.next = 13;
 	          return cadl.builtIn['signIn']({
 	            password: "letmein123",
 	            phoneNumber: "+1 65322138556758",
 	            verificationCode: vc
 	          });
 
-	        case 12:
+	        case 13:
 	          debugger;
 	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
 	          debugger; // await cadl.initPage('MeetingRoomInvited')
 
-	          _context.next = 17;
+	          _context.next = 18;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 17:
+	        case 18:
 	          debugger;
-	          _context.next = 20;
-	          return cadl.root['MeetingRoomCreate'].save[0][1]({
-	            roomName: 'Test room',
-	            videoProvider: 'Twilio test'
-	          });
+	          _context.next = 21;
+	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 20:
+	        case 21:
 	          debugger; // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
 	          // debugger
 
-	          _context.next = 23;
+	          _context.next = 24;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 23:
+	        case 24:
 	          debugger;
-	          _context.next = 26;
+	          _context.next = 27;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 26:
+	        case 27:
 	          debugger;
-	          _context.next = 29;
+	          _context.next = 30;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
 
-	        case 29:
+	        case 30:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
 
-	          _context.next = 32;
+	          _context.next = 33;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 32:
+	        case 33:
 	          debugger;
-	          _context.next = 35;
+	          _context.next = 36;
 	          return cadl.root['InviteeInfo'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 35:
+	        case 36:
 	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
@@ -73728,7 +73793,7 @@
 	          //     }
 	          // }
 
-	        case 36:
+	        case 37:
 	        case "end":
 	          return _context.stop();
 	      }

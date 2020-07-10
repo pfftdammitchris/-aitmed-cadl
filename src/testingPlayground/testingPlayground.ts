@@ -22,6 +22,7 @@ export default (async function () {
     const cadl = new CADL({ ...defaultConfig })
     debugger
     await cadl.init()
+    debugger
 
     await cadl.initPage('SignIn')
     // await cadl.initPage('CreateNewAccount')
@@ -49,7 +50,7 @@ export default (async function () {
     // await cadl.initPage('MeetingRoomInvited')
     await cadl.initPage('MeetingRoomCreate')
     debugger
-    await cadl.root['MeetingRoomCreate'].save[0][1]({roomName:'Test room', videoProvider:'Twilio test'})
+    await cadl.root['MeetingRoomCreate'].save[0][1]()
     debugger
     // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
     // debugger
