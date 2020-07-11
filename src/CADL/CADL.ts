@@ -509,11 +509,11 @@ export default class CADL {
                     }
                 })
                 this.dispatch({ type: 'populate', payload: { pageName: 'Global' } })
-                this.dispatch(
-                    {
-                        type: 'update-localStorage',
-                    }
-                )
+                // this.dispatch(
+                //     {
+                //         type: 'update-localStorage',
+                //     }
+                // )
                 break
             }
             case ('update-localStorage'): {

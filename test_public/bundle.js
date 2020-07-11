@@ -73113,10 +73113,12 @@
 	              payload: {
 	                pageName: 'Global'
 	              }
-	            });
-	            this.dispatch({
-	              type: 'update-localStorage'
-	            });
+	            }); // this.dispatch(
+	            //     {
+	            //         type: 'update-localStorage',
+	            //     }
+	            // )
+
 	            break;
 	          }
 
