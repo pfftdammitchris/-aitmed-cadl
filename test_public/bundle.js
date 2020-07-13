@@ -72852,32 +72852,30 @@
 	          pageName = _ref3.pageName,
 	          _ref3$withFns = _ref3.withFns,
 	          withFns = _ref3$withFns === void 0 ? false : _ref3$withFns;
-	      var localStorageRoot = {};
 
-	      try {
-	        var root = localStorage.getItem('root');
-
-	        if (root) {
-	          localStorageRoot = JSON.parse(root);
-	        }
-	      } catch (error) {
-	        console.log(error);
-	      }
-
+	      // let localStorageRoot = {}
+	      // try {
+	      //     const root = localStorage.getItem('root')
+	      //     if (root) {
+	      //         localStorageRoot = JSON.parse(root)
+	      //     }
+	      // } catch (error) {
+	      //     console.log(error)
+	      // }
 	      var sourceCopy = cloneDeep_1(source);
 
 	      var localRoot = pageName ? sourceCopy[pageName] : sourceCopy;
 	      var sourceCopyWithKeys = populateKeys({
 	        source: sourceCopy,
 	        lookFor: '.',
-	        locations: [this.root, localStorageRoot, sourceCopy]
+	        locations: [this.root, sourceCopy]
 	      });
 	      localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys;
 	      var sourceCopyWithVals = populateVals({
 	        source: sourceCopyWithKeys,
 	        lookFor: lookFor,
 	        skip: skip,
-	        locations: [this.root, localStorageRoot, localRoot]
+	        locations: [this.root, localRoot]
 	      });
 	      localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys;
 	      var populatedResponse = sourceCopyWithVals;
@@ -72905,18 +72903,15 @@
 	      switch (action.type) {
 	        case 'populate':
 	          {
-	            var localStorageRoot = {};
-
-	            try {
-	              var root = localStorage.getItem('root');
-
-	              if (root) {
-	                localStorageRoot = JSON.parse(root);
-	              }
-	            } catch (error) {
-	              console.log(error);
-	            }
-
+	            // let localStorageRoot = {}
+	            // try {
+	            //     const root = localStorage.getItem('root')
+	            //     if (root) {
+	            //         localStorageRoot = JSON.parse(root)
+	            //     }
+	            // } catch (error) {
+	            //     console.log(error)
+	            // }
 	            var pageName = action.payload.pageName;
 
 	            var pageObjectCopy = cloneDeep_1(this.root[pageName]);
@@ -72925,17 +72920,17 @@
 	            var populateWithRoot = populateObject({
 	              source: pageObjectCopy,
 	              lookFor: '.',
-	              locations: [this.root, localStorageRoot, this.root[pageName]]
+	              locations: [this.root, this.root[pageName]]
 	            });
 	            var populateWithSelf = populateObject({
 	              source: populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, localStorageRoot, this.root[pageName]]
+	              locations: [this.root, this.root[pageName]]
 	            });
 	            var populateAfterInheriting = populateObject({
 	              source: populateWithSelf,
 	              lookFor: '=',
-	              locations: [this.root, localStorageRoot, this.root[pageName]]
+	              locations: [this.root, this.root[pageName]]
 	            });
 	            var withFNs = attachFns({
 	              cadlObject: populateAfterInheriting,
@@ -73000,18 +72995,15 @@
 
 	        case 'eval-object':
 	          {
-	            var _localStorageRoot = {};
-
-	            try {
-	              var _root = localStorage.getItem('root');
-
-	              if (_root) {
-	                _localStorageRoot = JSON.parse(_root);
-	              }
-	            } catch (error) {
-	              console.log(error);
-	            }
-
+	            // let localStorageRoot = {}
+	            // try {
+	            //     const root = localStorage.getItem('root')
+	            //     if (root) {
+	            //         localStorageRoot = JSON.parse(root)
+	            //     }
+	            // } catch (error) {
+	            //     console.log(error)
+	            // }
 	            var _action$payload3 = action.payload,
 	                _pageName3 = _action$payload3.pageName,
 	                updateObject = _action$payload3.updateObject;
@@ -73019,19 +73011,19 @@
 	            var _populateWithRoot = populateObject({
 	              source: updateObject,
 	              lookFor: '.',
-	              locations: [this.root, _localStorageRoot, this.root[_pageName3]]
+	              locations: [this.root, this.root[_pageName3]]
 	            });
 
 	            var _populateWithSelf = populateObject({
 	              source: _populateWithRoot,
 	              lookFor: '..',
-	              locations: [this.root, _localStorageRoot, this.root[_pageName3]]
+	              locations: [this.root, this.root[_pageName3]]
 	            });
 
 	            var _populateAfterInheriting = populateObject({
 	              source: _populateWithSelf,
 	              lookFor: '=',
-	              locations: [this, this.root, _localStorageRoot, this.root[_pageName3]]
+	              locations: [this, this.root, this.root[_pageName3]]
 	            });
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
@@ -73075,17 +73067,17 @@
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
-	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
+	                          locations: [_this.root, _this.root[_pageName3]]
 	                        });
 	                        _populateWithSelf2 = populateObject({
 	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
+	                          locations: [_this.root, _this.root[_pageName3]]
 	                        });
 	                        _populateAfterInheriting2 = populateObject({
 	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this.root, _localStorageRoot, _this.root[_pageName3]]
+	                          locations: [_this.root, _this.root[_pageName3]]
 	                        });
 	                        _boundDispatch = _this.dispatch.bind(_this);
 	                        withFn = attachFns({
@@ -73118,12 +73110,10 @@
 	              payload: {
 	                pageName: 'Global'
 	              }
-	            }); // this.dispatch(
-	            //     {
-	            //         type: 'update-localStorage',
-	            //     }
-	            // )
-
+	            });
+	            this.dispatch({
+	              type: 'update-localStorage'
+	            });
 	            break;
 	          }
 
@@ -73263,6 +73253,55 @@
 
 	      return runInit;
 	    }()
+	    /**
+	     * 
+	     * @param key "user" | "meetroom"
+	     * 
+	     * -sets either the user or meetroom value from localStorage to the corresponding root value in memory
+	     */
+
+	  }, {
+	    key: "setFromLocalStorage",
+	    value: function setFromLocalStorage(key) {
+	      var localStorageRoot;
+
+	      try {
+	        var root = localStorage.getItem('root');
+
+	        if (root) {
+	          localStorageRoot = JSON.parse(root);
+	        }
+	      } catch (error) {
+	        console.log(error);
+	      }
+
+	      if (localStorageRoot) {
+	        var _localStorageRoot = localStorageRoot,
+	            Global = _localStorageRoot.Global,
+	            meetroom = _localStorageRoot.meetroom;
+
+	        switch (key) {
+	          case "user":
+	            {
+	              var user = Global.currentUser.vertex;
+	              this.root.Global.currentUser.vertex = user;
+	              break;
+	            }
+
+	          case "meetroom":
+	            {
+	              var currMeetroom = meetroom.edge;
+	              this.root.meetroom.edge = currMeetroom;
+	              break;
+	            }
+
+	          default:
+	            {
+	              return;
+	            }
+	        }
+	      }
+	    }
 	  }, {
 	    key: "getConfig",
 	    value: function getConfig() {
@@ -73773,83 +73812,69 @@
 	          return cadl.init();
 
 	        case 4:
-	          debugger;
-	          _context.next = 7;
-	          return cadl.initPage('SignIn');
-
-	        case 7:
+	          debugger; // await cadl.initPage('SignIn')
 	          // await cadl.initPage('CreateNewAccount')
+
 	          debugger;
-	          _context.next = 10;
+	          _context.next = 8;
 	          return Account$1.requestVerificationCode('+1 65322138556758');
 
-	        case 10:
+	        case 8:
 	          vc = _context.sent;
-	          _context.next = 13;
-	          return cadl.builtIn['signIn']({
-	            password: "letmein123",
-	            phoneNumber: "+1 65322138556758",
-	            verificationCode: vc
-	          });
-
-	        case 13:
-	          debugger;
-	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
-
-	          debugger; // await cadl.initPage('MeetingRoomInvited')
-
-	          _context.next = 18;
-	          return cadl.initPage('MeetingRoomCreate');
-
-	        case 18:
-	          debugger;
-	          _context.next = 21;
-	          return cadl.root['MeetingRoomCreate'].save[0][1]();
-
-	        case 21:
-	          debugger;
-	          _context.next = 24;
-	          return cadl.runInit('MeetingRoomCreate');
-
-	        case 24:
-	          debugger; // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+	          //     confirmPassword: "letmein123",
+	          //     countryCode: "+1",
+	          //     password: "letmein123",
+	          //     phoneNumber: "+1 65322138556758",
+	          //     username: "username",
+	          //     verificationCode: vc
+	          // })
+	          // await cadl.builtIn['signIn']({
+	          //     password: "letmein123",
+	          //     phoneNumber: "+1 65322138556758",
+	          //     verificationCode: vc
+	          // })
 	          // debugger
-
-	          _context.next = 27;
+	          // cadl.root['SignIn'].update()
+	          // // cadl.root['CreateNewAccount'].update()
+	          // debugger
+	          // // await cadl.initPage('MeetingRoomInvited')
+	          // await cadl.initPage('MeetingRoomCreate')
+	          // debugger
+	          // await cadl.root['MeetingRoomCreate'].save[0][1]()
+	          // debugger
+	          // await cadl.runInit('MeetingRoomCreate')
+	          // debugger
+	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // debugger
+	          debugger;
+	          cadl.setFromLocalStorage('user');
+	          debugger;
+	          cadl.setFromLocalStorage('meetroom');
+	          debugger;
+	          _context.next = 16;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 27:
+	        case 16:
 	          debugger;
-	          _context.next = 30;
+	          _context.next = 19;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 30:
+	        case 19:
 	          debugger;
-	          _context.next = 33;
+	          _context.next = 22;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
 
-	        case 33:
+	        case 22:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
-
-	          _context.next = 36;
-	          return cadl.initPage('InviteeInfo');
-
-	        case 36:
-	          debugger;
-	          _context.next = 39;
-	          return cadl.root['InviteeInfo'].save[0][1]({
-	            firstName: "Stan",
-	            lastName: "koko"
-	          });
-
-	        case 39:
-	          debugger;
-	          _context.next = 42;
-	          return cadl.runInit('CreateMeeting');
-
-	        case 42:
-	          debugger; // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
+	          // await cadl.initPage('InviteeInfo')
+	          // debugger
+	          // await cadl.root['InviteeInfo'].save[0][1]({ firstName: "Stan", lastName: "koko" })
+	          // debugger
+	          // await cadl.runInit('CreateMeeting')
+	          // debugger
+	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
 	          // debugger
@@ -73903,7 +73928,7 @@
 	          //     }
 	          // }
 
-	        case 44:
+	        case 24:
 	        case "end":
 	          return _context.stop();
 	      }

@@ -333,28 +333,28 @@ export default class CADL {
         skip?: string[],
         withFns?: boolean
     }): Record<string, any> {
-        let localStorageRoot = {}
-        try {
-            const root = localStorage.getItem('root')
-            if (root) {
-                localStorageRoot = JSON.parse(root)
-            }
-        } catch (error) {
-            console.log(error)
-        }
+        // let localStorageRoot = {}
+        // try {
+        //     const root = localStorage.getItem('root')
+        //     if (root) {
+        //         localStorageRoot = JSON.parse(root)
+        //     }
+        // } catch (error) {
+        //     console.log(error)
+        // }
         let sourceCopy = _.cloneDeep(source)
         let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
         const sourceCopyWithKeys = populateKeys({
             source: sourceCopy,
             lookFor: '.',
-            locations: [this.root, localStorageRoot, sourceCopy]
+            locations: [this.root, sourceCopy]
         })
         localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys
         const sourceCopyWithVals = populateVals({
             source: sourceCopyWithKeys,
             lookFor,
             skip,
-            locations: [this.root, localStorageRoot, localRoot]
+            locations: [this.root, localRoot]
         })
         localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys
         let populatedResponse = sourceCopyWithVals
@@ -375,15 +375,15 @@ export default class CADL {
     private dispatch(action: { type: string, payload?: any }) {
         switch (action.type) {
             case ('populate'): {
-                let localStorageRoot = {}
-                try {
-                    const root = localStorage.getItem('root')
-                    if (root) {
-                        localStorageRoot = JSON.parse(root)
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
+                // let localStorageRoot = {}
+                // try {
+                //     const root = localStorage.getItem('root')
+                //     if (root) {
+                //         localStorageRoot = JSON.parse(root)
+                //     }
+                // } catch (error) {
+                //     console.log(error)
+                // }
                 const { pageName } = action.payload
                 const pageObjectCopy = _.cloneDeep(this.root[pageName])
                 const boundDispatch = this.dispatch.bind(this)
@@ -391,17 +391,17 @@ export default class CADL {
                 const populateWithRoot = populateObject({
                     source: pageObjectCopy,
                     lookFor: '.',
-                    locations: [this.root, localStorageRoot, this.root[pageName]]
+                    locations: [this.root, this.root[pageName]]
                 })
                 const populateWithSelf = populateObject({
                     source: populateWithRoot,
                     lookFor: '..',
-                    locations: [this.root, localStorageRoot, this.root[pageName]]
+                    locations: [this.root, this.root[pageName]]
                 })
                 const populateAfterInheriting = populateObject({
                     source: populateWithSelf,
                     lookFor: '=',
-                    locations: [this.root, localStorageRoot, this.root[pageName]]
+                    locations: [this.root, this.root[pageName]]
                 })
 
                 const withFNs = attachFns({
@@ -448,19 +448,19 @@ export default class CADL {
                 return currentVal
             }
             case ('eval-object'): {
-                let localStorageRoot = {}
-                try {
-                    const root = localStorage.getItem('root')
-                    if (root) {
-                        localStorageRoot = JSON.parse(root)
-                    }
-                } catch (error) {
-                    console.log(error)
-                }
+                // let localStorageRoot = {}
+                // try {
+                //     const root = localStorage.getItem('root')
+                //     if (root) {
+                //         localStorageRoot = JSON.parse(root)
+                //     }
+                // } catch (error) {
+                //     console.log(error)
+                // }
                 const { pageName, updateObject } = action.payload
-                const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, localStorageRoot, this.root[pageName]] })
-                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, localStorageRoot, this.root[pageName]] })
-                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, localStorageRoot, this.root[pageName]] })
+                const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
+                const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
+                const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, this.root[pageName]] })
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
@@ -483,19 +483,19 @@ export default class CADL {
                         const populateWithRoot = populateObject({
                             source: val,
                             lookFor: '.',
-                            locations: [this.root, localStorageRoot, this.root[pageName]]
+                            locations: [this.root, this.root[pageName]]
                         })
 
                         const populateWithSelf = populateObject({
                             source: populateWithRoot,
                             lookFor: '..',
-                            locations: [this.root, localStorageRoot, this.root[pageName]]
+                            locations: [this.root, this.root[pageName]]
                         })
 
                         const populateAfterInheriting = populateObject({
                             source: populateWithSelf,
                             lookFor: '=',
-                            locations: [this.root, localStorageRoot, this.root[pageName]]
+                            locations: [this.root, this.root[pageName]]
                         })
 
                         const boundDispatch = this.dispatch.bind(this)
@@ -509,11 +509,11 @@ export default class CADL {
                     }
                 })
                 this.dispatch({ type: 'populate', payload: { pageName: 'Global' } })
-                // this.dispatch(
-                //     {
-                //         type: 'update-localStorage',
-                //     }
-                // )
+                this.dispatch(
+                    {
+                        type: 'update-localStorage',
+                    }
+                )
                 break
             }
             case ('update-localStorage'): {
@@ -592,6 +592,42 @@ export default class CADL {
                     init = Object.values(populatedUpdatedPageWithFns)[0].init
 
                     this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+                }
+            }
+        }
+    }
+
+    /**
+     * 
+     * @param key "user" | "meetroom"
+     * 
+     * -sets either the user or meetroom value from localStorage to the corresponding root value in memory
+     */
+    public setFromLocalStorage(key: "user" | "meetroom") {
+        let localStorageRoot
+        try {
+            const root = localStorage.getItem('root')
+            if (root) {
+                localStorageRoot = JSON.parse(root)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+        if (localStorageRoot) {
+            const { Global, meetroom } = localStorageRoot
+            switch (key) {
+                case ("user"): {
+                    let user = Global.currentUser.vertex
+                    this.root.Global.currentUser.vertex = user
+                    break
+                }
+                case ("meetroom"): {
+                    let currMeetroom = meetroom.edge
+                    this.root.meetroom.edge = currMeetroom
+                    break
+                }
+                default: {
+                    return
                 }
             }
         }
