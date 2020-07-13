@@ -7,7 +7,7 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import DashboardMeetingroom from '../CADL/__mocks__/DashboardMeetingroom'
-import { Account } from '../'
+// import { Account } from '../'
 
 import dot from 'dot-object'
 
