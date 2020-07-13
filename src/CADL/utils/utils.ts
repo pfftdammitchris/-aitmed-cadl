@@ -223,8 +223,15 @@ function attachFns({ cadlObject,
                                 if (id) {
                                     idList = Array.isArray(id) ? [...id] : [id]
                                 }
+                                if (maxcount) {
+                                    options.maxcount = parseInt(maxcount)
+                                }
+                                if(type){
+                                    options.type = parseInt(type)
+
+                                }
                                 try {
-                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options, type: parseInt(type), maxcount: parseInt(maxcount) } })
+                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options} })
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -238,7 +245,7 @@ function attachFns({ cadlObject,
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res[0] }
+                                        payload: { pageName, dataKey, data: res }
                                     })
 
                                 }
@@ -263,6 +270,7 @@ function attachFns({ cadlObject,
                                 //merging existing name field and incoming name field
                                 let parsedType = parseInt(currentVal.type)
                                 let mergedVal = { ...currentVal, type: parsedType }
+
                                 if (name) {
                                     mergedVal = mergeDeep(mergedVal, { name })
                                 }
@@ -792,7 +800,7 @@ function replaceUint8ArrayWithBase64(source) {
                 sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key])
             } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
                 sourceCopy[key] = sourceCopy[key].map((elem) => replaceUint8ArrayWithBase64(elem))
-            } 
+            }
         })
     }
     return sourceCopy
