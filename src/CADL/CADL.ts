@@ -549,6 +549,55 @@ export default class CADL {
         _.set(location, pathArr, dataObject[dataObjectKey])
     }
 
+    /**
+     * 
+     * @param pageName string
+     * - runs the init functions of the page matching the pageName
+     */
+    public async runInit(pageName: string): Promise<void> {
+        const boundDispatch = this.dispatch.bind(this)
+
+        //run init commands if any
+        let page: Record<string, any> = this.root[pageName]
+        let init = page.init
+        if (init) {
+
+            this.initCallQueue = init.map((_command, index) => index)
+            while (this.initCallQueue.length > 0) {
+                const currIndex = this.initCallQueue.shift()
+                const command = init[currIndex]
+                if (typeof command === 'function') {
+                    try {
+                        //TODO: check dispatch function/ side effects work accordingly
+                        await command()
+                    } catch (error) {
+                        throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
+                    }
+
+                    //updating page after command has been called
+                    const updatedPage = this.root[pageName]
+
+                    //populateObject again to populate any data that was dependant on the command call
+                    let populatedUpdatedPage = populateObject({
+                        source: updatedPage,
+                        lookFor: '..',
+                        skip: ['components'],
+                        locations: [this.root[pageName]]
+                    })
+
+                    const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
+
+                    page = populatedUpdatedPageWithFns
+
+                    init = Object.values(populatedUpdatedPageWithFns)[0].init
+
+                    this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+                }
+            }
+        }
+    }
+
+
 
     public get cadlVersion() {
         return this._cadlVersion

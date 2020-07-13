@@ -71042,29 +71042,34 @@
 	                              idList = Array.isArray(id) ? toConsumableArray(id) : [id];
 	                            }
 
-	                            _context.prev = 4;
-	                            _context.next = 7;
+	                            if (maxcount) {
+	                              options.maxcount = parseInt(maxcount);
+	                            }
+
+	                            if (type) {
+	                              options.type = parseInt(type);
+	                            }
+
+	                            _context.prev = 6;
+	                            _context.next = 9;
 	                            return store$3.level2SDK.edgeServices.retrieveEdge({
 	                              idList: idList,
-	                              options: _objectSpread$c(_objectSpread$c({}, options), {}, {
-	                                type: parseInt(type),
-	                                maxcount: parseInt(maxcount)
-	                              })
+	                              options: _objectSpread$c({}, options)
 	                            });
 
-	                          case 7:
+	                          case 9:
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
 	                            res = data;
-	                            _context.next = 15;
+	                            _context.next = 17;
 	                            break;
 
-	                          case 12:
-	                            _context.prev = 12;
-	                            _context.t0 = _context["catch"](4);
+	                          case 14:
+	                            _context.prev = 14;
+	                            _context.t0 = _context["catch"](6);
 	                            throw _context.t0;
 
-	                          case 15:
+	                          case 17:
 	                            if (res.length > 0) {
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
@@ -71075,7 +71080,7 @@
 	                                payload: {
 	                                  pageName: pageName,
 	                                  dataKey: dataKey,
-	                                  data: res[0]
+	                                  data: res
 	                                }
 	                              });
 	                            } //TODO:handle else case
@@ -71083,12 +71088,12 @@
 
 	                            return _context.abrupt("return", res);
 
-	                          case 17:
+	                          case 19:
 	                          case "end":
 	                            return _context.stop();
 	                        }
 	                      }
-	                    }, _callee, null, [[4, 12]]);
+	                    }, _callee, null, [[6, 14]]);
 	                  }));
 	                };
 
@@ -73166,6 +73171,98 @@
 
 	      set_1(location, pathArr, dataObject[dataObjectKey]);
 	    }
+	    /**
+	     * 
+	     * @param pageName string
+	     * - runs the init functions of the page matching the pageName
+	     */
+
+	  }, {
+	    key: "runInit",
+	    value: function () {
+	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(pageName) {
+	        var boundDispatch, page, init, currIndex, command, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
+	        return regenerator.wrap(function _callee6$(_context6) {
+	          while (1) {
+	            switch (_context6.prev = _context6.next) {
+	              case 0:
+	                boundDispatch = this.dispatch.bind(this); //run init commands if any
+
+	                page = this.root[pageName];
+	                init = page.init;
+
+	                if (!init) {
+	                  _context6.next = 25;
+	                  break;
+	                }
+
+	                this.initCallQueue = init.map(function (_command, index) {
+	                  return index;
+	                });
+
+	              case 5:
+	                if (!(this.initCallQueue.length > 0)) {
+	                  _context6.next = 25;
+	                  break;
+	                }
+
+	                currIndex = this.initCallQueue.shift();
+	                command = init[currIndex];
+
+	                if (!(typeof command === 'function')) {
+	                  _context6.next = 23;
+	                  break;
+	                }
+
+	                _context6.prev = 9;
+	                _context6.next = 12;
+	                return command();
+
+	              case 12:
+	                _context6.next = 17;
+	                break;
+
+	              case 14:
+	                _context6.prev = 14;
+	                _context6.t0 = _context6["catch"](9);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t0);
+
+	              case 17:
+	                //updating page after command has been called
+	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
+
+	                populatedUpdatedPage = populateObject({
+	                  source: updatedPage,
+	                  lookFor: '..',
+	                  skip: ['components'],
+	                  locations: [this.root[pageName]]
+	                });
+	                populatedUpdatedPageWithFns = attachFns({
+	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
+	                  dispatch: boundDispatch
+	                });
+	                page = populatedUpdatedPageWithFns;
+	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
+	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
+
+	              case 23:
+	                _context6.next = 5;
+	                break;
+
+	              case 25:
+	              case "end":
+	                return _context6.stop();
+	            }
+	          }
+	        }, _callee6, this, [[9, 14]]);
+	      }));
+
+	      function runInit(_x5) {
+	        return _runInit.apply(this, arguments);
+	      }
+
+	      return runInit;
+	    }()
 	  }, {
 	    key: "getConfig",
 	    value: function getConfig() {
@@ -73710,39 +73807,49 @@
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
 	        case 21:
+	          debugger;
+	          _context.next = 24;
+	          return cadl.runInit('MeetingRoomCreate');
+
+	        case 24:
 	          debugger; // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
 	          // debugger
 
-	          _context.next = 24;
-	          return cadl.initPage('CreateMeeting');
-
-	        case 24:
-	          debugger;
 	          _context.next = 27;
-	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
+	          return cadl.initPage('CreateMeeting');
 
 	        case 27:
 	          debugger;
 	          _context.next = 30;
-	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
+	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
 	        case 30:
+	          debugger;
+	          _context.next = 33;
+	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
+
+	        case 33:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
 
-	          _context.next = 33;
+	          _context.next = 36;
 	          return cadl.initPage('InviteeInfo');
 
-	        case 33:
+	        case 36:
 	          debugger;
-	          _context.next = 36;
+	          _context.next = 39;
 	          return cadl.root['InviteeInfo'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 36:
-	          // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
+	        case 39:
+	          debugger;
+	          _context.next = 42;
+	          return cadl.runInit('CreateMeeting');
+
+	        case 42:
+	          debugger; // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
 	          // debugger
 	          // await cadl.initPage('ApplyBusiness')
 	          // debugger
@@ -73755,6 +73862,7 @@
 	          // //@ts-ignore
 	          // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
 	          // debugger
+
 	          console.log(cadl); // async function test_LoginNewDevice({ phone_number }) {
 	          //     console.log('Testing loginNewDevice')
 	          //     let verification_code
@@ -73795,7 +73903,7 @@
 	          //     }
 	          // }
 
-	        case 37:
+	        case 44:
 	        case "end":
 	          return _context.stop();
 	      }

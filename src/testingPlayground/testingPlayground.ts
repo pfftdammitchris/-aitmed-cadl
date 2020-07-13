@@ -52,6 +52,8 @@ export default (async function () {
     debugger
     await cadl.root['MeetingRoomCreate'].save[0][1]()
     debugger
+    await cadl.runInit('MeetingRoomCreate')
+    debugger
     // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
     // debugger
     await cadl.initPage('CreateMeeting')
@@ -65,7 +67,10 @@ export default (async function () {
     // debugger
     await cadl.initPage('InviteeInfo')
     debugger
-    await cadl.root['InviteeInfo'].save[0][1]({firstName:"Stan", lastName:"koko"})
+    await cadl.root['InviteeInfo'].save[0][1]({ firstName: "Stan", lastName: "koko" })
+    debugger
+    await cadl.runInit('CreateMeeting')
+    debugger
     // await cadl.root['DashboardMeetingroom'].components[0].children[1].children[0].onClick[0].object()
     // debugger
     // await cadl.initPage('ApplyBusiness')
