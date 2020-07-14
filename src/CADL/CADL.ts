@@ -614,7 +614,7 @@ export default class CADL {
             console.log(error)
         }
         if (localStorageRoot) {
-            const { Global, meetroom } = localStorageRoot
+            const { Global } = localStorageRoot
             switch (key) {
                 case ("user"): {
                     let user = Global.currentUser.vertex
@@ -622,8 +622,8 @@ export default class CADL {
                     break
                 }
                 case ("meetroom"): {
-                    let currMeetroom = meetroom.edge
-                    this.root.meetroom.edge = currMeetroom
+                    let currMeetroom = Global.meetroom.edge
+                    this.root.Global.meetroom.edge = currMeetroom
                     break
                 }
                 default: {
@@ -633,7 +633,92 @@ export default class CADL {
         }
     }
 
+    /**
+     * 
+     * @param path string
+     * @param value any
+     * 
+     * - set value to a given path. Assume the path begins at the root.
+     */
+    public setValue({ path, value }: { path: string, value: any }): void {
+        let pathArr = path.split('.')
+        _.set(this.root, pathArr, value)
+        return
+    }
 
+    /**
+     * 
+     * @param path string
+     * @param value any
+     * 
+     * - add value to a given path. Assume the path begins at the root.
+     */
+    public addValue({ path, value }: { path: string, value: any }): void {
+        let pathArr = path.split('.')
+        let currVal = _.get(this.root, pathArr)
+        if (typeof currVal === 'undefined') {
+            currVal = [value]
+        } else if (Array.isArray(currVal)) {
+            currVal.push(value)
+        }
+        _.set(this.root, pathArr, currVal)
+        return
+    }
+
+    /**
+     * 
+     * @param path string
+     * @param predicate Record<string, number | string>
+     * 
+     * - remove value from a given path. Assume the path begins at the root.
+     */
+    public removeValue({ path, predicate }: { path: string, predicate: Record<string, number | string> }):void {
+        let pathArr = path.split('.')
+        let currVal = _.get(this.root, pathArr)
+        if (currVal && Array.isArray(currVal)) {
+            let newVal = currVal.filter((elem) => {
+                let passes = true
+                for (let [key, val] of Object.entries(predicate)) {
+                    if (elem[key] === val) {
+                        passes = false
+                    }
+                }
+                return passes
+            })
+            _.set(this.root, pathArr, newVal)
+        }
+
+    }
+
+    /**
+     * 
+     * @param path string
+     * @param predicate Record<string, number | string>
+     * @param value any
+     * 
+     * - replace value at a given path. Assume the path begins at the root.
+     */
+    public replaceValue({ path, predicate, value }: { path: string, predicate: Record<string, number | string>, value: any }): void {
+        let pathArr = path.split('.')
+        let currVal = _.get(this.root, pathArr)
+        if (currVal && Array.isArray(currVal)) {
+            let currValCopy = [...currVal]
+            let valIndex = -1
+            for (let i = 0; i < currValCopy.length; i++) {
+                for (let [key, val] of Object.entries(predicate)) {
+                    //TODO:refac to account for multiple conditions
+                    if (currValCopy[i][key] === val) {
+                        valIndex = i
+                    }
+                }
+            }
+            if (valIndex >= 0) {
+                currValCopy.splice(valIndex, 1, value)
+                _.set(this.root, pathArr, currValCopy)
+            }
+        }
+        return
+    }
 
     public get cadlVersion() {
         return this._cadlVersion
