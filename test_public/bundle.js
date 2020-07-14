@@ -73583,9 +73583,44 @@
 	        case 9:
 	          vc = _context.sent;
 	          _context.next = 12;
-	          return cadl.initPage('VideoChat');
+	          return cadl.builtIn['signIn']({
+	            password: "letmein123",
+	            phoneNumber: "+1 65322138556758",
+	            verificationCode: vc
+	          });
 
 	        case 12:
+	          debugger; // cadl.root['SignIn'].update()
+	          // cadl.root['CreateNewAccount'].update()
+	          // debugger
+	          // await cadl.initPage('MeetingRoomInvited')
+	          // debugger
+	          // await cadl.runInit('MeetingRoomInvited')
+	          // debugger
+	          // await cadl.initPage('MeetingRoomCreate')
+	          // debugger
+	          // await cadl.root['MeetingRoomCreate'].save[0][1]()
+	          // debugger
+	          // await cadl.runInit('MeetingRoomCreate')
+	          // debugger
+	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // debugger
+	          // debugger
+	          // cadl.setFromLocalStorage('user')
+	          // debugger
+	          // cadl.setFromLocalStorage('meetroom')
+	          // debugger
+	          // await cadl.initPage('CreateMeeting')
+	          // debugger
+	          // await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
+	          // debugger
+	          // await cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object()
+	          // debugger
+
+	          _context.next = 15;
+	          return cadl.initPage('VideoChat');
+
+	        case 15:
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
 	            value: [{
@@ -73683,7 +73718,7 @@
 	          //     }
 	          // }
 
-	        case 21:
+	        case 24:
 	        case "end":
 	          return _context.stop();
 	      }
