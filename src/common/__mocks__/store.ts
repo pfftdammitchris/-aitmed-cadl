@@ -4,6 +4,7 @@ import { CommonTypes } from '../types'
 export const mockEdge: CommonTypes.Edge = {
   atime: 1575338814,
   atimes: 1575338814,
+  tage: 1575338814,
   besak: new Uint8Array(),
   bvid: new Uint8Array(),
   ctime: 1575338814,
