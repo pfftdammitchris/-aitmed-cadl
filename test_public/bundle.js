@@ -73799,7 +73799,7 @@
 	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	console.log(dotObject.dot(DashboardMeetingroom));
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	  var cadl;
+	  var cadl, vc;
 	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
@@ -73812,56 +73812,80 @@
 	          return cadl.init();
 
 	        case 4:
-	          debugger; // await cadl.initPage('SignIn')
-	          // await cadl.initPage('CreateNewAccount')
+	          debugger;
+	          _context.next = 7;
+	          return cadl.initPage('SignIn');
 
-	          debugger; // const vc = await Account.requestVerificationCode('+1 65322138556758')
-	          // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-	          //     confirmPassword: "letmein123",
-	          //     countryCode: "+1",
-	          //     password: "letmein123",
-	          //     phoneNumber: "+1 65322138556758",
-	          //     username: "username",
-	          //     verificationCode: vc
-	          // })
-	          // await cadl.builtIn['signIn']({
-	          //     password: "letmein123",
-	          //     phoneNumber: "+1 65322138556758",
-	          //     verificationCode: vc
-	          // })
-	          // debugger
-	          // cadl.root['SignIn'].update()
-	          // // cadl.root['CreateNewAccount'].update()
-	          // debugger
-	          // // await cadl.initPage('MeetingRoomInvited')
-	          // await cadl.initPage('MeetingRoomCreate')
-	          // debugger
-	          // await cadl.root['MeetingRoomCreate'].save[0][1]()
-	          // debugger
-	          // await cadl.runInit('MeetingRoomCreate')
-	          // debugger
-	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
-	          // debugger
+	        case 7:
+	          _context.next = 9;
+	          return Account$1.requestVerificationCode('+1 65322138556758');
 
+	        case 9:
+	          vc = _context.sent;
+	          _context.next = 12;
+	          return cadl.builtIn['signIn']({
+	            password: "letmein123",
+	            phoneNumber: "+1 65322138556758",
+	            verificationCode: vc
+	          });
+
+	        case 12:
+	          debugger;
+	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
+
+	          debugger;
+	          _context.next = 17;
+	          return cadl.initPage('MeetingRoomInvited');
+
+	        case 17:
+	          debugger;
+	          _context.next = 20;
+	          return cadl.runInit('MeetingRoomInvited');
+
+	        case 20:
+	          debugger;
+	          _context.next = 23;
+	          return cadl.initPage('MeetingRoomCreate');
+
+	        case 23:
+	          debugger;
+	          _context.next = 26;
+	          return cadl.root['MeetingRoomCreate'].save[0][1]();
+
+	        case 26:
+	          debugger;
+	          _context.next = 29;
+	          return cadl.runInit('MeetingRoomCreate');
+
+	        case 29:
+	          debugger;
+	          cadl.updateObject({
+	            dataKey: '.Global.meetroom.edge.refid',
+	            dataObject: {
+	              id: '123'
+	            },
+	            dataObjectKey: 'id'
+	          });
+	          debugger;
 	          debugger;
 	          cadl.setFromLocalStorage('user');
 	          debugger;
 	          cadl.setFromLocalStorage('meetroom');
 	          debugger;
-	          _context.next = 13;
+	          _context.next = 39;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 13:
+	        case 39:
 	          debugger;
-	          _context.next = 16;
+	          _context.next = 42;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 16:
+	        case 42:
 	          debugger;
-	          _context.next = 19;
+	          _context.next = 45;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object();
 
-	        case 19:
+	        case 45:
 	          debugger; // await cadl.initPage('VideoChat')
 	          // debugger
 	          // await cadl.initPage('InviteeInfo')
@@ -73924,7 +73948,7 @@
 	          //     }
 	          // }
 
-	        case 21:
+	        case 47:
 	        case "end":
 	          return _context.stop();
 	      }

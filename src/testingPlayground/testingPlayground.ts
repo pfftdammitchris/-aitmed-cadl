@@ -7,7 +7,7 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import DashboardMeetingroom from '../CADL/__mocks__/DashboardMeetingroom'
-// import { Account } from '../'
+import { Account } from '../'
 
 import dot from 'dot-object'
 
@@ -24,10 +24,10 @@ export default (async function () {
     await cadl.init()
     debugger
 
-    // await cadl.initPage('SignIn')
-    // await cadl.initPage('CreateNewAccount')
-    debugger
-    // const vc = await Account.requestVerificationCode('+1 65322138556758')
+    await cadl.initPage('SignIn')
+    // // await cadl.initPage('CreateNewAccount')
+    // debugger
+    const vc = await Account.requestVerificationCode('+1 65322138556758')
 
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
     //     confirmPassword: "letmein123",
@@ -38,24 +38,27 @@ export default (async function () {
     //     verificationCode: vc
     // })
 
-    // await cadl.builtIn['signIn']({
-    //     password: "letmein123",
-    //     phoneNumber: "+1 65322138556758",
-    //     verificationCode: vc
-    // })
-    // debugger
-    // cadl.root['SignIn'].update()
-    // // cadl.root['CreateNewAccount'].update()
-    // debugger
-    // // await cadl.initPage('MeetingRoomInvited')
-    // await cadl.initPage('MeetingRoomCreate')
-    // debugger
-    // await cadl.root['MeetingRoomCreate'].save[0][1]()
-    // debugger
-    // await cadl.runInit('MeetingRoomCreate')
-    // debugger
-    // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
-    // debugger
+    await cadl.builtIn['signIn']({
+        password: "letmein123",
+        phoneNumber: "+1 65322138556758",
+        verificationCode: vc
+    })
+    debugger
+    cadl.root['SignIn'].update()
+    // cadl.root['CreateNewAccount'].update()
+    debugger
+    await cadl.initPage('MeetingRoomInvited')
+    debugger
+    await cadl.runInit('MeetingRoomInvited')
+    debugger
+    await cadl.initPage('MeetingRoomCreate')
+    debugger
+    await cadl.root['MeetingRoomCreate'].save[0][1]()
+    debugger
+    await cadl.runInit('MeetingRoomCreate')
+    debugger
+    cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+    debugger
     debugger
     cadl.setFromLocalStorage('user')
     debugger
