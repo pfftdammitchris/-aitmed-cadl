@@ -34,12 +34,12 @@ export default (async function () {
     // })
     // debugger
 
-    // await cadl.builtIn['signIn']({
-    //     password: "letmein123",
-    //     phoneNumber: "+1 65322138556758",
-    //     verificationCode: vc
-    // })
-    // debugger
+    await cadl.builtIn['signIn']({
+        password: "letmein123",
+        phoneNumber: "+1 65322138556758",
+        verificationCode: vc
+    })
+    debugger
     // cadl.root['SignIn'].update()
     // cadl.root['CreateNewAccount'].update()
     // debugger
