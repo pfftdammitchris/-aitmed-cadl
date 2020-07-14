@@ -56119,6 +56119,8 @@
 
 	  defineProperty$e(this, "sig", void 0);
 
+	  defineProperty$e(this, "tage", void 0);
+
 	  defineProperty$e(this, "deat", void 0);
 	};
 	var Vertex = function Vertex() {
@@ -56231,6 +56233,7 @@
 	  res.eid = edge.getId();
 	  res.bvid = edge.getBvid();
 	  res.type = edge.getType();
+	  res.tage = edge.getTage();
 	  var name = edge.getName();
 
 	  if (name === '') {
