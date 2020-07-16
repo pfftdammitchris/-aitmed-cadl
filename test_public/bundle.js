@@ -73153,14 +73153,16 @@
 	      var dataKey = _ref5.dataKey,
 	          dataObject = _ref5.dataObject,
 	          dataObjectKey = _ref5.dataObjectKey;
-	      var trimPath, location;
+	      var location = this.root;
+	      var path;
 
 	      if (dataKey.startsWith('.')) {
-	        trimPath = dataKey.substring(1, dataKey.length);
-	        location = this.root;
+	        path = dataKey.substring(1, dataKey.length);
+	      } else {
+	        path = dataKey;
 	      }
 
-	      var pathArr = trimPath.split('.');
+	      var pathArr = path.split('.');
 	      var newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject;
 
 	      set_1(location, pathArr, newVal);
