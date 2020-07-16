@@ -539,14 +539,15 @@ export default class CADL {
      *  params.dataObject Record<string, any>
      *  params.dataObjectKey string
      */
-    public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: Record<string, any>, dataObjectKey: string }) {
+    public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: any, dataObjectKey?: string }) {
         let trimPath, location
         if (dataKey.startsWith('.')) {
             trimPath = dataKey.substring(1, dataKey.length)
             location = this.root
         }
         const pathArr = trimPath.split('.')
-        _.set(location, pathArr, dataObject[dataObjectKey])
+        const newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject
+        _.set(location, pathArr, newVal)
     }
 
     /**
@@ -672,7 +673,7 @@ export default class CADL {
      * 
      * - remove value from a given path. Assume the path begins at the root.
      */
-    public removeValue({ path, predicate }: { path: string, predicate: Record<string, number | string> }):void {
+    public removeValue({ path, predicate }: { path: string, predicate: Record<string, number | string> }): void {
         let pathArr = path.split('.')
         let currVal = _.get(this.root, pathArr)
         if (currVal && Array.isArray(currVal)) {

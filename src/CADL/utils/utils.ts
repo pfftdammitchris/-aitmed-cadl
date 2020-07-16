@@ -226,12 +226,12 @@ function attachFns({ cadlObject,
                                 if (maxcount) {
                                     options.maxcount = parseInt(maxcount)
                                 }
-                                if(type){
+                                if (type) {
                                     options.type = parseInt(type)
 
                                 }
                                 try {
-                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options} })
+                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })
                                     res = data
                                 } catch (error) {
                                     throw error
@@ -706,7 +706,7 @@ function populateObject({ source, lookFor, locations, skip = [], path = [] }: { 
     let sourceCopy = _.cloneDeep(source)
     Object.keys(sourceCopy).forEach((key) => {
         let index = key
-        if (!skip.includes(key)) {
+        if (!skip.includes(key) && key !== 'dataKey') {
             if (isObject(sourceCopy[key])) {
                 sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip, path: path.concat(index) })
             } else if (Array.isArray(sourceCopy[key])) {

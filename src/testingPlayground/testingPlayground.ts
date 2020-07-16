@@ -22,7 +22,7 @@ export default (async function () {
     await cadl.initPage('SignIn')
     // await cadl.initPage('CreateNewAccount')
     // debugger
-    const vc = await Account.requestVerificationCode('+1 65322138556758')
+    const vc = await Account.requestVerificationCode('+1 3238677306')
 
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
     //     confirmPassword: "letmein123",
@@ -35,22 +35,22 @@ export default (async function () {
     // debugger
 
     await cadl.builtIn['signIn']({
-        password: "letmein123",
-        phoneNumber: "+1 65322138556758",
+        password: "letmein12",
+        phoneNumber: "+1 3238677306",
         verificationCode: vc
     })
     debugger
-    // cadl.root['SignIn'].update()
+    cadl.root['SignIn'].update()
     // cadl.root['CreateNewAccount'].update()
     // debugger
     // await cadl.initPage('MeetingRoomInvited')
     // debugger
     // await cadl.runInit('MeetingRoomInvited')
     // debugger
-    // await cadl.initPage('MeetingRoomCreate')
-    // debugger
-    // await cadl.root['MeetingRoomCreate'].save[0][1]()
-    // debugger
+    await cadl.initPage('MeetingRoomCreate')
+    debugger
+    await cadl.root['MeetingRoomCreate'].save[0][1]()
+    debugger
     // await cadl.runInit('MeetingRoomCreate')
     // debugger
     // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -60,13 +60,16 @@ export default (async function () {
     // debugger
     // cadl.setFromLocalStorage('meetroom')
     // debugger
-    // await cadl.initPage('CreateMeeting')
-    // debugger
+    await cadl.initPage('CreateMeeting')
+    debugger
 
-    // await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
-    // debugger
-    // await cadl.root['CreateMeeting'].components[1].children[3].onClick[0].object()
-    // debugger
+    await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
+    debugger
+    cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
+    debugger
+    await cadl.root['CreateMeeting'].components[1].children[3].onClick[1].object()
+    await cadl.root['CreateMeeting'].components[1].children[3].onClick[2].object[0][1]()
+    debugger
     await cadl.initPage('VideoChat')
     cadl.setValue({ path: 'VideoChat.listData.participants', value: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] })
     debugger
