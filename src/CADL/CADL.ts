@@ -540,12 +540,14 @@ export default class CADL {
      *  params.dataObjectKey string
      */
     public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: any, dataObjectKey?: string }) {
-        let trimPath, location
+        const location = this.root
+        let path
         if (dataKey.startsWith('.')) {
-            trimPath = dataKey.substring(1, dataKey.length)
-            location = this.root
+            path = dataKey.substring(1, dataKey.length)
+        } else {
+            path = dataKey
         }
-        const pathArr = trimPath.split('.')
+        const pathArr = path.split('.')
         const newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject
         _.set(location, pathArr, newVal)
     }
