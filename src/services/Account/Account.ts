@@ -5,7 +5,7 @@ import Note from '../Note'
 import * as AccountTypes from './types'
 
 import * as accountUtils from './utils'
-import {retrieveVertex} from '../../common/retrieve'
+import { retrieveVertex } from '../../common/retrieve'
 
 /**
  * @param phone_number: string
@@ -62,10 +62,10 @@ export const login: AccountTypes.Login = async (
   await loginByVerificationCode(phone_number, verification_code)
   const user = await loginByPassword(password)
   //TODO: edit when user profile is more standardized
-  if(user.id){
+  if (user.id) {
     const userVertex = await retrieveVertex(user.id)
     return userVertex
-  } else{
+  } else {
     return user
   }
 }
@@ -82,7 +82,12 @@ export const loginByPassword: AccountTypes.LoginByPassword = async (
     .catch(store.errorCatcher)
 
   const user = await retrieve()
-  return user
+  if (user.id) {
+    const userVertex = await retrieveVertex(user.id)
+    return userVertex
+  } else {
+    return user
+  }
 }
 
 /**

@@ -70221,7 +70221,7 @@
 
 	var loginByPassword = /*#__PURE__*/function () {
 	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(password) {
-	    var user;
+	    var user, userVertex;
 	    return regenerator.wrap(function _callee4$(_context4) {
 	      while (1) {
 	        switch (_context4.prev = _context4.next) {
@@ -70237,9 +70237,23 @@
 
 	          case 4:
 	            user = _context4.sent;
+
+	            if (!user.id) {
+	              _context4.next = 12;
+	              break;
+	            }
+
+	            _context4.next = 8;
+	            return retrieveVertex(user.id);
+
+	          case 8:
+	            userVertex = _context4.sent;
+	            return _context4.abrupt("return", userVertex);
+
+	          case 12:
 	            return _context4.abrupt("return", user);
 
-	          case 6:
+	          case 13:
 	          case "end":
 	            return _context4.stop();
 	        }
@@ -72124,20 +72138,21 @@
 	  return {
 	    createNewAccount: function createNewAccount(_ref22) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
-	        var phoneNumber, password, verificationCode, name, data;
+	        var phoneNumber, password, verificationCode, name, passPlaceHolder, vcPlaceHolder, confirmPassword, restOfName, data;
 	        return regenerator.wrap(function _callee11$(_context11) {
 	          while (1) {
 	            switch (_context11.prev = _context11.next) {
 	              case 0:
 	                phoneNumber = _ref22.phoneNumber, password = _ref22.password, verificationCode = _ref22.verificationCode, name = _ref22.name;
-	                _context11.next = 3;
-	                return Account$1.create(phoneNumber, password, verificationCode, name);
+	                passPlaceHolder = name.password, vcPlaceHolder = name.verificationCode, confirmPassword = name.confirmPassword, restOfName = objectWithoutProperties(name, ["password", "verificationCode", "confirmPassword"]);
+	                _context11.next = 4;
+	                return Account$1.create(phoneNumber, password, verificationCode, _objectSpread$c({}, restOfName));
 
-	              case 3:
+	              case 4:
 	                data = _context11.sent;
 	                return _context11.abrupt("return", data);
 
-	              case 5:
+	              case 6:
 	              case "end":
 	                return _context11.stop();
 	            }
@@ -72179,6 +72194,39 @@
 	            }
 	          }
 	        }, _callee12);
+	      }))();
+	    },
+	    loginByPassword: function loginByPassword(password) {
+	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee13() {
+	        var data;
+	        return regenerator.wrap(function _callee13$(_context13) {
+	          while (1) {
+	            switch (_context13.prev = _context13.next) {
+	              case 0:
+	                _context13.next = 2;
+	                return Account$1.loginByPassword(password);
+
+	              case 2:
+	                data = _context13.sent;
+
+	                if (dispatch) {
+	                  dispatch({
+	                    type: 'update-data',
+	                    //TODO: handle case for data is an array or an object
+	                    payload: {
+	                      pageName: 'builtIn',
+	                      dataKey: 'builtIn.UserVertex',
+	                      data: data
+	                    }
+	                  });
+	                }
+
+	              case 4:
+	              case "end":
+	                return _context13.stop();
+	            }
+	          }
+	        }, _callee13);
 	      }))();
 	    },
 	    currentDateTime: function () {
@@ -73575,41 +73623,52 @@
 	          return cadl.init();
 
 	        case 4:
-	          debugger;
+	          debugger; // await cadl.initPage('SignIn')
+
 	          _context.next = 7;
-	          return cadl.initPage('SignIn');
+	          return cadl.initPage('CreateNewAccount');
 
 	        case 7:
-	          _context.next = 9;
-	          return Account$1.requestVerificationCode('+1 3238677306');
+	          debugger;
+	          _context.next = 10;
+	          return Account$1.requestVerificationCode('+1 5555455255');
 
-	        case 9:
+	        case 10:
 	          vc = _context.sent;
-	          _context.next = 12;
-	          return cadl.builtIn['signIn']({
-	            password: "letmein12",
-	            phoneNumber: "+1 3238677306",
+	          _context.next = 13;
+	          return cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+	            confirmPassword: "letmein123",
+	            countryCode: "+1",
+	            password: "letmein123",
+	            phoneNumber: "+1 5555455255",
+	            username: "sammy",
 	            verificationCode: vc
 	          });
 
-	        case 12:
-	          debugger;
-	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
+	        case 13:
+	          debugger; // await cadl.builtIn['signIn']({
+	          //     password: "letmein123",
+	          //     phoneNumber: "+1 5555455555",
+	          //     verificationCode: vc
+	          // })
 	          // debugger
-	          // await cadl.initPage('MeetingRoomInvited')
+	          // cadl.root['SignIn'].update()
+
+	          cadl.root['CreateNewAccount'].update();
+	          debugger; // await cadl.initPage('MeetingRoomInvited')
 	          // debugger
 	          // await cadl.runInit('MeetingRoomInvited')
 	          // debugger
 
-	          _context.next = 16;
+	          _context.next = 18;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 16:
+	        case 18:
 	          debugger;
-	          _context.next = 19;
+	          _context.next = 21;
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 19:
+	        case 21:
 	          debugger; // await cadl.runInit('MeetingRoomCreate')
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -73620,34 +73679,44 @@
 	          // cadl.setFromLocalStorage('meetroom')
 	          // debugger
 
-	          _context.next = 22;
+	          _context.next = 24;
 	          return cadl.initPage('CreateMeeting');
 
-	        case 22:
+	        case 24:
 	          debugger;
-	          _context.next = 25;
+	          _context.next = 27;
 	          return cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object();
 
-	        case 25:
+	        case 27:
 	          debugger;
 	          cadl.updateObject({
 	            dataKey: '.Global.meetroom.edge.name.roomName',
 	            dataObject: 'hello tom'
 	          });
 	          debugger;
-	          _context.next = 30;
+	          _context.next = 32;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[1].object();
 
-	        case 30:
-	          _context.next = 32;
+	        case 32:
+	          _context.next = 34;
 	          return cadl.root['CreateMeeting'].components[1].children[3].onClick[2].object[0][1]();
 
-	        case 32:
+	        case 34:
 	          debugger;
-	          _context.next = 35;
+	          _context.next = 37;
+	          return cadl.initPage('InviteeInfo');
+
+	        case 37:
+	          debugger;
+	          _context.next = 40;
 	          return cadl.initPage('VideoChat');
 
-	        case 35:
+	        case 40:
+	          _context.next = 42;
+	          return cadl.initPage('CloseMeeting');
+
+	        case 42:
+	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
 	            value: [{
@@ -73745,7 +73814,7 @@
 	          //     }
 	          // }
 
-	        case 44:
+	        case 52:
 	        case "end":
 	          return _context.stop();
 	      }

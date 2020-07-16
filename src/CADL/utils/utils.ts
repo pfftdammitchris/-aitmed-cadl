@@ -6,6 +6,7 @@ import Document from '../../services/document'
 import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
+import { loginByPassword } from 'services/Account/Account'
 
 export {
     isPopulated,
@@ -731,11 +732,12 @@ function builtInFns(dispatch?: Function) {
             verificationCode,
             name,
         }) {
+            const { password: passPlaceHolder, verificationCode: vcPlaceHolder, confirmPassword, ...restOfName } = name
             const data = await Account.create(
                 phoneNumber,
                 password,
                 verificationCode,
-                name
+                { ...restOfName }
             )
             return data
         },
@@ -758,6 +760,17 @@ function builtInFns(dispatch?: Function) {
 
             }
             return data
+        },
+        async loginByPassword(password) {
+            const data = await Account.loginByPassword(password)
+            if (dispatch) {
+                dispatch({
+                    type: 'update-data',
+                    //TODO: handle case for data is an array or an object
+                    payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
+                })
+
+            }
         },
         currentDateTime: (() => Date.now())()
     }

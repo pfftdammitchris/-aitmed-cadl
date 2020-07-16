@@ -51,7 +51,7 @@ export interface Login {
 
 // LoginByPassword
 export interface LoginByPassword {
-  (password: string): Promise<User>
+  (password: string): Promise<any>
 }
 // LoginByVerificationCode
 export interface LoginByVerificationCode {
