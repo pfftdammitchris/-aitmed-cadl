@@ -72495,13 +72495,10 @@
 	  var cadlCopy = cloneDeep_1(cadlObject);
 
 	  Object.keys(cadlCopy).forEach(function (key) {
-	    if (key === 'update') {
-	      cadlCopy[key] = evalState({
-	        pageName: pageName,
-	        updateObject: cadlCopy[key],
-	        dispatch: dispatch
-	      });
-	    } else if (key === 'object' && cadlCopy.actionType === 'evalObject') {
+	    // if (key === 'update') {
+	    //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
+	    // } else 
+	    if (key === 'object' && cadlCopy.actionType === 'evalObject') {
 	      cadlCopy[key] = evalState({
 	        pageName: pageName,
 	        updateObject: cadlCopy[key],

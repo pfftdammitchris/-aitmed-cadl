@@ -580,9 +580,10 @@ function evalState({ pageName, updateObject, dispatch }: { pageName: string, upd
 function replaceEvalObject({ pageName, cadlObject, dispatch }: { pageName: string, cadlObject: Record<string, any>, dispatch: Function }): Record<string, any> {
     const cadlCopy = _.cloneDeep(cadlObject)
     Object.keys(cadlCopy).forEach((key) => {
-        if (key === 'update') {
-            cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
-        } else if (key === 'object' && cadlCopy.actionType === 'evalObject') {
+        // if (key === 'update') {
+        //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
+        // } else 
+        if (key === 'object' && cadlCopy.actionType === 'evalObject') {
             cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
         } else if (isObject(cadlCopy[key])) {
             cadlCopy[key] = replaceEvalObject({ pageName, cadlObject: cadlCopy[key], dispatch })
