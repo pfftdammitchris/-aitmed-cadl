@@ -1,6 +1,6 @@
 import axios from 'axios'
 import YAML from 'yaml'
-import _ from 'lodash'
+import _, { isObject } from 'lodash'
 import dot from 'dot-object'
 
 import {
@@ -176,6 +176,12 @@ export default class CADL {
         let pageCADL = await this.getPage(pageName)
         //FOR FORMDATA
         //process formData
+        if (this.root[pageName]) {
+            const cloneCurrPage = _.cloneDeep(this.root[pageName])
+            //TODO: test order of overrides
+            const mergedPage = _.merge(pageCADL, { [pageName]: cloneCurrPage })
+            pageCADL = mergedPage
+        }
         const processedFormData = this.processPopulate({
             source: pageCADL,
             lookFor: ['.', '..', '='],
@@ -216,26 +222,36 @@ export default class CADL {
                     } catch (error) {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
-
-                    //updating page after command has been called
-                    const updatedPage = this.root[pageName]
-
-                    //populateObject again to populate any data that was dependant on the command call
-                    let populatedUpdatedPage = populateObject({
-                        source: updatedPage,
-                        lookFor: '..',
-                        skip: ['components'],
-                        locations: [this.root[pageName]]
-                    })
-
-                    const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
-
-                    processedPage = populatedUpdatedPageWithFns
-
-                    init = Object.values(populatedUpdatedPageWithFns)[0].init
-
-                    this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+                } else if (isObject(command) && 'actionType' in command) {
+                    const { actionType, dataKey, dataObject } = command
+                    switch (actionType) {
+                        case ('updateObject'): {
+                            this.updateObject({ dataKey, dataObject })
+                            break
+                        }
+                        default: {
+                            return
+                        }
+                    }
                 }
+                //updating page after command has been called
+                const updatedPage = this.root[pageName]
+
+                //populateObject again to populate any data that was dependant on the command call
+                let populatedUpdatedPage = populateObject({
+                    source: updatedPage,
+                    lookFor: '..',
+                    skip: ['components'],
+                    locations: [this.root[pageName]]
+                })
+
+                const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
+
+                processedPage = populatedUpdatedPageWithFns
+
+                init = Object.values(populatedUpdatedPageWithFns)[0].init
+
+                this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
             }
         }
         //FOR COMPONENTS

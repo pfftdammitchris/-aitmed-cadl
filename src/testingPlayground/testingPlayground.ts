@@ -51,6 +51,8 @@ export default (async function () {
     debugger
     await cadl.root['MeetingRoomCreate'].save[0][1]()
     debugger
+    await cadl.initPage('MeetingLobbyStart')
+    debugger
     // await cadl.runInit('MeetingRoomCreate')
     // debugger
     // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -60,20 +62,23 @@ export default (async function () {
     // debugger
     // cadl.setFromLocalStorage('meetroom')
     // debugger
-    await cadl.initPage('CreateMeeting')
-    debugger
+    // await cadl.initPage('CreateMeeting')
+    // debugger
 
-    await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
+    // await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
+    // debugger
+    // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
+    // debugger
+    await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
     debugger
-    cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
+   
+    await cadl.initPage('InviteeInfo01')
     debugger
-    await cadl.root['CreateMeeting'].components[1].children[3].onClick[1].object()
-    await cadl.root['CreateMeeting'].components[1].children[3].onClick[2].object[0][1]()
-    debugger
-    await cadl.initPage('InviteeInfo')
+     await cadl.root['InviteeInfo01'].save[0][1]({ firstName: "Stan", lastName: "koko" })
     debugger
     await cadl.initPage('VideoChat')
-    await cadl.initPage('CloseMeeting')
+    debugger
+    await cadl.initPage('MeetingLobbyClose')
     debugger
     cadl.setValue({ path: 'VideoChat.listData.participants', value: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] })
     debugger
