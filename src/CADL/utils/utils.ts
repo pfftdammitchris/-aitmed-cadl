@@ -6,7 +6,6 @@ import Document from '../../services/document'
 import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
-import { loginByPassword } from 'services/Account/Account'
 
 export {
     isPopulated,
@@ -218,7 +217,7 @@ function attachFns({ cadlObject,
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
-                                const { api, dataKey, id, maxcount, type, ...options } = _.cloneDeep(output)
+                                const { api, dataKey, id, maxcount, type, sCondition, ...options } = _.cloneDeep(output)
                                 let res: any[] = []
                                 let idList: string[] | Uint8Array[] = []
                                 if (id) {
@@ -230,6 +229,9 @@ function attachFns({ cadlObject,
                                 if (type) {
                                     options.type = parseInt(type)
 
+                                }
+                                if (sCondition) {
+                                    options.scondition = sCondition
                                 }
                                 try {
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })

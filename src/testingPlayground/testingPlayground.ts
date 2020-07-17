@@ -19,29 +19,29 @@ export default (async function () {
     await cadl.init()
     debugger
 
-    // await cadl.initPage('SignIn')
-    await cadl.initPage('CreateNewAccount')
+    await cadl.initPage('SignIn')
+    // await cadl.initPage('CreateNewAccount')
     debugger
-    const vc = await Account.requestVerificationCode('+1 5555455255')
+    const vc = await Account.requestVerificationCode('+1 3238677306')
 
-    await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-        confirmPassword: "letmein123",
-        countryCode: "+1",
-        password: "letmein123",
-        phoneNumber: "+1 5555455255",
-        username: "sammy",
-        verificationCode: vc
-    })
-    debugger
-
-    // await cadl.builtIn['signIn']({
+    // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+    //     confirmPassword: "letmein123",
+    //     countryCode: "+1",
     //     password: "letmein123",
-    //     phoneNumber: "+1 5555455555",
+    //     phoneNumber: "+1 5555455255",
+    //     username: "sammy",
     //     verificationCode: vc
     // })
     // debugger
-    // cadl.root['SignIn'].update()
-    cadl.root['CreateNewAccount'].update()
+
+    await cadl.builtIn['signIn']({
+        password: "letmein123",
+        phoneNumber: "+1 3238677306",
+        verificationCode: vc
+    })
+    debugger
+    cadl.root['SignIn'].update()
+    // cadl.root['CreateNewAccount'].update()
     debugger
     // await cadl.initPage('MeetingRoomInvited')
     // debugger

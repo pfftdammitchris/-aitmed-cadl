@@ -71045,13 +71045,13 @@
 	              {
 	                var getFn = function getFn(output) {
 	                  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	                    var _cloneDeep2, api, dataKey, id, maxcount, type, options, res, idList, _yield$store$level2SD, data;
+	                    var _cloneDeep2, api, dataKey, id, maxcount, type, sCondition, options, res, idList, _yield$store$level2SD, data;
 
 	                    return regenerator.wrap(function _callee$(_context) {
 	                      while (1) {
 	                        switch (_context.prev = _context.next) {
 	                          case 0:
-	                            _cloneDeep2 = cloneDeep_1(output), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, id = _cloneDeep2.id, maxcount = _cloneDeep2.maxcount, type = _cloneDeep2.type, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "id", "maxcount", "type"]);
+	                            _cloneDeep2 = cloneDeep_1(output), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, id = _cloneDeep2.id, maxcount = _cloneDeep2.maxcount, type = _cloneDeep2.type, sCondition = _cloneDeep2.sCondition, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "id", "maxcount", "type", "sCondition"]);
 	                            res = [];
 	                            idList = [];
 
@@ -71067,26 +71067,30 @@
 	                              options.type = parseInt(type);
 	                            }
 
-	                            _context.prev = 6;
-	                            _context.next = 9;
+	                            if (sCondition) {
+	                              options.scondition = sCondition;
+	                            }
+
+	                            _context.prev = 7;
+	                            _context.next = 10;
 	                            return store$3.level2SDK.edgeServices.retrieveEdge({
 	                              idList: idList,
 	                              options: _objectSpread$c({}, options)
 	                            });
 
-	                          case 9:
+	                          case 10:
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
 	                            res = data;
-	                            _context.next = 17;
+	                            _context.next = 18;
 	                            break;
 
-	                          case 14:
-	                            _context.prev = 14;
-	                            _context.t0 = _context["catch"](6);
+	                          case 15:
+	                            _context.prev = 15;
+	                            _context.t0 = _context["catch"](7);
 	                            throw _context.t0;
 
-	                          case 17:
+	                          case 18:
 	                            if (res.length > 0) {
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
@@ -71105,12 +71109,12 @@
 
 	                            return _context.abrupt("return", res);
 
-	                          case 19:
+	                          case 20:
 	                          case "end":
 	                            return _context.stop();
 	                        }
 	                      }
-	                    }, _callee, null, [[6, 14]]);
+	                    }, _callee, null, [[7, 15]]);
 	                  }));
 	                };
 
@@ -73623,38 +73627,29 @@
 	          return cadl.init();
 
 	        case 4:
-	          debugger; // await cadl.initPage('SignIn')
-
+	          debugger;
 	          _context.next = 7;
-	          return cadl.initPage('CreateNewAccount');
+	          return cadl.initPage('SignIn');
 
 	        case 7:
+	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
 	          _context.next = 10;
-	          return Account$1.requestVerificationCode('+1 5555455255');
+	          return Account$1.requestVerificationCode('+1 3238677306');
 
 	        case 10:
 	          vc = _context.sent;
 	          _context.next = 13;
-	          return cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-	            confirmPassword: "letmein123",
-	            countryCode: "+1",
+	          return cadl.builtIn['signIn']({
 	            password: "letmein123",
-	            phoneNumber: "+1 5555455255",
-	            username: "sammy",
+	            phoneNumber: "+1 3238677306",
 	            verificationCode: vc
 	          });
 
 	        case 13:
-	          debugger; // await cadl.builtIn['signIn']({
-	          //     password: "letmein123",
-	          //     phoneNumber: "+1 5555455555",
-	          //     verificationCode: vc
-	          // })
-	          // debugger
-	          // cadl.root['SignIn'].update()
+	          debugger;
+	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
-	          cadl.root['CreateNewAccount'].update();
 	          debugger; // await cadl.initPage('MeetingRoomInvited')
 	          // debugger
 	          // await cadl.runInit('MeetingRoomInvited')
