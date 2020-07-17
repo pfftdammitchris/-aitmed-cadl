@@ -214,7 +214,7 @@ export default class CADL {
             this.initCallQueue = init.map((_command, index) => index)
             while (this.initCallQueue.length > 0) {
                 const currIndex = this.initCallQueue.shift()
-                const command = init[currIndex]
+                const command: any = init[currIndex]
                 if (typeof command === 'function') {
                     try {
                         //TODO: check dispatch function/ side effects work accordingly
@@ -223,7 +223,7 @@ export default class CADL {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
                 } else if (isObject(command) && 'actionType' in command) {
-                    const { actionType, dataKey, dataObject } = command
+                    const { actionType, dataKey, dataObject }: any = command
                     switch (actionType) {
                         case ('updateObject'): {
                             this.updateObject({ dataKey, dataObject })
