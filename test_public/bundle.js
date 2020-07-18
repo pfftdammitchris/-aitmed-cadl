@@ -72498,7 +72498,7 @@
 	    // if (key === 'update') {
 	    //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
 	    // } else 
-	    if (key === 'object' && cadlCopy.actionType === 'evalObject') {
+	    if (key === 'object' && isObject$5(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
 	      cadlCopy[key] = evalState({
 	        pageName: pageName,
 	        updateObject: cadlCopy[key],
@@ -74297,26 +74297,35 @@
 	          return cadl.init();
 
 	        case 4:
-	          debugger;
+	          debugger; // await cadl.initPage('SignIn')
+
 	          _context.next = 7;
-	          return cadl.initPage('SignIn');
+	          return cadl.initPage('CreateNewAccount');
 
 	        case 7:
-	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
 	          _context.next = 10;
-	          return Account$1.requestVerificationCode('+1 3238677306');
+	          return Account$1.requestVerificationCode('+1 7015168317');
 
 	        case 10:
 	          vc = _context.sent;
 	          _context.next = 13;
-	          return cadl.builtIn['signIn']({
-	            password: "letmein12",
-	            phoneNumber: "+1 3238677306",
+	          return cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+	            confirmPassword: "letmein123",
+	            countryCode: "+1",
+	            password: "letmein123",
+	            phoneNumber: "+1 7015168317",
+	            username: "sammy",
 	            verificationCode: vc
 	          });
 
 	        case 13:
+	          debugger; // await cadl.builtIn['signIn']({
+	          //     password: "letmein12",
+	          //     phoneNumber: "+1 3238677306",
+	          //     verificationCode: vc
+	          // })
+
 	          debugger;
 	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
@@ -74325,20 +74334,20 @@
 	          // await cadl.runInit('MeetingRoomInvited')
 	          // debugger
 
-	          _context.next = 18;
+	          _context.next = 19;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 18:
+	        case 19:
 	          debugger;
-	          _context.next = 21;
+	          _context.next = 22;
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 21:
+	        case 22:
 	          debugger;
-	          _context.next = 24;
+	          _context.next = 25;
 	          return cadl.initPage('MeetingLobbyStart');
 
-	        case 24:
+	        case 25:
 	          debugger; // await cadl.runInit('MeetingRoomCreate')
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -74355,33 +74364,33 @@
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
 	          // debugger
 
-	          _context.next = 27;
+	          _context.next = 28;
 	          return cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object();
 
-	        case 27:
+	        case 28:
 	          debugger;
-	          _context.next = 30;
+	          _context.next = 31;
 	          return cadl.initPage('InviteeInfo01');
 
-	        case 30:
+	        case 31:
 	          debugger;
-	          _context.next = 33;
+	          _context.next = 34;
 	          return cadl.root['InviteeInfo01'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 33:
+	        case 34:
 	          debugger;
-	          _context.next = 36;
+	          _context.next = 37;
 	          return cadl.initPage('VideoChat');
 
-	        case 36:
+	        case 37:
 	          debugger;
-	          _context.next = 39;
+	          _context.next = 40;
 	          return cadl.initPage('MeetingLobbyClose');
 
-	        case 39:
+	        case 40:
 	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
@@ -74480,7 +74489,7 @@
 	          //     }
 	          // }
 
-	        case 49:
+	        case 50:
 	        case "end":
 	          return _context.stop();
 	      }
