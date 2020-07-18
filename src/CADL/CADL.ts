@@ -360,19 +360,27 @@ export default class CADL {
         // }
         let sourceCopy = _.cloneDeep(source)
         let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
-        const sourceCopyWithKeys = populateKeys({
+        const sourceCopyWithRootKeys = populateKeys({
             source: sourceCopy,
             lookFor: '.',
             locations: [this.root, sourceCopy]
         })
-        localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys
+
+        //populate the keys from the local page object
+        const sourceCopyWithLocalKeys = populateKeys({
+            source: sourceCopyWithRootKeys,
+            lookFor: '..',
+            locations: [localRoot]
+        })
+
+        localRoot = pageName ? sourceCopyWithLocalKeys[pageName] : sourceCopyWithLocalKeys
         const sourceCopyWithVals = populateVals({
-            source: sourceCopyWithKeys,
+            source: sourceCopyWithLocalKeys,
             lookFor,
             skip,
             locations: [this.root, localRoot]
         })
-        localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys
+        localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithLocalKeys
         let populatedResponse = sourceCopyWithVals
         if (withFns) {
             const boundDispatch = this.dispatch.bind(this)
@@ -542,7 +550,7 @@ export default class CADL {
                 break
             }
             case ('add-fn'): {
-                
+
                 const { pageName, fn } = action.payload
                 if (this.root.actions[pageName]) {
                     this.root.actions[pageName].update = fn

@@ -73567,19 +73567,25 @@
 	      var sourceCopy = cloneDeep_1(source);
 
 	      var localRoot = pageName ? sourceCopy[pageName] : sourceCopy;
-	      var sourceCopyWithKeys = populateKeys({
+	      var sourceCopyWithRootKeys = populateKeys({
 	        source: sourceCopy,
 	        lookFor: '.',
 	        locations: [this.root, sourceCopy]
+	      }); //populate the keys from the local page object
+
+	      var sourceCopyWithLocalKeys = populateKeys({
+	        source: sourceCopyWithRootKeys,
+	        lookFor: '..',
+	        locations: [localRoot]
 	      });
-	      localRoot = pageName ? sourceCopyWithKeys[pageName] : sourceCopyWithKeys;
+	      localRoot = pageName ? sourceCopyWithLocalKeys[pageName] : sourceCopyWithLocalKeys;
 	      var sourceCopyWithVals = populateVals({
-	        source: sourceCopyWithKeys,
+	        source: sourceCopyWithLocalKeys,
 	        lookFor: lookFor,
 	        skip: skip,
 	        locations: [this.root, localRoot]
 	      });
-	      localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithKeys;
+	      localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithLocalKeys;
 	      var populatedResponse = sourceCopyWithVals;
 
 	      if (withFns) {
