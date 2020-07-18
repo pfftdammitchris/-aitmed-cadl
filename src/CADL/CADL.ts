@@ -36,7 +36,7 @@ export default class CADL {
     private _baseUrl: string
     private _assetsUrl: string
     private _map: Record<string, any>
-    private _root: Record<string, any> = {}
+    private _root: Record<string, any> = { actions: {} }
     private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
     private _initCallQueue: any[]
 
@@ -539,6 +539,16 @@ export default class CADL {
             case ('update-map'): {
                 //TODO: consider adding update-page-map
                 this.map = dot.dot(this.root)
+                break
+            }
+            case ('add-fn'): {
+                
+                const { pageName, fn } = action.payload
+                if (this.root.actions[pageName]) {
+                    this.root.actions[pageName].update = fn
+                } else {
+                    this.root.actions[pageName] = { update: fn }
+                }
                 break
             }
 

@@ -585,6 +585,9 @@ function replaceEvalObject({ pageName, cadlObject, dispatch }: { pageName: strin
         // } else 
         if (key === 'object' && cadlCopy.actionType === 'evalObject') {
             cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
+            if (pageName === 'SignIn' || pageName === 'CreateNewAccount' || pageName === 'SignUp') {
+                dispatch({ type: 'add-fn', payload: { pageName, fn: cadlCopy[key] } })
+            }
         } else if (isObject(cadlCopy[key])) {
             cadlCopy[key] = replaceEvalObject({ pageName, cadlObject: cadlCopy[key], dispatch })
         } else if (Array.isArray(cadlCopy[key])) {

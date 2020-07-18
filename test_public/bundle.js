@@ -72504,6 +72504,16 @@
 	        updateObject: cadlCopy[key],
 	        dispatch: dispatch
 	      });
+
+	      if (pageName === 'SignIn' || pageName === 'CreateNewAccount' || pageName === 'SignUp') {
+	        dispatch({
+	          type: 'add-fn',
+	          payload: {
+	            pageName: pageName,
+	            fn: cadlCopy[key]
+	          }
+	        });
+	      }
 	    } else if (isObject$5(cadlCopy[key])) {
 	      cadlCopy[key] = replaceEvalObject({
 	        pageName: pageName,
@@ -72918,7 +72928,9 @@
 
 	    defineProperty(this, "_map", void 0);
 
-	    defineProperty(this, "_root", {});
+	    defineProperty(this, "_root", {
+	      actions: {}
+	    });
 
 	    defineProperty(this, "_builtIn", builtInFns(this.dispatch.bind(this)));
 
@@ -73820,6 +73832,23 @@
 	            break;
 	          }
 
+	        case 'add-fn':
+	          {
+	            var _action$payload4 = action.payload,
+	                _pageName4 = _action$payload4.pageName,
+	                fn = _action$payload4.fn;
+
+	            if (this.root.actions[_pageName4]) {
+	              this.root.actions[_pageName4].update = fn;
+	            } else {
+	              this.root.actions[_pageName4] = {
+	                update: fn
+	              };
+	            }
+
+	            break;
+	          }
+
 	        default:
 	          {
 	            return;
@@ -74276,14 +74305,14 @@
 	          vc = _context.sent;
 	          _context.next = 13;
 	          return cadl.builtIn['signIn']({
-	            password: "letmein123",
+	            password: "letmein12",
 	            phoneNumber: "+1 3238677306",
 	            verificationCode: vc
 	          });
 
 	        case 13:
 	          debugger;
-	          cadl.root['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
+	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
 	          debugger; // await cadl.initPage('MeetingRoomInvited')
 	          // debugger
