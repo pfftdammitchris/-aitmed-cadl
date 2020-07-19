@@ -71769,60 +71769,58 @@
 
 
 	                              if (!(id && !id.startsWith('.'))) {
-	                                _context2.next = 25;
+	                                _context2.next = 23;
 	                                break;
 	                              }
 
-	                              debugger;
-	                              _context2.prev = 9;
+	                              _context2.prev = 8;
 	                              console.log('update edge request', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
-	                              _context2.next = 13;
+	                              _context2.next = 12;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 13:
+	                            case 12:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
-	                              debugger;
 	                              res = data;
 	                              console.log('update edge response', res);
-	                              _context2.next = 23;
+	                              _context2.next = 21;
 	                              break;
 
-	                            case 20:
-	                              _context2.prev = 20;
-	                              _context2.t0 = _context2["catch"](9);
+	                            case 18:
+	                              _context2.prev = 18;
+	                              _context2.t0 = _context2["catch"](8);
 	                              throw _context2.t0;
 
-	                            case 23:
-	                              _context2.next = 38;
+	                            case 21:
+	                              _context2.next = 36;
 	                              break;
 
-	                            case 25:
-	                              _context2.prev = 25;
+	                            case 23:
+	                              _context2.prev = 23;
 	                              console.log('create edge request', mergedVal);
-	                              _context2.next = 29;
+	                              _context2.next = 27;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 29:
+	                            case 27:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
 	                              console.log('create edge response', res);
-	                              _context2.next = 38;
+	                              _context2.next = 36;
 	                              break;
 
-	                            case 35:
-	                              _context2.prev = 35;
-	                              _context2.t1 = _context2["catch"](25);
+	                            case 33:
+	                              _context2.prev = 33;
+	                              _context2.t1 = _context2["catch"](23);
 	                              throw _context2.t1;
 
-	                            case 38:
+	                            case 36:
 	                              if (!res) {
-	                                _context2.next = 43;
+	                                _context2.next = 41;
 	                                break;
 	                              }
 
@@ -71846,15 +71844,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 43:
+	                            case 41:
 	                              return _context2.abrupt("return", null);
 
-	                            case 44:
+	                            case 42:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[9, 20], [25, 35]]);
+	                      }, _callee2, null, [[8, 18], [23, 33]]);
 	                    }));
 
 	                    return function (_x) {
