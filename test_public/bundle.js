@@ -71674,25 +71674,29 @@
 	                            }
 
 	                            _context.prev = 7;
-	                            _context.next = 10;
+	                            console.log('get edge request', {
+	                              idList: idList,
+	                              options: _objectSpread$c({}, options)
+	                            });
+	                            _context.next = 11;
 	                            return store$3.level2SDK.edgeServices.retrieveEdge({
 	                              idList: idList,
 	                              options: _objectSpread$c({}, options)
 	                            });
 
-	                          case 10:
+	                          case 11:
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
 	                            res = data;
-	                            _context.next = 18;
+	                            _context.next = 19;
 	                            break;
 
-	                          case 15:
-	                            _context.prev = 15;
+	                          case 16:
+	                            _context.prev = 16;
 	                            _context.t0 = _context["catch"](7);
 	                            throw _context.t0;
 
-	                          case 18:
+	                          case 19:
 	                            if (res.length > 0) {
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
@@ -71709,14 +71713,15 @@
 	                            } //TODO:handle else case
 
 
+	                            console.log('get edge response', res);
 	                            return _context.abrupt("return", res);
 
-	                          case 20:
+	                          case 22:
 	                          case "end":
 	                            return _context.stop();
 	                        }
 	                      }
-	                    }, _callee, null, [[7, 15]]);
+	                    }, _callee, null, [[7, 16]]);
 	                  }));
 	                };
 
@@ -71729,28 +71734,12 @@
 	                var storeFn = function storeFn(output) {
 	                  return /*#__PURE__*/function () {
 	                    var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(name) {
-	                      var id,
-	                          _cloneDeep3,
-	                          dataKey,
-	                          pathArr,
-	                          _ref6,
-	                          deat,
-	                          currentVal,
-	                          parsedType,
-	                          mergedVal,
-	                          res,
-	                          _yield$store$level2SD2,
-	                          data,
-	                          _yield$store$level2SD3,
-	                          _data,
-	                          replacedEidWithId,
-	                          _args2 = arguments;
+	                      var _cloneDeep3, dataKey, pathArr, _ref6, deat, id, currentVal, parsedType, mergedVal, res, _yield$store$level2SD2, data, _yield$store$level2SD3, _data, replacedEidWithId;
 
 	                      return regenerator.wrap(function _callee2$(_context2) {
 	                        while (1) {
 	                          switch (_context2.prev = _context2.next) {
 	                            case 0:
-	                              id = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : null;
 	                              _cloneDeep3 = cloneDeep_1(output), dataKey = _cloneDeep3.dataKey;
 	                              pathArr = dataKey.split('.'); //get current object name value
 
@@ -71760,7 +71749,7 @@
 	                                  pageName: pageName,
 	                                  dataKey: dataKey
 	                                }
-	                              }), deat = _ref6.deat, currentVal = objectWithoutProperties(_ref6, ["deat"]); //TODO: remove when backend fixes message type problem
+	                              }), deat = _ref6.deat, id = _ref6.id, currentVal = objectWithoutProperties(_ref6, ["deat", "id"]); //TODO: remove when backend fixes message type problem
 
 	                              if (currentVal.name && currentVal.name.message) {
 	                                currentVal.name.message = "temp";
@@ -71779,53 +71768,61 @@
 	                              } // mergedVal.type = parseInt(mergedVal.type)
 
 
-	                              if (!id) {
-	                                _context2.next = 22;
+	                              if (!(id && !id.startsWith('.'))) {
+	                                _context2.next = 25;
 	                                break;
 	                              }
 
+	                              debugger;
 	                              _context2.prev = 9;
-	                              _context2.next = 12;
+	                              console.log('update edge request', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                                id: id
+	                              }));
+	                              _context2.next = 13;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 
-	                            case 12:
+	                            case 13:
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
+	                              debugger;
 	                              res = data;
-	                              _context2.next = 20;
+	                              console.log('update edge response', res);
+	                              _context2.next = 23;
 	                              break;
 
-	                            case 17:
-	                              _context2.prev = 17;
+	                            case 20:
+	                              _context2.prev = 20;
 	                              _context2.t0 = _context2["catch"](9);
 	                              throw _context2.t0;
 
-	                            case 20:
-	                              _context2.next = 33;
+	                            case 23:
+	                              _context2.next = 38;
 	                              break;
 
-	                            case 22:
-	                              _context2.prev = 22;
-	                              _context2.next = 25;
+	                            case 25:
+	                              _context2.prev = 25;
+	                              console.log('create edge request', mergedVal);
+	                              _context2.next = 29;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
-	                            case 25:
+	                            case 29:
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              _context2.next = 33;
+	                              console.log('create edge response', res);
+	                              _context2.next = 38;
 	                              break;
 
-	                            case 30:
-	                              _context2.prev = 30;
-	                              _context2.t1 = _context2["catch"](22);
+	                            case 35:
+	                              _context2.prev = 35;
+	                              _context2.t1 = _context2["catch"](25);
 	                              throw _context2.t1;
 
-	                            case 33:
+	                            case 38:
 	                              if (!res) {
-	                                _context2.next = 38;
+	                                _context2.next = 43;
 	                                break;
 	                              }
 
@@ -71849,15 +71846,15 @@
 	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 38:
+	                            case 43:
 	                              return _context2.abrupt("return", null);
 
-	                            case 39:
+	                            case 44:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
 	                        }
-	                      }, _callee2, null, [[9, 17], [22, 30]]);
+	                      }, _callee2, null, [[9, 20], [25, 35]]);
 	                    }));
 
 	                    return function (_x) {
@@ -74297,12 +74294,12 @@
 	          return cadl.init();
 
 	        case 4:
-	          debugger; // await cadl.initPage('SignIn')
-
+	          debugger;
 	          _context.next = 7;
-	          return cadl.initPage('CreateNewAccount');
+	          return cadl.initPage('SignIn');
 
 	        case 7:
+	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
 	          _context.next = 10;
 	          return Account$1.requestVerificationCode('+1 7015168317');
@@ -74310,22 +74307,13 @@
 	        case 10:
 	          vc = _context.sent;
 	          _context.next = 13;
-	          return cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-	            confirmPassword: "letmein123",
-	            countryCode: "+1",
-	            password: "letmein123",
+	          return cadl.builtIn['signIn']({
+	            password: "letmein12",
 	            phoneNumber: "+1 7015168317",
-	            username: "sammy",
 	            verificationCode: vc
 	          });
 
 	        case 13:
-	          debugger; // await cadl.builtIn['signIn']({
-	          //     password: "letmein12",
-	          //     phoneNumber: "+1 3238677306",
-	          //     verificationCode: vc
-	          // })
-
 	          debugger;
 	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
@@ -74334,20 +74322,20 @@
 	          // await cadl.runInit('MeetingRoomInvited')
 	          // debugger
 
-	          _context.next = 19;
+	          _context.next = 18;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 19:
+	        case 18:
 	          debugger;
-	          _context.next = 22;
+	          _context.next = 21;
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 22:
+	        case 21:
 	          debugger;
-	          _context.next = 25;
+	          _context.next = 24;
 	          return cadl.initPage('MeetingLobbyStart');
 
-	        case 25:
+	        case 24:
 	          debugger; // await cadl.runInit('MeetingRoomCreate')
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -74363,34 +74351,35 @@
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
 	          // debugger
+	          // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
 
-	          _context.next = 28;
-	          return cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object();
+	          _context.next = 27;
+	          return cadl.root['MeetingLobbyStart'].save[0][1]();
 
-	        case 28:
+	        case 27:
 	          debugger;
-	          _context.next = 31;
+	          _context.next = 30;
 	          return cadl.initPage('InviteeInfo01');
 
-	        case 31:
+	        case 30:
 	          debugger;
-	          _context.next = 34;
+	          _context.next = 33;
 	          return cadl.root['InviteeInfo01'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 34:
+	        case 33:
 	          debugger;
-	          _context.next = 37;
+	          _context.next = 36;
 	          return cadl.initPage('VideoChat');
 
-	        case 37:
+	        case 36:
 	          debugger;
-	          _context.next = 40;
+	          _context.next = 39;
 	          return cadl.initPage('MeetingLobbyClose');
 
-	        case 40:
+	        case 39:
 	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
@@ -74489,7 +74478,7 @@
 	          //     }
 	          // }
 
-	        case 50:
+	        case 49:
 	        case "end":
 	          return _context.stop();
 	      }

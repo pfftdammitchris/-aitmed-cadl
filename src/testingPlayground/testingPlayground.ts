@@ -19,26 +19,26 @@ export default (async function () {
     await cadl.init()
     debugger
 
-    // await cadl.initPage('SignIn')
-    await cadl.initPage('CreateNewAccount')
+    await cadl.initPage('SignIn')
+    // await cadl.initPage('CreateNewAccount')
     debugger
     const vc = await Account.requestVerificationCode('+1 7015168317')
 
-    await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-        confirmPassword: "letmein123",
-        countryCode: "+1",
-        password: "letmein123",
-        phoneNumber: "+1 7015168317",
-        username: "sammy",
-        verificationCode: vc
-    })
-    debugger
-
-    // await cadl.builtIn['signIn']({
-    //     password: "letmein12",
-    //     phoneNumber: "+1 3238677306",
+    // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+    //     confirmPassword: "letmein123",
+    //     countryCode: "+1",
+    //     password: "letmein123",
+    //     phoneNumber: "+1 7015168317",
+    //     username: "sammy",
     //     verificationCode: vc
     // })
+    // debugger
+
+    await cadl.builtIn['signIn']({
+        password: "letmein12",
+        phoneNumber: "+1 7015168317",
+        verificationCode: vc
+    })
     debugger
     cadl.root.actions['SignIn'].update()
     // cadl.root['CreateNewAccount'].update()
@@ -69,12 +69,13 @@ export default (async function () {
     // debugger
     // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
     // debugger
-    await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
+    // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
+    await cadl.root['MeetingLobbyStart'].save[0][1]()
     debugger
-   
+
     await cadl.initPage('InviteeInfo01')
     debugger
-     await cadl.root['InviteeInfo01'].save[0][1]({ firstName: "Stan", lastName: "koko" })
+    await cadl.root['InviteeInfo01'].save[0][1]({ firstName: "Stan", lastName: "koko" })
     debugger
     await cadl.initPage('VideoChat')
     debugger

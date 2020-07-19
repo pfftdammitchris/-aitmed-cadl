@@ -234,6 +234,7 @@ function attachFns({ cadlObject,
                                     options.scondition = sCondition
                                 }
                                 try {
+                                    console.log('get edge request', { idList, options: { ...options } })
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })
                                     res = data
                                 } catch (error) {
@@ -253,17 +254,18 @@ function attachFns({ cadlObject,
 
                                 }
                                 //TODO:handle else case
+                                console.log('get edge response', res)
                                 return res
                             }
                             output = getFn(output)
                             break
                         }
                         case ('ce'): {
-                            const storeFn = (output) => async (name, id = null) => {
+                            const storeFn = (output) => async (name) => {
                                 const { dataKey } = _.cloneDeep(output)
                                 const pathArr = dataKey.split('.')
                                 //get current object name value
-                                const { deat, ...currentVal } = _.get(localRoot[pageName], pathArr) || dispatch({ type: 'get-data', payload: { pageName, dataKey } })
+                                const { deat, id, ...currentVal } = _.get(localRoot[pageName], pathArr) || dispatch({ type: 'get-data', payload: { pageName, dataKey } })
 
                                 //TODO: remove when backend fixes message type problem
                                 if (currentVal.name && currentVal.name.message) {
@@ -279,17 +281,24 @@ function attachFns({ cadlObject,
                                 }
                                 // mergedVal.type = parseInt(mergedVal.type)
                                 let res
-                                if (id) {
+                                if (id && !id.startsWith('.')) {
                                     try {
+                                        console.log('update edge request', { ...mergedVal, id })
+
                                         const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
                                         res = data
+                                        console.log('update edge response', res)
+
                                     } catch (error) {
                                         throw error
                                     }
                                 } else {
                                     try {
+                                        console.log('create edge request', mergedVal)
                                         const { data } = await store.level2SDK.edgeServices.createEdge({ ...mergedVal })
                                         res = data
+                                        console.log('create edge response', res)
+
                                     } catch (error) {
                                         throw error
                                     }
