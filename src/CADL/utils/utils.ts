@@ -234,9 +234,11 @@ function attachFns({ cadlObject,
                                     options.scondition = sCondition
                                 }
                                 try {
-                                    console.log('get edge request', { idList, options: { ...options } })
+                                    console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', { idList, options: { ...options } });
+
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })
                                     res = data
+                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
                                 } catch (error) {
                                     throw error
                                 }
@@ -254,7 +256,7 @@ function attachFns({ cadlObject,
 
                                 }
                                 //TODO:handle else case
-                                console.log('get edge response', res)
+
                                 return res
                             }
                             output = getFn(output)
@@ -283,22 +285,25 @@ function attachFns({ cadlObject,
                                 let res
                                 if (id && !id.startsWith('.')) {
                                     try {
-                                        console.log('update edge request', { ...mergedVal, id })
+
+                                        console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
 
                                         const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
                                         res = data
-                                        console.log('update edge response', res)
+
+                                        console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
 
                                     } catch (error) {
                                         throw error
                                     }
                                 } else {
                                     try {
-                                        console.log('create edge request', mergedVal)
+                                        console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
+
                                         const { data } = await store.level2SDK.edgeServices.createEdge({ ...mergedVal })
                                         res = data
-                                        console.log('create edge response', res)
 
+                                        console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
                                     } catch (error) {
                                         throw error
                                     }
@@ -324,7 +329,7 @@ function attachFns({ cadlObject,
                                 return null
                             }
 
-                            output = [output.dataKey, storeFn(output)]
+                            output = [`${output.dataKey}.name`, storeFn(output)]
                             break
                         }
                         case ('rd'): {

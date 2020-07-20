@@ -71674,7 +71674,7 @@
 	                            }
 
 	                            _context.prev = 7;
-	                            console.log('get edge request', {
+	                            console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
 	                              idList: idList,
 	                              options: _objectSpread$c({}, options)
 	                            });
@@ -71688,15 +71688,16 @@
 	                            _yield$store$level2SD = _context.sent;
 	                            data = _yield$store$level2SD.data;
 	                            res = data;
-	                            _context.next = 19;
+	                            console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	                            _context.next = 20;
 	                            break;
 
-	                          case 16:
-	                            _context.prev = 16;
+	                          case 17:
+	                            _context.prev = 17;
 	                            _context.t0 = _context["catch"](7);
 	                            throw _context.t0;
 
-	                          case 19:
+	                          case 20:
 	                            if (res.length > 0) {
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
@@ -71713,7 +71714,6 @@
 	                            } //TODO:handle else case
 
 
-	                            console.log('get edge response', res);
 	                            return _context.abrupt("return", res);
 
 	                          case 22:
@@ -71721,7 +71721,7 @@
 	                            return _context.stop();
 	                        }
 	                      }
-	                    }, _callee, null, [[7, 16]]);
+	                    }, _callee, null, [[7, 17]]);
 	                  }));
 	                };
 
@@ -71774,7 +71774,7 @@
 	                              }
 
 	                              _context2.prev = 8;
-	                              console.log('update edge request', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                              console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
 	                              }));
 	                              _context2.next = 12;
@@ -71786,7 +71786,7 @@
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              console.log('update edge response', res);
+	                              console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
 	                              _context2.next = 21;
 	                              break;
 
@@ -71801,7 +71801,9 @@
 
 	                            case 23:
 	                              _context2.prev = 23;
-	                              console.log('create edge request', mergedVal);
+	                              console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                                id: id
+	                              }));
 	                              _context2.next = 27;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
@@ -71809,7 +71811,7 @@
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              console.log('create edge response', res);
+	                              console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
 	                              _context2.next = 36;
 	                              break;
 
@@ -71861,7 +71863,7 @@
 	                  }();
 	                };
 
-	                output = [output.dataKey, storeFn(output)];
+	                output = ["".concat(output.dataKey, ".name"), storeFn(output)];
 	                break;
 	              }
 
