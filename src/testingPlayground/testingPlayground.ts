@@ -89,6 +89,13 @@ export default (async function () {
     debugger
     cadl.removeValue({ path: 'VideoChat.listData.participants', predicate: { id: 1 } })
     debugger
+    console.log(cadl)
+
+    cadl.resetReferences('MeetingLobbyStart')
+    debugger
+    cadl.initPage('MeetingLobbyStart', [])
+    console.log(cadl)
+
     // await cadl.initPage('InviteeInfo')
     // debugger
     // await cadl.root['InviteeInfo'].save[0][1]({ firstName: "Stan", lastName: "koko" })
@@ -111,7 +118,6 @@ export default (async function () {
     // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
     // debugger
 
-    console.log(cadl)
 
     // async function test_LoginNewDevice({ phone_number }) {
     //     console.log('Testing loginNewDevice')

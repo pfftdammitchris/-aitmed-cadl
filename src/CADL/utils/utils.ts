@@ -238,7 +238,7 @@ function attachFns({ cadlObject,
 
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })
                                     res = data
-                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+
                                 } catch (error) {
                                     throw error
                                 }
@@ -247,6 +247,7 @@ function attachFns({ cadlObject,
                                     res = res.map((edge) => {
                                         return replaceEidWithId(edge)
                                     })
+                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
 
                                     dispatch({
                                         type: 'update-data',
@@ -265,9 +266,9 @@ function attachFns({ cadlObject,
                         case ('ce'): {
                             const storeFn = (output) => async (name) => {
                                 const { dataKey } = _.cloneDeep(output)
-                                const pathArr = dataKey.split('.')
+                                // const pathArr = dataKey.split('.')
                                 //get current object name value
-                                const { deat, id, ...currentVal } = _.get(localRoot[pageName], pathArr) || dispatch({ type: 'get-data', payload: { pageName, dataKey } })
+                                const { deat, id, ...currentVal } = dispatch({ type: 'get-data', payload: { pageName, dataKey } })
 
                                 //TODO: remove when backend fixes message type problem
                                 if (currentVal.name && currentVal.name.message) {
@@ -624,9 +625,13 @@ function replaceEvalObject({ pageName, cadlObject, dispatch }: { pageName: strin
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateString({ source, lookFor, skip, locations, path }: { source: string, lookFor: string, skip?: string[], locations: Record<string, any>[], path?: string[] }) {
+function populateString({ source, lookFor, skip, locations, path, dispatch, pageName }: { source: string, lookFor: string, skip?: string[], locations: Record<string, any>[], path?: string[], dispatch?: Function, pageName?: string }) {
     if (skip && skip.includes(source)) return source
     if (!source.startsWith(lookFor)) return source
+    if (dispatch && pageName && path) {
+        const pathStr = path.slice(1).join('.')
+        dispatch({ type: 'save-ref', payload: { pageName, path: pathStr, ref: source } })
+    }
     let currVal = source
     let replacement
     if (lookFor === '_' && currVal.includes('.')) {
@@ -672,7 +677,7 @@ function populateString({ source, lookFor, skip, locations, path }: { source: st
             // replacement = lookUp(currVal, location)
             if (replacement && replacement !== source) {
                 if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
-                    return populateString({ source: replacement, lookFor, skip, locations, path })
+                    return populateString({ source: replacement, lookFor, skip, locations, path, pageName, dispatch })
                 } else {
                     break
                 }
@@ -698,17 +703,17 @@ function populateString({ source, lookFor, skip, locations, path }: { source: st
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateArray({ source, lookFor, skip, locations, path }: { source: any[], lookFor: string, skip?: string[], locations: Record<string, any>[], path: string[] }) {
+function populateArray({ source, lookFor, skip, locations, path, dispatch, pageName }: { source: any[], lookFor: string, skip?: string[], locations: Record<string, any>[], path: string[], dispatch?: Function, pageName?: string }) {
     let sourceCopy = _.cloneDeep(source)
     var previousKey = path[path.length - 1] || ''
     let replacement = sourceCopy.map((elem, i) => {
         let index = '[' + i + ']'
         if (Array.isArray(elem)) {
-            return populateArray({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index) })
+            return populateArray({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
         } else if (isObject(elem)) {
-            return populateObject({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index) })
+            return populateObject({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
         } else if (typeof elem === 'string') {
-            return populateString({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index) })
+            return populateString({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
         }
         return elem
     })
@@ -723,17 +728,17 @@ function populateArray({ source, lookFor, skip, locations, path }: { source: any
  * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateObject({ source, lookFor, locations, skip = [], path = [] }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[], skip?: string[], path?: string[] }): Record<string, any> {
+function populateObject({ source, lookFor, locations, skip = [], path = [], dispatch, pageName }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[], skip?: string[], path?: string[], dispatch?: Function, pageName?: string }): Record<string, any> {
     let sourceCopy = _.cloneDeep(source)
     Object.keys(sourceCopy).forEach((key) => {
         let index = key
         if (!skip.includes(key) && key !== 'dataKey') {
             if (isObject(sourceCopy[key])) {
-                sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip, path: path.concat(index) })
+                sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip, path: path.concat(index), dispatch, pageName })
             } else if (Array.isArray(sourceCopy[key])) {
-                sourceCopy[key] = populateArray({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index) })
+                sourceCopy[key] = populateArray({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index), dispatch, pageName })
             } else if (typeof sourceCopy[key] === 'string') {
-                sourceCopy[key] = populateString({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index) })
+                sourceCopy[key] = populateString({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index), dispatch, pageName })
             }
         }
     })
@@ -801,12 +806,16 @@ function populateVals({
     source,
     lookFor,
     locations,
-    skip
+    skip,
+    pageName,
+    dispatch
 }: {
     source: Record<string, any>,
     lookFor: string[],
     skip?: string[],
     locations: any[]
+    pageName?: string,
+    dispatch?: Function
 }): Record<string, any> {
     let sourceCopy = _.cloneDeep(source)
 
@@ -815,7 +824,9 @@ function populateVals({
             source: sourceCopy,
             lookFor: symbol,
             skip,
-            locations
+            locations,
+            pageName,
+            dispatch
         })
     }
 

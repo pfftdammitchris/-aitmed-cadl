@@ -36,7 +36,7 @@ export default class CADL {
     private _baseUrl: string
     private _assetsUrl: string
     private _map: Record<string, any>
-    private _root: Record<string, any> = { actions: {} }
+    private _root: Record<string, any> = { actions: {}, refs: {} }
     private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
     private _initCallQueue: any[]
 
@@ -177,10 +177,11 @@ export default class CADL {
         //FOR FORMDATA
         //process formData
         if (this.root[pageName]) {
-            const cloneCurrPage = _.cloneDeep(this.root[pageName])
-            //TODO: test order of overrides
-            const mergedPage = _.merge(pageCADL, { [pageName]: cloneCurrPage })
-            pageCADL = mergedPage
+            delete this.root[pageName]
+            // const cloneCurrPage = _.cloneDeep(this.root[pageName])
+            // //TODO: test order of overrides
+            // const mergedPage = _.merge(pageCADL, { [pageName]: cloneCurrPage })
+            // pageCADL = mergedPage
         }
         const processedFormData = this.processPopulate({
             source: pageCADL,
@@ -231,6 +232,14 @@ export default class CADL {
                         }
                         default: {
                             return
+                        }
+                    }
+                } else if (Array.isArray(command)) {
+                    if (typeof command[0][1] === 'function') {
+                        try {
+                            await command[0][1]()
+                        } catch (error) {
+                            throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                         }
                     }
                 }
@@ -372,18 +381,20 @@ export default class CADL {
             lookFor: '..',
             locations: [localRoot]
         })
+        const boundDispatch = this.dispatch.bind(this)
 
         localRoot = pageName ? sourceCopyWithLocalKeys[pageName] : sourceCopyWithLocalKeys
         const sourceCopyWithVals = populateVals({
             source: sourceCopyWithLocalKeys,
             lookFor,
             skip,
-            locations: [this.root, localRoot]
+            locations: [this.root, localRoot],
+            pageName,
+            dispatch: boundDispatch,
         })
         localRoot = pageName ? sourceCopyWithVals[pageName] : sourceCopyWithLocalKeys
         let populatedResponse = sourceCopyWithVals
         if (withFns) {
-            const boundDispatch = this.dispatch.bind(this)
             populatedResponse = attachFns({
                 cadlObject: sourceCopyWithVals,
                 dispatch: boundDispatch
@@ -559,6 +570,16 @@ export default class CADL {
                 }
                 break
             }
+            case ('save-ref'): {
+                const { pageName, ref, path } = action.payload
+                if (this.root.refs[pageName]) {
+                    this.root.refs[pageName][path] = ref
+                } else {
+                    this.root.refs[pageName] = {}
+                    this.root.refs[pageName][path] = ref
+                }
+                break
+            }
 
             default: {
                 return
@@ -598,7 +619,6 @@ export default class CADL {
         let page: Record<string, any> = this.root[pageName]
         let init = page.init
         if (init) {
-
             this.initCallQueue = init.map((_command, index) => index)
             while (this.initCallQueue.length > 0) {
                 const currIndex = this.initCallQueue.shift()
@@ -610,26 +630,45 @@ export default class CADL {
                     } catch (error) {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
-
-                    //updating page after command has been called
-                    const updatedPage = this.root[pageName]
-
-                    //populateObject again to populate any data that was dependant on the command call
-                    let populatedUpdatedPage = populateObject({
-                        source: updatedPage,
-                        lookFor: '..',
-                        skip: ['components'],
-                        locations: [this.root[pageName]]
-                    })
-
-                    const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
-
-                    page = populatedUpdatedPageWithFns
-
-                    init = Object.values(populatedUpdatedPageWithFns)[0].init
-
-                    this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+                } else if (isObject(command) && 'actionType' in command) {
+                    const { actionType, dataKey, dataObject }: any = command
+                    switch (actionType) {
+                        case ('updateObject'): {
+                            this.updateObject({ dataKey, dataObject })
+                            break
+                        }
+                        default: {
+                            return
+                        }
+                    }
+                } else if (Array.isArray(command)) {
+                    if (typeof command[0][1] === 'function') {
+                        try {
+                            await command[0][1]()
+                        } catch (error) {
+                            throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
+                        }
+                    }
                 }
+
+                //updating page after command has been called
+                const updatedPage = this.root[pageName]
+
+                //populateObject again to populate any data that was dependant on the command call
+                let populatedUpdatedPage = populateObject({
+                    source: updatedPage,
+                    lookFor: '..',
+                    skip: ['components'],
+                    locations: [this.root[pageName]]
+                })
+
+                const populatedUpdatedPageWithFns = attachFns({ cadlObject: { [pageName]: populatedUpdatedPage }, dispatch: boundDispatch })
+
+                page = populatedUpdatedPageWithFns
+
+                init = Object.values(populatedUpdatedPageWithFns)[0].init
+
+                this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
             }
         }
     }
@@ -755,6 +794,14 @@ export default class CADL {
             }
         }
         return
+    }
+
+    public resetReferences(pageName: string) {
+        const pageRefs = _.cloneDeep(this.root.refs[pageName])
+        for (let [path, ref] of Object.entries(pageRefs)) {
+            // let pathArr = path.split('.')
+            _.set(this.root[pageName], path, ref)
+        }
     }
 
     public get cadlVersion() {
