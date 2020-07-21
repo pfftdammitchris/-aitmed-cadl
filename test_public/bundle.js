@@ -73377,7 +73377,7 @@
 	    key: "runInit",
 	    value: function () {
 	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(pageName) {
-	        var boundDispatch, page, init, currIndex, command, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
+	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 	        return regenerator.wrap(function _callee6$(_context6) {
 	          while (1) {
 	            switch (_context6.prev = _context6.next) {
@@ -73388,7 +73388,7 @@
 	                init = page.init;
 
 	                if (!init) {
-	                  _context6.next = 25;
+	                  _context6.next = 47;
 	                  break;
 	                }
 
@@ -73398,7 +73398,7 @@
 
 	              case 5:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context6.next = 25;
+	                  _context6.next = 47;
 	                  break;
 	                }
 
@@ -73406,7 +73406,7 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context6.next = 23;
+	                  _context6.next = 19;
 	                  break;
 	                }
 
@@ -73424,6 +73424,59 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t0);
 
 	              case 17:
+	                _context6.next = 39;
+	                break;
+
+	              case 19:
+	                if (!(isObject_1(command) && 'actionType' in command)) {
+	                  _context6.next = 29;
+	                  break;
+	                }
+
+	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject;
+	                _context6.t1 = actionType;
+	                _context6.next = _context6.t1 === 'updateObject' ? 24 : 26;
+	                break;
+
+	              case 24:
+	                this.updateObject({
+	                  dataKey: dataKey,
+	                  dataObject: dataObject
+	                });
+	                return _context6.abrupt("break", 27);
+
+	              case 26:
+	                return _context6.abrupt("return");
+
+	              case 27:
+	                _context6.next = 39;
+	                break;
+
+	              case 29:
+	                if (!Array.isArray(command)) {
+	                  _context6.next = 39;
+	                  break;
+	                }
+
+	                if (!(typeof command[0][1] === 'function')) {
+	                  _context6.next = 39;
+	                  break;
+	                }
+
+	                _context6.prev = 31;
+	                _context6.next = 34;
+	                return command[0][1]();
+
+	              case 34:
+	                _context6.next = 39;
+	                break;
+
+	              case 36:
+	                _context6.prev = 36;
+	                _context6.t2 = _context6["catch"](31);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t2);
+
+	              case 39:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -73440,17 +73493,15 @@
 	                page = populatedUpdatedPageWithFns;
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-
-	              case 23:
 	                _context6.next = 5;
 	                break;
 
-	              case 25:
+	              case 47:
 	              case "end":
 	                return _context6.stop();
 	            }
 	          }
-	        }, _callee6, this, [[9, 14]]);
+	        }, _callee6, this, [[9, 14], [31, 36]]);
 	      }));
 
 	      function runInit(_x5) {
