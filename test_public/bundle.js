@@ -72084,15 +72084,17 @@
 	        pageName: pageName
 	      });
 	    } else if (isObject$5(elem)) {
-	      return populateObject({
-	        source: elem,
-	        skip: skip,
-	        lookFor: lookFor,
-	        locations: locations,
-	        path: path.slice(0, -1).concat(previousKey + index),
-	        dispatch: dispatch,
-	        pageName: pageName
-	      });
+	      if (!('actionType' in elem && elem.actionType === 'evalObject' && elem.object && isObject$5(elem.object))) {
+	        return populateObject({
+	          source: elem,
+	          skip: skip,
+	          lookFor: lookFor,
+	          locations: locations,
+	          path: path.slice(0, -1).concat(previousKey + index),
+	          dispatch: dispatch,
+	          pageName: pageName
+	        });
+	      }
 	    } else if (typeof elem === 'string') {
 	      return populateString({
 	        source: elem,
@@ -72136,15 +72138,17 @@
 
 	    if (!skip.includes(key) && key !== 'dataKey') {
 	      if (isObject$5(sourceCopy[key])) {
-	        sourceCopy[key] = populateObject({
-	          source: sourceCopy[key],
-	          lookFor: lookFor,
-	          locations: locations,
-	          skip: skip,
-	          path: path.concat(index),
-	          dispatch: dispatch,
-	          pageName: pageName
-	        });
+	        if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject$5(sourceCopy[key].object))) {
+	          sourceCopy[key] = populateObject({
+	            source: sourceCopy[key],
+	            lookFor: lookFor,
+	            locations: locations,
+	            skip: skip,
+	            path: path.concat(index),
+	            dispatch: dispatch,
+	            pageName: pageName
+	          });
+	        }
 	      } else if (Array.isArray(sourceCopy[key])) {
 	        sourceCopy[key] = populateArray({
 	          source: sourceCopy[key],

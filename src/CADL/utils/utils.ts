@@ -711,7 +711,9 @@ function populateArray({ source, lookFor, skip, locations, path, dispatch, pageN
         if (Array.isArray(elem)) {
             return populateArray({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
         } else if (isObject(elem)) {
-            return populateObject({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
+            if (!('actionType' in elem && elem.actionType === 'evalObject' && elem.object && isObject(elem.object))) {
+                return populateObject({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
+            }
         } else if (typeof elem === 'string') {
             return populateString({ source: elem, skip, lookFor, locations, path: path.slice(0, -1).concat(previousKey + index), dispatch, pageName })
         }
@@ -734,7 +736,9 @@ function populateObject({ source, lookFor, locations, skip = [], path = [], disp
         let index = key
         if (!skip.includes(key) && key !== 'dataKey') {
             if (isObject(sourceCopy[key])) {
-                sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip, path: path.concat(index), dispatch, pageName })
+                if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject(sourceCopy[key].object))) {
+                    sourceCopy[key] = populateObject({ source: sourceCopy[key], lookFor, locations, skip, path: path.concat(index), dispatch, pageName })
+                }
             } else if (Array.isArray(sourceCopy[key])) {
                 sourceCopy[key] = populateArray({ source: sourceCopy[key], skip, lookFor, locations, path: path.concat(index), dispatch, pageName })
             } else if (typeof sourceCopy[key] === 'string') {
