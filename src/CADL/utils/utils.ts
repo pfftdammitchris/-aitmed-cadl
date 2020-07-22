@@ -43,14 +43,22 @@ function replaceEidWithId(edge: Record<string, any>) {
 
 /**
  * 
- * @param params {}
- * @param params.source Record<string, any>
- * @param params.lookFor string
- * @param params.locations Record<string, any>[]
+ * @param PopulateKeysArgs {}
+ * @param PopulateKeysArgs.source Record<string, any>
+ * @param PopulateKeysArgs.lookFor string
+ * @param PopulateKeysArgs.locations Record<string, any>[]
  * @returns Record<string, any>
  * - merges source object with objects in locations where keys match lookFor
  */
-function populateKeys({ source, lookFor, locations }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[] }) {
+function populateKeys({
+    source,
+    lookFor,
+    locations
+}: {
+    source: Record<string, any>,
+    lookFor: string,
+    locations: Record<string, any>[]
+}): Record<string, any> {
     let output = _.cloneDeep(source)
     Object.keys(output).forEach((key) => {
         if (key.startsWith(lookFor)) {
@@ -84,7 +92,6 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
                 const mergedObjects = populateKeys({ source: parent, lookFor, locations })
                 //TODO: pending unit test
                 output = mergeDeep(mergedObjects, output)
-                // output = { ...mergedObjects, ...output }
                 delete output[key]
             }
         } else if (isObject(output[key])) {
@@ -108,7 +115,7 @@ function populateKeys({ source, lookFor, locations }: { source: Record<string, a
  * @returns any - whatever value that was attached to the location object at the given directions
  * @throws UnableToLocateValue if value is not found given the directions and location
  */
-function lookUp(directions: string, location: Record<string, any>) {
+function lookUp(directions: string, location: Record<string, any>): any {
     let arr = directions.split('.')
 
     try {
@@ -165,8 +172,13 @@ function isPopulated(item: string | Record<string, any>): boolean {
  * @param dispatch Function
  * @returns Record<string,any>
  */
-function attachFns({ cadlObject,
-    dispatch }) {
+function attachFns({
+    cadlObject,
+    dispatch
+}: {
+    cadlObject: Record<string, any>,
+    dispatch: Function
+}): Record<string, any> {
     //the localRoot object is the page object
     const localRoot = cadlObject
 
@@ -569,14 +581,23 @@ function attachFns({ cadlObject,
 
 
 /**
- * 
- * @param updateObject Record<string, any>
- * @param dispatch Function
+ * @param EvalStateArgs
+ * @param EvalStateArgs.pageName string
+ * @param EvalStateArgs.updateObject Record<string, any>
+ * @param EvalStateArgs.dispatch Function
  * @returns Function
  *
- *  - returns a function that is used to update the global state of the CADL class
+ *  - returns a function that is used to evalutate actionType evalObject
  */
-function evalState({ pageName, updateObject, dispatch }: { pageName: string, updateObject: Record<string, any>, dispatch: Function }): Function {
+function evalState({
+    pageName,
+    updateObject,
+    dispatch
+}: {
+    pageName: string,
+    updateObject: Record<string, any>,
+    dispatch: Function
+}): Function {
     return async (): Promise<void> => {
         await dispatch({ type: 'eval-object', payload: { pageName, updateObject } })
         return
@@ -584,14 +605,22 @@ function evalState({ pageName, updateObject, dispatch }: { pageName: string, upd
 }
 
 /**
- * 
- * @param cadlObject Record<string, any>
- * @param dispatch Function
+ * @param ReplaceEvalObjectArgs
+ * @param ReplaceEvalObjectArgs.cadlObject Record<string, any>
+ * @param ReplaceEvalObjectArgs.dispatch Function
  * @returns Record<string, any>
  * 
- * - replaces the eval object, if any, with a function that performs the the actions detailed in the eval object 
+ * - replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
  */
-function replaceEvalObject({ pageName, cadlObject, dispatch }: { pageName: string, cadlObject: Record<string, any>, dispatch: Function }): Record<string, any> {
+function replaceEvalObject({
+    pageName,
+    cadlObject,
+    dispatch
+}: {
+    pageName: string,
+    cadlObject: Record<string, any>,
+    dispatch: Function
+}): Record<string, any> {
     const cadlCopy = _.cloneDeep(cadlObject)
     Object.keys(cadlCopy).forEach((key) => {
         // if (key === 'update') {
@@ -618,13 +647,34 @@ function replaceEvalObject({ pageName, cadlObject, dispatch }: { pageName: strin
 
 
 /**
+ * @param PopulateStringArgs
+ * @param PopulateStringArgs.source  string -object that has values that need to be replaced
+ * @param PopulateStringArgs.lookFor string -item to look for in object
+ * @param PopulateStringArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
+ * @param PopulateStringArgs.path string
+ * @param PopulateStringArgs.dispatch Function
+ * @param PopulateStringArgs.pageName string
  * 
- * @param source  string -object that has values that need to be replaced
- * @param lookFor string -item to look for in object
- * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateString({ source, lookFor, skip, locations, path, dispatch, pageName }: { source: string, lookFor: string, skip?: string[], locations: Record<string, any>[], path?: string[], dispatch?: Function, pageName?: string }) {
+function populateString({
+    source,
+    lookFor,
+    skip,
+    locations,
+    path,
+    dispatch,
+    pageName
+}: {
+    source: string,
+    lookFor: string,
+    skip?: string[],
+    locations: Record<string,
+        any>[],
+    path?: string[],
+    dispatch?: Function,
+    pageName?: string
+}): any {
     if (skip && skip.includes(source)) return source
     if (!source.startsWith(lookFor)) return source
     if (dispatch && pageName && path) {
@@ -696,13 +746,34 @@ function populateString({ source, lookFor, skip, locations, path, dispatch, page
 }
 
 /**
+ * @param PopulateArrayArgs
+ * @param PopulateArrayArgs.source  any[] -object that has values that need to be replaced
+ * @param PopulateArrayArgs.lookFor string -item to look for in object
+ * @param PopulateArrayArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
+ * @param PopulateArrayArgs.path string[]
+ * @param PopulateArrayArgs.dispatch Function
+ * @param PopulateArrayArgs.pageName string
  * 
- * @param source  any[] -object that has values that need to be replaced
- * @param lookFor string -item to look for in object
- * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
- * @returns Record<string. any> 
+ * @returns any[] 
  */
-function populateArray({ source, lookFor, skip, locations, path, dispatch, pageName }: { source: any[], lookFor: string, skip?: string[], locations: Record<string, any>[], path: string[], dispatch?: Function, pageName?: string }) {
+function populateArray({
+    source,
+    lookFor,
+    skip,
+    locations,
+    path,
+    dispatch,
+    pageName
+}: {
+    source: any[],
+    lookFor: string,
+    skip?: string[],
+    locations: Record<string,
+        any>[],
+    path: string[],
+    dispatch?: Function,
+    pageName?: string
+}): any[] {
     let sourceCopy = _.cloneDeep(source)
     var previousKey = path[path.length - 1] || ''
     let replacement = sourceCopy.map((elem, i) => {
@@ -723,13 +794,36 @@ function populateArray({ source, lookFor, skip, locations, path, dispatch, pageN
 }
 
 /**
+ * @param PopulateObjectArgs
+ * @param PopulateObjectArgs.source  Record<string, any> -object that has values that need to be replaced
+ * @param PopulateObjectArgs.lookFor string -item to look for in object
+ * @param PopulateObjectArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
+ * @param PopulateObjectArgs.skip string[]
+ * @param PopulateObjectArgs.path string[]
+ * @param PopulateObjectArgs.dispatch Function
+ * @param PopulateObjectArgs.pageName string
  * 
- * @param source  Record<string, any> -object that has values that need to be replaced
- * @param lookFor string -item to look for in object
- * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
  * @returns Record<string. any> 
  */
-function populateObject({ source, lookFor, locations, skip = [], path = [], dispatch, pageName }: { source: Record<string, any>, lookFor: string, locations: Record<string, any>[], skip?: string[], path?: string[], dispatch?: Function, pageName?: string }): Record<string, any> {
+function populateObject({
+    source,
+    lookFor,
+    locations,
+    skip = [],
+    path = [],
+    dispatch,
+    pageName
+}: {
+    source: Record<string,
+        any>,
+    lookFor: string,
+    locations: Record<string,
+        any>[],
+    skip?: string[],
+    path?: string[],
+    dispatch?: Function,
+    pageName?: string
+}): Record<string, any> {
     let sourceCopy = _.cloneDeep(source)
     Object.keys(sourceCopy).forEach((key) => {
         let index = key
@@ -750,6 +844,7 @@ function populateObject({ source, lookFor, locations, skip = [], path = [], disp
 }
 
 /**
+ * @param dispatch Function
  * @returns Record<string, Function>
  */
 function builtInFns(dispatch?: Function) {
@@ -804,7 +899,17 @@ function builtInFns(dispatch?: Function) {
     }
 }
 
-
+/**
+ * 
+ * @param PopulateValsArgs 
+ * @param PopulateValsArgs.source Record<string, any>
+ * @param PopulateValsArgs.lookFor string[]
+ * @param PopulateValsArgs.locations any[]
+ * @param PopulateValsArgs.skip string[]
+ * @param PopulateValsArgs.pageName string
+ * @param PopulateValsArgs.dispatch Function
+ * @returns Record<string, any>
+ */
 function populateVals({
     source,
     lookFor,
@@ -836,7 +941,12 @@ function populateVals({
     return sourceCopy
 }
 
-function replaceUint8ArrayWithBase64(source) {
+/**
+ * 
+ * @param source Record<string, any>
+ * @returns Record<string, any>
+ */
+function replaceUint8ArrayWithBase64(source: Record<string, any>): Record<string, any> {
     let sourceCopy = _.cloneDeep(source)
     if (isObject(source)) {
 
