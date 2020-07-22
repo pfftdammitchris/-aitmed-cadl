@@ -40,6 +40,13 @@ export default class CADL {
     private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
     private _initCallQueue: any[]
 
+    /**
+     * 
+     * @param CADLARGS
+     * @param CADLARGS.env string 
+     * @param CADLARGS.configUrl string 
+     * @param CADLARGS.cadlVersion 'test' | 'stable' 
+     */
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
         //replace default arguments
         store.env = env
@@ -48,19 +55,27 @@ export default class CADL {
     }
 
     /**
-     * -loads config if not already loaded
-     * 
-     * -sets CADL version, baseUrl, assetsUrl, and root
+     * @param InitArgs 
+     * @param InitArgs.BaseDataModel Record<string, any>
+     * @param InitArgs.BaseCSS Record<string, any>
+     * @param InitArgs.BasePage Record<string, any>
      * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
      * @throws UnableToParseYAML -if unable to parse yaml file
      * @throws UnableToLoadConfig -if unable to load config data
+     * 
+     * -loads config if not already loaded
+     * -sets CADL version, baseUrl, assetsUrl, and root
      */
-    //TODO: add a force parameter to allow user to force init again
-    public async init({ BaseDataModel, BaseCSS, BasePage }: {
+    public async init({
+        BaseDataModel,
+        BaseCSS,
+        BasePage
+    }: {
         BaseDataModel?: Record<string, any>,
         BaseCSS?: Record<string, any>,
         BasePage?: Record<string, any>
-    } = {}): Promise<void> {
+    } = {}
+    ): Promise<void> {
         if (this.cadlEndpoint) return
         //get config
         let config: any = store.getConfig()
@@ -89,6 +104,7 @@ export default class CADL {
         this.baseUrl = baseUrl
         this.assetsUrl = assetsUrl
 
+        //set overrides of Base Objects
         if (BaseDataModel) {
             const processedBaseDataModel = this.processPopulate({
                 source: BaseDataModel,
@@ -163,14 +179,22 @@ export default class CADL {
 
     /**
      * 
-     * @param pageName 
+     * @param pageName string
+     * @param skip string[] -denotes the keys to skip in the population process 
+     * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
      * 
-     * - initiates cadlObject for page specified
      * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
      * @throws UnableToParseYAML -if unable to parse yaml file
      * @throws UnableToExecuteFn -if something goes wrong while executing any init function
+     * 
+     * - initiates cadlObject for page specified
      */
-    async initPage(pageName: string, skip: string[] = [], options: { builtIn?: Record<string, any>, [key: string]: any } = {}) {
+    //TODO: extract init functionality to use only runInit()
+    async initPage(
+        pageName: string,
+        skip: string[] = [],
+        options: { builtIn?: Record<string, any> } = {}
+    ): Promise<void> {
         if (!this.cadlEndpoint) await this.init()
 
         const { builtIn } = options
@@ -290,11 +314,12 @@ export default class CADL {
     }
 
     /**
+     * @param pageName string
      * @returns CADL_OBJECT
      * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
      * @throws UnableToParseYAML -if unable to parse yaml file
      */
-    public async getPage(pageName): Promise<CADL_OBJECT> {
+    public async getPage(pageName: string): Promise<CADL_OBJECT> {
         let pageCADL
         try {
             let url = `${this.baseUrl}${pageName}_en.yml`
@@ -334,6 +359,7 @@ export default class CADL {
 
     /**
      * 
+     * @param pageName string
      * @param dataKey string
      * @returns any
      * 
@@ -344,7 +370,6 @@ export default class CADL {
         const pathArr = dataKey.split('.')
         let currentVal
         if (firstCharacter === firstCharacter.toUpperCase()) {
-
             currentVal = _.get(this.root, pathArr)
         } else {
             currentVal = _.get(this.root[pageName], pathArr)
@@ -355,7 +380,16 @@ export default class CADL {
 
     /**
      * 
-     * @param action 
+     * @param ProcessPopulateArgs 
+     * @param ProcessPopulateArgs.source  Record<string, any> -item being de-referenced
+     * @param ProcessPopulateArgs.lookFor  string[] -reference tokens to look for e.g ['.','..']
+     * @param ProcessPopulateArgs.pageName?  string
+     * @param ProcessPopulateArgs.skip?  string[] -keys that should not be de-referenced e.g ['name','country']
+     * @param ProcessPopulateArgs.withFns?  boolean -choose to attach ecos functions to the source
+     * 
+     * @returns Record<string, any> -the processed/de-referenced object
+     * 
+     * - used to populate the references 
      */
     private processPopulate({
         source,
@@ -601,10 +635,12 @@ export default class CADL {
 
     /**
      * 
-     * @param params
-     *  params.dataKey string
-     *  params.dataObject Record<string, any>
-     *  params.dataObjectKey string
+     * @param UpdateObjectArgs
+     * @param UpdateObjectArgs.dataKey string
+     * @param UpdateObjectArgs.dataObject Record<string, any>
+     * @param UpdateObjectArgs.dataObjectKey string
+     * 
+     * -used for actionType updateObject
      */
     public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: any, dataObjectKey?: string }) {
         const location = this.root
@@ -723,8 +759,9 @@ export default class CADL {
 
     /**
      * 
-     * @param path string
-     * @param value any
+     * @param SetValueArgs
+     * @param SetValueArgs.path string
+     * @param SetValueArgs.value any
      * 
      * - set value to a given path. Assume the path begins at the root.
      */
@@ -736,8 +773,9 @@ export default class CADL {
 
     /**
      * 
-     * @param path string
-     * @param value any
+     * @param AddValueArgs 
+     * @param AddValueArgs.path string
+     * @param AddValueArgs.value any
      * 
      * - add value to a given path. Assume the path begins at the root.
      */
@@ -755,8 +793,9 @@ export default class CADL {
 
     /**
      * 
-     * @param path string
-     * @param predicate Record<string, number | string>
+     * @param RemoveValue 
+     * @param RemoveValue.path string
+     * @param RemoveValue.Predicate Record<string, number | string>
      * 
      * - remove value from a given path. Assume the path begins at the root.
      */
@@ -780,13 +819,23 @@ export default class CADL {
 
     /**
      * 
-     * @param path string
-     * @param predicate Record<string, number | string>
-     * @param value any
+     * @param ReplaceValueArgs 
+     * @param ReplaceValueArgs.path string
+     * @param ReplaceValueArgs.predicate Record<string, number | string>
+     * @param ReplaceValueArgs.value any
      * 
      * - replace value at a given path. Assume the path begins at the root.
      */
-    public replaceValue({ path, predicate, value }: { path: string, predicate: Record<string, number | string>, value: any }): void {
+    public replaceValue({
+        path,
+        predicate,
+        value
+    }: {
+        path: string,
+        predicate: Record<string,
+            number | string>,
+        value: any
+    }): void {
         let pathArr = path.split('.')
         let currVal = _.get(this.root, pathArr)
         if (currVal && Array.isArray(currVal)) {
@@ -807,6 +856,7 @@ export default class CADL {
         }
         return
     }
+
 
     public resetReferences(pageName: string) {
         const pageRefs = _.cloneDeep(this.root.refs[pageName])
@@ -836,9 +886,8 @@ export default class CADL {
 
     public set baseUrl(baseUrl) {
         this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
-
-
     }
+
     public get cadlBaseUrl() {
         return this._cadlBaseUrl
     }
@@ -896,7 +945,6 @@ export default class CADL {
     public getConfig() {
         return store.getConfig()
     }
-
 
     /**
      * Only able to be set when env = development
