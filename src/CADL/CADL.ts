@@ -125,6 +125,7 @@ export default class CADL {
                 lookFor: ['.', '..', '='],
             })
             this.root = { ...this.root, ...processedBasePage }
+
         }
 
         if (preload && preload.length) {
@@ -173,6 +174,15 @@ export default class CADL {
             }
         }
 
+        let localStorageGlobal = localStorage.getItem('Global')
+        if (localStorageGlobal) {
+            try {
+                localStorageGlobal = JSON.parse(localStorageGlobal)
+            } catch (error) {
+                console.log(error)
+            }
+            this.root = { ...this.root, Global: localStorageGlobal }
+        }
         this.dispatch({ type: 'update-map' })
     }
 
@@ -310,6 +320,7 @@ export default class CADL {
         })
         let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
         this.root = { ...this.root, ...replaceUpdateJob2 }
+
         this.dispatch({ type: 'update-map' })
     }
 
@@ -404,15 +415,7 @@ export default class CADL {
         skip?: string[],
         withFns?: boolean
     }): Record<string, any> {
-        // let localStorageRoot = {}
-        // try {
-        //     const root = localStorage.getItem('root')
-        //     if (root) {
-        //         localStorageRoot = JSON.parse(root)
-        //     }
-        // } catch (error) {
-        //     console.log(error)
-        // }
+
         let sourceCopy = _.cloneDeep(source)
         let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
         const sourceCopyWithRootKeys = populateKeys({
@@ -456,15 +459,7 @@ export default class CADL {
     private dispatch(action: { type: string, payload?: any }) {
         switch (action.type) {
             case ('populate'): {
-                // let localStorageRoot = {}
-                // try {
-                //     const root = localStorage.getItem('root')
-                //     if (root) {
-                //         localStorageRoot = JSON.parse(root)
-                //     }
-                // } catch (error) {
-                //     console.log(error)
-                // }
+
                 const { pageName } = action.payload
                 const pageObjectCopy = _.cloneDeep(this.root[pageName])
                 const boundDispatch = this.dispatch.bind(this)
@@ -491,6 +486,7 @@ export default class CADL {
                 })
 
                 this.root[pageName] = withFNs
+                this.dispatch({ type: 'update-localStorage' })
                 break
             }
             case ('update-data'): {
@@ -520,6 +516,8 @@ export default class CADL {
                     _.set(this.root[pageName], pathArr, mergedVal)
                 }
 
+                this.dispatch({ type: 'update-localStorage' })
+
                 return
             }
             case ('get-data'): {
@@ -529,15 +527,7 @@ export default class CADL {
                 return currentVal
             }
             case ('eval-object'): {
-                // let localStorageRoot = {}
-                // try {
-                //     const root = localStorage.getItem('root')
-                //     if (root) {
-                //         localStorageRoot = JSON.parse(root)
-                //     }
-                // } catch (error) {
-                //     console.log(error)
-                // }
+
                 const { pageName, updateObject } = action.payload
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
@@ -589,7 +579,12 @@ export default class CADL {
                         }
                     }
                 })
+                //populates Global because this object is instantiated once 
+                //unlike pages that are instantiated multiple times and can be repopulated 
+                //when they are loaded again
                 this.dispatch({ type: 'populate', payload: { pageName: 'Global' } })
+
+                //update the localStorage root
                 this.dispatch(
                     {
                         type: 'update-localStorage',
@@ -598,7 +593,7 @@ export default class CADL {
                 break
             }
             case ('update-localStorage'): {
-                localStorage.setItem('root', JSON.stringify(this.root))
+                localStorage.setItem('Global', JSON.stringify(this.root?.Global))
                 break
             }
             case ('update-map'): {
@@ -607,7 +602,7 @@ export default class CADL {
                 break
             }
             case ('add-fn'): {
-
+                //actions for page currently used for signIn 
                 const { pageName, fn } = action.payload
                 if (this.root.actions[pageName]) {
                     this.root.actions[pageName].update = fn
@@ -617,6 +612,7 @@ export default class CADL {
                 break
             }
             case ('save-ref'): {
+                //saves path to references as object is populated
                 const { pageName, ref, path } = action.payload
                 if (this.root.refs[pageName]) {
                     this.root.refs[pageName][path] = ref
@@ -653,6 +649,10 @@ export default class CADL {
         const pathArr = path.split('.')
         const newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject
         _.set(location, pathArr, newVal)
+
+        this.dispatch({
+            type: 'update-localStorage'
+        })
     }
 
     /**

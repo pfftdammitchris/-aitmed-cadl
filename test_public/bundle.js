@@ -70811,10 +70811,10 @@
 	}
 	/**
 	 * 
-	 * @param params {}
-	 * @param params.source Record<string, any>
-	 * @param params.lookFor string
-	 * @param params.locations Record<string, any>[]
+	 * @param PopulateKeysArgs {}
+	 * @param PopulateKeysArgs.source Record<string, any>
+	 * @param PopulateKeysArgs.lookFor string
+	 * @param PopulateKeysArgs.locations Record<string, any>[]
 	 * @returns Record<string, any>
 	 * - merges source object with objects in locations where keys match lookFor
 	 */
@@ -70885,8 +70885,7 @@
 	        }); //TODO: pending unit test
 
 
-	        output = mergeDeep(_mergedObjects, output); // output = { ...mergedObjects, ...output }
-
+	        output = mergeDeep(_mergedObjects, output);
 	        delete output[key];
 	      }
 	    } else if (isObject$5(output[key])) {
@@ -71834,12 +71833,13 @@
 	  }
 	}
 	/**
-	 * 
-	 * @param updateObject Record<string, any>
-	 * @param dispatch Function
+	 * @param EvalStateArgs
+	 * @param EvalStateArgs.pageName string
+	 * @param EvalStateArgs.updateObject Record<string, any>
+	 * @param EvalStateArgs.dispatch Function
 	 * @returns Function
 	 *
-	 *  - returns a function that is used to update the global state of the CADL class
+	 *  - returns a function that is used to evalutate actionType evalObject
 	 */
 
 
@@ -71873,12 +71873,12 @@
 	  }));
 	}
 	/**
-	 * 
-	 * @param cadlObject Record<string, any>
-	 * @param dispatch Function
+	 * @param ReplaceEvalObjectArgs
+	 * @param ReplaceEvalObjectArgs.cadlObject Record<string, any>
+	 * @param ReplaceEvalObjectArgs.dispatch Function
 	 * @returns Record<string, any>
 	 * 
-	 * - replaces the eval object, if any, with a function that performs the the actions detailed in the eval object 
+	 * - replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
 	 */
 
 
@@ -71932,10 +71932,14 @@
 	  return cadlCopy;
 	}
 	/**
+	 * @param PopulateStringArgs
+	 * @param PopulateStringArgs.source  string -object that has values that need to be replaced
+	 * @param PopulateStringArgs.lookFor string -item to look for in object
+	 * @param PopulateStringArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
+	 * @param PopulateStringArgs.path string
+	 * @param PopulateStringArgs.dispatch Function
+	 * @param PopulateStringArgs.pageName string
 	 * 
-	 * @param source  string -object that has values that need to be replaced
-	 * @param lookFor string -item to look for in object
-	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
 	 * @returns Record<string. any> 
 	 */
 
@@ -72050,11 +72054,15 @@
 	  return source;
 	}
 	/**
+	 * @param PopulateArrayArgs
+	 * @param PopulateArrayArgs.source  any[] -object that has values that need to be replaced
+	 * @param PopulateArrayArgs.lookFor string -item to look for in object
+	 * @param PopulateArrayArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
+	 * @param PopulateArrayArgs.path string[]
+	 * @param PopulateArrayArgs.dispatch Function
+	 * @param PopulateArrayArgs.pageName string
 	 * 
-	 * @param source  any[] -object that has values that need to be replaced
-	 * @param lookFor string -item to look for in object
-	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
-	 * @returns Record<string. any> 
+	 * @returns any[] 
 	 */
 
 
@@ -72112,10 +72120,15 @@
 	  return replacement;
 	}
 	/**
+	 * @param PopulateObjectArgs
+	 * @param PopulateObjectArgs.source  Record<string, any> -object that has values that need to be replaced
+	 * @param PopulateObjectArgs.lookFor string -item to look for in object
+	 * @param PopulateObjectArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
+	 * @param PopulateObjectArgs.skip string[]
+	 * @param PopulateObjectArgs.path string[]
+	 * @param PopulateObjectArgs.dispatch Function
+	 * @param PopulateObjectArgs.pageName string
 	 * 
-	 * @param source  Record<string, any> -object that has values that need to be replaced
-	 * @param lookFor string -item to look for in object
-	 * @param locations Record<string, any>[] -array of objects that may contain the values for the source object
 	 * @returns Record<string. any> 
 	 */
 
@@ -72175,6 +72188,7 @@
 	  return sourceCopy;
 	}
 	/**
+	 * @param dispatch Function
 	 * @returns Record<string, Function>
 	 */
 
@@ -72279,6 +72293,18 @@
 	    }()
 	  };
 	}
+	/**
+	 * 
+	 * @param PopulateValsArgs 
+	 * @param PopulateValsArgs.source Record<string, any>
+	 * @param PopulateValsArgs.lookFor string[]
+	 * @param PopulateValsArgs.locations any[]
+	 * @param PopulateValsArgs.skip string[]
+	 * @param PopulateValsArgs.pageName string
+	 * @param PopulateValsArgs.dispatch Function
+	 * @returns Record<string, any>
+	 */
+
 
 	function populateVals(_ref23) {
 	  var source = _ref23.source,
@@ -72313,6 +72339,12 @@
 
 	  return sourceCopy;
 	}
+	/**
+	 * 
+	 * @param source Record<string, any>
+	 * @returns Record<string, any>
+	 */
+
 
 	function replaceUint8ArrayWithBase64(source) {
 	  var sourceCopy = cloneDeep_1(source);
@@ -72345,6 +72377,13 @@
 	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	var CADL = /*#__PURE__*/function () {
+	  /**
+	   * 
+	   * @param CADLARGS
+	   * @param CADLARGS.env string 
+	   * @param CADLARGS.configUrl string 
+	   * @param CADLARGS.cadlVersion 'test' | 'stable' 
+	   */
 	  function CADL(_ref) {
 	    var env = _ref.env,
 	        configUrl = _ref.configUrl,
@@ -72379,14 +72418,17 @@
 	    this._cadlVersion = cadlVersion;
 	  }
 	  /**
-	   * -loads config if not already loaded
-	   * 
-	   * -sets CADL version, baseUrl, assetsUrl, and root
+	   * @param InitArgs 
+	   * @param InitArgs.BaseDataModel Record<string, any>
+	   * @param InitArgs.BaseCSS Record<string, any>
+	   * @param InitArgs.BasePage Record<string, any>
 	   * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
 	   * @throws UnableToParseYAML -if unable to parse yaml file
 	   * @throws UnableToLoadConfig -if unable to load config data
+	   * 
+	   * -loads config if not already loaded
+	   * -sets CADL version, baseUrl, assetsUrl, and root
 	   */
-	  //TODO: add a force parameter to allow user to force init again
 
 
 	  createClass(CADL, [{
@@ -72422,6 +72464,7 @@
 	            _processedBasePage,
 	            rawPage,
 	            processedRawPage,
+	            localStorageGlobal,
 	            _args = arguments;
 
 	        return regenerator.wrap(function _callee$(_context) {
@@ -72476,7 +72519,7 @@
 	                _this$cadlEndpoint = this.cadlEndpoint, baseUrl = _this$cadlEndpoint.baseUrl, assetsUrl = _this$cadlEndpoint.assetsUrl, preload = _this$cadlEndpoint.preload; //set baseUrl and assets Url
 
 	                this.baseUrl = baseUrl;
-	                this.assetsUrl = assetsUrl;
+	                this.assetsUrl = assetsUrl; //set overrides of Base Objects
 
 	                if (BaseDataModel) {
 	                  processedBaseDataModel = this.processPopulate({
@@ -72621,11 +72664,25 @@
 	                return _context.finish(74);
 
 	              case 77:
+	                localStorageGlobal = localStorage.getItem('Global');
+
+	                if (localStorageGlobal) {
+	                  try {
+	                    localStorageGlobal = JSON.parse(localStorageGlobal);
+	                  } catch (error) {
+	                    console.log(error);
+	                  }
+
+	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), {}, {
+	                    Global: localStorageGlobal
+	                  });
+	                }
+
 	                this.dispatch({
 	                  type: 'update-map'
 	                });
 
-	              case 78:
+	              case 80:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -72641,13 +72698,17 @@
 	    }()
 	    /**
 	     * 
-	     * @param pageName 
+	     * @param pageName string
+	     * @param skip string[] -denotes the keys to skip in the population process 
+	     * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
 	     * 
-	     * - initiates cadlObject for page specified
 	     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
 	     * @throws UnableToParseYAML -if unable to parse yaml file
 	     * @throws UnableToExecuteFn -if something goes wrong while executing any init function
+	     * 
+	     * - initiates cadlObject for page specified
 	     */
+	    //TODO: extract init functionality to use only runInit()
 
 	  }, {
 	    key: "initPage",
@@ -72888,6 +72949,7 @@
 	      return initPage;
 	    }()
 	    /**
+	     * @param pageName string
 	     * @returns CADL_OBJECT
 	     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
 	     * @throws UnableToParseYAML -if unable to parse yaml file
@@ -73000,6 +73062,7 @@
 	    }()
 	    /**
 	     * 
+	     * @param pageName string
 	     * @param dataKey string
 	     * @returns any
 	     * 
@@ -73024,7 +73087,16 @@
 	    }
 	    /**
 	     * 
-	     * @param action 
+	     * @param ProcessPopulateArgs 
+	     * @param ProcessPopulateArgs.source  Record<string, any> -item being de-referenced
+	     * @param ProcessPopulateArgs.lookFor  string[] -reference tokens to look for e.g ['.','..']
+	     * @param ProcessPopulateArgs.pageName?  string
+	     * @param ProcessPopulateArgs.skip?  string[] -keys that should not be de-referenced e.g ['name','country']
+	     * @param ProcessPopulateArgs.withFns?  boolean -choose to attach ecos functions to the source
+	     * 
+	     * @returns Record<string, any> -the processed/de-referenced object
+	     * 
+	     * - used to populate the references 
 	     */
 
 	  }, {
@@ -73037,15 +73109,6 @@
 	          _ref3$withFns = _ref3.withFns,
 	          withFns = _ref3$withFns === void 0 ? false : _ref3$withFns;
 
-	      // let localStorageRoot = {}
-	      // try {
-	      //     const root = localStorage.getItem('root')
-	      //     if (root) {
-	      //         localStorageRoot = JSON.parse(root)
-	      //     }
-	      // } catch (error) {
-	      //     console.log(error)
-	      // }
 	      var sourceCopy = cloneDeep_1(source);
 
 	      var localRoot = pageName ? sourceCopy[pageName] : sourceCopy;
@@ -73095,15 +73158,6 @@
 	      switch (action.type) {
 	        case 'populate':
 	          {
-	            // let localStorageRoot = {}
-	            // try {
-	            //     const root = localStorage.getItem('root')
-	            //     if (root) {
-	            //         localStorageRoot = JSON.parse(root)
-	            //     }
-	            // } catch (error) {
-	            //     console.log(error)
-	            // }
 	            var pageName = action.payload.pageName;
 
 	            var pageObjectCopy = cloneDeep_1(this.root[pageName]);
@@ -73129,6 +73183,9 @@
 	              dispatch: boundDispatch
 	            });
 	            this.root[pageName] = withFNs;
+	            this.dispatch({
+	              type: 'update-localStorage'
+	            });
 	            break;
 	          }
 
@@ -73169,6 +73226,9 @@
 	              set_1(this.root[_pageName], pathArr, _mergedVal);
 	            }
 
+	            this.dispatch({
+	              type: 'update-localStorage'
+	            });
 	            return;
 	          }
 
@@ -73187,15 +73247,6 @@
 
 	        case 'eval-object':
 	          {
-	            // let localStorageRoot = {}
-	            // try {
-	            //     const root = localStorage.getItem('root')
-	            //     if (root) {
-	            //         localStorageRoot = JSON.parse(root)
-	            //     }
-	            // } catch (error) {
-	            //     console.log(error)
-	            // }
 	            var _action$payload3 = action.payload,
 	                _pageName3 = _action$payload3.pageName,
 	                updateObject = _action$payload3.updateObject;
@@ -73296,13 +73347,17 @@
 	              return function (_x4) {
 	                return _ref4.apply(this, arguments);
 	              };
-	            }());
+	            }()); //populates Global because this object is instantiated once 
+	            //unlike pages that are instantiated multiple times and can be repopulated 
+	            //when they are loaded again
+
 	            this.dispatch({
 	              type: 'populate',
 	              payload: {
 	                pageName: 'Global'
 	              }
-	            });
+	            }); //update the localStorage root
+
 	            this.dispatch({
 	              type: 'update-localStorage'
 	            });
@@ -73311,7 +73366,9 @@
 
 	        case 'update-localStorage':
 	          {
-	            localStorage.setItem('root', JSON.stringify(this.root));
+	            var _this$root;
+
+	            localStorage.setItem('Global', JSON.stringify((_this$root = this.root) === null || _this$root === void 0 ? void 0 : _this$root.Global));
 	            break;
 	          }
 
@@ -73324,6 +73381,7 @@
 
 	        case 'add-fn':
 	          {
+	            //actions for page currently used for signIn 
 	            var _action$payload4 = action.payload,
 	                _pageName4 = _action$payload4.pageName,
 	                fn = _action$payload4.fn;
@@ -73341,6 +73399,7 @@
 
 	        case 'save-ref':
 	          {
+	            //saves path to references as object is populated
 	            var _action$payload5 = action.payload,
 	                _pageName5 = _action$payload5.pageName,
 	                ref = _action$payload5.ref,
@@ -73364,10 +73423,12 @@
 	    }
 	    /**
 	     * 
-	     * @param params
-	     *  params.dataKey string
-	     *  params.dataObject Record<string, any>
-	     *  params.dataObjectKey string
+	     * @param UpdateObjectArgs
+	     * @param UpdateObjectArgs.dataKey string
+	     * @param UpdateObjectArgs.dataObject Record<string, any>
+	     * @param UpdateObjectArgs.dataObjectKey string
+	     * 
+	     * -used for actionType updateObject
 	     */
 
 	  }, {
@@ -73389,6 +73450,10 @@
 	      var newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject;
 
 	      set_1(location, pathArr, newVal);
+
+	      this.dispatch({
+	        type: 'update-localStorage'
+	      });
 	    }
 	    /**
 	     * 
@@ -73583,8 +73648,9 @@
 	    }
 	    /**
 	     * 
-	     * @param path string
-	     * @param value any
+	     * @param SetValueArgs
+	     * @param SetValueArgs.path string
+	     * @param SetValueArgs.value any
 	     * 
 	     * - set value to a given path. Assume the path begins at the root.
 	     */
@@ -73602,8 +73668,9 @@
 	    }
 	    /**
 	     * 
-	     * @param path string
-	     * @param value any
+	     * @param AddValueArgs 
+	     * @param AddValueArgs.path string
+	     * @param AddValueArgs.value any
 	     * 
 	     * - add value to a given path. Assume the path begins at the root.
 	     */
@@ -73629,8 +73696,9 @@
 	    }
 	    /**
 	     * 
-	     * @param path string
-	     * @param predicate Record<string, number | string>
+	     * @param RemoveValue 
+	     * @param RemoveValue.path string
+	     * @param RemoveValue.Predicate Record<string, number | string>
 	     * 
 	     * - remove value from a given path. Assume the path begins at the root.
 	     */
@@ -73650,10 +73718,10 @@
 
 	          for (var _i = 0, _Object$entries = Object.entries(predicate); _i < _Object$entries.length; _i++) {
 	            var _Object$entries$_i = slicedToArray(_Object$entries[_i], 2),
-	                _key = _Object$entries$_i[0],
+	                key = _Object$entries$_i[0],
 	                val = _Object$entries$_i[1];
 
-	            if (elem[_key] === val) {
+	            if (elem[key] === val) {
 	              passes = false;
 	            }
 	          }
@@ -73666,9 +73734,10 @@
 	    }
 	    /**
 	     * 
-	     * @param path string
-	     * @param predicate Record<string, number | string>
-	     * @param value any
+	     * @param ReplaceValueArgs 
+	     * @param ReplaceValueArgs.path string
+	     * @param ReplaceValueArgs.predicate Record<string, number | string>
+	     * @param ReplaceValueArgs.value any
 	     * 
 	     * - replace value at a given path. Assume the path begins at the root.
 	     */
@@ -73691,11 +73760,11 @@
 	        for (var i = 0; i < currValCopy.length; i++) {
 	          for (var _i2 = 0, _Object$entries2 = Object.entries(predicate); _i2 < _Object$entries2.length; _i2++) {
 	            var _Object$entries2$_i = slicedToArray(_Object$entries2[_i2], 2),
-	                _key2 = _Object$entries2$_i[0],
+	                key = _Object$entries2$_i[0],
 	                val = _Object$entries2$_i[1];
 
 	            //TODO:refac to account for multiple conditions
-	            if (currValCopy[i][_key2] === val) {
+	            if (currValCopy[i][key] === val) {
 	              valIndex = i;
 	            }
 	          }
