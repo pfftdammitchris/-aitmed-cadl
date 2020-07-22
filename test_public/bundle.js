@@ -73608,33 +73608,30 @@
 	  }, {
 	    key: "setFromLocalStorage",
 	    value: function setFromLocalStorage(key) {
-	      var localStorageRoot;
+	      var localStorageGlobal;
 
 	      try {
-	        var root = localStorage.getItem('root');
+	        var Global = localStorage.getItem('Global');
 
-	        if (root) {
-	          localStorageRoot = JSON.parse(root);
+	        if (Global) {
+	          localStorageGlobal = JSON.parse(Global);
 	        }
 	      } catch (error) {
 	        console.log(error);
 	      }
 
-	      if (localStorageRoot) {
-	        var _localStorageRoot = localStorageRoot,
-	            Global = _localStorageRoot.Global;
-
+	      if (localStorageGlobal) {
 	        switch (key) {
 	          case "user":
 	            {
-	              var user = Global.currentUser.vertex;
+	              var user = localStorageGlobal.currentUser.vertex;
 	              this.root.Global.currentUser.vertex = user;
 	              break;
 	            }
 
 	          case "meetroom":
 	            {
-	              var currMeetroom = Global.meetroom.edge;
+	              var currMeetroom = localStorageGlobal.meetroom.edge;
 	              this.root.Global.meetroom.edge = currMeetroom;
 	              break;
 	            }
