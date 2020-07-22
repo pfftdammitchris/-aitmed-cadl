@@ -728,25 +728,24 @@ export default class CADL {
      * -sets either the user or meetroom value from localStorage to the corresponding root value in memory
      */
     public setFromLocalStorage(key: "user" | "meetroom") {
-        let localStorageRoot
+        let localStorageGlobal
         try {
-            const root = localStorage.getItem('root')
-            if (root) {
-                localStorageRoot = JSON.parse(root)
+            const Global = localStorage.getItem('Global')
+            if (Global) {
+                localStorageGlobal = JSON.parse(Global)
             }
         } catch (error) {
             console.log(error)
         }
-        if (localStorageRoot) {
-            const { Global } = localStorageRoot
+        if (localStorageGlobal) {
             switch (key) {
                 case ("user"): {
-                    let user = Global.currentUser.vertex
+                    let user = localStorageGlobal.currentUser.vertex
                     this.root.Global.currentUser.vertex = user
                     break
                 }
                 case ("meetroom"): {
-                    let currMeetroom = Global.meetroom.edge
+                    let currMeetroom = localStorageGlobal.meetroom.edge
                     this.root.Global.meetroom.edge = currMeetroom
                     break
                 }
