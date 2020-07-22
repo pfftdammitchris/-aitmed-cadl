@@ -278,7 +278,6 @@ function attachFns({ cadlObject,
                                 //merging existing name field and incoming name field
                                 let parsedType = parseInt(currentVal.type)
                                 let mergedVal = { ...currentVal, type: parsedType }
-
                                 if (name) {
                                     mergedVal = mergeDeep(mergedVal, { name })
                                 }

@@ -70,14 +70,15 @@ export default (async function () {
     // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
     // debugger
     // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
-    await cadl.root['MeetingLobbyStart'].save[0][1]()
+    const ed = await cadl.root['MeetingLobbyStart'].save[0][1]()
     debugger
-
+    cadl.root.VideoChatObjStore.reference = ed
+    debugger
     await cadl.initPage('InviteeInfo01')
     debugger
     await cadl.root['InviteeInfo01'].save[0][1]({ firstName: "Stan", lastName: "koko" })
     debugger
-    await cadl.initPage('VideoChat')
+    await cadl.initPage('VideoChat', [], { builtIn: { videoChat: ({ roomId, accessToken }) => { console.log(roomId); console.log(accessToken) } } })
     debugger
     await cadl.initPage('MeetingLobbyClose')
     debugger

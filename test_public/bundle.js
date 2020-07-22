@@ -72654,6 +72654,8 @@
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
 	        var skip,
+	            options,
+	            builtIn,
 	            pageCADL,
 	            processedFormData,
 	            processedWithFns,
@@ -72665,6 +72667,7 @@
 	            actionType,
 	            dataKey,
 	            dataObject,
+	            funcName,
 	            updatedPage,
 	            populatedUpdatedPage,
 	            populatedUpdatedPageWithFns,
@@ -72676,20 +72679,27 @@
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
 	                skip = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
+	                options = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
 
 	                if (this.cadlEndpoint) {
-	                  _context2.next = 4;
+	                  _context2.next = 5;
 	                  break;
 	                }
 
-	                _context2.next = 4;
+	                _context2.next = 5;
 	                return this.init();
 
-	              case 4:
-	                _context2.next = 6;
+	              case 5:
+	                builtIn = options.builtIn;
+
+	                if (builtIn && isObject_1(builtIn)) {
+	                  this.builtIn = _objectSpread$d(_objectSpread$d({}, this.builtIn), builtIn);
+	                }
+
+	                _context2.next = 9;
 	                return this.getPage(pageName);
 
-	              case 6:
+	              case 9:
 	                pageCADL = _context2.sent;
 
 	                //FOR FORMDATA
@@ -72726,7 +72736,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 58;
+	                  _context2.next = 63;
 	                  break;
 	                }
 
@@ -72734,9 +72744,9 @@
 	                  return index;
 	                });
 
-	              case 16:
+	              case 19:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 58;
+	                  _context2.next = 63;
 	                  break;
 	                }
 
@@ -72744,77 +72754,86 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 30;
+	                  _context2.next = 33;
 	                  break;
 	                }
 
-	                _context2.prev = 20;
-	                _context2.next = 23;
+	                _context2.prev = 23;
+	                _context2.next = 26;
 	                return command();
 
-	              case 23:
-	                _context2.next = 28;
+	              case 26:
+	                _context2.next = 31;
 	                break;
-
-	              case 25:
-	                _context2.prev = 25;
-	                _context2.t0 = _context2["catch"](20);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 28:
-	                _context2.next = 50;
+	                _context2.prev = 28;
+	                _context2.t0 = _context2["catch"](23);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
+
+	              case 31:
+	                _context2.next = 55;
 	                break;
 
-	              case 30:
+	              case 33:
 	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context2.next = 40;
+	                  _context2.next = 45;
 	                  break;
 	                }
 
-	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject;
+	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 35 : 37;
+	                _context2.next = _context2.t1 === 'updateObject' ? 38 : _context2.t1 === 'builtIn' ? 40 : 42;
 	                break;
 
-	              case 35:
+	              case 38:
 	                this.updateObject({
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 38);
-
-	              case 37:
-	                return _context2.abrupt("return");
-
-	              case 38:
-	                _context2.next = 50;
-	                break;
+	                return _context2.abrupt("break", 43);
 
 	              case 40:
+	                if (funcName === 'videoChat') {
+	                  if (funcName in this.builtIn && typeof this.builtIn[funcName] === 'function') {
+	                    this.builtIn[funcName](command);
+	                  }
+	                }
+
+	                return _context2.abrupt("break", 43);
+
+	              case 42:
+	                return _context2.abrupt("return");
+
+	              case 43:
+	                _context2.next = 55;
+	                break;
+
+	              case 45:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 50;
+	                  _context2.next = 55;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 50;
+	                  _context2.next = 55;
 	                  break;
 	                }
 
-	                _context2.prev = 42;
-	                _context2.next = 45;
+	                _context2.prev = 47;
+	                _context2.next = 50;
 	                return command[0][1]();
 
-	              case 45:
-	                _context2.next = 50;
+	              case 50:
+	                _context2.next = 55;
 	                break;
 
-	              case 47:
-	                _context2.prev = 47;
-	                _context2.t2 = _context2["catch"](42);
+	              case 52:
+	                _context2.prev = 52;
+	                _context2.t2 = _context2["catch"](47);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 50:
+	              case 55:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -72831,10 +72850,10 @@
 	                processedPage = populatedUpdatedPageWithFns;
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context2.next = 16;
+	                _context2.next = 19;
 	                break;
 
-	              case 58:
+	              case 63:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -72854,12 +72873,12 @@
 	                  type: 'update-map'
 	                });
 
-	              case 62:
+	              case 67:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[20, 25], [42, 47]]);
+	        }, _callee2, this, [[23, 28], [47, 52]]);
 	      }));
 
 	      function initPage(_x) {
@@ -73631,10 +73650,10 @@
 
 	          for (var _i = 0, _Object$entries = Object.entries(predicate); _i < _Object$entries.length; _i++) {
 	            var _Object$entries$_i = slicedToArray(_Object$entries[_i], 2),
-	                key = _Object$entries$_i[0],
+	                _key = _Object$entries$_i[0],
 	                val = _Object$entries$_i[1];
 
-	            if (elem[key] === val) {
+	            if (elem[_key] === val) {
 	              passes = false;
 	            }
 	          }
@@ -73672,11 +73691,11 @@
 	        for (var i = 0; i < currValCopy.length; i++) {
 	          for (var _i2 = 0, _Object$entries2 = Object.entries(predicate); _i2 < _Object$entries2.length; _i2++) {
 	            var _Object$entries2$_i = slicedToArray(_Object$entries2[_i2], 2),
-	                key = _Object$entries2$_i[0],
+	                _key2 = _Object$entries2$_i[0],
 	                val = _Object$entries2$_i[1];
 
 	            //TODO:refac to account for multiple conditions
-	            if (currValCopy[i][key] === val) {
+	            if (currValCopy[i][_key2] === val) {
 	              valIndex = i;
 	            }
 	          }
@@ -73831,7 +73850,7 @@
 
 	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	  var cadl, vc;
+	  var cadl, vc, ed;
 	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
@@ -73907,29 +73926,41 @@
 	          return cadl.root['MeetingLobbyStart'].save[0][1]();
 
 	        case 27:
+	          ed = _context.sent;
 	          debugger;
-	          _context.next = 30;
-	          return cadl.initPage('InviteeInfo01');
-
-	        case 30:
+	          cadl.root.VideoChatObjStore.reference = ed;
 	          debugger;
 	          _context.next = 33;
+	          return cadl.initPage('InviteeInfo01');
+
+	        case 33:
+	          debugger;
+	          _context.next = 36;
 	          return cadl.root['InviteeInfo01'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 33:
-	          debugger;
-	          _context.next = 36;
-	          return cadl.initPage('VideoChat');
-
 	        case 36:
 	          debugger;
 	          _context.next = 39;
-	          return cadl.initPage('MeetingLobbyClose');
+	          return cadl.initPage('VideoChat', [], {
+	            builtIn: {
+	              videoChat: function videoChat(_ref2) {
+	                var roomId = _ref2.roomId,
+	                    accessToken = _ref2.accessToken;
+	                console.log(roomId);
+	                console.log(accessToken);
+	              }
+	            }
+	          });
 
 	        case 39:
+	          debugger;
+	          _context.next = 42;
+	          return cadl.initPage('MeetingLobbyClose');
+
+	        case 42:
 	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
@@ -74032,7 +74063,7 @@
 	          //     }
 	          // }
 
-	        case 53:
+	        case 56:
 	        case "end":
 	          return _context.stop();
 	      }

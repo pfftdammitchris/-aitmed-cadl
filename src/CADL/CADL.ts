@@ -170,9 +170,13 @@ export default class CADL {
      * @throws UnableToParseYAML -if unable to parse yaml file
      * @throws UnableToExecuteFn -if something goes wrong while executing any init function
      */
-    async initPage(pageName: string, skip: string[] = []) {
+    async initPage(pageName: string, skip: string[] = [], options: { builtIn?: Record<string, any>, [key: string]: any } = {}) {
         if (!this.cadlEndpoint) await this.init()
 
+        const { builtIn } = options
+        if (builtIn && isObject(builtIn)) {
+            this.builtIn = { ...this.builtIn, ...builtIn }
+        }
         let pageCADL = await this.getPage(pageName)
         //FOR FORMDATA
         //process formData
@@ -224,10 +228,18 @@ export default class CADL {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
                 } else if (isObject(command) && 'actionType' in command) {
-                    const { actionType, dataKey, dataObject }: any = command
+                    const { actionType, dataKey, dataObject, funcName }: any = command
                     switch (actionType) {
                         case ('updateObject'): {
                             this.updateObject({ dataKey, dataObject })
+                            break
+                        }
+                        case ('builtIn'): {
+                            if (funcName === 'videoChat') {
+                                if (funcName in this.builtIn && typeof this.builtIn[funcName] === 'function') {
+                                    this.builtIn[funcName](command)
+                                }
+                            }
                             break
                         }
                         default: {
