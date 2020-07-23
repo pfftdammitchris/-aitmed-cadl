@@ -72773,15 +72773,13 @@
 	                  // pageCADL = mergedPage
 	                }
 
-	                debugger;
 	                processedFormData = this.processPopulate({
 	                  source: pageCADL,
 	                  lookFor: ['.', '..', '='],
 	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                });
-	                debugger; //FOR FNS
+	                }); //FOR FNS
 	                //process components
 
 	                processedWithFns = this.processPopulate({
@@ -72790,8 +72788,7 @@
 	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                });
-	                debugger; // //replace updateObj with Fn
+	                }); // //replace updateObj with Fn
 
 	                boundDispatch = this.dispatch.bind(this); // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
 
@@ -72801,7 +72798,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 70;
+	                  _context2.next = 66;
 	                  break;
 	                }
 
@@ -72809,9 +72806,9 @@
 	                  return index;
 	                });
 
-	              case 22:
+	              case 19:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 70;
+	                  _context2.next = 66;
 	                  break;
 	                }
 
@@ -72819,94 +72816,94 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 36;
+	                  _context2.next = 33;
 	                  break;
 	                }
 
-	                _context2.prev = 26;
-	                _context2.next = 29;
+	                _context2.prev = 23;
+	                _context2.next = 26;
 	                return command();
 
-	              case 29:
-	                _context2.next = 34;
+	              case 26:
+	                _context2.next = 31;
 	                break;
 
-	              case 31:
-	                _context2.prev = 31;
-	                _context2.t0 = _context2["catch"](26);
+	              case 28:
+	                _context2.prev = 28;
+	                _context2.t0 = _context2["catch"](23);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
-	              case 34:
-	                _context2.next = 61;
+	              case 31:
+	                _context2.next = 58;
 	                break;
 
-	              case 36:
+	              case 33:
 	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context2.next = 51;
+	                  _context2.next = 48;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 41 : _context2.t1 === 'builtIn' ? 43 : 48;
+	                _context2.next = _context2.t1 === 'updateObject' ? 38 : _context2.t1 === 'builtIn' ? 40 : 45;
 	                break;
 
-	              case 41:
+	              case 38:
 	                this.updateObject({
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 49);
+	                return _context2.abrupt("break", 46);
 
-	              case 43:
+	              case 40:
 	                if (!(funcName === 'videoChat')) {
-	                  _context2.next = 47;
+	                  _context2.next = 44;
 	                  break;
 	                }
 
 	                if (!(funcName in this.builtIn && typeof this.builtIn[funcName] === 'function')) {
-	                  _context2.next = 47;
+	                  _context2.next = 44;
 	                  break;
 	                }
 
-	                _context2.next = 47;
+	                _context2.next = 44;
 	                return this.builtIn[funcName](command);
 
-	              case 47:
-	                return _context2.abrupt("break", 49);
+	              case 44:
+	                return _context2.abrupt("break", 46);
 
-	              case 48:
+	              case 45:
 	                return _context2.abrupt("return");
 
-	              case 49:
-	                _context2.next = 61;
+	              case 46:
+	                _context2.next = 58;
 	                break;
 
-	              case 51:
+	              case 48:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 61;
+	                  _context2.next = 58;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 61;
+	                  _context2.next = 58;
 	                  break;
 	                }
 
-	                _context2.prev = 53;
-	                _context2.next = 56;
+	                _context2.prev = 50;
+	                _context2.next = 53;
 	                return command[0][1]();
 
-	              case 56:
-	                _context2.next = 61;
+	              case 53:
+	                _context2.next = 58;
 	                break;
 
-	              case 58:
-	                _context2.prev = 58;
-	                _context2.t2 = _context2["catch"](53);
+	              case 55:
+	                _context2.prev = 55;
+	                _context2.t2 = _context2["catch"](50);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 61:
+	              case 58:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -72916,7 +72913,6 @@
 	                  skip: ['components'],
 	                  locations: [this.root[pageName]]
 	                });
-	                debugger;
 	                populatedUpdatedPageWithFns = attachFns({
 	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
 	                  dispatch: boundDispatch
@@ -72924,10 +72920,10 @@
 	                processedPage = populatedUpdatedPageWithFns;
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context2.next = 22;
+	                _context2.next = 19;
 	                break;
 
-	              case 70:
+	              case 66:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -72947,12 +72943,12 @@
 	                  type: 'update-map'
 	                });
 
-	              case 74:
+	              case 70:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[26, 31], [53, 58]]);
+	        }, _callee2, this, [[23, 28], [50, 55]]);
 	      }));
 
 	      function initPage(_x) {
