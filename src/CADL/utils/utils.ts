@@ -272,7 +272,8 @@ function attachFns({
 
                                 return res
                             }
-                            output = getFn(output)
+                            output = isPopulated(output) ? getFn(output) : output
+
                             break
                         }
                         case ('ce'): {
@@ -341,7 +342,8 @@ function attachFns({
                                 return null
                             }
 
-                            output = [`${output.dataKey}.name`, storeFn(output)]
+                            // output = [`${output.dataKey}.name`, storeFn(output)]
+                            output = isPopulated(output) ? [`${output.dataKey}.name`, storeFn(output)] : output
                             break
                         }
                         case ('rd'): {

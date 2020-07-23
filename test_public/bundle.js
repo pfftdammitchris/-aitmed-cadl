@@ -71122,7 +71122,7 @@
 	                  }));
 	                };
 
-	                output = getFn(output);
+	                output = isPopulated(output) ? getFn(output) : output;
 	                break;
 	              }
 
@@ -71258,9 +71258,10 @@
 	                      return _ref5.apply(this, arguments);
 	                    };
 	                  }();
-	                };
+	                }; // output = [`${output.dataKey}.name`, storeFn(output)]
 
-	                output = ["".concat(output.dataKey, ".name"), storeFn(output)];
+
+	                output = isPopulated(output) ? ["".concat(output.dataKey, ".name"), storeFn(output)] : output;
 	                break;
 	              }
 
@@ -72772,13 +72773,15 @@
 	                  // pageCADL = mergedPage
 	                }
 
+	                debugger;
 	                processedFormData = this.processPopulate({
 	                  source: pageCADL,
 	                  lookFor: ['.', '..', '='],
 	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                }); //FOR FNS
+	                });
+	                debugger; //FOR FNS
 	                //process components
 
 	                processedWithFns = this.processPopulate({
@@ -72787,7 +72790,8 @@
 	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                }); // //replace updateObj with Fn
+	                });
+	                debugger; // //replace updateObj with Fn
 
 	                boundDispatch = this.dispatch.bind(this); // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
 
@@ -72797,7 +72801,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 66;
+	                  _context2.next = 70;
 	                  break;
 	                }
 
@@ -72805,9 +72809,9 @@
 	                  return index;
 	                });
 
-	              case 19:
+	              case 22:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 66;
+	                  _context2.next = 70;
 	                  break;
 	                }
 
@@ -72815,94 +72819,94 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 33;
+	                  _context2.next = 36;
 	                  break;
 	                }
 
-	                _context2.prev = 23;
-	                _context2.next = 26;
+	                _context2.prev = 26;
+	                _context2.next = 29;
 	                return command();
 
-	              case 26:
-	                _context2.next = 31;
+	              case 29:
+	                _context2.next = 34;
 	                break;
-
-	              case 28:
-	                _context2.prev = 28;
-	                _context2.t0 = _context2["catch"](23);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 31:
-	                _context2.next = 58;
+	                _context2.prev = 31;
+	                _context2.t0 = _context2["catch"](26);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
+
+	              case 34:
+	                _context2.next = 61;
 	                break;
 
-	              case 33:
+	              case 36:
 	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context2.next = 48;
+	                  _context2.next = 51;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 38 : _context2.t1 === 'builtIn' ? 40 : 45;
+	                _context2.next = _context2.t1 === 'updateObject' ? 41 : _context2.t1 === 'builtIn' ? 43 : 48;
 	                break;
 
-	              case 38:
+	              case 41:
 	                this.updateObject({
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 46);
+	                return _context2.abrupt("break", 49);
 
-	              case 40:
+	              case 43:
 	                if (!(funcName === 'videoChat')) {
-	                  _context2.next = 44;
+	                  _context2.next = 47;
 	                  break;
 	                }
 
 	                if (!(funcName in this.builtIn && typeof this.builtIn[funcName] === 'function')) {
-	                  _context2.next = 44;
+	                  _context2.next = 47;
 	                  break;
 	                }
 
-	                _context2.next = 44;
+	                _context2.next = 47;
 	                return this.builtIn[funcName](command);
 
-	              case 44:
-	                return _context2.abrupt("break", 46);
-
-	              case 45:
-	                return _context2.abrupt("return");
-
-	              case 46:
-	                _context2.next = 58;
-	                break;
+	              case 47:
+	                return _context2.abrupt("break", 49);
 
 	              case 48:
+	                return _context2.abrupt("return");
+
+	              case 49:
+	                _context2.next = 61;
+	                break;
+
+	              case 51:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 58;
+	                  _context2.next = 61;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 58;
+	                  _context2.next = 61;
 	                  break;
 	                }
 
-	                _context2.prev = 50;
-	                _context2.next = 53;
+	                _context2.prev = 53;
+	                _context2.next = 56;
 	                return command[0][1]();
 
-	              case 53:
-	                _context2.next = 58;
+	              case 56:
+	                _context2.next = 61;
 	                break;
 
-	              case 55:
-	                _context2.prev = 55;
-	                _context2.t2 = _context2["catch"](50);
+	              case 58:
+	                _context2.prev = 58;
+	                _context2.t2 = _context2["catch"](53);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 58:
+	              case 61:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -72912,6 +72916,7 @@
 	                  skip: ['components'],
 	                  locations: [this.root[pageName]]
 	                });
+	                debugger;
 	                populatedUpdatedPageWithFns = attachFns({
 	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
 	                  dispatch: boundDispatch
@@ -72919,10 +72924,10 @@
 	                processedPage = populatedUpdatedPageWithFns;
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context2.next = 19;
+	                _context2.next = 22;
 	                break;
 
-	              case 66:
+	              case 70:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -72942,12 +72947,12 @@
 	                  type: 'update-map'
 	                });
 
-	              case 70:
+	              case 74:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[23, 28], [50, 55]]);
+	        }, _callee2, this, [[26, 31], [53, 58]]);
 	      }));
 
 	      function initPage(_x) {
