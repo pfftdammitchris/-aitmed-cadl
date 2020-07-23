@@ -72797,7 +72797,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 63;
+	                  _context2.next = 66;
 	                  break;
 	                }
 
@@ -72807,7 +72807,7 @@
 
 	              case 19:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 63;
+	                  _context2.next = 66;
 	                  break;
 	                }
 
@@ -72833,18 +72833,18 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 31:
-	                _context2.next = 55;
+	                _context2.next = 58;
 	                break;
 
 	              case 33:
 	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context2.next = 45;
+	                  _context2.next = 48;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 38 : _context2.t1 === 'builtIn' ? 40 : 42;
+	                _context2.next = _context2.t1 === 'updateObject' ? 38 : _context2.t1 === 'builtIn' ? 40 : 45;
 	                break;
 
 	              case 38:
@@ -72852,49 +72852,57 @@
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 43);
+	                return _context2.abrupt("break", 46);
 
 	              case 40:
-	                if (funcName === 'videoChat') {
-	                  if (funcName in this.builtIn && typeof this.builtIn[funcName] === 'function') {
-	                    this.builtIn[funcName](command);
-	                  }
+	                if (!(funcName === 'videoChat')) {
+	                  _context2.next = 44;
+	                  break;
 	                }
 
-	                return _context2.abrupt("break", 43);
+	                if (!(funcName in this.builtIn && typeof this.builtIn[funcName] === 'function')) {
+	                  _context2.next = 44;
+	                  break;
+	                }
 
-	              case 42:
-	                return _context2.abrupt("return");
+	                _context2.next = 44;
+	                return this.builtIn[funcName](command);
 
-	              case 43:
-	                _context2.next = 55;
-	                break;
+	              case 44:
+	                return _context2.abrupt("break", 46);
 
 	              case 45:
+	                return _context2.abrupt("return");
+
+	              case 46:
+	                _context2.next = 58;
+	                break;
+
+	              case 48:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 55;
+	                  _context2.next = 58;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 55;
+	                  _context2.next = 58;
 	                  break;
 	                }
 
-	                _context2.prev = 47;
-	                _context2.next = 50;
+	                _context2.prev = 50;
+	                _context2.next = 53;
 	                return command[0][1]();
 
-	              case 50:
-	                _context2.next = 55;
+	              case 53:
+	                _context2.next = 58;
 	                break;
 
-	              case 52:
-	                _context2.prev = 52;
-	                _context2.t2 = _context2["catch"](47);
+	              case 55:
+	                _context2.prev = 55;
+	                _context2.t2 = _context2["catch"](50);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 55:
+	              case 58:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -72914,7 +72922,7 @@
 	                _context2.next = 19;
 	                break;
 
-	              case 63:
+	              case 66:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -72934,12 +72942,12 @@
 	                  type: 'update-map'
 	                });
 
-	              case 67:
+	              case 70:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[23, 28], [47, 52]]);
+	        }, _callee2, this, [[23, 28], [50, 55]]);
 	      }));
 
 	      function initPage(_x) {

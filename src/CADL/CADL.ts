@@ -271,7 +271,7 @@ export default class CADL {
                         case ('builtIn'): {
                             if (funcName === 'videoChat') {
                                 if (funcName in this.builtIn && typeof this.builtIn[funcName] === 'function') {
-                                    this.builtIn[funcName](command)
+                                    await this.builtIn[funcName](command)
                                 }
                             }
                             break
