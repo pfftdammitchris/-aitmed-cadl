@@ -70825,7 +70825,7 @@
 	      lookFor = _ref.lookFor,
 	      locations = _ref.locations;
 
-	  var output = cloneDeep_1(source);
+	  var output = cloneDeep_1(source || {});
 
 	  Object.keys(output).forEach(function (key) {
 	    if (key.startsWith(lookFor)) {
@@ -71008,7 +71008,7 @@
 	        dispatch = _ref3.dispatch;
 
 	    //traverse through the page object and look for the api keyword
-	    var output = cloneDeep_1(cadlObject);
+	    var output = cloneDeep_1(cadlObject || {});
 
 	    if (isObject$5(output)) {
 	      Object.keys(output).forEach(function (key) {
@@ -71050,7 +71050,7 @@
 	                      while (1) {
 	                        switch (_context.prev = _context.next) {
 	                          case 0:
-	                            _cloneDeep2 = cloneDeep_1(output), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, id = _cloneDeep2.id, maxcount = _cloneDeep2.maxcount, type = _cloneDeep2.type, sCondition = _cloneDeep2.sCondition, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "id", "maxcount", "type", "sCondition"]);
+	                            _cloneDeep2 = cloneDeep_1(output || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, id = _cloneDeep2.id, maxcount = _cloneDeep2.maxcount, type = _cloneDeep2.type, sCondition = _cloneDeep2.sCondition, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "id", "maxcount", "type", "sCondition"]);
 	                            res = [];
 	                            idList = [];
 
@@ -71137,7 +71137,7 @@
 	                        while (1) {
 	                          switch (_context2.prev = _context2.next) {
 	                            case 0:
-	                              _cloneDeep3 = cloneDeep_1(output), dataKey = _cloneDeep3.dataKey; // const pathArr = dataKey.split('.')
+	                              _cloneDeep3 = cloneDeep_1(output || {}), dataKey = _cloneDeep3.dataKey; // const pathArr = dataKey.split('.')
 	                              //get current object name value
 
 	                              _dispatch = dispatch({
@@ -71276,7 +71276,7 @@
 	                        switch (_context4.prev = _context4.next) {
 	                          case 0:
 	                            //TODO:update to new format
-	                            _cloneDeep4 = cloneDeep_1(output), api = _cloneDeep4.api, dataKey = _cloneDeep4.dataKey, ids = _cloneDeep4.ids, rest = objectWithoutProperties(_cloneDeep4, ["api", "dataKey", "ids"]);
+	                            _cloneDeep4 = cloneDeep_1(output || {}), api = _cloneDeep4.api, dataKey = _cloneDeep4.dataKey, ids = _cloneDeep4.ids, rest = objectWithoutProperties(_cloneDeep4, ["api", "dataKey", "ids"]);
 	                            _context4.prev = 1;
 	                            _context4.next = 4;
 	                            return store$3.level2SDK.documentServices.retrieveDocument({
@@ -71376,7 +71376,7 @@
 	                              data = _ref9.data, type = _ref9.type, _ref9$id = _ref9.id, id = _ref9$id === void 0 ? null : _ref9$id;
 	                              //TODO:update to new format after ApplyBusiness is updated
 	                              //@ts-ignore
-	                              _cloneDeep5 = cloneDeep_1(output), dataKey = _cloneDeep5.dataKey, cloneOutput = objectWithoutProperties(_cloneDeep5, ["dataKey"]); // const pathArr = dataKey.split('.')
+	                              _cloneDeep5 = cloneDeep_1(output || {}), dataKey = _cloneDeep5.dataKey, cloneOutput = objectWithoutProperties(_cloneDeep5, ["dataKey"]); // const pathArr = dataKey.split('.')
 	                              // const currentVal = _.get(localRoot[pageName], pathArr)
 
 	                              currentVal = dispatch({
@@ -71511,7 +71511,7 @@
 	                            case 0:
 	                              id = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : null;
 	                              //TODO: update to new format
-	                              _cloneDeep6 = cloneDeep_1(output), dataKey = _cloneDeep6.dataKey, cloneOutput = objectWithoutProperties(_cloneDeep6, ["dataKey"]);
+	                              _cloneDeep6 = cloneDeep_1(output || {}), dataKey = _cloneDeep6.dataKey, cloneOutput = objectWithoutProperties(_cloneDeep6, ["dataKey"]);
 	                              pathArr = dataKey.split('.');
 	                              currentVal = get_1(localRoot[pageName], pathArr);
 	                              mergedVal = mergeDeep(currentVal, cloneOutput);
@@ -71614,7 +71614,7 @@
 	                      while (1) {
 	                        switch (_context7.prev = _context7.next) {
 	                          case 0:
-	                            _cloneDeep7 = cloneDeep_1(output), api = _cloneDeep7.api, dataKey = _cloneDeep7.dataKey, options = objectWithoutProperties(_cloneDeep7, ["api", "dataKey"]);
+	                            _cloneDeep7 = cloneDeep_1(output || {}), api = _cloneDeep7.api, dataKey = _cloneDeep7.dataKey, options = objectWithoutProperties(_cloneDeep7, ["api", "dataKey"]);
 	                            res = [];
 	                            _context7.prev = 2;
 	                            _context7.next = 5;
@@ -71685,7 +71685,7 @@
 	                          switch (_context8.prev = _context8.next) {
 	                            case 0:
 	                              //@ts-ignore
-	                              _cloneDeep8 = cloneDeep_1(output), api = _cloneDeep8.api, dataKey = _cloneDeep8.dataKey;
+	                              _cloneDeep8 = cloneDeep_1(output || {}), api = _cloneDeep8.api, dataKey = _cloneDeep8.dataKey;
 	                              pathArr = dataKey.split('.');
 	                              currentVal = get_1(Object.values(localRoot)[0], pathArr);
 	                              _context8.prev = 3;
@@ -71754,7 +71754,7 @@
 	                        switch (_context9.prev = _context9.next) {
 	                          case 0:
 	                            //@ts-ignore
-	                            _cloneDeep9 = cloneDeep_1(output), api = _cloneDeep9.api, dataKey = _cloneDeep9.dataKey, filter = _cloneDeep9.filter, sourcePath = _cloneDeep9.source;
+	                            _cloneDeep9 = cloneDeep_1(output || {}), api = _cloneDeep9.api, dataKey = _cloneDeep9.dataKey, filter = _cloneDeep9.filter, sourcePath = _cloneDeep9.source;
 	                            _context9.prev = 1;
 	                            source = dispatch({
 	                              type: 'get-data',
@@ -71888,7 +71888,7 @@
 	      cadlObject = _ref17.cadlObject,
 	      dispatch = _ref17.dispatch;
 
-	  var cadlCopy = cloneDeep_1(cadlObject);
+	  var cadlCopy = cloneDeep_1(cadlObject || {});
 
 	  Object.keys(cadlCopy).forEach(function (key) {
 	    // if (key === 'update') {
@@ -72076,7 +72076,7 @@
 	      dispatch = _ref19.dispatch,
 	      pageName = _ref19.pageName;
 
-	  var sourceCopy = cloneDeep_1(source);
+	  var sourceCopy = cloneDeep_1(source || []);
 
 	  var previousKey = path[path.length - 1] || '';
 	  var replacement = sourceCopy.map(function (elem, i) {
@@ -72145,7 +72145,7 @@
 	      dispatch = _ref20.dispatch,
 	      pageName = _ref20.pageName;
 
-	  var sourceCopy = cloneDeep_1(source);
+	  var sourceCopy = cloneDeep_1(source || {});
 
 	  Object.keys(sourceCopy).forEach(function (key) {
 	    var index = key;
@@ -72315,7 +72315,7 @@
 	      pageName = _ref23.pageName,
 	      dispatch = _ref23.dispatch;
 
-	  var sourceCopy = cloneDeep_1(source);
+	  var sourceCopy = cloneDeep_1(source || {});
 
 	  var _iterator3 = _createForOfIteratorHelper$g(lookFor),
 	      _step3;
@@ -72348,7 +72348,7 @@
 
 
 	function replaceUint8ArrayWithBase64(source) {
-	  var sourceCopy = cloneDeep_1(source);
+	  var sourceCopy = cloneDeep_1(source || {});
 
 	  if (isObject$5(source)) {
 	    Object.keys(sourceCopy).forEach(function (key) {

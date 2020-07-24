@@ -59,7 +59,7 @@ function populateKeys({
     lookFor: string,
     locations: Record<string, any>[]
 }): Record<string, any> {
-    let output = _.cloneDeep(source)
+    let output = _.cloneDeep(source || {})
     Object.keys(output).forEach((key) => {
         if (key.startsWith(lookFor)) {
             let parent = {}
@@ -206,7 +206,7 @@ function attachFns({
         dispatch: Function
     }): Record<string, any> {
         //traverse through the page object and look for the api keyword
-        let output = _.cloneDeep(cadlObject)
+        let output = _.cloneDeep(cadlObject || {})
         if (isObject(output)) {
             Object.keys(output).forEach((key) => {
                 if (isObject(output[key])) {
@@ -229,7 +229,7 @@ function attachFns({
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
-                                const { api, dataKey, id, maxcount, type, sCondition, ...options } = _.cloneDeep(output)
+                                const { api, dataKey, id, maxcount, type, sCondition, ...options } = _.cloneDeep(output || {})
                                 let res: any[] = []
                                 let idList: string[] | Uint8Array[] = []
                                 if (id) {
@@ -278,7 +278,7 @@ function attachFns({
                         }
                         case ('ce'): {
                             const storeFn = (output) => async (name) => {
-                                const { dataKey } = _.cloneDeep(output)
+                                const { dataKey } = _.cloneDeep(output || {})
                                 // const pathArr = dataKey.split('.')
                                 //get current object name value
                                 const { deat, id, ...currentVal } = dispatch({ type: 'get-data', payload: { pageName, dataKey } })
@@ -350,7 +350,7 @@ function attachFns({
                             const getFn = (output) => async () => {
                                 let res
                                 //TODO:update to new format
-                                const { api, dataKey, ids, ...rest } = _.cloneDeep(output)
+                                const { api, dataKey, ids, ...rest } = _.cloneDeep(output || {})
                                 try {
                                     // const parsedType = type.split('-')[1]
                                     const data = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest } }).then(({ data }) => {
@@ -385,7 +385,7 @@ function attachFns({
                             const storeFn = (output) => async ({ data, type, id = null }) => {
                                 //TODO:update to new format after ApplyBusiness is updated
                                 //@ts-ignore
-                                const { dataKey, ...cloneOutput } = _.cloneDeep(output)
+                                const { dataKey, ...cloneOutput } = _.cloneDeep(output || {} )
                                 // const pathArr = dataKey.split('.')
                                 // const currentVal = _.get(localRoot[pageName], pathArr)
                                 const currentVal = dispatch({ type: 'get-data', payload: { dataKey, pageName } })
@@ -435,7 +435,7 @@ function attachFns({
                             const storeFn = (output) => async (name, id = null) => {
 
                                 //TODO: update to new format
-                                const { dataKey, ...cloneOutput } = _.cloneDeep(output)
+                                const { dataKey, ...cloneOutput } = _.cloneDeep(output || {} )
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
                                 const mergedVal = mergeDeep(currentVal, cloneOutput)
@@ -476,7 +476,7 @@ function attachFns({
                         }
                         case ('rv'): {
                             const getFn = (output) => async () => {
-                                const { api, dataKey, ...options } = _.cloneDeep(output)
+                                const { api, dataKey, ...options } = _.cloneDeep(output || {} )
 
                                 let res: any[] = []
                                 try {
@@ -507,7 +507,7 @@ function attachFns({
                             const builtInFn = _.get(builtInFnsObj, pathArr)
                             const fn = (output) => async (input?: any) => {
                                 //@ts-ignore
-                                const { api, dataKey } = _.cloneDeep(output)
+                                const { api, dataKey } = _.cloneDeep(output || {} )
                                 const pathArr = dataKey.split('.')
                                 const currentVal = _.get(Object.values(localRoot)[0], pathArr)
                                 let res: any
@@ -536,7 +536,7 @@ function attachFns({
 
                             const fn = (output) => async () => {
                                 //@ts-ignore
-                                const { api, dataKey, filter, source: sourcePath } = _.cloneDeep(output)
+                                const { api, dataKey, filter, source: sourcePath } = _.cloneDeep(output || {})
                                 let res: any
                                 try {
                                     const source = dispatch({ type: 'get-data', payload: { pageName, dataKey: sourcePath } })
@@ -623,7 +623,7 @@ function replaceEvalObject({
     cadlObject: Record<string, any>,
     dispatch: Function
 }): Record<string, any> {
-    const cadlCopy = _.cloneDeep(cadlObject)
+    const cadlCopy = _.cloneDeep(cadlObject || {})
     Object.keys(cadlCopy).forEach((key) => {
         // if (key === 'update') {
         //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
@@ -776,7 +776,7 @@ function populateArray({
     dispatch?: Function,
     pageName?: string
 }): any[] {
-    let sourceCopy = _.cloneDeep(source)
+    let sourceCopy = _.cloneDeep(source || [])
     var previousKey = path[path.length - 1] || ''
     let replacement = sourceCopy.map((elem, i) => {
         let index = '[' + i + ']'
@@ -826,7 +826,7 @@ function populateObject({
     dispatch?: Function,
     pageName?: string
 }): Record<string, any> {
-    let sourceCopy = _.cloneDeep(source)
+    let sourceCopy = _.cloneDeep(source || {})
     Object.keys(sourceCopy).forEach((key) => {
         let index = key
         if (!skip.includes(key) && key !== 'dataKey') {
@@ -927,7 +927,7 @@ function populateVals({
     pageName?: string,
     dispatch?: Function
 }): Record<string, any> {
-    let sourceCopy = _.cloneDeep(source)
+    let sourceCopy = _.cloneDeep(source || {})
 
     for (let symbol of lookFor) {
         sourceCopy = populateObject({
@@ -949,7 +949,7 @@ function populateVals({
  * @returns Record<string, any>
  */
 function replaceUint8ArrayWithBase64(source: Record<string, any>): Record<string, any> {
-    let sourceCopy = _.cloneDeep(source)
+    let sourceCopy = _.cloneDeep(source || {})
     if (isObject(source)) {
 
         Object.keys(sourceCopy).forEach((key) => {
