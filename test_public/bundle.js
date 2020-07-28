@@ -72764,13 +72764,13 @@
 	  return {
 	    createNewAccount: function createNewAccount(_ref21) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
-	        var phoneNumber, password, verificationCode, name, passPlaceHolder, vcPlaceHolder, confirmPassword, restOfName, data;
+	        var phoneNumber, password, verificationCode, name, passPlaceHolder, vcPlaceHolder, confirmPassword, countryCode, avatar, restOfName, data;
 	        return regenerator.wrap(function _callee11$(_context11) {
 	          while (1) {
 	            switch (_context11.prev = _context11.next) {
 	              case 0:
 	                phoneNumber = _ref21.phoneNumber, password = _ref21.password, verificationCode = _ref21.verificationCode, name = _ref21.name;
-	                passPlaceHolder = name.password, vcPlaceHolder = name.verificationCode, confirmPassword = name.confirmPassword, restOfName = objectWithoutProperties(name, ["password", "verificationCode", "confirmPassword"]);
+	                passPlaceHolder = name.password, vcPlaceHolder = name.verificationCode, confirmPassword = name.confirmPassword, countryCode = name.countryCode, avatar = name.avatar, restOfName = objectWithoutProperties(name, ["password", "verificationCode", "confirmPassword", "countryCode", "avatar"]);
 	                _context11.next = 4;
 	                return Account$1.create(phoneNumber, password, verificationCode, _objectSpread$c({}, restOfName));
 
