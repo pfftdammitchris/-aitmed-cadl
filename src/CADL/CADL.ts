@@ -1,5 +1,5 @@
 import axios from 'axios'
-import YAML, { stringify } from 'yaml'
+import YAML from 'yaml'
 import _, { isObject } from 'lodash'
 import dot from 'dot-object'
 import { EventEmitter } from 'events'
