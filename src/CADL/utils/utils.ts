@@ -871,7 +871,7 @@ function builtInFns(dispatch?: Function) {
             verificationCode,
             name,
         }) {
-            const { password: passPlaceHolder, verificationCode: vcPlaceHolder, confirmPassword, ...restOfName } = name
+            const { password: passPlaceHolder, verificationCode: vcPlaceHolder, confirmPassword, countryCode, avatar, ...restOfName } = name
             const data = await Account.create(
                 phoneNumber,
                 password,
