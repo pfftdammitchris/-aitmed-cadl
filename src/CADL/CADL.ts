@@ -2,6 +2,7 @@ import axios from 'axios'
 import YAML from 'yaml'
 import _, { isObject } from 'lodash'
 import dot from 'dot-object'
+import { EventEmitter } from 'events'
 
 import {
     populateObject,
@@ -28,7 +29,7 @@ import {
 } from './types'
 
 import { mergeDeep } from '../utils'
-export default class CADL {
+export default class CADL extends EventEmitter {
 
     private _cadlVersion: 'test' | 'stable'
     private _cadlEndpoint: CADL_OBJECT
@@ -48,10 +49,12 @@ export default class CADL {
      * @param CADLARGS.cadlVersion 'test' | 'stable' 
      */
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
+        super()
         //replace default arguments
         store.env = env
         store.configUrl = configUrl
         this._cadlVersion = cadlVersion
+
     }
 
     /**
@@ -76,6 +79,7 @@ export default class CADL {
         BasePage?: Record<string, any>
     } = {}
     ): Promise<void> {
+
         if (this.cadlEndpoint) return
         //get config
         let config: any = store.getConfig()
@@ -125,6 +129,7 @@ export default class CADL {
                 lookFor: ['.', '..', '='],
             })
             this.root = { ...this.root, ...processedBasePage }
+
 
         }
 
@@ -184,6 +189,7 @@ export default class CADL {
             this.root = { ...this.root, Global: localStorageGlobal }
         }
         this.dispatch({ type: 'update-map' })
+        this.emit('stateChanged', { name: 'update', path: '.', prevVal: {}, newVal: this.root })
     }
 
 
@@ -212,9 +218,11 @@ export default class CADL {
             this.builtIn = { ...this.builtIn, ...builtIn }
         }
         let pageCADL = await this.getPage(pageName)
+        let prevVal = {}
         //FOR FORMDATA
         //process formData
         if (this.root[pageName]) {
+            prevVal = _.cloneDeep(this.root[pageName])
             delete this.root[pageName]
             // const cloneCurrPage = _.cloneDeep(this.root[pageName])
             // //TODO: test order of overrides
@@ -320,6 +328,7 @@ export default class CADL {
         let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
         this.root = { ...this.root, ...replaceUpdateJob2 }
 
+        this.emit('stateChanged', { name: 'update', path: `.${pageName}`, prevVal, newVal: this.root })
         this.dispatch({ type: 'update-map' })
     }
 
@@ -589,6 +598,7 @@ export default class CADL {
                         type: 'update-localStorage',
                     }
                 )
+                this.emit('stateChanged', { name: 'update' })
                 break
             }
             case ('update-localStorage'): {
@@ -621,6 +631,10 @@ export default class CADL {
                 }
                 break
             }
+            case ('emit-update'): {
+                const { pageName, dataKey, newVal } = action.payload
+                this.emit('stateChanged', { name: 'update', path: `.${pageName}.${dataKey}`, newVal })
+            }
 
             default: {
                 return
@@ -652,6 +666,7 @@ export default class CADL {
         this.dispatch({
             type: 'update-localStorage'
         })
+        this.emit('stateChanged', { name: 'update', path: dataKey, newVal: dataObject })
     }
 
     /**

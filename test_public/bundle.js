@@ -925,6 +925,87 @@
 
 	var createClass = _createClass;
 
+	function _assertThisInitialized(self) {
+	  if (self === void 0) {
+	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+	  }
+
+	  return self;
+	}
+
+	var assertThisInitialized = _assertThisInitialized;
+
+	var setPrototypeOf = createCommonjsModule(function (module) {
+	function _setPrototypeOf(o, p) {
+	  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+	    o.__proto__ = p;
+	    return o;
+	  };
+
+	  return _setPrototypeOf(o, p);
+	}
+
+	module.exports = _setPrototypeOf;
+	});
+
+	function _inherits(subClass, superClass) {
+	  if (typeof superClass !== "function" && superClass !== null) {
+	    throw new TypeError("Super expression must either be null or a function");
+	  }
+
+	  subClass.prototype = Object.create(superClass && superClass.prototype, {
+	    constructor: {
+	      value: subClass,
+	      writable: true,
+	      configurable: true
+	    }
+	  });
+	  if (superClass) setPrototypeOf(subClass, superClass);
+	}
+
+	var inherits = _inherits;
+
+	var _typeof_1 = createCommonjsModule(function (module) {
+	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
+	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return typeof obj;
+	    };
+	  } else {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
+	module.exports = _typeof;
+	});
+
+	function _possibleConstructorReturn(self, call) {
+	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
+	    return call;
+	  }
+
+	  return assertThisInitialized(self);
+	}
+
+	var possibleConstructorReturn = _possibleConstructorReturn;
+
+	var getPrototypeOf = createCommonjsModule(function (module) {
+	function _getPrototypeOf(o) {
+	  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+	    return o.__proto__ || Object.getPrototypeOf(o);
+	  };
+	  return _getPrototypeOf(o);
+	}
+
+	module.exports = _getPrototypeOf;
+	});
+
 	/** Detect free variable `global` from Node.js. */
 	var freeGlobal = typeof commonjsGlobal == 'object' && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 
@@ -2219,6 +2300,60 @@
 	}
 
 	var set_1 = set;
+
+	/**
+	 * The base implementation of `_.get` without support for default values.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {Array|string} path The path of the property to get.
+	 * @returns {*} Returns the resolved value.
+	 */
+	function baseGet(object, path) {
+	  path = _castPath(path, object);
+
+	  var index = 0,
+	      length = path.length;
+
+	  while (object != null && index < length) {
+	    object = object[_toKey(path[index++])];
+	  }
+	  return (index && index == length) ? object : undefined;
+	}
+
+	var _baseGet = baseGet;
+
+	/**
+	 * Gets the value at `path` of `object`. If the resolved value is
+	 * `undefined`, the `defaultValue` is returned in its place.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.7.0
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @param {Array|string} path The path of the property to get.
+	 * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+	 * @returns {*} Returns the resolved value.
+	 * @example
+	 *
+	 * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+	 *
+	 * _.get(object, 'a[0].b.c');
+	 * // => 3
+	 *
+	 * _.get(object, ['a', '0', 'b', 'c']);
+	 * // => 3
+	 *
+	 * _.get(object, 'a.b.c', 'default');
+	 * // => 'default'
+	 */
+	function get(object, path, defaultValue) {
+	  var result = object == null ? undefined : _baseGet(object, path);
+	  return result === undefined ? defaultValue : result;
+	}
+
+	var get_1 = get;
 
 	/**
 	 * Removes all key-value entries from the stack.
@@ -3779,60 +3914,6 @@
 
 	var cloneDeep_1 = cloneDeep;
 
-	/**
-	 * The base implementation of `_.get` without support for default values.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array|string} path The path of the property to get.
-	 * @returns {*} Returns the resolved value.
-	 */
-	function baseGet(object, path) {
-	  path = _castPath(path, object);
-
-	  var index = 0,
-	      length = path.length;
-
-	  while (object != null && index < length) {
-	    object = object[_toKey(path[index++])];
-	  }
-	  return (index && index == length) ? object : undefined;
-	}
-
-	var _baseGet = baseGet;
-
-	/**
-	 * Gets the value at `path` of `object`. If the resolved value is
-	 * `undefined`, the `defaultValue` is returned in its place.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.7.0
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @param {Array|string} path The path of the property to get.
-	 * @param {*} [defaultValue] The value returned for `undefined` resolved values.
-	 * @returns {*} Returns the resolved value.
-	 * @example
-	 *
-	 * var object = { 'a': [{ 'b': { 'c': 3 } }] };
-	 *
-	 * _.get(object, 'a[0].b.c');
-	 * // => 3
-	 *
-	 * _.get(object, ['a', '0', 'b', 'c']);
-	 * // => 3
-	 *
-	 * _.get(object, 'a.b.c', 'default');
-	 * // => 'default'
-	 */
-	function get(object, path, defaultValue) {
-	  var result = object == null ? undefined : _baseGet(object, path);
-	  return result === undefined ? defaultValue : result;
-	}
-
-	var get_1 = get;
-
 	var bind = function bind(fn, thisArg) {
 	  return function wrap() {
 	    var args = new Array(arguments.length);
@@ -4322,7 +4403,11 @@
 	  return !!(value && value.__CANCEL__);
 	};
 
-	var global$1 = (typeof global !== "undefined" ? global :
+	var global$1 = (typeof global$2 !== "undefined" ? global$2 :
+	  typeof self !== "undefined" ? self :
+	  typeof window !== "undefined" ? window : {});
+
+	var global$2 = (typeof global$1 !== "undefined" ? global$1 :
 	            typeof self !== "undefined" ? self :
 	            typeof window !== "undefined" ? window : {});
 
@@ -4337,10 +4422,10 @@
 	}
 	var cachedSetTimeout = defaultSetTimout;
 	var cachedClearTimeout = defaultClearTimeout;
-	if (typeof global$1.setTimeout === 'function') {
+	if (typeof global$2.setTimeout === 'function') {
 	    cachedSetTimeout = setTimeout;
 	}
-	if (typeof global$1.clearTimeout === 'function') {
+	if (typeof global$2.clearTimeout === 'function') {
 	    cachedClearTimeout = clearTimeout;
 	}
 
@@ -4489,7 +4574,7 @@
 	}function umask() { return 0; }
 
 	// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
-	var performance = global$1.performance || {};
+	var performance = global$2.performance || {};
 	var performanceNow =
 	  performance.now        ||
 	  performance.mozNow     ||
@@ -5482,87 +5567,6 @@
 	axios_1.default = _default;
 
 	var axios$1 = axios_1;
-
-	var setPrototypeOf = createCommonjsModule(function (module) {
-	function _setPrototypeOf(o, p) {
-	  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-	    o.__proto__ = p;
-	    return o;
-	  };
-
-	  return _setPrototypeOf(o, p);
-	}
-
-	module.exports = _setPrototypeOf;
-	});
-
-	function _inherits(subClass, superClass) {
-	  if (typeof superClass !== "function" && superClass !== null) {
-	    throw new TypeError("Super expression must either be null or a function");
-	  }
-
-	  subClass.prototype = Object.create(superClass && superClass.prototype, {
-	    constructor: {
-	      value: subClass,
-	      writable: true,
-	      configurable: true
-	    }
-	  });
-	  if (superClass) setPrototypeOf(subClass, superClass);
-	}
-
-	var inherits = _inherits;
-
-	var _typeof_1 = createCommonjsModule(function (module) {
-	function _typeof(obj) {
-	  "@babel/helpers - typeof";
-
-	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return typeof obj;
-	    };
-	  } else {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-	    };
-	  }
-
-	  return _typeof(obj);
-	}
-
-	module.exports = _typeof;
-	});
-
-	function _assertThisInitialized(self) {
-	  if (self === void 0) {
-	    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-	  }
-
-	  return self;
-	}
-
-	var assertThisInitialized = _assertThisInitialized;
-
-	function _possibleConstructorReturn(self, call) {
-	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
-	    return call;
-	  }
-
-	  return assertThisInitialized(self);
-	}
-
-	var possibleConstructorReturn = _possibleConstructorReturn;
-
-	var getPrototypeOf = createCommonjsModule(function (module) {
-	function _getPrototypeOf(o) {
-	  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
-	    return o.__proto__ || Object.getPrototypeOf(o);
-	  };
-	  return _getPrototypeOf(o);
-	}
-
-	module.exports = _getPrototypeOf;
-	});
 
 	function _superPropBase(object, property) {
 	  while (!Object.prototype.hasOwnProperty.call(object, property)) {
@@ -11295,8 +11299,8 @@
 	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
 	 * get the Object implementation, which is slower but behaves correctly.
 	 */
-	Buffer.TYPED_ARRAY_SUPPORT = global$1.TYPED_ARRAY_SUPPORT !== undefined
-	  ? global$1.TYPED_ARRAY_SUPPORT
+	Buffer.TYPED_ARRAY_SUPPORT = global$2.TYPED_ARRAY_SUPPORT !== undefined
+	  ? global$2.TYPED_ARRAY_SUPPORT
 	  : true;
 
 	function kMaxLength () {
@@ -15614,6 +15618,472 @@
 	DotObject._process = _process;
 
 	var dotObject = DotObject;
+
+	var domain;
+
+	// This constructor is used to store event handlers. Instantiating this is
+	// faster than explicitly calling `Object.create(null)` to get a "clean" empty
+	// object (tested with v8 v4.9).
+	function EventHandlers() {}
+	EventHandlers.prototype = Object.create(null);
+
+	function EventEmitter() {
+	  EventEmitter.init.call(this);
+	}
+
+	// nodejs oddity
+	// require('events') === require('events').EventEmitter
+	EventEmitter.EventEmitter = EventEmitter;
+
+	EventEmitter.usingDomains = false;
+
+	EventEmitter.prototype.domain = undefined;
+	EventEmitter.prototype._events = undefined;
+	EventEmitter.prototype._maxListeners = undefined;
+
+	// By default EventEmitters will print a warning if more than 10 listeners are
+	// added to it. This is a useful default which helps finding memory leaks.
+	EventEmitter.defaultMaxListeners = 10;
+
+	EventEmitter.init = function() {
+	  this.domain = null;
+	  if (EventEmitter.usingDomains) {
+	    // if there is an active domain, then attach to it.
+	    if (domain.active ) ;
+	  }
+
+	  if (!this._events || this._events === Object.getPrototypeOf(this)._events) {
+	    this._events = new EventHandlers();
+	    this._eventsCount = 0;
+	  }
+
+	  this._maxListeners = this._maxListeners || undefined;
+	};
+
+	// Obviously not all Emitters should be limited to 10. This function allows
+	// that to be increased. Set to zero for unlimited.
+	EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+	  if (typeof n !== 'number' || n < 0 || isNaN(n))
+	    throw new TypeError('"n" argument must be a positive number');
+	  this._maxListeners = n;
+	  return this;
+	};
+
+	function $getMaxListeners(that) {
+	  if (that._maxListeners === undefined)
+	    return EventEmitter.defaultMaxListeners;
+	  return that._maxListeners;
+	}
+
+	EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+	  return $getMaxListeners(this);
+	};
+
+	// These standalone emit* functions are used to optimize calling of event
+	// handlers for fast cases because emit() itself often has a variable number of
+	// arguments and can be deoptimized because of that. These functions always have
+	// the same number of arguments and thus do not get deoptimized, so the code
+	// inside them can execute faster.
+	function emitNone(handler, isFn, self) {
+	  if (isFn)
+	    handler.call(self);
+	  else {
+	    var len = handler.length;
+	    var listeners = arrayClone(handler, len);
+	    for (var i = 0; i < len; ++i)
+	      listeners[i].call(self);
+	  }
+	}
+	function emitOne(handler, isFn, self, arg1) {
+	  if (isFn)
+	    handler.call(self, arg1);
+	  else {
+	    var len = handler.length;
+	    var listeners = arrayClone(handler, len);
+	    for (var i = 0; i < len; ++i)
+	      listeners[i].call(self, arg1);
+	  }
+	}
+	function emitTwo(handler, isFn, self, arg1, arg2) {
+	  if (isFn)
+	    handler.call(self, arg1, arg2);
+	  else {
+	    var len = handler.length;
+	    var listeners = arrayClone(handler, len);
+	    for (var i = 0; i < len; ++i)
+	      listeners[i].call(self, arg1, arg2);
+	  }
+	}
+	function emitThree(handler, isFn, self, arg1, arg2, arg3) {
+	  if (isFn)
+	    handler.call(self, arg1, arg2, arg3);
+	  else {
+	    var len = handler.length;
+	    var listeners = arrayClone(handler, len);
+	    for (var i = 0; i < len; ++i)
+	      listeners[i].call(self, arg1, arg2, arg3);
+	  }
+	}
+
+	function emitMany(handler, isFn, self, args) {
+	  if (isFn)
+	    handler.apply(self, args);
+	  else {
+	    var len = handler.length;
+	    var listeners = arrayClone(handler, len);
+	    for (var i = 0; i < len; ++i)
+	      listeners[i].apply(self, args);
+	  }
+	}
+
+	EventEmitter.prototype.emit = function emit(type) {
+	  var er, handler, len, args, i, events, domain;
+	  var doError = (type === 'error');
+
+	  events = this._events;
+	  if (events)
+	    doError = (doError && events.error == null);
+	  else if (!doError)
+	    return false;
+
+	  domain = this.domain;
+
+	  // If there is no 'error' event listener then throw.
+	  if (doError) {
+	    er = arguments[1];
+	    if (domain) {
+	      if (!er)
+	        er = new Error('Uncaught, unspecified "error" event');
+	      er.domainEmitter = this;
+	      er.domain = domain;
+	      er.domainThrown = false;
+	      domain.emit('error', er);
+	    } else if (er instanceof Error) {
+	      throw er; // Unhandled 'error' event
+	    } else {
+	      // At least give some kind of context to the user
+	      var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
+	      err.context = er;
+	      throw err;
+	    }
+	    return false;
+	  }
+
+	  handler = events[type];
+
+	  if (!handler)
+	    return false;
+
+	  var isFn = typeof handler === 'function';
+	  len = arguments.length;
+	  switch (len) {
+	    // fast cases
+	    case 1:
+	      emitNone(handler, isFn, this);
+	      break;
+	    case 2:
+	      emitOne(handler, isFn, this, arguments[1]);
+	      break;
+	    case 3:
+	      emitTwo(handler, isFn, this, arguments[1], arguments[2]);
+	      break;
+	    case 4:
+	      emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
+	      break;
+	    // slower
+	    default:
+	      args = new Array(len - 1);
+	      for (i = 1; i < len; i++)
+	        args[i - 1] = arguments[i];
+	      emitMany(handler, isFn, this, args);
+	  }
+
+	  return true;
+	};
+
+	function _addListener(target, type, listener, prepend) {
+	  var m;
+	  var events;
+	  var existing;
+
+	  if (typeof listener !== 'function')
+	    throw new TypeError('"listener" argument must be a function');
+
+	  events = target._events;
+	  if (!events) {
+	    events = target._events = new EventHandlers();
+	    target._eventsCount = 0;
+	  } else {
+	    // To avoid recursion in the case that type === "newListener"! Before
+	    // adding it to the listeners, first emit "newListener".
+	    if (events.newListener) {
+	      target.emit('newListener', type,
+	                  listener.listener ? listener.listener : listener);
+
+	      // Re-assign `events` because a newListener handler could have caused the
+	      // this._events to be assigned to a new object
+	      events = target._events;
+	    }
+	    existing = events[type];
+	  }
+
+	  if (!existing) {
+	    // Optimize the case of one listener. Don't need the extra array object.
+	    existing = events[type] = listener;
+	    ++target._eventsCount;
+	  } else {
+	    if (typeof existing === 'function') {
+	      // Adding the second element, need to change to array.
+	      existing = events[type] = prepend ? [listener, existing] :
+	                                          [existing, listener];
+	    } else {
+	      // If we've already got an array, just append.
+	      if (prepend) {
+	        existing.unshift(listener);
+	      } else {
+	        existing.push(listener);
+	      }
+	    }
+
+	    // Check for listener leak
+	    if (!existing.warned) {
+	      m = $getMaxListeners(target);
+	      if (m && m > 0 && existing.length > m) {
+	        existing.warned = true;
+	        var w = new Error('Possible EventEmitter memory leak detected. ' +
+	                            existing.length + ' ' + type + ' listeners added. ' +
+	                            'Use emitter.setMaxListeners() to increase limit');
+	        w.name = 'MaxListenersExceededWarning';
+	        w.emitter = target;
+	        w.type = type;
+	        w.count = existing.length;
+	        emitWarning(w);
+	      }
+	    }
+	  }
+
+	  return target;
+	}
+	function emitWarning(e) {
+	  typeof console.warn === 'function' ? console.warn(e) : console.log(e);
+	}
+	EventEmitter.prototype.addListener = function addListener(type, listener) {
+	  return _addListener(this, type, listener, false);
+	};
+
+	EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+	EventEmitter.prototype.prependListener =
+	    function prependListener(type, listener) {
+	      return _addListener(this, type, listener, true);
+	    };
+
+	function _onceWrap(target, type, listener) {
+	  var fired = false;
+	  function g() {
+	    target.removeListener(type, g);
+	    if (!fired) {
+	      fired = true;
+	      listener.apply(target, arguments);
+	    }
+	  }
+	  g.listener = listener;
+	  return g;
+	}
+
+	EventEmitter.prototype.once = function once(type, listener) {
+	  if (typeof listener !== 'function')
+	    throw new TypeError('"listener" argument must be a function');
+	  this.on(type, _onceWrap(this, type, listener));
+	  return this;
+	};
+
+	EventEmitter.prototype.prependOnceListener =
+	    function prependOnceListener(type, listener) {
+	      if (typeof listener !== 'function')
+	        throw new TypeError('"listener" argument must be a function');
+	      this.prependListener(type, _onceWrap(this, type, listener));
+	      return this;
+	    };
+
+	// emits a 'removeListener' event iff the listener was removed
+	EventEmitter.prototype.removeListener =
+	    function removeListener(type, listener) {
+	      var list, events, position, i, originalListener;
+
+	      if (typeof listener !== 'function')
+	        throw new TypeError('"listener" argument must be a function');
+
+	      events = this._events;
+	      if (!events)
+	        return this;
+
+	      list = events[type];
+	      if (!list)
+	        return this;
+
+	      if (list === listener || (list.listener && list.listener === listener)) {
+	        if (--this._eventsCount === 0)
+	          this._events = new EventHandlers();
+	        else {
+	          delete events[type];
+	          if (events.removeListener)
+	            this.emit('removeListener', type, list.listener || listener);
+	        }
+	      } else if (typeof list !== 'function') {
+	        position = -1;
+
+	        for (i = list.length; i-- > 0;) {
+	          if (list[i] === listener ||
+	              (list[i].listener && list[i].listener === listener)) {
+	            originalListener = list[i].listener;
+	            position = i;
+	            break;
+	          }
+	        }
+
+	        if (position < 0)
+	          return this;
+
+	        if (list.length === 1) {
+	          list[0] = undefined;
+	          if (--this._eventsCount === 0) {
+	            this._events = new EventHandlers();
+	            return this;
+	          } else {
+	            delete events[type];
+	          }
+	        } else {
+	          spliceOne(list, position);
+	        }
+
+	        if (events.removeListener)
+	          this.emit('removeListener', type, originalListener || listener);
+	      }
+
+	      return this;
+	    };
+
+	EventEmitter.prototype.removeAllListeners =
+	    function removeAllListeners(type) {
+	      var listeners, events;
+
+	      events = this._events;
+	      if (!events)
+	        return this;
+
+	      // not listening for removeListener, no need to emit
+	      if (!events.removeListener) {
+	        if (arguments.length === 0) {
+	          this._events = new EventHandlers();
+	          this._eventsCount = 0;
+	        } else if (events[type]) {
+	          if (--this._eventsCount === 0)
+	            this._events = new EventHandlers();
+	          else
+	            delete events[type];
+	        }
+	        return this;
+	      }
+
+	      // emit removeListener for all listeners on all events
+	      if (arguments.length === 0) {
+	        var keys = Object.keys(events);
+	        for (var i = 0, key; i < keys.length; ++i) {
+	          key = keys[i];
+	          if (key === 'removeListener') continue;
+	          this.removeAllListeners(key);
+	        }
+	        this.removeAllListeners('removeListener');
+	        this._events = new EventHandlers();
+	        this._eventsCount = 0;
+	        return this;
+	      }
+
+	      listeners = events[type];
+
+	      if (typeof listeners === 'function') {
+	        this.removeListener(type, listeners);
+	      } else if (listeners) {
+	        // LIFO order
+	        do {
+	          this.removeListener(type, listeners[listeners.length - 1]);
+	        } while (listeners[0]);
+	      }
+
+	      return this;
+	    };
+
+	EventEmitter.prototype.listeners = function listeners(type) {
+	  var evlistener;
+	  var ret;
+	  var events = this._events;
+
+	  if (!events)
+	    ret = [];
+	  else {
+	    evlistener = events[type];
+	    if (!evlistener)
+	      ret = [];
+	    else if (typeof evlistener === 'function')
+	      ret = [evlistener.listener || evlistener];
+	    else
+	      ret = unwrapListeners(evlistener);
+	  }
+
+	  return ret;
+	};
+
+	EventEmitter.listenerCount = function(emitter, type) {
+	  if (typeof emitter.listenerCount === 'function') {
+	    return emitter.listenerCount(type);
+	  } else {
+	    return listenerCount.call(emitter, type);
+	  }
+	};
+
+	EventEmitter.prototype.listenerCount = listenerCount;
+	function listenerCount(type) {
+	  var events = this._events;
+
+	  if (events) {
+	    var evlistener = events[type];
+
+	    if (typeof evlistener === 'function') {
+	      return 1;
+	    } else if (evlistener) {
+	      return evlistener.length;
+	    }
+	  }
+
+	  return 0;
+	}
+
+	EventEmitter.prototype.eventNames = function eventNames() {
+	  return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
+	};
+
+	// About 1.5x faster than the two-arg version of Array#splice().
+	function spliceOne(list, index) {
+	  for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
+	    list[i] = list[k];
+	  list.pop();
+	}
+
+	function arrayClone(arr, i) {
+	  var copy = new Array(i);
+	  while (i--)
+	    copy[i] = arr[i];
+	  return copy;
+	}
+
+	function unwrapListeners(arr) {
+	  var ret = new Array(arr.length);
+	  for (var i = 0; i < ret.length; ++i) {
+	    ret[i] = arr[i].listener || arr[i];
+	  }
+	  return ret;
+	}
 
 	function _objectWithoutPropertiesLoose(source, excluded) {
 	  if (source == null) return {};
@@ -24867,7 +25337,7 @@
 	  }
 	});
 
-	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$1 !== 'undefined' ? global$1 : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$2 !== 'undefined' ? global$2 : typeof self !== 'undefined' ? self : {};
 
 	function commonjsRequire$1 () {
 		throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
@@ -26186,7 +26656,7 @@
 	  return !!(value && value.__CANCEL__);
 	};
 
-	var global$1$1 = (typeof global$1 !== "undefined" ? global$1 :
+	var global$1$1 = (typeof global$2 !== "undefined" ? global$2 :
 	            typeof self !== "undefined" ? self :
 	            typeof window !== "undefined" ? window : {});
 
@@ -56183,6 +56653,13 @@
 	  defineProperty$e(this, "esig", void 0);
 	};
 
+	var index$1 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		Edge: Edge,
+		Vertex: Vertex,
+		Doc: Doc
+	});
+
 	function toSDKVertex(vertex) {
 	  var res = new Vertex();
 	  res.id = vertex.getId();
@@ -57335,6 +57812,12 @@
 	  return services;
 	}();
 
+
+
+	var types = /*#__PURE__*/Object.freeze({
+		__proto__: null
+	});
+
 	function getJWT(type) {
 	  switch (type) {
 	    case 1040:
@@ -58170,6 +58653,12 @@
 	  return services;
 	}();
 
+
+
+	var types$1 = /*#__PURE__*/Object.freeze({
+		__proto__: null
+	});
+
 	function ownKeys$4(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$4(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$4(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$4(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -58366,6 +58855,12 @@
 
 	  return services;
 	}();
+
+
+
+	var types$2 = /*#__PURE__*/Object.freeze({
+		__proto__: null
+	});
 
 	var StatusCodes;
 
@@ -59223,6 +59718,12 @@
 	  return Account;
 	}();
 
+
+
+	var types$3 = /*#__PURE__*/Object.freeze({
+		__proto__: null
+	});
+
 	var SDK =
 	/*#__PURE__*/
 	function () {
@@ -59329,6 +59830,7 @@
 
 	  return SDK;
 	}();
+	//# sourceMappingURL=index.es.js.map
 
 	var ErrorCodes;
 
@@ -71108,6 +71610,14 @@
 	                                  data: res
 	                                }
 	                              });
+	                              dispatch({
+	                                type: 'emit-update',
+	                                payload: {
+	                                  pageName: pageName,
+	                                  dataKey: dataKey,
+	                                  newVal: res
+	                                }
+	                              });
 	                            } //TODO:handle else case
 
 
@@ -71219,7 +71729,7 @@
 
 	                            case 35:
 	                              if (!res) {
-	                                _context2.next = 40;
+	                                _context2.next = 41;
 	                                break;
 	                              }
 
@@ -71241,12 +71751,20 @@
 	                                  pageName: pageName
 	                                }
 	                              });
+	                              dispatch({
+	                                type: 'emit-update',
+	                                payload: {
+	                                  pageName: pageName,
+	                                  dataKey: dataKey,
+	                                  newVal: res
+	                                }
+	                              });
 	                              return _context2.abrupt("return", res);
 
-	                            case 40:
+	                            case 41:
 	                              return _context2.abrupt("return", null);
 
-	                            case 41:
+	                            case 42:
 	                            case "end":
 	                              return _context2.stop();
 	                          }
@@ -71331,7 +71849,7 @@
 
 	                          case 11:
 	                            if (!res) {
-	                              _context4.next = 14;
+	                              _context4.next = 15;
 	                              break;
 	                            }
 
@@ -71344,12 +71862,20 @@
 	                                data: res
 	                              }
 	                            });
+	                            dispatch({
+	                              type: 'emit-update',
+	                              payload: {
+	                                pageName: pageName,
+	                                newVal: res,
+	                                dataKey: dataKey
+	                              }
+	                            });
 	                            return _context4.abrupt("return", res);
 
-	                          case 14:
+	                          case 15:
 	                            return _context4.abrupt("return", null);
 
-	                          case 15:
+	                          case 16:
 	                          case "end":
 	                            return _context4.stop();
 	                        }
@@ -71446,7 +71972,7 @@
 
 	                            case 30:
 	                              if (!res) {
-	                                _context5.next = 33;
+	                                _context5.next = 34;
 	                                break;
 	                              }
 
@@ -71459,12 +71985,20 @@
 	                                  data: res
 	                                }
 	                              });
+	                              dispatch({
+	                                type: 'emit-update',
+	                                payload: {
+	                                  pageName: pageName,
+	                                  newVal: res,
+	                                  dataKey: dataKey
+	                                }
+	                              });
 	                              return _context5.abrupt("return", res);
 
-	                            case 33:
+	                            case 34:
 	                              return _context5.abrupt("return", null);
 
-	                            case 34:
+	                            case 35:
 	                            case "end":
 	                              return _context5.stop();
 	                          }
@@ -71568,7 +72102,7 @@
 
 	                            case 31:
 	                              if (!res) {
-	                                _context6.next = 34;
+	                                _context6.next = 35;
 	                                break;
 	                              }
 
@@ -71581,12 +72115,20 @@
 	                                  data: res
 	                                }
 	                              });
+	                              dispatch({
+	                                type: 'emit-update',
+	                                payload: {
+	                                  pageName: pageName,
+	                                  newVal: res,
+	                                  dataKey: dataKey
+	                                }
+	                              });
 	                              return _context6.abrupt("return", res);
 
-	                            case 34:
+	                            case 35:
 	                              return _context6.abrupt("return", null);
 
-	                            case 35:
+	                            case 36:
 	                            case "end":
 	                              return _context6.stop();
 	                          }
@@ -71637,7 +72179,7 @@
 
 	                          case 13:
 	                            if (!(res.length > 0)) {
-	                              _context7.next = 16;
+	                              _context7.next = 17;
 	                              break;
 	                            }
 
@@ -71650,12 +72192,20 @@
 	                                data: res
 	                              }
 	                            });
+	                            dispatch({
+	                              type: 'emit-update',
+	                              payload: {
+	                                pageName: pageName,
+	                                newVal: res,
+	                                dataKey: dataKey
+	                              }
+	                            });
 	                            return _context7.abrupt("return", res);
 
-	                          case 16:
+	                          case 17:
 	                            return _context7.abrupt("return", null);
 
-	                          case 17:
+	                          case 18:
 	                          case "end":
 	                            return _context7.stop();
 	                        }
@@ -71707,7 +72257,7 @@
 
 	                            case 13:
 	                              if (!(Array.isArray(res) && res.length > 0 || isObject$5(res))) {
-	                                _context8.next = 16;
+	                                _context8.next = 17;
 	                                break;
 	                              }
 
@@ -71720,12 +72270,20 @@
 	                                  data: res
 	                                }
 	                              });
+	                              dispatch({
+	                                type: 'emit-update',
+	                                payload: {
+	                                  pageName: pageName,
+	                                  dataKey: dataKey,
+	                                  newVal: res
+	                                }
+	                              });
 	                              return _context8.abrupt("return", res);
 
-	                            case 16:
+	                            case 17:
 	                              return _context8.abrupt("return", null);
 
-	                            case 17:
+	                            case 18:
 	                            case "end":
 	                              return _context8.stop();
 	                          }
@@ -71790,7 +72348,7 @@
 
 	                          case 10:
 	                            if (!(Array.isArray(res) && res.length > 0)) {
-	                              _context9.next = 13;
+	                              _context9.next = 14;
 	                              break;
 	                            }
 
@@ -71803,12 +72361,20 @@
 	                                data: res[0]
 	                              }
 	                            });
+	                            dispatch({
+	                              type: 'emit-update',
+	                              payload: {
+	                                pageName: pageName,
+	                                newVal: res,
+	                                dataKey: dataKey
+	                              }
+	                            });
 	                            return _context9.abrupt("return", res);
 
-	                          case 13:
+	                          case 14:
 	                            return _context9.abrupt("return", null);
 
-	                          case 14:
+	                          case 15:
 	                          case "end":
 	                            return _context9.stop();
 	                        }
@@ -72377,7 +72943,15 @@
 
 	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-	var CADL = /*#__PURE__*/function () {
+	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$u() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var CADL = /*#__PURE__*/function (_EventEmitter) {
+	  inherits(CADL, _EventEmitter);
+
+	  var _super = _createSuper$t(CADL);
+
 	  /**
 	   * 
 	   * @param CADLARGS
@@ -72386,37 +72960,41 @@
 	   * @param CADLARGS.cadlVersion 'test' | 'stable' 
 	   */
 	  function CADL(_ref) {
+	    var _this;
+
 	    var env = _ref.env,
 	        configUrl = _ref.configUrl,
 	        cadlVersion = _ref.cadlVersion;
 
 	    classCallCheck(this, CADL);
 
-	    defineProperty(this, "_cadlVersion", void 0);
+	    _this = _super.call(this); //replace default arguments
 
-	    defineProperty(this, "_cadlEndpoint", void 0);
+	    defineProperty(assertThisInitialized(_this), "_cadlVersion", void 0);
 
-	    defineProperty(this, "_cadlBaseUrl", void 0);
+	    defineProperty(assertThisInitialized(_this), "_cadlEndpoint", void 0);
 
-	    defineProperty(this, "_baseUrl", void 0);
+	    defineProperty(assertThisInitialized(_this), "_cadlBaseUrl", void 0);
 
-	    defineProperty(this, "_assetsUrl", void 0);
+	    defineProperty(assertThisInitialized(_this), "_baseUrl", void 0);
 
-	    defineProperty(this, "_map", void 0);
+	    defineProperty(assertThisInitialized(_this), "_assetsUrl", void 0);
 
-	    defineProperty(this, "_root", {
+	    defineProperty(assertThisInitialized(_this), "_map", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "_root", {
 	      actions: {},
 	      refs: {}
 	    });
 
-	    defineProperty(this, "_builtIn", builtInFns(this.dispatch.bind(this)));
+	    defineProperty(assertThisInitialized(_this), "_builtIn", builtInFns(_this.dispatch.bind(assertThisInitialized(_this))));
 
-	    defineProperty(this, "_initCallQueue", void 0);
+	    defineProperty(assertThisInitialized(_this), "_initCallQueue", void 0);
 
-	    //replace default arguments
 	    store$3.env = env;
 	    store$3.configUrl = configUrl;
-	    this._cadlVersion = cadlVersion;
+	    _this._cadlVersion = cadlVersion;
+	    return _this;
 	  }
 	  /**
 	   * @param InitArgs 
@@ -72682,8 +73260,14 @@
 	                this.dispatch({
 	                  type: 'update-map'
 	                });
+	                this.emit('stateChanged', {
+	                  name: 'update',
+	                  path: '.',
+	                  prevVal: {},
+	                  newVal: this.root
+	                });
 
-	              case 80:
+	              case 81:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -72719,6 +73303,7 @@
 	            options,
 	            builtIn,
 	            pageCADL,
+	            prevVal,
 	            processedFormData,
 	            processedWithFns,
 	            boundDispatch,
@@ -72763,10 +73348,11 @@
 
 	              case 9:
 	                pageCADL = _context2.sent;
-
-	                //FOR FORMDATA
+	                prevVal = {}; //FOR FORMDATA
 	                //process formData
+
 	                if (this.root[pageName]) {
+	                  prevVal = cloneDeep_1(this.root[pageName]);
 	                  delete this.root[pageName]; // const cloneCurrPage = _.cloneDeep(this.root[pageName])
 	                  // //TODO: test order of overrides
 	                  // const mergedPage = _.merge(pageCADL, { [pageName]: cloneCurrPage })
@@ -72798,7 +73384,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 66;
+	                  _context2.next = 67;
 	                  break;
 	                }
 
@@ -72806,9 +73392,9 @@
 	                  return index;
 	                });
 
-	              case 19:
+	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 66;
+	                  _context2.next = 67;
 	                  break;
 	                }
 
@@ -72816,94 +73402,94 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context2.next = 33;
+	                  _context2.next = 34;
 	                  break;
 	                }
 
-	                _context2.prev = 23;
-	                _context2.next = 26;
+	                _context2.prev = 24;
+	                _context2.next = 27;
 	                return command();
 
-	              case 26:
-	                _context2.next = 31;
+	              case 27:
+	                _context2.next = 32;
 	                break;
 
-	              case 28:
-	                _context2.prev = 28;
-	                _context2.t0 = _context2["catch"](23);
+	              case 29:
+	                _context2.prev = 29;
+	                _context2.t0 = _context2["catch"](24);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
-	              case 31:
-	                _context2.next = 58;
+	              case 32:
+	                _context2.next = 59;
 	                break;
 
-	              case 33:
+	              case 34:
 	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context2.next = 48;
+	                  _context2.next = 49;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 38 : _context2.t1 === 'builtIn' ? 40 : 45;
+	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 41 : 46;
 	                break;
 
-	              case 38:
+	              case 39:
 	                this.updateObject({
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 46);
+	                return _context2.abrupt("break", 47);
 
-	              case 40:
+	              case 41:
 	                if (!(funcName === 'videoChat')) {
-	                  _context2.next = 44;
+	                  _context2.next = 45;
 	                  break;
 	                }
 
 	                if (!(funcName in this.builtIn && typeof this.builtIn[funcName] === 'function')) {
-	                  _context2.next = 44;
+	                  _context2.next = 45;
 	                  break;
 	                }
 
-	                _context2.next = 44;
+	                _context2.next = 45;
 	                return this.builtIn[funcName](command);
 
-	              case 44:
-	                return _context2.abrupt("break", 46);
-
 	              case 45:
-	                return _context2.abrupt("return");
+	                return _context2.abrupt("break", 47);
 
 	              case 46:
-	                _context2.next = 58;
+	                return _context2.abrupt("return");
+
+	              case 47:
+	                _context2.next = 59;
 	                break;
 
-	              case 48:
+	              case 49:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 58;
+	                  _context2.next = 59;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 58;
+	                  _context2.next = 59;
 	                  break;
 	                }
 
-	                _context2.prev = 50;
-	                _context2.next = 53;
+	                _context2.prev = 51;
+	                _context2.next = 54;
 	                return command[0][1]();
 
-	              case 53:
-	                _context2.next = 58;
+	              case 54:
+	                _context2.next = 59;
 	                break;
 
-	              case 55:
-	                _context2.prev = 55;
-	                _context2.t2 = _context2["catch"](50);
+	              case 56:
+	                _context2.prev = 56;
+	                _context2.t2 = _context2["catch"](51);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 58:
+	              case 59:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -72920,10 +73506,10 @@
 	                processedPage = populatedUpdatedPageWithFns;
 	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
 	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context2.next = 19;
+	                _context2.next = 20;
 	                break;
 
-	              case 66:
+	              case 67:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -72939,16 +73525,22 @@
 	                  dispatch: boundDispatch
 	                });
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), replaceUpdateJob2);
+	                this.emit('stateChanged', {
+	                  name: 'update',
+	                  path: ".".concat(pageName),
+	                  prevVal: prevVal,
+	                  newVal: this.root
+	                });
 	                this.dispatch({
 	                  type: 'update-map'
 	                });
 
-	              case 70:
+	              case 72:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[23, 28], [50, 55]]);
+	        }, _callee2, this, [[24, 29], [51, 56]]);
 	      }));
 
 	      function initPage(_x) {
@@ -73162,7 +73754,7 @@
 	  }, {
 	    key: "dispatch",
 	    value: function dispatch(action) {
-	      var _this = this;
+	      var _this2 = this;
 
 	      switch (action.type) {
 	        case 'populate':
@@ -73293,10 +73885,10 @@
 
 	                        if (key.startsWith('..')) {
 	                          trimPath = key.substring(2, key.length - 1);
-	                          location = _this.root[_pageName3];
+	                          location = _this2.root[_pageName3];
 	                        } else if (key.startsWith('.')) {
 	                          trimPath = key.substring(1, key.length - 1);
-	                          location = _this.root;
+	                          location = _this2.root;
 	                        }
 
 	                        _pathArr2 = trimPath.split('.');
@@ -73315,23 +73907,23 @@
 
 	                        _trimPath = key.substring(2, key.length);
 	                        _pathArr3 = _trimPath.split('.');
-	                        _val = get_1(_this.root, _pathArr3) || get_1(_this.root[_pageName3], _pathArr3);
+	                        _val = get_1(_this2.root, _pathArr3) || get_1(_this2.root[_pageName3], _pathArr3);
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this2.root, _this2.root[_pageName3]]
 	                        });
 	                        _populateWithSelf2 = populateObject({
 	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this2.root, _this2.root[_pageName3]]
 	                        });
 	                        _populateAfterInheriting2 = populateObject({
 	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this.root, _this.root[_pageName3]]
+	                          locations: [_this2.root, _this2.root[_pageName3]]
 	                        });
-	                        _boundDispatch = _this.dispatch.bind(_this);
+	                        _boundDispatch = _this2.dispatch.bind(_this2);
 	                        withFn = attachFns({
 	                          cadlObject: _populateAfterInheriting2,
 	                          dispatch: _boundDispatch
@@ -73369,6 +73961,9 @@
 
 	            this.dispatch({
 	              type: 'update-localStorage'
+	            });
+	            this.emit('stateChanged', {
+	              name: 'update'
 	            });
 	            break;
 	          }
@@ -73424,6 +74019,19 @@
 	            break;
 	          }
 
+	        case 'emit-update':
+	          {
+	            var _action$payload6 = action.payload,
+	                _pageName6 = _action$payload6.pageName,
+	                _dataKey2 = _action$payload6.dataKey,
+	                newVal = _action$payload6.newVal;
+	            this.emit('stateChanged', {
+	              name: 'update',
+	              path: ".".concat(_pageName6, ".").concat(_dataKey2),
+	              newVal: newVal
+	            });
+	          }
+
 	        default:
 	          {
 	            return;
@@ -73462,6 +74070,11 @@
 
 	      this.dispatch({
 	        type: 'update-localStorage'
+	      });
+	      this.emit('stateChanged', {
+	        name: 'update',
+	        path: dataKey,
+	        newVal: dataObject
 	      });
 	    }
 	    /**
@@ -73907,7 +74520,7 @@
 	  }]);
 
 	  return CADL;
-	}();
+	}(EventEmitter);
 
 	var RootTypes;
 
@@ -73934,30 +74547,35 @@
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$e({}, defaultConfig$1));
 	          debugger;
-	          _context.next = 4;
+	          cadl.on('stateChanged', function (change) {
+	            debugger;
+	            console.log(change);
+	          });
+	          debugger;
+	          _context.next = 6;
 	          return cadl.init();
 
-	        case 4:
+	        case 6:
 	          debugger;
-	          _context.next = 7;
+	          _context.next = 9;
 	          return cadl.initPage('SignIn');
 
-	        case 7:
+	        case 9:
 	          // await cadl.initPage('CreateNewAccount')
 	          debugger;
-	          _context.next = 10;
+	          _context.next = 12;
 	          return Account$1.requestVerificationCode('+1 7015168317');
 
-	        case 10:
+	        case 12:
 	          vc = _context.sent;
-	          _context.next = 13;
+	          _context.next = 15;
 	          return cadl.builtIn['signIn']({
-	            password: "letmein12",
+	            password: "letmein123",
 	            phoneNumber: "+1 7015168317",
 	            verificationCode: vc
 	          });
 
-	        case 13:
+	        case 15:
 	          debugger;
 	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
@@ -73966,20 +74584,20 @@
 	          // await cadl.runInit('MeetingRoomInvited')
 	          // debugger
 
-	          _context.next = 18;
+	          _context.next = 20;
 	          return cadl.initPage('MeetingRoomCreate');
 
-	        case 18:
+	        case 20:
 	          debugger;
-	          _context.next = 21;
+	          _context.next = 23;
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 21:
+	        case 23:
 	          debugger;
-	          _context.next = 24;
+	          _context.next = 26;
 	          return cadl.initPage('MeetingLobbyStart');
 
-	        case 24:
+	        case 26:
 	          debugger; // await cadl.runInit('MeetingRoomCreate')
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -73997,28 +74615,28 @@
 	          // debugger
 	          // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
 
-	          _context.next = 27;
+	          _context.next = 29;
 	          return cadl.root['MeetingLobbyStart'].save[0][1]();
 
-	        case 27:
+	        case 29:
 	          ed = _context.sent;
 	          debugger;
 	          cadl.root.VideoChatObjStore.reference = ed;
 	          debugger;
-	          _context.next = 33;
+	          _context.next = 35;
 	          return cadl.initPage('InviteeInfo01');
 
-	        case 33:
+	        case 35:
 	          debugger;
-	          _context.next = 36;
+	          _context.next = 38;
 	          return cadl.root['InviteeInfo01'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 36:
+	        case 38:
 	          debugger;
-	          _context.next = 39;
+	          _context.next = 41;
 	          return cadl.initPage('VideoChat', [], {
 	            builtIn: {
 	              videoChat: function videoChat(_ref2) {
@@ -74030,12 +74648,12 @@
 	            }
 	          });
 
-	        case 39:
+	        case 41:
 	          debugger;
-	          _context.next = 42;
+	          _context.next = 44;
 	          return cadl.initPage('MeetingLobbyClose');
 
-	        case 42:
+	        case 44:
 	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
@@ -74138,7 +74756,7 @@
 	          //     }
 	          // }
 
-	        case 56:
+	        case 58:
 	        case "end":
 	          return _context.stop();
 	      }

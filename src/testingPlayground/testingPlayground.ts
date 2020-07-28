@@ -16,6 +16,12 @@ export default (async function () {
 
     const cadl = new CADL({ ...defaultConfig })
     debugger
+    cadl.on('stateChanged', function (change) {
+        debugger
+        console.log(change)
+    })
+
+    debugger
     await cadl.init()
     debugger
 
@@ -35,7 +41,7 @@ export default (async function () {
     // debugger
 
     await cadl.builtIn['signIn']({
-        password: "letmein12",
+        password: "letmein123",
         phoneNumber: "+1 7015168317",
         verificationCode: vc
     })
