@@ -271,7 +271,7 @@ function attachFns({
 
                                 }
                                 //TODO:handle else case
-
+                                console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
                                 return res
                             }
                             output = isPopulated(output) ? getFn(output) : output
@@ -488,6 +488,7 @@ function attachFns({
 
                                 let res: any[] = []
                                 try {
+                                    console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', { options: { ...options } });
                                     const { data } = await store.level2SDK.vertexServices.retrieveVertex({
                                         idList: [], options
                                     })
@@ -496,6 +497,7 @@ function attachFns({
                                     throw error
                                 }
                                 if (res.length > 0) {
+                                    console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
@@ -505,6 +507,7 @@ function attachFns({
 
                                     return res
                                 }
+                                console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
                                 //TODO:handle else case
                                 return null
                             }
@@ -643,9 +646,12 @@ function replaceEvalObject({
         //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
         // } else 
         if (key === 'object' && isObject(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
-            cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
+            const updateObject = _.cloneDeep(cadlCopy[key])
+
+            cadlCopy[key] = evalState({ pageName, updateObject, dispatch })
+            //used to update global state after user signin
             if (pageName === 'SignIn' || pageName === 'CreateNewAccount' || pageName === 'SignUp') {
-                dispatch({ type: 'add-fn', payload: { pageName, fn: cadlCopy[key] } })
+                dispatch({ type: 'add-fn', payload: { pageName, fn: evalState({ pageName, updateObject, dispatch }) } })
             }
         } else if (isObject(cadlCopy[key])) {
             cadlCopy[key] = replaceEvalObject({ pageName, cadlObject: cadlCopy[key], dispatch })

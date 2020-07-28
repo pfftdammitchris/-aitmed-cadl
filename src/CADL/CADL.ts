@@ -1,5 +1,5 @@
 import axios from 'axios'
-import YAML from 'yaml'
+import YAML, { stringify } from 'yaml'
 import _, { isObject } from 'lodash'
 import dot from 'dot-object'
 import { EventEmitter } from 'events'
@@ -54,7 +54,6 @@ export default class CADL extends EventEmitter {
         store.env = env
         store.configUrl = configUrl
         this._cadlVersion = cadlVersion
-
     }
 
     /**
@@ -62,9 +61,9 @@ export default class CADL extends EventEmitter {
      * @param InitArgs.BaseDataModel Record<string, any>
      * @param InitArgs.BaseCSS Record<string, any>
      * @param InitArgs.BasePage Record<string, any>
-     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
-     * @throws UnableToParseYAML -if unable to parse yaml file
-     * @throws UnableToLoadConfig -if unable to load config data
+     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
+     * @throws {UnableToParseYAML} -if unable to parse yaml file
+     * @throws {UnableToLoadConfig} -if unable to load config data
      * 
      * -loads config if not already loaded
      * -sets CADL version, baseUrl, assetsUrl, and root
@@ -180,13 +179,21 @@ export default class CADL extends EventEmitter {
         }
 
         let localStorageGlobal = localStorage.getItem('Global')
+        let localStorageGlobalParsed: Record<string, any> | null = null
         if (localStorageGlobal) {
             try {
-                localStorageGlobal = JSON.parse(localStorageGlobal)
+                localStorageGlobalParsed = JSON.parse(localStorageGlobal)
             } catch (error) {
                 console.log(error)
             }
-            this.root = { ...this.root, Global: localStorageGlobal }
+            if (localStorageGlobalParsed) {
+                this.root = { ...this.root, Global: localStorageGlobalParsed }
+                this.dispatch({
+                    type: 'update-data',
+                    //TODO: handle case for data is an array or an object
+                    payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data: localStorageGlobalParsed.currentUser.vertex }
+                })
+            }
         }
         this.dispatch({ type: 'update-map' })
         this.emit('stateChanged', { name: 'update', path: '.', prevVal: {}, newVal: this.root })
@@ -195,13 +202,13 @@ export default class CADL extends EventEmitter {
 
     /**
      * 
-     * @param  string pageName
+     * @param string pageName
      * @param skip string[] -denotes the keys to skip in the population process 
      * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
      * 
-     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
-     * @throws UnableToParseYAML -if unable to parse yaml file
-     * @throws UnableToExecuteFn -if something goes wrong while executing any init function
+     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
+     * @throws {UnableToParseYAML} -if unable to parse yaml file
+     * @throws {UnableToExecuteFn} -if something goes wrong while executing any init function
      * 
      * - initiates cadlObject for page specified
      */
@@ -353,8 +360,8 @@ export default class CADL extends EventEmitter {
      * 
      * @param url string
      * @returns Promise<Record<string, any>>
-     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
-     * @throws UnableToParseYAML -if unable to parse yaml file
+     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
+     * @throws {UnableToParseYAML} -if unable to parse yaml file
      * 
      * -retrieves and parses cadl yaml file
      */
@@ -535,7 +542,6 @@ export default class CADL extends EventEmitter {
                 return currentVal
             }
             case ('eval-object'): {
-
                 const { pageName, updateObject } = action.payload
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
@@ -652,6 +658,7 @@ export default class CADL extends EventEmitter {
      * @param UpdateObjectArgs.dataKey string
      * @param UpdateObjectArgs.dataObject Record<string, any>
      * @param UpdateObjectArgs.dataObjectKey string
+     * @emits CADL#stateChanged
      * 
      * -used for actionType updateObject
      */
