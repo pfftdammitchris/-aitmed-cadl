@@ -73283,7 +73283,7 @@
 	    }()
 	    /**
 	     * 
-	     * @param pageName string
+	     * @param  string pageName
 	     * @param skip string[] -denotes the keys to skip in the population process 
 	     * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
 	     * 
@@ -73527,7 +73527,7 @@
 	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), replaceUpdateJob2);
 	                this.emit('stateChanged', {
 	                  name: 'update',
-	                  path: ".".concat(pageName),
+	                  path: "".concat(pageName),
 	                  prevVal: prevVal,
 	                  newVal: this.root
 	                });
@@ -73872,42 +73872,57 @@
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
 	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                var trimPath, location, _pathArr2, val, _trimPath, _pathArr3, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
+	                var trimPath, location, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
 
 	                return regenerator.wrap(function _callee5$(_context5) {
 	                  while (1) {
 	                    switch (_context5.prev = _context5.next) {
 	                      case 0:
 	                        if (key.startsWith('=')) {
-	                          _context5.next = 7;
+	                          _context5.next = 5;
 	                          break;
 	                        }
+
+	                        val = _populateAfterInheriting[key];
 
 	                        if (key.startsWith('..')) {
 	                          trimPath = key.substring(2, key.length - 1);
 	                          location = _this2.root[_pageName3];
+	                          _pathArr2 = trimPath.split('.');
+
+	                          set_1(location, _pathArr2, val);
+
+	                          _this2.emit('stateChanged', {
+	                            name: 'update',
+	                            path: "".concat(_pageName3, ".").concat(trimPath),
+	                            newVal: val
+	                          });
 	                        } else if (key.startsWith('.')) {
 	                          trimPath = key.substring(1, key.length - 1);
 	                          location = _this2.root;
+	                          _pathArr3 = trimPath.split('.');
+
+	                          set_1(location, _pathArr3, val);
+
+	                          _this2.emit('stateChanged', {
+	                            name: 'update',
+	                            path: "".concat(trimPath),
+	                            newVal: val
+	                          });
 	                        }
 
-	                        _pathArr2 = trimPath.split('.');
-	                        val = _populateAfterInheriting[key];
-
-	                        set_1(location, _pathArr2, val);
-
-	                        _context5.next = 19;
+	                        _context5.next = 17;
 	                        break;
 
-	                      case 7:
+	                      case 5:
 	                        if (!key.startsWith('=')) {
-	                          _context5.next = 19;
+	                          _context5.next = 17;
 	                          break;
 	                        }
 
 	                        _trimPath = key.substring(2, key.length);
-	                        _pathArr3 = _trimPath.split('.');
-	                        _val = get_1(_this2.root, _pathArr3) || get_1(_this2.root[_pageName3], _pathArr3);
+	                        _pathArr4 = _trimPath.split('.');
+	                        _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
@@ -73930,14 +73945,14 @@
 	                        });
 
 	                        if (!(typeof withFn === 'function')) {
-	                          _context5.next = 19;
+	                          _context5.next = 17;
 	                          break;
 	                        }
 
-	                        _context5.next = 19;
+	                        _context5.next = 17;
 	                        return withFn();
 
-	                      case 19:
+	                      case 17:
 	                      case "end":
 	                        return _context5.stop();
 	                    }
@@ -73961,9 +73976,6 @@
 
 	            this.dispatch({
 	              type: 'update-localStorage'
-	            });
-	            this.emit('stateChanged', {
-	              name: 'update'
 	            });
 	            break;
 	          }
@@ -74027,7 +74039,7 @@
 	                newVal = _action$payload6.newVal;
 	            this.emit('stateChanged', {
 	              name: 'update',
-	              path: ".".concat(_pageName6, ".").concat(_dataKey2),
+	              path: "".concat(_pageName6, ".").concat(_dataKey2),
 	              newVal: newVal
 	            });
 	          }

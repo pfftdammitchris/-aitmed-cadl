@@ -195,7 +195,7 @@ export default class CADL extends EventEmitter {
 
     /**
      * 
-     * @param pageName string
+     * @param  string pageName
      * @param skip string[] -denotes the keys to skip in the population process 
      * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
      * 
@@ -328,7 +328,7 @@ export default class CADL extends EventEmitter {
         let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
         this.root = { ...this.root, ...replaceUpdateJob2 }
 
-        this.emit('stateChanged', { name: 'update', path: `.${pageName}`, prevVal, newVal: this.root })
+        this.emit('stateChanged', { name: 'update', path: `${pageName}`, prevVal, newVal: this.root })
         this.dispatch({ type: 'update-map' })
     }
 
@@ -543,17 +543,22 @@ export default class CADL extends EventEmitter {
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
-                        let trimPath, location
+                        let trimPath, location, val
+                        val = populateAfterInheriting[key]
                         if (key.startsWith('..')) {
                             trimPath = key.substring(2, key.length - 1)
                             location = this.root[pageName]
+                            const pathArr = trimPath.split('.')
+                            _.set(location, pathArr, val)
+                            this.emit('stateChanged', { name: 'update', path: `${pageName}.${trimPath}`, newVal: val })
                         } else if (key.startsWith('.')) {
                             trimPath = key.substring(1, key.length - 1)
                             location = this.root
+                            const pathArr = trimPath.split('.')
+                            _.set(location, pathArr, val)
+                            this.emit('stateChanged', { name: 'update', path: `${trimPath}`, newVal: val })
                         }
-                        const pathArr = trimPath.split('.')
-                        const val = populateAfterInheriting[key]
-                        _.set(location, pathArr, val)
+
                     } else if (key.startsWith('=')) {
                         const trimPath = key.substring(2, key.length)
                         const pathArr = trimPath.split('.')
@@ -598,7 +603,6 @@ export default class CADL extends EventEmitter {
                         type: 'update-localStorage',
                     }
                 )
-                this.emit('stateChanged', { name: 'update' })
                 break
             }
             case ('update-localStorage'): {
@@ -633,7 +637,7 @@ export default class CADL extends EventEmitter {
             }
             case ('emit-update'): {
                 const { pageName, dataKey, newVal } = action.payload
-                this.emit('stateChanged', { name: 'update', path: `.${pageName}.${dataKey}`, newVal })
+                this.emit('stateChanged', { name: 'update', path: `${pageName}.${dataKey}`, newVal })
             }
 
             default: {
