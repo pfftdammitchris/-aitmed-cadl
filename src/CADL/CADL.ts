@@ -37,8 +37,7 @@ export default class CADL extends EventEmitter {
     private _baseUrl: string
     private _assetsUrl: string
     private _map: Record<string, any>
-    private _root: Record<string, any> = { actions: {}, refs: {} }
-    private _builtIn: Record<string, any> = builtInFns(this.dispatch.bind(this))
+    private _root: Record<string, any> = { actions: {}, refs: {}, builtIn: builtInFns(this.dispatch.bind(this)) }
     private _initCallQueue: any[]
 
     /**
@@ -222,7 +221,7 @@ export default class CADL extends EventEmitter {
 
         const { builtIn } = options
         if (builtIn && isObject(builtIn)) {
-            this.builtIn = { ...this.builtIn, ...builtIn }
+            this.root.builtIn = { ...this.root.builtIn, ...builtIn }
         }
         let pageCADL = await this.getPage(pageName)
         let prevVal = {}
@@ -284,8 +283,8 @@ export default class CADL extends EventEmitter {
                         }
                         case ('builtIn'): {
                             if (funcName === 'videoChat') {
-                                if (funcName in this.builtIn && typeof this.builtIn[funcName] === 'function') {
-                                    await this.builtIn[funcName](command)
+                                if (funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function') {
+                                    await this.root.builtIn[funcName](command)
                                 }
                             }
                             break
@@ -510,7 +509,7 @@ export default class CADL extends EventEmitter {
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
                 if (pageName === 'builtIn') {
-                    _.set(this, pathArr, data)
+                    _.set(this.root, pathArr, data)
                 } else if (firstCharacter === firstCharacter.toUpperCase()) {
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
