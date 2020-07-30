@@ -81567,7 +81567,7 @@
 	        case 14:
 	          vc = _context.sent;
 	          _context.next = 17;
-	          return cadl.builtIn['signIn']({
+	          return cadl.root.builtIn['signIn']({
 	            password: "letmein123",
 	            phoneNumber: "+1 7015168317",
 	            verificationCode: vc
