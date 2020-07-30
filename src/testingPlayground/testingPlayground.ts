@@ -42,7 +42,7 @@ export default (async function () {
     // })
     // debugger
 
-    await cadl.builtIn['signIn']({
+    await cadl.root.builtIn['signIn']({
         password: "letmein123",
         phoneNumber: "+1 7015168317",
         verificationCode: vc
