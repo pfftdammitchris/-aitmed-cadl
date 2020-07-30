@@ -935,13 +935,6 @@ export default class CADL extends EventEmitter {
     public set root(root) {
         this._root = root || {}
     }
-    public get builtIn() {
-        return this._builtIn
-    }
-    public set builtIn(builtIn) {
-        this._builtIn = builtIn || {}
-
-    }
 
     set apiVersion(apiVersion) {
         store.apiVersion = apiVersion
