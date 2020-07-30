@@ -81490,14 +81490,6 @@
 	      this._root = root || {};
 	    }
 	  }, {
-	    key: "builtIn",
-	    get: function get() {
-	      return this._builtIn;
-	    },
-	    set: function set(builtIn) {
-	      this._builtIn = builtIn || {};
-	    }
-	  }, {
 	    key: "apiVersion",
 	    set: function set(apiVersion) {
 	      store$3.apiVersion = apiVersion;
