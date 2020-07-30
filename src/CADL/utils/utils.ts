@@ -6,6 +6,8 @@ import Document from '../../services/document'
 import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
+import moment from 'moment'
+import humanizeDuration from 'humanize-duration'
 
 export {
     isPopulated,
@@ -917,7 +919,15 @@ function builtInFns(dispatch?: Function) {
 
             }
         },
-        currentDateTime: (() => Date.now())()
+        currentDateTime: (() => Date.now())(),
+        string: {
+            formatUnixtime_en(unixTime: number) {
+                return moment(unixTime).format('ll')
+            },
+            formatDurationInSecond(unixTime: number) {
+                return humanizeDuration(unixTime)
+            }
+        }
     }
 }
 

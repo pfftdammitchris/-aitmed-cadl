@@ -25,6 +25,8 @@ export default (async function () {
     await cadl.init()
     debugger
 
+    console.log(cadl.root.builtIn.string.formatUnixtime_en(1595970704255))
+    console.log(cadl.root.builtIn.string.formatDurationInSecond(3388333000))
     await cadl.initPage('SignIn')
     // await cadl.initPage('CreateNewAccount')
     debugger
@@ -54,6 +56,7 @@ export default (async function () {
     // await cadl.runInit('MeetingRoomInvited')
     // debugger
     await cadl.initPage('MeetingRoomCreate')
+
     debugger
     await cadl.root['MeetingRoomCreate'].save[0][1]()
     debugger
