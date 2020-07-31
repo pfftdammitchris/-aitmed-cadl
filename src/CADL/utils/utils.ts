@@ -8,7 +8,6 @@ import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
 import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
-import { Status } from '@aitmed/ecos-lvl2-sdk'
 
 export {
     isPopulated,

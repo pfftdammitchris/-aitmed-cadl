@@ -42,13 +42,13 @@ export default (async function () {
     // })
     // debugger
 
-    // await cadl.root.builtIn['signIn']({
-    //     password: "letmein123",
-    //     phoneNumber: "+1 7015168317",
-    //     verificationCode: vc
-    // })
-    // debugger
-    // cadl.root.actions['SignIn'].update()
+    await cadl.root.builtIn['signIn']({
+        password: "letmein123",
+        phoneNumber: "+1 7015168317",
+        verificationCode: vc
+    })
+    debugger
+    cadl.root.actions['SignIn'].update()
     // cadl.root['CreateNewAccount'].update()
     debugger
     // await cadl.initPage('MeetingRoomInvited')
