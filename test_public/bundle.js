@@ -45639,9 +45639,7 @@
 	      var _loadConfig = asyncToGenerator$1(
 	      /*#__PURE__*/
 	      regenerator$1.mark(function _callee2(appName) {
-	        var _this = this;
-
-	        var hostname, splits, configData, config, configJSON;
+	        var hostname, splits, url, configData, config, configJSON;
 	        return regenerator$1.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -45672,11 +45670,18 @@
 	                      appName = splits.slice(0, splits.length - 1).join('.');
 	                    }
 	                  }
+	                }
+
+	                //permits overriding of config url
+	                if (this.configUrl.endsWith('.yml')) {
+	                  url = this.configUrl;
+	                } else {
+	                  url = "".concat(this.configUrl, "/").concat(appName, ".yml");
 	                } // Getting config data from {appName}.yml
 
 
-	                _context2.next = 6;
-	                return axios$1$1.get("".concat(this.configUrl, "/").concat(appName, ".yml")).then(function (_ref2) {
+	                _context2.next = 7;
+	                return axios$1$1.get(url).then(function (_ref2) {
 	                  var data = _ref2.data;
 	                  return data;
 	                })["catch"](
@@ -45684,22 +45689,26 @@
 	                asyncToGenerator$1(
 	                /*#__PURE__*/
 	                regenerator$1.mark(function _callee() {
-	                  var aitmedConfig;
+	                  var urlArr, defaultUrl, aitmedConfig;
 	                  return regenerator$1.wrap(function _callee$(_context) {
 	                    while (1) {
 	                      switch (_context.prev = _context.next) {
 	                        case 0:
-	                          _context.next = 2;
-	                          return axios$1$1.get("".concat(_this.configUrl, "/aitmed.yml")).then(function (_ref4) {
+	                          //TODO: should an override have a default?
+	                          urlArr = url.split('/');
+	                          urlArr.pop();
+	                          defaultUrl = urlArr.join('/');
+	                          _context.next = 5;
+	                          return axios$1$1.get("".concat(defaultUrl, "/aitmed.yml")).then(function (_ref4) {
 	                            var data = _ref4.data;
 	                            return data;
 	                          });
 
-	                        case 2:
+	                        case 5:
 	                          aitmedConfig = _context.sent;
 	                          return _context.abrupt("return", aitmedConfig);
 
-	                        case 4:
+	                        case 7:
 	                        case "end":
 	                          return _context.stop();
 	                      }
@@ -45707,7 +45716,7 @@
 	                  }, _callee);
 	                })));
 
-	              case 6:
+	              case 7:
 	                configData = _context2.sent;
 
 	                try {
@@ -45731,7 +45740,7 @@
 	                this.generateGrpcCLient();
 	                return _context2.abrupt("return", config);
 
-	              case 11:
+	              case 12:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -79836,6 +79845,37 @@
 	      formatDurationInSecond: function formatDurationInSecond(unixTime) {
 	        return humanizeDuration(unixTime);
 	      }
+	    },
+	    SignInOk: function SignInOk() {
+	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee14() {
+	        var status;
+	        return regenerator.wrap(function _callee14$(_context14) {
+	          while (1) {
+	            switch (_context14.prev = _context14.next) {
+	              case 0:
+	                _context14.next = 2;
+	                return Account$1.getStatus();
+
+	              case 2:
+	                status = _context14.sent;
+
+	                if (!(status.code !== 0)) {
+	                  _context14.next = 5;
+	                  break;
+	                }
+
+	                return _context14.abrupt("return", false);
+
+	              case 5:
+	                return _context14.abrupt("return", true);
+
+	              case 6:
+	              case "end":
+	                return _context14.stop();
+	            }
+	          }
+	        }, _callee14);
+	      }))();
 	    }
 	  };
 	}
@@ -80306,12 +80346,17 @@
 	            dataKey,
 	            dataObject,
 	            funcName,
+	            _command$if,
+	            condExpression,
+	            elseEffect,
+	            condResult,
 	            updatedPage,
 	            populatedUpdatedPage,
 	            populatedUpdatedPageWithFns,
 	            processedComponents,
 	            replaceUpdateJob2,
 	            _args2 = arguments;
+
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -80375,7 +80420,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 67;
+	                  _context2.next = 80;
 	                  break;
 	                }
 
@@ -80385,7 +80430,7 @@
 
 	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 67;
+	                  _context2.next = 80;
 	                  break;
 	                }
 
@@ -80411,7 +80456,7 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 32:
-	                _context2.next = 59;
+	                _context2.next = 72;
 	                break;
 
 	              case 34:
@@ -80453,34 +80498,74 @@
 	                return _context2.abrupt("return");
 
 	              case 47:
-	                _context2.next = 59;
+	                _context2.next = 72;
 	                break;
 
 	              case 49:
+	                if (!(isObject_1(command) && 'if' in command)) {
+	                  _context2.next = 62;
+	                  break;
+	                }
+
+	                //TODO: add the then condition
+	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
+
+	                if (!(typeof condExpression === 'function')) {
+	                  _context2.next = 60;
+	                  break;
+	                }
+
+	                _context2.next = 54;
+	                return condExpression();
+
+	              case 54:
+	                condResult = _context2.sent;
+
+	                if (!(!condResult && isObject_1(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
+	                  _context2.next = 60;
+	                  break;
+	                }
+
+	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
+	                  _context2.next = 60;
+	                  break;
+	                }
+
+	                _context2.next = 59;
+	                return this.root.builtIn['goto'](elseEffect['goto']);
+
+	              case 59:
+	                return _context2.abrupt("return");
+
+	              case 60:
+	                _context2.next = 72;
+	                break;
+
+	              case 62:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 59;
+	                  _context2.next = 72;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 59;
+	                  _context2.next = 72;
 	                  break;
 	                }
 
-	                _context2.prev = 51;
-	                _context2.next = 54;
+	                _context2.prev = 64;
+	                _context2.next = 67;
 	                return command[0][1]();
 
-	              case 54:
-	                _context2.next = 59;
+	              case 67:
+	                _context2.next = 72;
 	                break;
 
-	              case 56:
-	                _context2.prev = 56;
-	                _context2.t2 = _context2["catch"](51);
+	              case 69:
+	                _context2.prev = 69;
+	                _context2.t2 = _context2["catch"](64);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 59:
+	              case 72:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -80500,7 +80585,7 @@
 	                _context2.next = 20;
 	                break;
 
-	              case 67:
+	              case 80:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -80526,12 +80611,12 @@
 	                  type: 'update-map'
 	                });
 
-	              case 72:
+	              case 85:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[24, 29], [51, 56]]);
+	        }, _callee2, this, [[24, 29], [64, 69]]);
 	      }));
 
 	      function initPage(_x) {
@@ -81566,36 +81651,48 @@
 
 	        case 14:
 	          vc = _context.sent;
-	          _context.next = 17;
-	          return cadl.root.builtIn['signIn']({
-	            password: "letmein123",
-	            phoneNumber: "+1 7015168317",
-	            verificationCode: vc
-	          });
-
-	        case 17:
-	          debugger;
-	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
-
+	          // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
+	          //     confirmPassword: "letmein123",
+	          //     countryCode: "+1",
+	          //     password: "letmein123",
+	          //     phoneNumber: "+1 7015168317",
+	          //     username: "sammy",
+	          //     verificationCode: vc
+	          // })
+	          // debugger
+	          // await cadl.root.builtIn['signIn']({
+	          //     password: "letmein123",
+	          //     phoneNumber: "+1 7015168317",
+	          //     verificationCode: vc
+	          // })
+	          // debugger
+	          // cadl.root.actions['SignIn'].update()
+	          // cadl.root['CreateNewAccount'].update()
 	          debugger; // await cadl.initPage('MeetingRoomInvited')
 	          // debugger
 	          // await cadl.runInit('MeetingRoomInvited')
 	          // debugger
 
-	          _context.next = 22;
-	          return cadl.initPage('MeetingRoomCreate');
+	          _context.next = 18;
+	          return cadl.initPage('MeetingRoomCreate', [], {
+	            builtIn: {
+	              "goto": function _goto(destination) {
+	                console.log(destination);
+	              }
+	            }
+	          });
 
-	        case 22:
+	        case 18:
 	          debugger;
-	          _context.next = 25;
+	          _context.next = 21;
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 25:
+	        case 21:
 	          debugger;
-	          _context.next = 28;
+	          _context.next = 24;
 	          return cadl.initPage('MeetingLobbyStart');
 
-	        case 28:
+	        case 24:
 	          debugger; // await cadl.runInit('MeetingRoomCreate')
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -81613,28 +81710,28 @@
 	          // debugger
 	          // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
 
-	          _context.next = 31;
+	          _context.next = 27;
 	          return cadl.root['MeetingLobbyStart'].save[0][1]();
 
-	        case 31:
+	        case 27:
 	          ed = _context.sent;
 	          debugger;
 	          cadl.root.VideoChatObjStore.reference = ed;
 	          debugger;
-	          _context.next = 37;
+	          _context.next = 33;
 	          return cadl.initPage('InviteeInfo01');
 
-	        case 37:
+	        case 33:
 	          debugger;
-	          _context.next = 40;
+	          _context.next = 36;
 	          return cadl.root['InviteeInfo01'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 40:
+	        case 36:
 	          debugger;
-	          _context.next = 43;
+	          _context.next = 39;
 	          return cadl.initPage('VideoChat', [], {
 	            builtIn: {
 	              videoChat: function videoChat(_ref2) {
@@ -81646,12 +81743,12 @@
 	            }
 	          });
 
-	        case 43:
+	        case 39:
 	          debugger;
-	          _context.next = 46;
+	          _context.next = 42;
 	          return cadl.initPage('MeetingLobbyClose');
 
-	        case 46:
+	        case 42:
 	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
@@ -81754,7 +81851,7 @@
 	          //     }
 	          // }
 
-	        case 60:
+	        case 56:
 	        case "end":
 	          return _context.stop();
 	      }

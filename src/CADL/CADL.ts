@@ -293,6 +293,18 @@ export default class CADL extends EventEmitter {
                             return
                         }
                     }
+                } else if (isObject(command) && 'if' in command) {
+                    //TODO: add the then condition
+                    const [condExpression, , elseEffect] = command['if']
+                    if (typeof condExpression === 'function') {
+                        const condResult = await condExpression()
+                        if (!condResult && isObject(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string') {
+                            if ('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function') {
+                                await this.root.builtIn['goto'](elseEffect['goto'])
+                                return
+                            }
+                        }
+                    }
                 } else if (Array.isArray(command)) {
                     if (typeof command[0][1] === 'function') {
                         try {

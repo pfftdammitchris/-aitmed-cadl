@@ -8,6 +8,7 @@ import { UnableToLocateValue } from '../errors'
 import { Account } from '../../services'
 import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
+import { Status } from '@aitmed/ecos-lvl2-sdk'
 
 export {
     isPopulated,
@@ -927,6 +928,13 @@ function builtInFns(dispatch?: Function) {
             formatDurationInSecond(unixTime: number) {
                 return humanizeDuration(unixTime)
             }
+        },
+        async SignInOk(): Promise<boolean> {
+            const status = await Account.getStatus()
+            if (status.code !== 0) {
+                return false
+            }
+            return true
         }
     }
 }

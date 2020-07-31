@@ -42,20 +42,20 @@ export default (async function () {
     // })
     // debugger
 
-    await cadl.root.builtIn['signIn']({
-        password: "letmein123",
-        phoneNumber: "+1 7015168317",
-        verificationCode: vc
-    })
-    debugger
-    cadl.root.actions['SignIn'].update()
+    // await cadl.root.builtIn['signIn']({
+    //     password: "letmein123",
+    //     phoneNumber: "+1 7015168317",
+    //     verificationCode: vc
+    // })
+    // debugger
+    // cadl.root.actions['SignIn'].update()
     // cadl.root['CreateNewAccount'].update()
     debugger
     // await cadl.initPage('MeetingRoomInvited')
     // debugger
     // await cadl.runInit('MeetingRoomInvited')
     // debugger
-    await cadl.initPage('MeetingRoomCreate')
+    await cadl.initPage('MeetingRoomCreate', [], { builtIn: { goto(destination) { console.log(destination) } } })
 
     debugger
     await cadl.root['MeetingRoomCreate'].save[0][1]()
