@@ -231,7 +231,7 @@ function attachFns({
                     switch (apiType) {
                         case ('re'): {
                             const getFn = (output) => async () => {
-                                const { api, dataKey, id, maxcount, type, sCondition, ...options } = _.cloneDeep(output || {})
+                                const { api, dataKey, dataIn, dataOut, id, maxcount, type, sCondition, ...options } = _.cloneDeep(output || {})
                                 let res: any[] = []
                                 let idList: string[] | Uint8Array[] = []
                                 if (id) {
@@ -266,9 +266,9 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey, newVal: res } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
 
 
                                 }
@@ -282,10 +282,10 @@ function attachFns({
                         }
                         case ('ce'): {
                             const storeFn = (output) => async (name) => {
-                                const { dataKey } = _.cloneDeep(output || {})
+                                const { dataKey, dataIn, dataOut } = _.cloneDeep(output || {})
                                 // const pathArr = dataKey.split('.')
                                 //get current object name value
-                                const { deat, id, ...currentVal } = dispatch({ type: 'get-data', payload: { pageName, dataKey } })
+                                const { deat, id, ...currentVal } = dispatch({ type: 'get-data', payload: { pageName, dataKey: dataIn ? dataIn : dataKey } })
 
                                 //TODO: remove when backend fixes message type problem
                                 if (currentVal.name && currentVal.name.message) {
@@ -330,7 +330,7 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: replacedEidWithId }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: replacedEidWithId }
                                     })
 
                                     //dispatch action to update state that is dependant of this response
@@ -339,7 +339,7 @@ function attachFns({
                                         type: 'populate',
                                         payload: { pageName }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey, newVal: res } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
 
                                     return res
                                 }
@@ -347,15 +347,14 @@ function attachFns({
                                 return null
                             }
 
-                            // output = [`${output.dataKey}.name`, storeFn(output)]
-                            output = isPopulated(output) ? [`${output.dataKey}.name`, storeFn(output)] : output
+                            output = isPopulated(output) ? [`${output.dataOut ? output.dataOut : output.dataKey}.name`, storeFn(output)] : output
                             break
                         }
                         case ('rd'): {
                             const getFn = (output) => async () => {
                                 let res
                                 //TODO:update to new format
-                                const { api, dataKey, ids, ...rest } = _.cloneDeep(output || {})
+                                const { api, dataKey, dataIn, dataOut, ids, ...rest } = _.cloneDeep(output || {})
                                 try {
                                     // const parsedType = type.split('-')[1]
                                     const data = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest } }).then(({ data }) => {
@@ -375,9 +374,9 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
 
                                     return res
                                 }
@@ -392,10 +391,10 @@ function attachFns({
                             const storeFn = (output) => async ({ data, type, id = null }) => {
                                 //TODO:update to new format after ApplyBusiness is updated
                                 //@ts-ignore
-                                const { dataKey, ...cloneOutput } = _.cloneDeep(output || {})
+                                const { dataKey, dataIn, dataOut, ...cloneOutput } = _.cloneDeep(output || {})
                                 // const pathArr = dataKey.split('.')
                                 // const currentVal = _.get(localRoot[pageName], pathArr)
-                                const currentVal = dispatch({ type: 'get-data', payload: { dataKey, pageName } })
+                                const currentVal = dispatch({ type: 'get-data', payload: { dataKey: dataIn ? dataIn : dataKey, pageName } })
 
                                 const mergedVal = mergeDeep(currentVal, { name: { data, type } })
                                 const { api, ...options } = mergedVal
@@ -428,9 +427,9 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
 
                                     return res
                                 }
@@ -444,8 +443,8 @@ function attachFns({
                             const storeFn = (output) => async (name, id = null) => {
 
                                 //TODO: update to new format
-                                const { dataKey, ...cloneOutput } = _.cloneDeep(output || {})
-                                const pathArr = dataKey.split('.')
+                                const { dataKey, dataIn, dataOut, ...cloneOutput } = _.cloneDeep(output || {})
+                                const pathArr = dataIn ? dataIn.split('.') : dataKey.split('.')
                                 const currentVal = _.get(localRoot[pageName], pathArr)
                                 const mergedVal = mergeDeep(currentVal, cloneOutput)
                                 const mergedName = mergeDeep({ name: mergedVal }, name)
@@ -473,9 +472,9 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
                                     return res
                                 }
                                 //TODO:handle else case
@@ -486,7 +485,7 @@ function attachFns({
                         }
                         case ('rv'): {
                             const getFn = (output) => async () => {
-                                const { api, dataKey, ...options } = _.cloneDeep(output || {})
+                                const { api, dataKey, dataIn, dataOut, ...options } = _.cloneDeep(output || {})
 
                                 let res: any[] = []
                                 try {
@@ -503,9 +502,9 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
 
                                     return res
                                 }
@@ -522,8 +521,8 @@ function attachFns({
                             const builtInFn = _.get(builtInFnsObj, pathArr)
                             const fn = (output) => async (input?: any) => {
                                 //@ts-ignore
-                                const { api, dataKey } = _.cloneDeep(output || {})
-                                const pathArr = dataKey.split('.')
+                                const { api, dataKey, dataIn, dataOut } = _.cloneDeep(output || {})
+                                const pathArr = dataIn ? dataIn.split('.') : dataKey.split('.')
                                 const currentVal = _.get(Object.values(localRoot)[0], pathArr)
                                 let res: any
                                 try {
@@ -537,9 +536,9 @@ function attachFns({
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res }
+                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
-                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey, newVal: res } })
+                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
 
                                     return res
                                 }
