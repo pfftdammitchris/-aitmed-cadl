@@ -79841,10 +79841,10 @@
 	    }(),
 	    string: {
 	      formatUnixtime_en: function formatUnixtime_en(unixTime) {
-	        return moment(unixTime).format('ll');
+	        return moment(unixTime * 1000).format('lll');
 	      },
 	      formatDurationInSecond: function formatDurationInSecond(unixTime) {
-	        return humanizeDuration(unixTime);
+	        return humanizeDuration(unixTime * 1000);
 	      }
 	    },
 	    SignInOk: function SignInOk() {
