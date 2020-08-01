@@ -921,10 +921,10 @@ function builtInFns(dispatch?: Function) {
         currentDateTime: (() => Date.now())(),
         string: {
             formatUnixtime_en(unixTime: number) {
-                return moment(unixTime).format('ll')
+                return moment(unixTime*1000).format('ll')
             },
             formatDurationInSecond(unixTime: number) {
-                return humanizeDuration(unixTime)
+                return humanizeDuration(unixTime*1000)
             }
         },
         async SignInOk(): Promise<boolean> {
