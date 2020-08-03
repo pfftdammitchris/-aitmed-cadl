@@ -15,7 +15,7 @@ This package contains the CADL class used to process CADL objects in addition to
 ## To run the CADL validation UI locally run the following command
 
 ```
-    npm run dev
+    npm run start:val_ui
 ```
 
 then navigate to http://localhost:5000/
@@ -32,5 +32,11 @@ then navigate to http://localhost:5000/
 ## To run the CADL test page UI locally run the following command
 
 ```
-    npm run test:dev
+    npm run start:test
+```
+
+## To update the @aitmed/cadl package run
+
+```
+    npm run publish:public
 ```

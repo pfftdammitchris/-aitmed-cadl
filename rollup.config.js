@@ -6,7 +6,6 @@ import external from 'rollup-plugin-peer-deps-external'
 import globals from 'rollup-plugin-node-globals'
 import nodePolyfills from 'rollup-plugin-node-polyfills';
 
-
 const extensions = ['.js', '.ts']
 
 export default [
@@ -96,7 +95,7 @@ export default [
 				extensions,
 			}),
 			json(),
-			nodePolyfills()
+			nodePolyfills(),
 		],
 	}
 ];

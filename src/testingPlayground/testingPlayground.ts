@@ -14,12 +14,8 @@ export default (async function () {
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
-    const cadl = new CADL({ ...defaultConfig })
-    debugger
-    cadl.on('stateChanged', function (change) {
-        debugger
-        console.log(change)
-    })
+    const cadl = new CADL({ ...defaultConfig, env: 'production' })
+
 
     debugger
     await cadl.init()
@@ -28,6 +24,8 @@ export default (async function () {
     console.log(cadl.root.builtIn.string.formatUnixtime_en(1595970704255))
     console.log(cadl.root.builtIn.string.formatDurationInSecond(3388333000))
     await cadl.initPage('SignIn')
+    cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
+    debugger
     // await cadl.initPage('CreateNewAccount')
     debugger
     const vc = await Account.requestVerificationCode('+1 7015168317')

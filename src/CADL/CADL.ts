@@ -1,18 +1,9 @@
+import _ from 'lodash'
 import axios from 'axios'
 import YAML from 'yaml'
-import _, { isObject } from 'lodash'
-import dot from 'dot-object'
 import { EventEmitter } from 'events'
+import produce from 'immer'
 
-import {
-    populateObject,
-    attachFns,
-    populateKeys,
-    builtInFns,
-    populateVals,
-    replaceUint8ArrayWithBase64,
-    replaceEvalObject,
-} from './utils'
 import store, {
     ResponseCatcher,
     ErrorCatcher
@@ -27,8 +18,17 @@ import {
     CADL_OBJECT,
     CADLARGS
 } from './types'
+import {
+    populateObject,
+    attachFns,
+    populateKeys,
+    builtInFns,
+    populateVals,
+    replaceUint8ArrayWithBase64,
+    replaceEvalObject,
+} from './utils'
+import { mergeDeep, isObject } from '../utils'
 
-import { mergeDeep } from '../utils'
 export default class CADL extends EventEmitter {
 
     private _cadlVersion: 'test' | 'stable'
@@ -36,15 +36,14 @@ export default class CADL extends EventEmitter {
     private _cadlBaseUrl: string
     private _baseUrl: string
     private _assetsUrl: string
-    private _map: Record<string, any>
-    private _root: Record<string, any> = { actions: {}, refs: {}, builtIn: builtInFns(this.dispatch.bind(this)) }
+    private _root: Record<string, any> = this.initRoot({})
     private _initCallQueue: any[]
 
     /**
      * 
      * @param CADLARGS
-     * @param CADLARGS.env string 
-     * @param CADLARGS.configUrl string 
+     * @param CADLARGS.env 'development' | 'production'
+     * @param CADLARGS.configUrl  
      * @param CADLARGS.cadlVersion 'test' | 'stable' 
      */
     constructor({ env, configUrl, cadlVersion }: CADLARGS) {
@@ -57,10 +56,10 @@ export default class CADL extends EventEmitter {
 
     /**
      * @param InitArgs 
-     * @param InitArgs.BaseDataModel Record<string, any>
-     * @param InitArgs.BaseCSS Record<string, any>
-     * @param InitArgs.BasePage Record<string, any>
-     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
+     * @param InitArgs.BaseDataModel 
+     * @param InitArgs.BaseCSS 
+     * @param InitArgs.BasePage 
+     * @throws {UnableToRetrieveYAML} -if unable to retrieve noodlYAML
      * @throws {UnableToParseYAML} -if unable to parse yaml file
      * @throws {UnableToLoadConfig} -if unable to load config data
      * 
@@ -127,8 +126,6 @@ export default class CADL extends EventEmitter {
                 lookFor: ['.', '..', '='],
             })
             this.root = { ...this.root, ...processedBasePage }
-
-
         }
 
         if (preload && preload.length) {
@@ -194,20 +191,19 @@ export default class CADL extends EventEmitter {
                 })
             }
         }
-        this.dispatch({ type: 'update-map' })
         this.emit('stateChanged', { name: 'update', path: '.', prevVal: {}, newVal: this.root })
     }
 
 
     /**
      * 
-     * @param string pageName
-     * @param skip string[] -denotes the keys to skip in the population process 
-     * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
+     * @param pageName
+     * @param skip Denotes the keys to skip in the population process 
+     * @param options Object that takes in set of options for the page
      * 
-     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
-     * @throws {UnableToParseYAML} -if unable to parse yaml file
-     * @throws {UnableToExecuteFn} -if something goes wrong while executing any init function
+     * @throws {UnableToRetrieveYAML} -When unable to retrieve noodlYAML
+     * @throws {UnableToParseYAML} -When unable to parse yaml file
+     * @throws {UnableToExecuteFn} -When something goes wrong while executing any init function
      * 
      * - initiates cadlObject for page specified
      */
@@ -221,7 +217,9 @@ export default class CADL extends EventEmitter {
 
         const { builtIn } = options
         if (builtIn && isObject(builtIn)) {
-            this.root.builtIn = { ...this.root.builtIn, ...builtIn }
+            this.root = produce(this.root, draft => {
+                draft.builtIn = { ...draft.builtIn, ...builtIn }
+            })
         }
         let pageCADL = await this.getPage(pageName)
         let prevVal = {}
@@ -229,11 +227,9 @@ export default class CADL extends EventEmitter {
         //process formData
         if (this.root[pageName]) {
             prevVal = _.cloneDeep(this.root[pageName])
-            delete this.root[pageName]
-            // const cloneCurrPage = _.cloneDeep(this.root[pageName])
-            // //TODO: test order of overrides
-            // const mergedPage = _.merge(pageCADL, { [pageName]: cloneCurrPage })
-            // pageCADL = mergedPage
+            this.root = produce(this.root, draft => {
+                delete draft[pageName]
+            })
         }
         const processedFormData = this.processPopulate({
             source: pageCADL,
@@ -242,6 +238,7 @@ export default class CADL extends EventEmitter {
             withFns: true,
             pageName
         })
+
         //FOR FNS
         //process components
         const processedWithFns = this.processPopulate({
@@ -252,13 +249,13 @@ export default class CADL extends EventEmitter {
             pageName
         })
 
-        // //replace updateObj with Fn
+        //replace updateObj with Fn
         const boundDispatch = this.dispatch.bind(this)
-        // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
-
 
         let processedPage = processedWithFns
-        this.root = { ...this.root, ...processedPage }
+        this.root = produce(this.root, draft => {
+            return { ...draft, ...processedPage }
+        })
 
         //run init commands if any
         let init = Object.values(processedPage)[0].init
@@ -331,9 +328,13 @@ export default class CADL extends EventEmitter {
 
                 init = Object.values(populatedUpdatedPageWithFns)[0].init
 
-                this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+
+                this.root[pageName] = produce(this.root[pageName], draft => {
+                    Object.assign(draft[pageName], Object.values(populatedUpdatedPageWithFns)[0])
+                })
             }
         }
+
         //FOR COMPONENTS
         //process components
         const processedComponents = this.processPopulate({
@@ -344,17 +345,17 @@ export default class CADL extends EventEmitter {
             pageName
         })
         let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
-        this.root = { ...this.root, ...replaceUpdateJob2 }
-
+        this.root = produce(this.root, draft => {
+            return { ...draft, ...replaceUpdateJob2 }
+        })
         this.emit('stateChanged', { name: 'update', path: `${pageName}`, prevVal, newVal: this.root })
-        this.dispatch({ type: 'update-map' })
     }
 
     /**
-     * @param pageName string
+     * @param pageName 
      * @returns CADL_OBJECT
-     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
-     * @throws UnableToParseYAML -if unable to parse yaml file
+     * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
+     * @throws {UnableToParseYAML} -When unable to parse yaml file
      */
     public async getPage(pageName: string): Promise<CADL_OBJECT> {
         let pageCADL
@@ -368,13 +369,13 @@ export default class CADL extends EventEmitter {
     }
 
     /**
+     * Retrieves and parses cadl yaml file.
      * 
-     * @param url string
-     * @returns Promise<Record<string, any>>
-     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
-     * @throws {UnableToParseYAML} -if unable to parse yaml file
+     * @param url 
+     * @returns The raw object version of the noodl file
+     * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
+     * @throws {UnableToParseYAML} -When unable to parse yaml file
      * 
-     * -retrieves and parses cadl yaml file
      */
     private async defaultObject(url: string): Promise<Record<string, any>> {
         let cadlYAML, cadlObject
@@ -396,11 +397,12 @@ export default class CADL extends EventEmitter {
 
     /**
      * 
-     * @param pageName string
-     * @param dataKey string
-     * @returns any
+     * Returns data associated with given pageName and dataKey.
      * 
-     * -returns data associated with given pageName and dataKey
+     * @param pageName 
+     * @param dataKey 
+     * @returns The data that is assigned to the given path.
+     * 
      */
     public getData(pageName: string, dataKey: string): any {
         const firstCharacter = dataKey[0]
@@ -416,17 +418,17 @@ export default class CADL extends EventEmitter {
     }
 
     /**
+     * Used to populate the references of the noodl files. 
      * 
      * @param ProcessPopulateArgs 
-     * @param ProcessPopulateArgs.source  Record<string, any> -item being de-referenced
-     * @param ProcessPopulateArgs.lookFor  string[] -reference tokens to look for e.g ['.','..']
-     * @param ProcessPopulateArgs.pageName?  string
-     * @param ProcessPopulateArgs.skip?  string[] -keys that should not be de-referenced e.g ['name','country']
-     * @param ProcessPopulateArgs.withFns?  boolean -choose to attach ecos functions to the source
+     * @param ProcessPopulateArgs.source  The item being de-referenced.
+     * @param ProcessPopulateArgs.lookFor  Reference tokens to look for e.g ['.','..'].
+     * @param ProcessPopulateArgs.pageName 
+     * @param ProcessPopulateArgs.skip Keys that should not be de-referenced e.g ['name','country'].
+     * @param ProcessPopulateArgs.withFns Choose to attach ecos functions to the source
      * 
-     * @returns Record<string, any> -the processed/de-referenced object
+     * @returns The processed/de-referenced object.
      * 
-     * - used to populate the references 
      */
     private processPopulate({
         source,
@@ -511,7 +513,9 @@ export default class CADL extends EventEmitter {
                     dispatch: boundDispatch
                 })
 
-                this.root[pageName] = withFNs
+                this.root = produce(this.root, draft => {
+                    draft[pageName] = withFNs
+                })
                 this.dispatch({ type: 'update-localStorage' })
                 break
             }
@@ -521,11 +525,15 @@ export default class CADL extends EventEmitter {
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
                 if (pageName === 'builtIn') {
-                    _.set(this.root, pathArr, data)
+                    this.root = produce(this.root, draft => {
+                        _.set(draft, pathArr, data)
+                    })
                 } else if (firstCharacter === firstCharacter.toUpperCase()) {
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
-                    _.set(this.root, pathArr, mergedVal)
+                    this.root = produce(this.root, draft => {
+                        _.set(draft, pathArr, mergedVal)
+                    })
                 } else {
                     const currentVal = _.get(this.root[pageName], pathArr)
                     let mergedVal
@@ -539,7 +547,9 @@ export default class CADL extends EventEmitter {
                     } else {
                         mergedVal = data
                     }
-                    _.set(this.root[pageName], pathArr, mergedVal)
+                    this.root = produce(this.root, draft => {
+                        _.set(draft[pageName], pathArr, mergedVal)
+                    })
                 }
 
                 this.dispatch({ type: 'update-localStorage' })
@@ -560,19 +570,21 @@ export default class CADL extends EventEmitter {
                 Object.keys(populateAfterInheriting).forEach(async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
-                        let trimPath, location, val
+                        let trimPath, val
                         val = populateAfterInheriting[key]
                         if (key.startsWith('..')) {
                             trimPath = key.substring(2, key.length - 1)
-                            location = this.root[pageName]
                             const pathArr = trimPath.split('.')
-                            _.set(location, pathArr, val)
+                            this.root = produce(this.root, draft => {
+                                _.set(draft[pageName], pathArr, val)
+                            })
                             this.emit('stateChanged', { name: 'update', path: `${pageName}.${trimPath}`, newVal: val })
                         } else if (key.startsWith('.')) {
                             trimPath = key.substring(1, key.length - 1)
-                            location = this.root
                             const pathArr = trimPath.split('.')
-                            _.set(location, pathArr, val)
+                            this.root = produce(this.root, draft => {
+                                _.set(draft, pathArr, val)
+                            })
                             this.emit('stateChanged', { name: 'update', path: `${trimPath}`, newVal: val })
                         }
 
@@ -626,29 +638,17 @@ export default class CADL extends EventEmitter {
                 localStorage.setItem('Global', JSON.stringify(this.root?.Global))
                 break
             }
-            case ('update-map'): {
-                //TODO: consider adding update-page-map
-                this.map = dot.dot(this.root)
-                break
-            }
             case ('add-fn'): {
                 //actions for page currently used for signIn 
                 const { pageName, fn } = action.payload
                 if (this.root.actions[pageName]) {
-                    this.root.actions[pageName].update = fn
+                    this.root = produce(this.root, draft => {
+                        draft.actions[pageName].update = fn
+                    })
                 } else {
-                    this.root.actions[pageName] = { update: fn }
-                }
-                break
-            }
-            case ('save-ref'): {
-                //saves path to references as object is populated
-                const { pageName, ref, path } = action.payload
-                if (this.root.refs[pageName]) {
-                    this.root.refs[pageName][path] = ref
-                } else {
-                    this.root.refs[pageName] = {}
-                    this.root.refs[pageName][path] = ref
+                    this.root = produce(this.root, draft => {
+                        draft.actions[pageName] = { update: fn }
+                    })
                 }
                 break
             }
@@ -664,17 +664,16 @@ export default class CADL extends EventEmitter {
     }
 
     /**
+     * Used for the actionType 'updateObject'. It updates the value of an object at the given path.
      * 
      * @param UpdateObjectArgs
-     * @param UpdateObjectArgs.dataKey string
-     * @param UpdateObjectArgs.dataObject Record<string, any>
-     * @param UpdateObjectArgs.dataObjectKey string
+     * @param UpdateObjectArgs.dataKey The path to the property being changed.
+     * @param UpdateObjectArgs.dataObject The object that will be updated.
+     * @param UpdateObjectArgs.dataObjectKey The specific key of the dataObject to be used as the new value. 
      * @emits CADL#stateChanged
      * 
-     * -used for actionType updateObject
      */
     public updateObject({ dataKey, dataObject, dataObjectKey }: { dataKey: string, dataObject: any, dataObjectKey?: string }) {
-        const location = this.root
         let path
         if (dataKey.startsWith('.')) {
             path = dataKey.substring(1, dataKey.length)
@@ -683,7 +682,9 @@ export default class CADL extends EventEmitter {
         }
         const pathArr = path.split('.')
         const newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject
-        _.set(location, pathArr, newVal)
+        this.root = produce(this.root, draft => {
+            _.set(draft, pathArr, newVal)
+        })
 
         this.dispatch({
             type: 'update-localStorage'
@@ -692,9 +693,9 @@ export default class CADL extends EventEmitter {
     }
 
     /**
+     * Runs the init functions of the page matching the pageName.
      * 
-     * @param pageName string
-     * - runs the init functions of the page matching the pageName
+     * @param pageName 
      */
     public async runInit(pageName: string): Promise<void> {
         const boundDispatch = this.dispatch.bind(this)
@@ -706,7 +707,7 @@ export default class CADL extends EventEmitter {
             this.initCallQueue = init.map((_command, index) => index)
             while (this.initCallQueue.length > 0) {
                 const currIndex = this.initCallQueue.shift()
-                const command = init[currIndex]
+                const command: any = init[currIndex]
                 if (typeof command === 'function') {
                     try {
                         //TODO: check dispatch function/ side effects work accordingly
@@ -715,14 +716,34 @@ export default class CADL extends EventEmitter {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
                 } else if (isObject(command) && 'actionType' in command) {
-                    const { actionType, dataKey, dataObject }: any = command
+                    const { actionType, dataKey, dataObject, funcName }: any = command
                     switch (actionType) {
                         case ('updateObject'): {
                             this.updateObject({ dataKey, dataObject })
                             break
                         }
+                        case ('builtIn'): {
+                            if (funcName === 'videoChat') {
+                                if (funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function') {
+                                    await this.root.builtIn[funcName](command)
+                                }
+                            }
+                            break
+                        }
                         default: {
                             return
+                        }
+                    }
+                } else if (isObject(command) && 'if' in command) {
+                    //TODO: add the then condition
+                    const [condExpression, , elseEffect] = command['if']
+                    if (typeof condExpression === 'function') {
+                        const condResult = await condExpression()
+                        if (!condResult && isObject(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string') {
+                            if ('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function') {
+                                await this.root.builtIn['goto'](elseEffect['goto'])
+                                return
+                            }
                         }
                     }
                 } else if (Array.isArray(command)) {
@@ -734,7 +755,6 @@ export default class CADL extends EventEmitter {
                         }
                     }
                 }
-
                 //updating page after command has been called
                 const updatedPage = this.root[pageName]
 
@@ -752,17 +772,21 @@ export default class CADL extends EventEmitter {
 
                 init = Object.values(populatedUpdatedPageWithFns)[0].init
 
-                this.root[pageName] = { ...this.root[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+
+                this.root = produce(this.root, draft => {
+                    draft[pageName] = { ...draft[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+                })
             }
         }
     }
 
     /**
+     * Sets either the user or meetroom value from localStorage to the corresponding root value in memory
      * 
      * @param key "user" | "meetroom"
      * 
-     * -sets either the user or meetroom value from localStorage to the corresponding root value in memory
      */
+    //TODO: ask Chris if he uses this
     public setFromLocalStorage(key: "user" | "meetroom") {
         let localStorageGlobal
         try {
@@ -777,12 +801,16 @@ export default class CADL extends EventEmitter {
             switch (key) {
                 case ("user"): {
                     let user = localStorageGlobal.currentUser.vertex
-                    this.root.Global.currentUser.vertex = user
+                    this.root = produce(this.root, draft => {
+                        draft.Global.currentUser.vertex = user
+                    })
                     break
                 }
                 case ("meetroom"): {
                     let currMeetroom = localStorageGlobal.meetroom.edge
-                    this.root.Global.meetroom.edge = currMeetroom
+                    this.root = produce(this.root, draft => {
+                        draft.Global.meetroom.edge = currMeetroom
+                    })
                     break
                 }
                 default: {
@@ -793,26 +821,28 @@ export default class CADL extends EventEmitter {
     }
 
     /**
+     * Set a new value at a given path. Assume the path begins at the root.
      * 
      * @param SetValueArgs
-     * @param SetValueArgs.path string
-     * @param SetValueArgs.value any
+     * @param SetValueArgs.path The path to the property being changed.
+     * @param SetValueArgs.value The new value being set at the given path
      * 
-     * - set value to a given path. Assume the path begins at the root.
      */
     public setValue({ path, value }: { path: string, value: any }): void {
         let pathArr = path.split('.')
-        _.set(this.root, pathArr, value)
+        this.root = produce(this.root, draft => {
+            _.set(draft, pathArr, value)
+        })
         return
     }
 
     /**
+     * Add a value to an array at a given path. Assume the path begins at root.
      * 
      * @param AddValueArgs 
-     * @param AddValueArgs.path string
-     * @param AddValueArgs.value any
+     * @param AddValueArgs.path Path to an array from the root.
+     * @param AddValueArgs.value Value that will be added to the array at the given path.
      * 
-     * - add value to a given path. Assume the path begins at the root.
      */
     public addValue({ path, value }: { path: string, value: any }): void {
         let pathArr = path.split('.')
@@ -822,17 +852,19 @@ export default class CADL extends EventEmitter {
         } else if (Array.isArray(currVal)) {
             currVal.push(value)
         }
-        _.set(this.root, pathArr, currVal)
+        this.root = produce(this.root, draft => {
+            _.set(draft, pathArr, currVal)
+        })
         return
     }
 
     /**
+     * Remove a value from an array at a given path. Assume the path begins at the root.
      * 
      * @param RemoveValue 
-     * @param RemoveValue.path string
-     * @param RemoveValue.Predicate Record<string, number | string>
+     * @param RemoveValue.path Path to the array being altered.
+     * @param RemoveValue.Predicate The condition to be met for items being deleted from the array e.g {id:'123'}
      * 
-     * - remove value from a given path. Assume the path begins at the root.
      */
     public removeValue({ path, predicate }: { path: string, predicate: Record<string, number | string> }): void {
         let pathArr = path.split('.')
@@ -847,19 +879,21 @@ export default class CADL extends EventEmitter {
                 }
                 return passes
             })
-            _.set(this.root, pathArr, newVal)
+            this.root = produce(this.root, draft => {
+                _.set(draft, pathArr, newVal)
+            })
         }
 
     }
 
     /**
+     * Replace value at a given path. Assume the path begins at the root.
      * 
      * @param ReplaceValueArgs 
-     * @param ReplaceValueArgs.path string
-     * @param ReplaceValueArgs.predicate Record<string, number | string>
-     * @param ReplaceValueArgs.value any
+     * @param ReplaceValueArgs.path Path to an array beginning from the root level.
+     * @param ReplaceValueArgs.predicate Condition to be met for value being replaced.
+     * @param ReplaceValueArgs.value Value that will replace the value in question.
      * 
-     * - replace value at a given path. Assume the path begins at the root.
      */
     public replaceValue({
         path,
@@ -886,21 +920,47 @@ export default class CADL extends EventEmitter {
             }
             if (valIndex >= 0) {
                 currValCopy.splice(valIndex, 1, value)
-                _.set(this.root, pathArr, currValCopy)
+                this.root = produce(this.root, draft => {
+                    _.set(draft, pathArr, currValCopy)
+                })
             }
         }
         return
     }
 
-
-    public resetReferences(pageName: string) {
-        const pageRefs = _.cloneDeep(this.root.refs[pageName])
-        for (let [path, ref] of Object.entries(pageRefs)) {
-            // let pathArr = path.split('.')
-            _.set(this.root[pageName], path, ref)
-        }
+    private initRoot(root) {
+        return produce(root, draft => {
+            draft.actions = {}
+            draft.builtIn = builtInFns(this.dispatch.bind(this))
+        })
     }
 
+    public newDispatch(action) {
+        if (!isObject(action)) {
+            throw new Error('Actions must be plain objects')
+        }
+
+        if (typeof action.type === 'undefined') {
+            throw new Error('Actions types cannot be undefined.')
+        }
+
+        this.reducer(this.root, action)
+
+        return action
+    }
+
+    private reducer(state = this.root, action) {
+        switch (action.type) {
+            case 'SET_VALUE': {
+                const { pageName, dataKey, value } = action.payload
+                produce(state, draft => {
+                    _.set(draft[pageName], dataKey, value)
+                })
+            }
+            default:
+                return state
+        }
+    }
     public get cadlVersion() {
         return this._cadlVersion
     }
@@ -955,13 +1015,7 @@ export default class CADL extends EventEmitter {
     get apiVersion() {
         return store.apiVersion
     }
-    set map(map) {
-        this._map = map
-    }
 
-    get map() {
-        return this._map
-    }
     set initCallQueue(initCallQueue) {
         this._initCallQueue = initCallQueue
     }

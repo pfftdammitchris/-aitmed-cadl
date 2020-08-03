@@ -1,13 +1,14 @@
 import _ from 'lodash'
 import dot from 'dot-object'
-import store from '../../common/store'
-import { mergeDeep, isObject } from '../../utils'
-import Document from '../../services/document'
-import { documentToNote } from '../../services/document/utils'
-import { UnableToLocateValue } from '../errors'
-import { Account } from '../../services'
 import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
+
+import store from '../../common/store'
+import Document from '../../services/document'
+import { Account } from '../../services'
+import { mergeDeep, isObject } from '../../utils'
+import { documentToNote } from '../../services/document/utils'
+import { UnableToLocateValue } from '../errors'
 
 export {
     isPopulated,
@@ -24,8 +25,8 @@ export {
     replaceEvalObject,
 }
 
-
 /**
+ * Maps ecos.eid to id.
  * 
  * @param edge 
  * @returns edge
@@ -44,13 +45,13 @@ function replaceEidWithId(edge: Record<string, any>) {
 }
 
 /**
+ * Merges keys in source object with objects in locations where keys match lookFor.
  * 
- * @param PopulateKeysArgs {}
- * @param PopulateKeysArgs.source Record<string, any>
- * @param PopulateKeysArgs.lookFor string
- * @param PopulateKeysArgs.locations Record<string, any>[]
- * @returns Record<string, any>
- * - merges source object with objects in locations where keys match lookFor
+ * @param PopulateKeysArgs 
+ * @param PopulateKeysArgs.source Object to populate.
+ * @param PopulateKeysArgs.lookFor Symbols to lookFor in properties e.g ['..,.']
+ * @param PopulateKeysArgs.locations 
+ * @returns Populated object.
  */
 function populateKeys({
     source,
@@ -111,11 +112,12 @@ function populateKeys({
 }
 
 /**
+ * Used to look up value of a key given the path and source locations to for the value in.
  * 
- * @param directions string -dot notation leading to location of value
- * @param location - Record<string, any> -place to look for value
- * @returns any - whatever value that was attached to the location object at the given directions
- * @throws UnableToLocateValue if value is not found given the directions and location
+ * @param directions  Path leading to the location of value
+ * @param location Sources to look for value in.
+ * @returns Whatever value that was attached to the property at the given directions.
+ * @throws {UnableToLocateValue} When value is not found given the directions and location.
  */
 function lookUp(directions: string, location: Record<string, any>): any {
     let arr = directions.split('.')
@@ -133,10 +135,11 @@ function lookUp(directions: string, location: Record<string, any>): any {
 
 
 /**
+ * Checks whether or not an object has been de-referenced.
  * 
- * @param item string | Record<string, any>
- * @returns boolean
- * -takes in an object or string and checks whether or not the item has been populated
+ * @param item 
+ * @returns true if the object has already been dereferenced and false otherwise.
+ * 
  */
 function isPopulated(item: string | Record<string, any>): boolean {
     let itemCopy = _.cloneDeep(item)
@@ -169,10 +172,11 @@ function isPopulated(item: string | Record<string, any>): boolean {
 
 
 /**
+ * Attaches ecos functions to the object.
  * 
- * @param cadlObject Record<string, any>
- * @param dispatch Function
- * @returns Record<string,any>
+ * @param cadlObject 
+ * @param dispatch 
+ * @returns The object with functions attached to it.
  */
 function attachFns({
     cadlObject,
@@ -248,7 +252,9 @@ function attachFns({
                                     options.scondition = sCondition
                                 }
                                 try {
-                                    console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', { idList, options: { ...options } });
+                                    if (store.env === 'development') {
+                                        console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', { idList, options: { ...options } });
+                                    }
 
                                     const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })
                                     res = data
@@ -261,7 +267,9 @@ function attachFns({
                                     res = res.map((edge) => {
                                         return replaceEidWithId(edge)
                                     })
-                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+                                    if (store.env === 'development') {
+                                        console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+                                    }
 
                                     dispatch({
                                         type: 'update-data',
@@ -273,7 +281,9 @@ function attachFns({
 
                                 }
                                 //TODO:handle else case
-                                console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+                                if (store.env === 'development') {
+                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+                                }
                                 return res
                             }
                             output = isPopulated(output) ? getFn(output) : output
@@ -303,24 +313,32 @@ function attachFns({
                                 if (id && !id.startsWith('.')) {
                                     try {
 
-                                        console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
+                                        if (store.env === 'development') {
+                                            console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
+                                        }
 
                                         const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
                                         res = data
 
-                                        console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
+                                        if (store.env === 'development') {
+                                            console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
+                                        }
 
                                     } catch (error) {
                                         throw error
                                     }
                                 } else {
                                     try {
-                                        console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
+                                        if (store.env === 'development') {
+                                            console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
+                                        }
 
                                         const { data } = await store.level2SDK.edgeServices.createEdge({ ...mergedVal })
                                         res = data
 
-                                        console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
+                                        if (store.env === 'development') {
+                                            console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
+                                        }
                                     } catch (error) {
                                         throw error
                                     }
@@ -489,7 +507,9 @@ function attachFns({
 
                                 let res: any[] = []
                                 try {
-                                    console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', { options: { ...options } });
+                                    if (store.env === 'development') {
+                                        console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', { options: { ...options } });
+                                    }
                                     const { data } = await store.level2SDK.vertexServices.retrieveVertex({
                                         idList: [], options
                                     })
@@ -498,7 +518,9 @@ function attachFns({
                                     throw error
                                 }
                                 if (res.length > 0) {
-                                    console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+                                    if (store.env === 'development') {
+                                        console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+                                    }
                                     dispatch({
                                         type: 'update-data',
                                         //TODO: handle case for data is an array or an object
@@ -508,7 +530,9 @@ function attachFns({
 
                                     return res
                                 }
-                                console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+                                if (store.env === 'development') {
+                                    console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+                                }
                                 //TODO:handle else case
                                 return null
                             }
@@ -601,13 +625,14 @@ function attachFns({
 
 
 /**
+ * Returns a function that is used to evalutate actionType evalObject.
+ * 
  * @param EvalStateArgs
- * @param EvalStateArgs.pageName string
- * @param EvalStateArgs.updateObject Record<string, any>
- * @param EvalStateArgs.dispatch Function
- * @returns Function
+ * @param EvalStateArgs.pageName 
+ * @param EvalStateArgs.updateObject 
+ * @param EvalStateArgs.dispatch 
+ * @returns Function that runs the series of operations detailed in the updateObject.
  *
- *  - returns a function that is used to evalutate actionType evalObject
  */
 function evalState({
     pageName,
@@ -625,12 +650,13 @@ function evalState({
 }
 
 /**
- * @param ReplaceEvalObjectArgs
- * @param ReplaceEvalObjectArgs.cadlObject Record<string, any>
- * @param ReplaceEvalObjectArgs.dispatch Function
- * @returns Record<string, any>
+ * Replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
  * 
- * - replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
+ * @param ReplaceEvalObjectArgs
+ * @param ReplaceEvalObjectArgs.cadlObject 
+ * @param ReplaceEvalObjectArgs.dispatch 
+ * @returns Object with evalObject replaced by a function.
+ * 
  */
 function replaceEvalObject({
     pageName,
@@ -643,9 +669,6 @@ function replaceEvalObject({
 }): Record<string, any> {
     const cadlCopy = _.cloneDeep(cadlObject || {})
     Object.keys(cadlCopy).forEach((key) => {
-        // if (key === 'update') {
-        //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
-        // } else 
         if (key === 'object' && isObject(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
             const updateObject = _.cloneDeep(cadlCopy[key])
 
@@ -670,15 +693,17 @@ function replaceEvalObject({
 
 
 /**
- * @param PopulateStringArgs
- * @param PopulateStringArgs.source  string -object that has values that need to be replaced
- * @param PopulateStringArgs.lookFor string -item to look for in object
- * @param PopulateStringArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
- * @param PopulateStringArgs.path string
- * @param PopulateStringArgs.dispatch Function
- * @param PopulateStringArgs.pageName string
+ * Used to de-reference a string by looking for value in locations. 
  * 
- * @returns Record<string. any> 
+ * @param PopulateStringArgs
+ * @param PopulateStringArgs.source Object that has values that need to be replaced
+ * @param PopulateStringArgs.lookFor Item to look for in object
+ * @param PopulateStringArgs.locations Array of objects that may contain the values for the source object
+ * @param PopulateStringArgs.path The path to the value that will be changed.
+ * @param PopulateStringArgs.dispatch Function to change the state.
+ * @param PopulateStringArgs.pageName 
+ * 
+ * @returns De-referenced object. 
  */
 function populateString({
     source,
@@ -700,10 +725,6 @@ function populateString({
 }): any {
     if (skip && skip.includes(source)) return source
     if (!source.startsWith(lookFor)) return source
-    if (dispatch && pageName && path) {
-        const pathStr = path.slice(1).join('.')
-        dispatch({ type: 'save-ref', payload: { pageName, path: pathStr, ref: source } })
-    }
     let currVal = source
     let replacement
     if (lookFor === '_' && currVal.includes('.')) {
@@ -726,15 +747,6 @@ function populateString({
         if (source.startsWith('=..')) {
             currVal = currVal.slice(2)
         }
-        // else if (source.startsWith('=.builtIn')) {
-        //     const builtInFuncs = builtInFns()
-        //     const pathArr = source.slice(2).split('.')[1]
-        //     const fn = _.get(builtInFuncs, pathArr)
-        //     if (fn) {
-        //         replacement = fn
-        //         return replacement
-        //     }
-        // } 
         else if (source.startsWith('=.')) {
             currVal = currVal.slice(1)
         }
@@ -745,7 +757,6 @@ function populateString({
     for (let location of locations) {
         try {
             replacement = dot.pick(currVal, location)
-
             // replacement = lookUp(currVal, location)
             if (replacement && replacement !== source) {
                 if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
@@ -769,15 +780,17 @@ function populateString({
 }
 
 /**
- * @param PopulateArrayArgs
- * @param PopulateArrayArgs.source  any[] -object that has values that need to be replaced
- * @param PopulateArrayArgs.lookFor string -item to look for in object
- * @param PopulateArrayArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
- * @param PopulateArrayArgs.path string[]
- * @param PopulateArrayArgs.dispatch Function
- * @param PopulateArrayArgs.pageName string
+ * Dereference values in an array data structure.
  * 
- * @returns any[] 
+ * @param PopulateArrayArgs
+ * @param PopulateArrayArgs.source Object that has values that need to be replaced.
+ * @param PopulateArrayArgs.lookFor Item to look for in object
+ * @param PopulateArrayArgs.locations Array of objects that may contain the values for the source object
+ * @param PopulateArrayArgs.path 
+ * @param PopulateArrayArgs.dispatch Function to change the state.
+ * @param PopulateArrayArgs.pageName 
+ * 
+ * @returns Dereferenced array.
  */
 function populateArray({
     source,
@@ -817,16 +830,18 @@ function populateArray({
 }
 
 /**
- * @param PopulateObjectArgs
- * @param PopulateObjectArgs.source  Record<string, any> -object that has values that need to be replaced
- * @param PopulateObjectArgs.lookFor string -item to look for in object
- * @param PopulateObjectArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
- * @param PopulateObjectArgs.skip string[]
- * @param PopulateObjectArgs.path string[]
- * @param PopulateObjectArgs.dispatch Function
- * @param PopulateObjectArgs.pageName string
+ * De-references source object by looking for items in the given locations.
  * 
- * @returns Record<string. any> 
+ * @param PopulateObjectArgs
+ * @param PopulateObjectArgs.source Object that has values that need to be replaced
+ * @param PopulateObjectArgs.lookFor Item to look for in object
+ * @param PopulateObjectArgs.locations Array of objects that may contain the values for the source object
+ * @param PopulateObjectArgs.skip 
+ * @param PopulateObjectArgs.path 
+ * @param PopulateObjectArgs.dispatch 
+ * @param PopulateObjectArgs.pageName 
+ * 
+ * @returns Dereferenced object
  */
 function populateObject({
     source,
@@ -867,8 +882,8 @@ function populateObject({
 }
 
 /**
- * @param dispatch Function
- * @returns Record<string, Function>
+ * @param dispatch Function to change the state.
+ * @returns Object of builtIn functions.
  */
 function builtInFns(dispatch?: Function) {
     return {
@@ -921,10 +936,10 @@ function builtInFns(dispatch?: Function) {
         currentDateTime: (() => Date.now())(),
         string: {
             formatUnixtime_en(unixTime: number) {
-                return moment(unixTime*1000).format('lll')
+                return moment(unixTime * 1000).format('lll')
             },
             formatDurationInSecond(unixTime: number) {
-                return humanizeDuration(unixTime*1000)
+                return humanizeDuration(unixTime * 1000)
             }
         },
         async SignInOk(): Promise<boolean> {
@@ -938,15 +953,16 @@ function builtInFns(dispatch?: Function) {
 }
 
 /**
+ * De-reference source object by looking for multiple items in multiple locations.
  * 
  * @param PopulateValsArgs 
- * @param PopulateValsArgs.source Record<string, any>
- * @param PopulateValsArgs.lookFor string[]
- * @param PopulateValsArgs.locations any[]
- * @param PopulateValsArgs.skip string[]
- * @param PopulateValsArgs.pageName string
- * @param PopulateValsArgs.dispatch Function
- * @returns Record<string, any>
+ * @param PopulateValsArgs.source Object that needs de-referencing.
+ * @param PopulateValsArgs.lookFor An array of items to look for e.g ['.','..']
+ * @param PopulateValsArgs.locations Locations to look for values.
+ * @param PopulateValsArgs.skip Keys to skip in the de-referencing process.
+ * @param PopulateValsArgs.pageName 
+ * @param PopulateValsArgs.dispatch Function to alter the state.
+ * @returns 
  */
 function populateVals({
     source,
@@ -980,14 +996,14 @@ function populateVals({
 }
 
 /**
+ * Replaces Uint8Array values with base64 values
  * 
- * @param source Record<string, any>
- * @returns Record<string, any>
+ * @param source Object that needs values replaced.
+ * @returns Object that has had Uint8Array values mapped to base64.
  */
 function replaceUint8ArrayWithBase64(source: Record<string, any>): Record<string, any> {
     let sourceCopy = _.cloneDeep(source || {})
     if (isObject(source)) {
-
         Object.keys(sourceCopy).forEach((key) => {
             if (sourceCopy[key] instanceof Uint8Array) {
                 sourceCopy[key] = store.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key])

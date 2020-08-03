@@ -875,6 +875,26 @@
 
 	var slicedToArray = _slicedToArray;
 
+	var _typeof_1 = createCommonjsModule(function (module) {
+	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
+	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return typeof obj;
+	    };
+	  } else {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
+	module.exports = _typeof;
+	});
+
 	function _arrayWithoutHoles(arr) {
 	  if (Array.isArray(arr)) return arrayLikeToArray(arr);
 	}
@@ -964,26 +984,6 @@
 	}
 
 	var inherits = _inherits;
-
-	var _typeof_1 = createCommonjsModule(function (module) {
-	function _typeof(obj) {
-	  "@babel/helpers - typeof";
-
-	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return typeof obj;
-	    };
-	  } else {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-	    };
-	  }
-
-	  return _typeof(obj);
-	}
-
-	module.exports = _typeof;
-	});
 
 	function _possibleConstructorReturn(self, call) {
 	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
@@ -15035,590 +15035,6 @@
 	  stringify: stringify
 	};
 
-	function _process (v, mod) {
-	  var i;
-	  var r;
-
-	  if (typeof mod === 'function') {
-	    r = mod(v);
-	    if (r !== undefined) {
-	      v = r;
-	    }
-	  } else if (Array.isArray(mod)) {
-	    for (i = 0; i < mod.length; i++) {
-	      r = mod[i](v);
-	      if (r !== undefined) {
-	        v = r;
-	      }
-	    }
-	  }
-
-	  return v
-	}
-
-	function parseKey (key, val) {
-	  // detect negative index notation
-	  if (key[0] === '-' && Array.isArray(val) && /^-\d+$/.test(key)) {
-	    return val.length + parseInt(key, 10)
-	  }
-	  return key
-	}
-
-	function isIndex$1 (k) {
-	  return /^\d+$/.test(k)
-	}
-
-	function isObject$2 (val) {
-	  return Object.prototype.toString.call(val) === '[object Object]'
-	}
-
-	function isArrayOrObject (val) {
-	  return Object(val) === val
-	}
-
-	function isEmptyObject (val) {
-	  return Object.keys(val).length === 0
-	}
-
-	var blacklist = ['__proto__', 'prototype', 'constructor'];
-	var blacklistFilter = function (part) { return blacklist.indexOf(part) === -1 };
-
-	function parsePath (path, sep) {
-	  if (path.indexOf('[') >= 0) {
-	    path = path.replace(/\[/g, '.').replace(/]/g, '');
-	  }
-
-	  var parts = path.split(sep);
-
-	  var check = parts.filter(blacklistFilter);
-
-	  if (check.length !== parts.length) {
-	    throw Error('Refusing to update blacklisted property ' + path)
-	  }
-
-	  return parts
-	}
-
-	var hasOwnProperty$a = Object.prototype.hasOwnProperty;
-
-	function DotObject (separator, override, useArray, useBrackets) {
-	  if (!(this instanceof DotObject)) {
-	    return new DotObject(separator, override, useArray, useBrackets)
-	  }
-
-	  if (typeof override === 'undefined') override = false;
-	  if (typeof useArray === 'undefined') useArray = true;
-	  if (typeof useBrackets === 'undefined') useBrackets = true;
-	  this.separator = separator || '.';
-	  this.override = override;
-	  this.useArray = useArray;
-	  this.useBrackets = useBrackets;
-	  this.keepArray = false;
-
-	  // contains touched arrays
-	  this.cleanup = [];
-	}
-
-	var dotDefault = new DotObject('.', false, true, true);
-	function wrap (method) {
-	  return function () {
-	    return dotDefault[method].apply(dotDefault, arguments)
-	  }
-	}
-
-	DotObject.prototype._fill = function (a, obj, v, mod) {
-	  var k = a.shift();
-
-	  if (a.length > 0) {
-	    obj[k] = obj[k] || (this.useArray && isIndex$1(a[0]) ? [] : {});
-
-	    if (!isArrayOrObject(obj[k])) {
-	      if (this.override) {
-	        obj[k] = {};
-	      } else {
-	        if (!(isArrayOrObject(v) && isEmptyObject(v))) {
-	          throw new Error(
-	            'Trying to redefine `' + k + '` which is a ' + typeof obj[k]
-	          )
-	        }
-
-	        return
-	      }
-	    }
-
-	    this._fill(a, obj[k], v, mod);
-	  } else {
-	    if (!this.override && isArrayOrObject(obj[k]) && !isEmptyObject(obj[k])) {
-	      if (!(isArrayOrObject(v) && isEmptyObject(v))) {
-	        throw new Error("Trying to redefine non-empty obj['" + k + "']")
-	      }
-
-	      return
-	    }
-
-	    obj[k] = _process(v, mod);
-	  }
-	};
-
-	/**
-	 *
-	 * Converts an object with dotted-key/value pairs to it's expanded version
-	 *
-	 * Optionally transformed by a set of modifiers.
-	 *
-	 * Usage:
-	 *
-	 *   var row = {
-	 *     'nr': 200,
-	 *     'doc.name': '  My Document  '
-	 *   }
-	 *
-	 *   var mods = {
-	 *     'doc.name': [_s.trim, _s.underscored]
-	 *   }
-	 *
-	 *   dot.object(row, mods)
-	 *
-	 * @param {Object} obj
-	 * @param {Object} mods
-	 */
-	DotObject.prototype.object = function (obj, mods) {
-	  var self = this;
-
-	  Object.keys(obj).forEach(function (k) {
-	    var mod = mods === undefined ? null : mods[k];
-	    // normalize array notation.
-	    var ok = parsePath(k, self.separator).join(self.separator);
-
-	    if (ok.indexOf(self.separator) !== -1) {
-	      self._fill(ok.split(self.separator), obj, obj[k], mod);
-	      delete obj[k];
-	    } else {
-	      obj[k] = _process(obj[k], mod);
-	    }
-	  });
-
-	  return obj
-	};
-
-	/**
-	 * @param {String} path dotted path
-	 * @param {String} v value to be set
-	 * @param {Object} obj object to be modified
-	 * @param {Function|Array} mod optional modifier
-	 */
-	DotObject.prototype.str = function (path, v, obj, mod) {
-	  var ok = parsePath(path, this.separator).join(this.separator);
-
-	  if (path.indexOf(this.separator) !== -1) {
-	    this._fill(ok.split(this.separator), obj, v, mod);
-	  } else {
-	    obj[path] = _process(v, mod);
-	  }
-
-	  return obj
-	};
-
-	/**
-	 *
-	 * Pick a value from an object using dot notation.
-	 *
-	 * Optionally remove the value
-	 *
-	 * @param {String} path
-	 * @param {Object} obj
-	 * @param {Boolean} remove
-	 */
-	DotObject.prototype.pick = function (path, obj, remove, reindexArray) {
-	  var i;
-	  var keys;
-	  var val;
-	  var key;
-	  var cp;
-
-	  keys = parsePath(path, this.separator);
-	  for (i = 0; i < keys.length; i++) {
-	    key = parseKey(keys[i], obj);
-	    if (obj && typeof obj === 'object' && key in obj) {
-	      if (i === keys.length - 1) {
-	        if (remove) {
-	          val = obj[key];
-	          if (reindexArray && Array.isArray(obj)) {
-	            obj.splice(key, 1);
-	          } else {
-	            delete obj[key];
-	          }
-	          if (Array.isArray(obj)) {
-	            cp = keys.slice(0, -1).join('.');
-	            if (this.cleanup.indexOf(cp) === -1) {
-	              this.cleanup.push(cp);
-	            }
-	          }
-	          return val
-	        } else {
-	          return obj[key]
-	        }
-	      } else {
-	        obj = obj[key];
-	      }
-	    } else {
-	      return undefined
-	    }
-	  }
-	  if (remove && Array.isArray(obj)) {
-	    obj = obj.filter(function (n) {
-	      return n !== undefined
-	    });
-	  }
-	  return obj
-	};
-	/**
-	 *
-	 * Delete value from an object using dot notation.
-	 *
-	 * @param {String} path
-	 * @param {Object} obj
-	 * @return {any} The removed value
-	 */
-	DotObject.prototype.delete = function (path, obj) {
-	  return this.remove(path, obj, true)
-	};
-
-	/**
-	 *
-	 * Remove value from an object using dot notation.
-	 *
-	 * Will remove multiple items if path is an array.
-	 * In this case array indexes will be retained until all
-	 * removals have been processed.
-	 *
-	 * Use dot.delete() to automatically  re-index arrays.
-	 *
-	 * @param {String|Array<String>} path
-	 * @param {Object} obj
-	 * @param {Boolean} reindexArray
-	 * @return {any} The removed value
-	 */
-	DotObject.prototype.remove = function (path, obj, reindexArray) {
-	  var i;
-
-	  this.cleanup = [];
-	  if (Array.isArray(path)) {
-	    for (i = 0; i < path.length; i++) {
-	      this.pick(path[i], obj, true, reindexArray);
-	    }
-	    if (!reindexArray) {
-	      this._cleanup(obj);
-	    }
-	    return obj
-	  } else {
-	    return this.pick(path, obj, true, reindexArray)
-	  }
-	};
-
-	DotObject.prototype._cleanup = function (obj) {
-	  var ret;
-	  var i;
-	  var keys;
-	  var root;
-	  if (this.cleanup.length) {
-	    for (i = 0; i < this.cleanup.length; i++) {
-	      keys = this.cleanup[i].split('.');
-	      root = keys.splice(0, -1).join('.');
-	      ret = root ? this.pick(root, obj) : obj;
-	      ret = ret[keys[0]].filter(function (v) {
-	        return v !== undefined
-	      });
-	      this.set(this.cleanup[i], ret, obj);
-	    }
-	    this.cleanup = [];
-	  }
-	};
-
-	/**
-	 * Alias method  for `dot.remove`
-	 *
-	 * Note: this is not an alias for dot.delete()
-	 *
-	 * @param {String|Array<String>} path
-	 * @param {Object} obj
-	 * @param {Boolean} reindexArray
-	 * @return {any} The removed value
-	 */
-	DotObject.prototype.del = DotObject.prototype.remove;
-
-	/**
-	 *
-	 * Move a property from one place to the other.
-	 *
-	 * If the source path does not exist (undefined)
-	 * the target property will not be set.
-	 *
-	 * @param {String} source
-	 * @param {String} target
-	 * @param {Object} obj
-	 * @param {Function|Array} mods
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.move = function (source, target, obj, mods, merge) {
-	  if (typeof mods === 'function' || Array.isArray(mods)) {
-	    this.set(target, _process(this.pick(source, obj, true), mods), obj, merge);
-	  } else {
-	    merge = mods;
-	    this.set(target, this.pick(source, obj, true), obj, merge);
-	  }
-
-	  return obj
-	};
-
-	/**
-	 *
-	 * Transfer a property from one object to another object.
-	 *
-	 * If the source path does not exist (undefined)
-	 * the property on the other object will not be set.
-	 *
-	 * @param {String} source
-	 * @param {String} target
-	 * @param {Object} obj1
-	 * @param {Object} obj2
-	 * @param {Function|Array} mods
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.transfer = function (
-	  source,
-	  target,
-	  obj1,
-	  obj2,
-	  mods,
-	  merge
-	) {
-	  if (typeof mods === 'function' || Array.isArray(mods)) {
-	    this.set(
-	      target,
-	      _process(this.pick(source, obj1, true), mods),
-	      obj2,
-	      merge
-	    );
-	  } else {
-	    merge = mods;
-	    this.set(target, this.pick(source, obj1, true), obj2, merge);
-	  }
-
-	  return obj2
-	};
-
-	/**
-	 *
-	 * Copy a property from one object to another object.
-	 *
-	 * If the source path does not exist (undefined)
-	 * the property on the other object will not be set.
-	 *
-	 * @param {String} source
-	 * @param {String} target
-	 * @param {Object} obj1
-	 * @param {Object} obj2
-	 * @param {Function|Array} mods
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.copy = function (source, target, obj1, obj2, mods, merge) {
-	  if (typeof mods === 'function' || Array.isArray(mods)) {
-	    this.set(
-	      target,
-	      _process(
-	        // clone what is picked
-	        JSON.parse(JSON.stringify(this.pick(source, obj1, false))),
-	        mods
-	      ),
-	      obj2,
-	      merge
-	    );
-	  } else {
-	    merge = mods;
-	    this.set(target, this.pick(source, obj1, false), obj2, merge);
-	  }
-
-	  return obj2
-	};
-
-	/**
-	 *
-	 * Set a property on an object using dot notation.
-	 *
-	 * @param {String} path
-	 * @param {any} val
-	 * @param {Object} obj
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.set = function (path, val, obj, merge) {
-	  var i;
-	  var k;
-	  var keys;
-	  var key;
-
-	  // Do not operate if the value is undefined.
-	  if (typeof val === 'undefined') {
-	    return obj
-	  }
-	  keys = parsePath(path, this.separator);
-
-	  for (i = 0; i < keys.length; i++) {
-	    key = keys[i];
-	    if (i === keys.length - 1) {
-	      if (merge && isObject$2(val) && isObject$2(obj[key])) {
-	        for (k in val) {
-	          if (hasOwnProperty$a.call(val, k)) {
-	            obj[key][k] = val[k];
-	          }
-	        }
-	      } else if (merge && Array.isArray(obj[key]) && Array.isArray(val)) {
-	        for (var j = 0; j < val.length; j++) {
-	          obj[keys[i]].push(val[j]);
-	        }
-	      } else {
-	        obj[key] = val;
-	      }
-	    } else if (
-	      // force the value to be an object
-	      !hasOwnProperty$a.call(obj, key) ||
-	      (!isObject$2(obj[key]) && !Array.isArray(obj[key]))
-	    ) {
-	      // initialize as array if next key is numeric
-	      if (/^\d+$/.test(keys[i + 1])) {
-	        obj[key] = [];
-	      } else {
-	        obj[key] = {};
-	      }
-	    }
-	    obj = obj[key];
-	  }
-	  return obj
-	};
-
-	/**
-	 *
-	 * Transform an object
-	 *
-	 * Usage:
-	 *
-	 *   var obj = {
-	 *     "id": 1,
-	 *    "some": {
-	 *      "thing": "else"
-	 *    }
-	 *   }
-	 *
-	 *   var transform = {
-	 *     "id": "nr",
-	 *    "some.thing": "name"
-	 *   }
-	 *
-	 *   var tgt = dot.transform(transform, obj)
-	 *
-	 * @param {Object} recipe Transform recipe
-	 * @param {Object} obj Object to be transformed
-	 * @param {Array} mods modifiers for the target
-	 */
-	DotObject.prototype.transform = function (recipe, obj, tgt) {
-	  obj = obj || {};
-	  tgt = tgt || {};
-	  Object.keys(recipe).forEach(
-	    function (key) {
-	      this.set(recipe[key], this.pick(key, obj), tgt);
-	    }.bind(this)
-	  );
-	  return tgt
-	};
-
-	/**
-	 *
-	 * Convert object to dotted-key/value pair
-	 *
-	 * Usage:
-	 *
-	 *   var tgt = dot.dot(obj)
-	 *
-	 *   or
-	 *
-	 *   var tgt = {}
-	 *   dot.dot(obj, tgt)
-	 *
-	 * @param {Object} obj source object
-	 * @param {Object} tgt target object
-	 * @param {Array} path path array (internal)
-	 */
-	DotObject.prototype.dot = function (obj, tgt, path) {
-	  tgt = tgt || {};
-	  path = path || [];
-	  var isArray = Array.isArray(obj);
-
-	  Object.keys(obj).forEach(
-	    function (key) {
-	      var index = isArray && this.useBrackets ? '[' + key + ']' : key;
-	      if (
-	        isArrayOrObject(obj[key]) &&
-	        ((isObject$2(obj[key]) && !isEmptyObject(obj[key])) ||
-	          (Array.isArray(obj[key]) && !this.keepArray && obj[key].length !== 0))
-	      ) {
-	        if (isArray && this.useBrackets) {
-	          var previousKey = path[path.length - 1] || '';
-	          return this.dot(
-	            obj[key],
-	            tgt,
-	            path.slice(0, -1).concat(previousKey + index)
-	          )
-	        } else {
-	          return this.dot(obj[key], tgt, path.concat(index))
-	        }
-	      } else {
-	        if (isArray && this.useBrackets) {
-	          tgt[path.join(this.separator).concat('[' + key + ']')] = obj[key];
-	        } else {
-	          tgt[path.concat(index).join(this.separator)] = obj[key];
-	        }
-	      }
-	    }.bind(this)
-	  );
-	  return tgt
-	};
-
-	DotObject.pick = wrap('pick');
-	DotObject.move = wrap('move');
-	DotObject.transfer = wrap('transfer');
-	DotObject.transform = wrap('transform');
-	DotObject.copy = wrap('copy');
-	DotObject.object = wrap('object');
-	DotObject.str = wrap('str');
-	DotObject.set = wrap('set');
-	DotObject.delete = wrap('delete');
-	DotObject.del = DotObject.remove = wrap('remove');
-	DotObject.dot = wrap('dot');
-	['override', 'overwrite'].forEach(function (prop) {
-	  Object.defineProperty(DotObject, prop, {
-	    get: function () {
-	      return dotDefault.override
-	    },
-	    set: function (val) {
-	      dotDefault.override = !!val;
-	    }
-	  });
-	});
-	['useArray', 'keepArray', 'useBrackets'].forEach(function (prop) {
-	  Object.defineProperty(DotObject, prop, {
-	    get: function () {
-	      return dotDefault[prop]
-	    },
-	    set: function (val) {
-	      dotDefault[prop] = val;
-	    }
-	  });
-	});
-
-	DotObject._process = _process;
-
-	var dotObject = DotObject;
-
 	var domain;
 
 	// This constructor is used to store event handlers. Instantiating this is
@@ -16085,78 +15501,7 @@
 	  return ret;
 	}
 
-	function _objectWithoutPropertiesLoose(source, excluded) {
-	  if (source == null) return {};
-	  var target = {};
-	  var sourceKeys = Object.keys(source);
-	  var key, i;
-
-	  for (i = 0; i < sourceKeys.length; i++) {
-	    key = sourceKeys[i];
-	    if (excluded.indexOf(key) >= 0) continue;
-	    target[key] = source[key];
-	  }
-
-	  return target;
-	}
-
-	var objectWithoutPropertiesLoose = _objectWithoutPropertiesLoose;
-
-	function _objectWithoutProperties(source, excluded) {
-	  if (source == null) return {};
-	  var target = objectWithoutPropertiesLoose(source, excluded);
-	  var key, i;
-
-	  if (Object.getOwnPropertySymbols) {
-	    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
-
-	    for (i = 0; i < sourceSymbolKeys.length; i++) {
-	      key = sourceSymbolKeys[i];
-	      if (excluded.indexOf(key) >= 0) continue;
-	      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
-	      target[key] = source[key];
-	    }
-	  }
-
-	  return target;
-	}
-
-	var objectWithoutProperties = _objectWithoutProperties;
-
-	/** Used to compose bitmasks for cloning. */
-	var CLONE_SYMBOLS_FLAG$2 = 4;
-
-	/**
-	 * Creates a shallow clone of `value`.
-	 *
-	 * **Note:** This method is loosely based on the
-	 * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
-	 * and supports cloning arrays, array buffers, booleans, date objects, maps,
-	 * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
-	 * arrays. The own enumerable properties of `arguments` objects are cloned
-	 * as plain objects. An empty object is returned for uncloneable values such
-	 * as error objects, functions, DOM nodes, and WeakMaps.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to clone.
-	 * @returns {*} Returns the cloned value.
-	 * @see _.cloneDeep
-	 * @example
-	 *
-	 * var objects = [{ 'a': 1 }, { 'b': 2 }];
-	 *
-	 * var shallow = _.clone(objects);
-	 * console.log(shallow[0] === objects[0]);
-	 * // => true
-	 */
-	function clone(value) {
-	  return _baseClone(value, CLONE_SYMBOLS_FLAG$2);
-	}
-
-	var clone_1 = clone;
+	function n(n){for(var t=arguments.length,r=Array(t>1?t-1:0),e=1;e<t;e++)r[e-1]=arguments[e];if("production"!==process.env.NODE_ENV){var i=Y[n],o=i?"function"==typeof i?i.apply(null,r):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}throw Error("[Immer] minified error nr: "+n+(r.length?" "+r.join(","):"")+". Find the full error at: https://bit.ly/3cXEKWf")}function t(n){return !!n&&!!n[Q]}function r(n){return !!n&&(function(n){if(!n||"object"!=typeof n)return !1;var t=Object.getPrototypeOf(n);return !t||t===Object.prototype}(n)||Array.isArray(n)||!!n[L]||!!n.constructor[L]||s(n)||v(n))}function i(n,t,r){void 0===r&&(r=!1),0===o(n)?(r?Object.keys:Z)(n).forEach((function(e){r&&"symbol"==typeof e||t(e,n[e],n);})):n.forEach((function(r,e){return t(e,r,n)}));}function o(n){var t=n[Q];return t?t.i>3?t.i-4:t.i:Array.isArray(n)?1:s(n)?2:v(n)?3:0}function u(n,t){return 2===o(n)?n.has(t):Object.prototype.hasOwnProperty.call(n,t)}function a(n,t){return 2===o(n)?n.get(t):n[t]}function f(n,t,r){var e=o(n);2===e?n.set(t,r):3===e?(n.delete(t),n.add(r)):n[t]=r;}function c(n,t){return n===t?0!==n||1/n==1/t:n!=n&&t!=t}function s(n){return X&&n instanceof Map}function v(n){return q&&n instanceof Set}function p(n){return n.o||n.t}function l(n){if(Array.isArray(n))return n.slice();var t=nn(n);delete t[Q];for(var r=Z(t),e=0;e<r.length;e++){var i=r[e],o=t[i];!1===o.writable&&(o.writable=!0,o.configurable=!0),(o.get||o.set)&&(t[i]={configurable:!0,writable:!0,enumerable:o.enumerable,value:n[i]});}return Object.create(Object.getPrototypeOf(n),t)}function d(n,e){b(n)||t(n)||!r(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=h),Object.freeze(n),e&&i(n,(function(n,t){return d(t,!0)}),!0));}function h(){n(2);}function b(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function y(t){var r=tn[t];return r||n("production"!==process.env.NODE_ENV?18:19,t),r}function _(){return "production"===process.env.NODE_ENV||U||n(0),U}function j(n,t){t&&(y("Patches"),n.u=[],n.s=[],n.v=t);}function g(n){O(n),n.p.forEach(S),n.p=null;}function O(n){n===U&&(U=n.l);}function w(n){return U={p:[],l:U,h:n,m:!0,_:0}}function S(n){var t=n[Q];0===t.i||1===t.i?t.j():t.g=!0;}function P(t,e){e._=e.p.length;var i=e.p[0],o=void 0!==t&&t!==i;return e.h.O||y("ES5").S(e,t,o),o?(i[Q].P&&(g(e),n(4)),r(t)&&(t=M(e,t),e.l||x(e,t)),e.u&&y("Patches").M(i[Q],t,e.u,e.s)):t=M(e,i,[]),g(e),e.u&&e.v(e.u,e.s),t!==H?t:void 0}function M(n,t,r){if(b(t))return t;var e=t[Q];if(!e)return i(t,(function(i,o){return A(n,e,t,i,o,r)}),!0),t;if(e.A!==n)return t;if(!e.P)return x(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=l(e.k):e.o;i(3===e.i?new Set(o):o,(function(t,i){return A(n,e,o,t,i,r)})),x(n,o,!1),r&&n.u&&y("Patches").R(e,r,n.u,n.s);}return e.o}function A(e,i,o,a,c,s){if("production"!==process.env.NODE_ENV&&c===o&&n(5),t(c)){var v=M(e,c,s&&i&&3!==i.i&&!u(i.D,a)?s.concat(a):void 0);if(f(o,a,v),!t(v))return;e.m=!1;}if(r(c)&&!b(c)){if(!e.h.N&&e._<1)return;M(e,c),i&&i.A.l||x(e,c);}}function x(n,t,r){void 0===r&&(r=!1),n.h.N&&n.m&&d(t,r);}function z(n,t){var r=n[Q];return (r?p(r):n)[t]}function I(n,t){if(t in n)for(var r=Object.getPrototypeOf(n);r;){var e=Object.getOwnPropertyDescriptor(r,t);if(e)return e;r=Object.getPrototypeOf(r);}}function E(n){n.P||(n.P=!0,n.l&&E(n.l));}function k(n){n.o||(n.o=l(n.t));}function R(n,t,r){var e=s(t)?y("MapSet").T(t,r):v(t)?y("MapSet").F(t,r):n.O?function(n,t){var r=Array.isArray(n),e={i:r?1:0,A:t?t.A:_(),P:!1,I:!1,D:{},l:t,t:n,k:null,o:null,j:null,C:!1},i=e,o=rn;r&&(i=[e],o=en);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(t,r):y("ES5").J(t,r);return (r?r.A:_()).p.push(e),e}function D(e){return t(e)||n(22,e),function n(t){if(!r(t))return t;var e,u=t[Q],c=o(t);if(u){if(!u.P&&(u.i<4||!y("ES5").K(u)))return u.t;u.I=!0,e=N(t,c),u.I=!1;}else e=N(t,c);return i(e,(function(t,r){u&&a(u.t,t)===r||f(e,t,n(r));})),3===c?new Set(e):e}(e)}function N(n,t){switch(t){case 2:return new Map(n);case 3:return Array.from(n)}return l(n)}var G,U,W="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),X="undefined"!=typeof Map,q="undefined"!=typeof Set,B="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,H=W?Symbol.for("immer-nothing"):((G={})["immer-nothing"]=!0,G),L=W?Symbol.for("immer-draftable"):"__$immer_draftable",Q=W?Symbol.for("immer-state"):"__$immer_state",Y={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return "Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return "Unsupported patch operation: "+n},18:function(n){return "The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},19:"plugin not loaded",20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available",21:function(n){return "produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '"+n+"'"},22:function(n){return "'current' expects a draft, got: "+n},23:function(n){return "'original' expects a draft, got: "+n}},Z="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,nn=Object.getOwnPropertyDescriptors||function(n){var t={};return Z(n).forEach((function(r){t[r]=Object.getOwnPropertyDescriptor(n,r);})),t},tn={},rn={get:function(n,t){if(t===Q)return n;var e=p(n);if(!u(e,t))return function(n,t,r){var e,i=I(t,r);return i?"value"in i?i.value:null===(e=i.get)||void 0===e?void 0:e.call(n.k):void 0}(n,e,t);var i=e[t];return n.I||!r(i)?i:i===z(n.t,t)?(k(n),n.o[t]=R(n.A.h,i,n)):i},has:function(n,t){return t in p(n)},ownKeys:function(n){return Reflect.ownKeys(p(n))},set:function(n,t,r){var e=I(p(n),t);if(null==e?void 0:e.set)return e.set.call(n.k,r),!0;if(n.D[t]=!0,!n.P){if(c(r,z(p(n),t))&&(void 0!==r||u(n.t,t)))return !0;k(n),E(n);}return n.o[t]=r,!0},deleteProperty:function(n,t){return void 0!==z(n.t,t)||t in n.t?(n.D[t]=!1,k(n),E(n)):delete n.D[t],n.o&&delete n.o[t],!0},getOwnPropertyDescriptor:function(n,t){var r=p(n),e=Reflect.getOwnPropertyDescriptor(r,t);return e?{writable:!0,configurable:1!==n.i||"length"!==t,enumerable:e.enumerable,value:r[t]}:e},defineProperty:function(){n(11);},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12);}},en={};i(rn,(function(n,t){en[n]=function(){return arguments[0]=arguments[0][0],t.apply(this,arguments)};})),en.deleteProperty=function(t,r){return "production"!==process.env.NODE_ENV&&isNaN(parseInt(r))&&n(13),rn.deleteProperty.call(this,t[0],r)},en.set=function(t,r,e){return "production"!==process.env.NODE_ENV&&"length"!==r&&isNaN(parseInt(r))&&n(14),rn.set.call(this,t[0],r,e,t[0])};var on$1=function(){function e(n){this.O=B,this.N="production"!==process.env.NODE_ENV,"boolean"==typeof(null==n?void 0:n.useProxies)&&this.setUseProxies(n.useProxies),"boolean"==typeof(null==n?void 0:n.autoFreeze)&&this.setAutoFreeze(n.autoFreeze),this.produce=this.produce.bind(this),this.produceWithPatches=this.produceWithPatches.bind(this);}var i=e.prototype;return i.produce=function(t,e,i){if("function"==typeof t&&"function"!=typeof e){var o=e;e=t;var u=this;return function(n){var t=this;void 0===n&&(n=o);for(var r=arguments.length,i=Array(r>1?r-1:0),a=1;a<r;a++)i[a-1]=arguments[a];return u.produce(n,(function(n){var r;return (r=e).call.apply(r,[t,n].concat(i))}))}}var a;if("function"!=typeof e&&n(6),void 0!==i&&"function"!=typeof i&&n(7),r(t)){var f=w(this),c=R(this,t,void 0),s=!0;try{a=e(c),s=!1;}finally{s?g(f):O(f);}return "undefined"!=typeof Promise&&a instanceof Promise?a.then((function(n){return j(f,i),P(n,f)}),(function(n){throw g(f),n})):(j(f,i),P(a,f))}if(!t||"object"!=typeof t){if((a=e(t))===H)return;return void 0===a&&(a=t),this.N&&d(a,!0),a}n(21,t);},i.produceWithPatches=function(n,t){var r,e,i=this;return "function"==typeof n?function(t){for(var r=arguments.length,e=Array(r>1?r-1:0),o=1;o<r;o++)e[o-1]=arguments[o];return i.produceWithPatches(t,(function(t){return n.apply(void 0,[t].concat(e))}))}:[this.produce(n,t,(function(n,t){r=n,e=t;})),r,e]},i.createDraft=function(e){r(e)||n(8),t(e)&&(e=D(e));var i=w(this),o=R(this,e,void 0);return o[Q].C=!0,O(i),o},i.finishDraft=function(t,r){var e=t&&t[Q];"production"!==process.env.NODE_ENV&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return j(i,r),P(void 0,i)},i.setAutoFreeze=function(n){this.N=n;},i.setUseProxies=function(t){t&&!B&&n(20),this.O=t;},i.applyPatches=function(n,r){var e;for(e=r.length-1;e>=0;e--){var i=r[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}var o=y("Patches").$;return t(n)?o(n,r):this.produce(n,(function(n){return o(n,r.slice(e+1))}))},e}(),un=new on$1,an=un.produce,fn=un.produceWithPatches.bind(un),cn=un.setAutoFreeze.bind(un),sn=un.setUseProxies.bind(un),vn=un.applyPatches.bind(un),pn=un.createDraft.bind(un),ln=un.finishDraft.bind(un);//# sourceMappingURL=immer.esm.js.map
 
 	var check = function (it) {
 	  return it && it.Math == Math && it;
@@ -16193,13 +15538,13 @@
 
 	// `Object.prototype.propertyIsEnumerable` method implementation
 	// https://tc39.github.io/ecma262/#sec-object.prototype.propertyisenumerable
-	var f = NASHORN_BUG ? function propertyIsEnumerable(V) {
+	var f$1 = NASHORN_BUG ? function propertyIsEnumerable(V) {
 	  var descriptor = getOwnPropertyDescriptor(this, V);
 	  return !!descriptor && descriptor.enumerable;
 	} : nativePropertyIsEnumerable;
 
 	var objectPropertyIsEnumerable = {
-		f: f
+		f: f$1
 	};
 
 	var createPropertyDescriptor = function (bitmap, value) {
@@ -16243,7 +15588,7 @@
 	  return indexedObject(requireObjectCoercible(it));
 	};
 
-	var isObject$3 = function (it) {
+	var isObject$2 = function (it) {
 	  return typeof it === 'object' ? it !== null : typeof it === 'function';
 	};
 
@@ -16252,23 +15597,23 @@
 	// instead of the ES6 spec version, we didn't implement @@toPrimitive case
 	// and the second argument - flag - preferred type is a string
 	var toPrimitive = function (input, PREFERRED_STRING) {
-	  if (!isObject$3(input)) return input;
+	  if (!isObject$2(input)) return input;
 	  var fn, val;
-	  if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$3(val = fn.call(input))) return val;
-	  if (typeof (fn = input.valueOf) == 'function' && !isObject$3(val = fn.call(input))) return val;
-	  if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$3(val = fn.call(input))) return val;
+	  if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$2(val = fn.call(input))) return val;
+	  if (typeof (fn = input.valueOf) == 'function' && !isObject$2(val = fn.call(input))) return val;
+	  if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject$2(val = fn.call(input))) return val;
 	  throw TypeError("Can't convert object to primitive value");
 	};
 
-	var hasOwnProperty$b = {}.hasOwnProperty;
+	var hasOwnProperty$a = {}.hasOwnProperty;
 
 	var has = function (it, key) {
-	  return hasOwnProperty$b.call(it, key);
+	  return hasOwnProperty$a.call(it, key);
 	};
 
 	var document$1 = global_1.document;
 	// typeof document.createElement is 'object' in old IE
-	var EXISTS = isObject$3(document$1) && isObject$3(document$1.createElement);
+	var EXISTS = isObject$2(document$1) && isObject$2(document$1.createElement);
 
 	var documentCreateElement = function (it) {
 	  return EXISTS ? document$1.createElement(it) : {};
@@ -16285,7 +15630,7 @@
 
 	// `Object.getOwnPropertyDescriptor` method
 	// https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptor
-	var f$1 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+	var f$2 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
 	  O = toIndexedObject(O);
 	  P = toPrimitive(P, true);
 	  if (ie8DomDefine) try {
@@ -16295,11 +15640,11 @@
 	};
 
 	var objectGetOwnPropertyDescriptor = {
-		f: f$1
+		f: f$2
 	};
 
 	var anObject = function (it) {
-	  if (!isObject$3(it)) {
+	  if (!isObject$2(it)) {
 	    throw TypeError(String(it) + ' is not an object');
 	  } return it;
 	};
@@ -16308,7 +15653,7 @@
 
 	// `Object.defineProperty` method
 	// https://tc39.github.io/ecma262/#sec-object.defineproperty
-	var f$2 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
+	var f$3 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
 	  anObject(O);
 	  P = toPrimitive(P, true);
 	  anObject(Attributes);
@@ -16321,7 +15666,7 @@
 	};
 
 	var objectDefineProperty = {
-		f: f$2
+		f: f$3
 	};
 
 	var createNonEnumerableProperty = descriptors ? function (object, key, value) {
@@ -16396,7 +15741,7 @@
 	var getterFor = function (TYPE) {
 	  return function (it) {
 	    var state;
-	    if (!isObject$3(it) || (state = get$2(it)).type !== TYPE) {
+	    if (!isObject$2(it) || (state = get$2(it)).type !== TYPE) {
 	      throw TypeError('Incompatible receiver, ' + TYPE + ' required');
 	    } return state;
 	  };
@@ -16569,18 +15914,18 @@
 
 	// `Object.getOwnPropertyNames` method
 	// https://tc39.github.io/ecma262/#sec-object.getownpropertynames
-	var f$3 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+	var f$4 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
 	  return objectKeysInternal(O, hiddenKeys$1);
 	};
 
 	var objectGetOwnPropertyNames = {
-		f: f$3
+		f: f$4
 	};
 
-	var f$4 = Object.getOwnPropertySymbols;
+	var f$5 = Object.getOwnPropertySymbols;
 
 	var objectGetOwnPropertySymbols = {
-		f: f$4
+		f: f$5
 	};
 
 	// all object keys, includes non-enumerable and symbols
@@ -16805,14 +16150,14 @@
 	};
 
 	// fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
-	var f$5 = function getOwnPropertyNames(it) {
+	var f$6 = function getOwnPropertyNames(it) {
 	  return windowNames && toString$4.call(it) == '[object Window]'
 	    ? getWindowNames(it)
 	    : nativeGetOwnPropertyNames(toIndexedObject(it));
 	};
 
 	var objectGetOwnPropertyNamesExternal = {
-		f: f$5
+		f: f$6
 	};
 
 	var WellKnownSymbolsStore = shared('wks');
@@ -16826,10 +16171,10 @@
 	  } return WellKnownSymbolsStore[name];
 	};
 
-	var f$6 = wellKnownSymbol;
+	var f$7 = wellKnownSymbol;
 
 	var wellKnownSymbolWrapped = {
-		f: f$6
+		f: f$7
 	};
 
 	var defineProperty$2 = objectDefineProperty.f;
@@ -16892,7 +16237,7 @@
 	    C = originalArray.constructor;
 	    // cross-realm fallback
 	    if (typeof C == 'function' && (C === Array || isArray$3(C.prototype))) C = undefined;
-	    else if (isObject$3(C)) {
+	    else if (isObject$2(C)) {
 	      C = C[SPECIES];
 	      if (C === null) C = undefined;
 	    }
@@ -16997,7 +16342,7 @@
 	  }
 	} : nativeDefineProperty$1;
 
-	var wrap$1 = function (tag, description) {
+	var wrap = function (tag, description) {
 	  var symbol = AllSymbols[tag] = objectCreate$1($Symbol[PROTOTYPE$1]);
 	  setInternalState(symbol, {
 	    type: SYMBOL,
@@ -17096,7 +16441,7 @@
 	      setSymbolDescriptor(this, tag, createPropertyDescriptor(1, value));
 	    };
 	    if (descriptors && USE_SETTER) setSymbolDescriptor(ObjectPrototype, tag, { configurable: true, set: setter });
-	    return wrap$1(tag, description);
+	    return wrap(tag, description);
 	  };
 
 	  redefine($Symbol[PROTOTYPE$1], 'toString', function toString() {
@@ -17104,7 +16449,7 @@
 	  });
 
 	  redefine($Symbol, 'withoutSetter', function (description) {
-	    return wrap$1(uid(description), description);
+	    return wrap(uid(description), description);
 	  });
 
 	  objectPropertyIsEnumerable.f = $propertyIsEnumerable;
@@ -17114,7 +16459,7 @@
 	  objectGetOwnPropertySymbols.f = $getOwnPropertySymbols;
 
 	  wellKnownSymbolWrapped.f = function (name) {
-	    return wrap$1(wellKnownSymbol(name), name);
+	    return wrap(wellKnownSymbol(name), name);
 	  };
 
 	  if (descriptors) {
@@ -17213,7 +16558,7 @@
 	      var $replacer;
 	      while (arguments.length > index) args.push(arguments[index++]);
 	      $replacer = replacer;
-	      if (!isObject$3(replacer) && it === undefined || isSymbol$1(it)) return; // IE8 returns string on undefined
+	      if (!isObject$2(replacer) && it === undefined || isSymbol$1(it)) return; // IE8 returns string on undefined
 	      if (!isArray$3(replacer)) replacer = function (key, value) {
 	        if (typeof $replacer == 'function') value = $replacer.call(this, key, value);
 	        if (!isSymbol$1(value)) return value;
@@ -17269,7 +16614,7 @@
 	  defineProperty$4(symbolPrototype, 'description', {
 	    configurable: true,
 	    get: function description() {
-	      var symbol = isObject$3(this) ? this.valueOf() : this;
+	      var symbol = isObject$2(this) ? this.valueOf() : this;
 	      var string = symbolToString$1.call(symbol);
 	      if (has(EmptyStringDescriptionStore, symbol)) return '';
 	      var desc = native ? string.slice(7, -1) : string.replace(regexp, '$1');
@@ -17462,7 +16807,7 @@
 
 	var fastKey = function (it, create) {
 	  // return a primitive with prefix
-	  if (!isObject$3(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
+	  if (!isObject$2(it)) return typeof it == 'symbol' ? it : (typeof it == 'string' ? 'S' : 'P') + it;
 	  if (!has(it, METADATA)) {
 	    // can't set metadata to uncaught frozen object
 	    if (!isExtensible(it)) return 'F';
@@ -17515,7 +16860,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.freeze
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES, sham: !freezing }, {
 	  freeze: function freeze(it) {
-	    return nativeFreeze && isObject$3(it) ? nativeFreeze(onFreeze(it)) : it;
+	    return nativeFreeze && isObject$2(it) ? nativeFreeze(onFreeze(it)) : it;
 	  }
 	});
 
@@ -17727,7 +17072,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.isextensible
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$4 }, {
 	  isExtensible: function isExtensible(it) {
-	    return isObject$3(it) ? nativeIsExtensible ? nativeIsExtensible(it) : true : false;
+	    return isObject$2(it) ? nativeIsExtensible ? nativeIsExtensible(it) : true : false;
 	  }
 	});
 
@@ -17738,7 +17083,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.isfrozen
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$5 }, {
 	  isFrozen: function isFrozen(it) {
-	    return isObject$3(it) ? nativeIsFrozen ? nativeIsFrozen(it) : false : true;
+	    return isObject$2(it) ? nativeIsFrozen ? nativeIsFrozen(it) : false : true;
 	  }
 	});
 
@@ -17749,7 +17094,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.issealed
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$6 }, {
 	  isSealed: function isSealed(it) {
-	    return isObject$3(it) ? nativeIsSealed ? nativeIsSealed(it) : false : true;
+	    return isObject$2(it) ? nativeIsSealed ? nativeIsSealed(it) : false : true;
 	  }
 	});
 
@@ -17774,7 +17119,7 @@
 	// https://tc39.github.io/ecma262/#sec-object.preventextensions
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$8, sham: !freezing }, {
 	  preventExtensions: function preventExtensions(it) {
-	    return nativePreventExtensions && isObject$3(it) ? nativePreventExtensions(onFreeze$1(it)) : it;
+	    return nativePreventExtensions && isObject$2(it) ? nativePreventExtensions(onFreeze$1(it)) : it;
 	  }
 	});
 
@@ -17789,12 +17134,12 @@
 	// https://tc39.github.io/ecma262/#sec-object.seal
 	_export({ target: 'Object', stat: true, forced: FAILS_ON_PRIMITIVES$9, sham: !freezing }, {
 	  seal: function seal(it) {
-	    return nativeSeal && isObject$3(it) ? nativeSeal(onFreeze$2(it)) : it;
+	    return nativeSeal && isObject$2(it) ? nativeSeal(onFreeze$2(it)) : it;
 	  }
 	});
 
 	var aPossiblePrototype = function (it) {
-	  if (!isObject$3(it) && it !== null) {
+	  if (!isObject$2(it) && it !== null) {
 	    throw TypeError("Can't set " + String(it) + ' as a prototype');
 	  } return it;
 	};
@@ -17932,7 +17277,7 @@
 	    var args = partArgs.concat(slice.call(arguments));
 	    return this instanceof boundFunction ? construct$1(fn, args.length, args) : fn.apply(that, args);
 	  };
-	  if (isObject$3(fn.prototype)) boundFunction.prototype = fn.prototype;
+	  if (isObject$2(fn.prototype)) boundFunction.prototype = fn.prototype;
 	  return boundFunction;
 	};
 
@@ -17971,8 +17316,8 @@
 	// https://tc39.github.io/ecma262/#sec-function.prototype-@@hasinstance
 	if (!(HAS_INSTANCE in FunctionPrototype$1)) {
 	  objectDefineProperty.f(FunctionPrototype$1, HAS_INSTANCE, { value: function (O) {
-	    if (typeof this != 'function' || !isObject$3(O)) return false;
-	    if (!isObject$3(this.prototype)) return O instanceof this;
+	    if (typeof this != 'function' || !isObject$2(O)) return false;
+	    if (!isObject$2(this.prototype)) return O instanceof this;
 	    // for environment w/o native `@@hasInstance` logic enough `instanceof`, but add this:
 	    while (O = objectGetPrototypeOf(O)) if (this.prototype === O) return true;
 	    return false;
@@ -18142,7 +17487,7 @@
 	var SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('concat');
 
 	var isConcatSpreadable = function (O) {
-	  if (!isObject$3(O)) return false;
+	  if (!isObject$2(O)) return false;
 	  var spreadable = O[IS_CONCAT_SPREADABLE];
 	  return spreadable !== undefined ? !!spreadable : isArray$3(O);
 	};
@@ -18632,7 +17977,7 @@
 	      // cross-realm fallback
 	      if (typeof Constructor == 'function' && (Constructor === Array || isArray$3(Constructor.prototype))) {
 	        Constructor = undefined;
-	      } else if (isObject$3(Constructor)) {
+	      } else if (isObject$2(Constructor)) {
 	        Constructor = Constructor[SPECIES$2];
 	        if (Constructor === null) Constructor = undefined;
 	      }
@@ -19031,7 +18376,7 @@
 	// https://tc39.github.io/ecma262/#sec-isregexp
 	var isRegexp = function (it) {
 	  var isRegExp;
-	  return isObject$3(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
+	  return isObject$2(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : classofRaw(it) == 'RegExp');
 	};
 
 	var notARegexp = function (it) {
@@ -20144,7 +19489,7 @@
 	    // we haven't completely correct pre-ES6 way for getting `new.target`, so use this
 	    typeof (NewTarget = dummy.constructor) == 'function' &&
 	    NewTarget !== Wrapper &&
-	    isObject$3(NewTargetPrototype = NewTarget.prototype) &&
+	    isObject$2(NewTargetPrototype = NewTarget.prototype) &&
 	    NewTargetPrototype !== Wrapper.prototype
 	  ) objectSetPrototypeOf($this, NewTargetPrototype);
 	  return $this;
@@ -20286,7 +19631,7 @@
 	      return nativeTest.call(this, str);
 	    }
 	    var result = this.exec(str);
-	    if (result !== null && !isObject$3(result)) {
+	    if (result !== null && !isObject$2(result)) {
 	      throw new Error('RegExp exec method returned something other than an Object or null');
 	    }
 	    return !!result;
@@ -20411,8 +19756,8 @@
 	    // ES2015 (in case, if modules with ES2015 Number statics required before):
 	    'EPSILON,isFinite,isInteger,isNaN,isSafeInteger,MAX_SAFE_INTEGER,' +
 	    'MIN_SAFE_INTEGER,parseFloat,parseInt,isInteger'
-	  ).split(','), j = 0, key; keys$3.length > j; j++) {
-	    if (has(NativeNumber, key = keys$3[j]) && !has(NumberWrapper, key)) {
+	  ).split(','), j$1 = 0, key; keys$3.length > j$1; j$1++) {
+	    if (has(NativeNumber, key = keys$3[j$1]) && !has(NumberWrapper, key)) {
 	      defineProperty$a(NumberWrapper, key, getOwnPropertyDescriptor$6(NativeNumber, key));
 	    }
 	  }
@@ -20444,7 +19789,7 @@
 	// `Number.isInteger` method implementation
 	// https://tc39.github.io/ecma262/#sec-number.isinteger
 	var isInteger = function isInteger(it) {
-	  return !isObject$3(it) && isFinite(it) && floor$2(it) === it;
+	  return !isObject$2(it) && isFinite(it) && floor$2(it) === it;
 	};
 
 	// `Number.isInteger` method
@@ -20747,14 +20092,14 @@
 
 	var nativeCosh = Math.cosh;
 	var abs$2 = Math.abs;
-	var E = Math.E;
+	var E$1 = Math.E;
 
 	// `Math.cosh` method
 	// https://tc39.github.io/ecma262/#sec-math.cosh
 	_export({ target: 'Math', stat: true, forced: !nativeCosh || nativeCosh(710) === Infinity }, {
 	  cosh: function cosh(x) {
 	    var t = mathExpm1(abs$2(x) - 1) + 1;
-	    return (t + 1 / (t * E * E)) * (E / 2);
+	    return (t + 1 / (t * E$1 * E$1)) * (E$1 / 2);
 	  }
 	});
 
@@ -20877,7 +20222,7 @@
 
 	var abs$5 = Math.abs;
 	var exp$1 = Math.exp;
-	var E$1 = Math.E;
+	var E$2 = Math.E;
 
 	var FORCED$d = fails(function () {
 	  return Math.sinh(-2e-17) != -2e-17;
@@ -20888,7 +20233,7 @@
 	// V8 near Chromium 38 has a problem with very small numbers
 	_export({ target: 'Math', stat: true, forced: FORCED$d }, {
 	  sinh: function sinh(x) {
-	    return abs$5(x = +x) < 1 ? (mathExpm1(x) - mathExpm1(-x)) / 2 : (exp$1(x - 1) - exp$1(-x - 1)) * (E$1 / 2);
+	    return abs$5(x = +x) < 1 ? (mathExpm1(x) - mathExpm1(-x)) / 2 : (exp$1(x - 1) - exp$1(-x - 1)) * (E$2 / 2);
 	  }
 	});
 
@@ -21249,17 +20594,17 @@
 	};
 
 	// 25.4.1.5 NewPromiseCapability(C)
-	var f$7 = function (C) {
+	var f$8 = function (C) {
 	  return new PromiseCapability(C);
 	};
 
 	var newPromiseCapability = {
-		f: f$7
+		f: f$8
 	};
 
 	var promiseResolve = function (C, x) {
 	  anObject(C);
-	  if (isObject$3(x) && x.constructor === C) return x;
+	  if (isObject$2(x) && x.constructor === C) return x;
 	  var promiseCapability = newPromiseCapability.f(C);
 	  var resolve = promiseCapability.resolve;
 	  resolve(x);
@@ -21346,7 +20691,7 @@
 	// helpers
 	var isThenable = function (it) {
 	  var then;
-	  return isObject$3(it) && typeof (then = it.then) == 'function' ? then : false;
+	  return isObject$2(it) && typeof (then = it.then) == 'function' ? then : false;
 	};
 
 	var notify$1 = function (promise, state, isReject) {
@@ -21721,11 +21066,11 @@
 	        nativeMethod.call(this, value === 0 ? 0 : value);
 	        return this;
 	      } : KEY == 'delete' ? function (key) {
-	        return IS_WEAK && !isObject$3(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
+	        return IS_WEAK && !isObject$2(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
 	      } : KEY == 'get' ? function get(key) {
-	        return IS_WEAK && !isObject$3(key) ? undefined : nativeMethod.call(this, key === 0 ? 0 : key);
+	        return IS_WEAK && !isObject$2(key) ? undefined : nativeMethod.call(this, key === 0 ? 0 : key);
 	      } : KEY == 'has' ? function has(key) {
-	        return IS_WEAK && !isObject$3(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
+	        return IS_WEAK && !isObject$2(key) ? false : nativeMethod.call(this, key === 0 ? 0 : key);
 	      } : function set(key, value) {
 	        nativeMethod.call(this, key === 0 ? 0 : key, value);
 	        return this;
@@ -22068,7 +21413,7 @@
 	      // 23.4.3.3 WeakSet.prototype.delete(value)
 	      'delete': function (key) {
 	        var state = getInternalState(this);
-	        if (!isObject$3(key)) return false;
+	        if (!isObject$2(key)) return false;
 	        var data = getWeakData(key);
 	        if (data === true) return uncaughtFrozenStore(state)['delete'](key);
 	        return data && has(data, state.id) && delete data[state.id];
@@ -22077,7 +21422,7 @@
 	      // 23.4.3.4 WeakSet.prototype.has(value)
 	      has: function has$1(key) {
 	        var state = getInternalState(this);
-	        if (!isObject$3(key)) return false;
+	        if (!isObject$2(key)) return false;
 	        var data = getWeakData(key);
 	        if (data === true) return uncaughtFrozenStore(state).has(key);
 	        return data && has(data, state.id);
@@ -22088,7 +21433,7 @@
 	      // 23.3.3.3 WeakMap.prototype.get(key)
 	      get: function get(key) {
 	        var state = getInternalState(this);
-	        if (isObject$3(key)) {
+	        if (isObject$2(key)) {
 	          var data = getWeakData(key);
 	          if (data === true) return uncaughtFrozenStore(state).get(key);
 	          return data ? data[state.id] : undefined;
@@ -22146,28 +21491,28 @@
 	  var nativeSet = WeakMapPrototype.set;
 	  redefineAll(WeakMapPrototype, {
 	    'delete': function (key) {
-	      if (isObject$3(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        return nativeDelete.call(this, key) || state.frozen['delete'](key);
 	      } return nativeDelete.call(this, key);
 	    },
 	    has: function has(key) {
-	      if (isObject$3(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        return nativeHas.call(this, key) || state.frozen.has(key);
 	      } return nativeHas.call(this, key);
 	    },
 	    get: function get(key) {
-	      if (isObject$3(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        return nativeHas.call(this, key) ? nativeGet.call(this, key) : state.frozen.get(key);
 	      } return nativeGet.call(this, key);
 	    },
 	    set: function set(key, value) {
-	      if (isObject$3(key) && !isExtensible(key)) {
+	      if (isObject$2(key) && !isExtensible(key)) {
 	        var state = enforceIternalState(this);
 	        if (!state.frozen) state.frozen = new InternalWeakMap();
 	        nativeHas.call(this, key) ? nativeSet.call(this, key, value) : state.frozen.set(key, value);
@@ -22462,8 +21807,8 @@
 	      return new NativeArrayBuffer(toIndex(length));
 	    };
 	    var ArrayBufferPrototype = $ArrayBuffer[PROTOTYPE$2] = NativeArrayBuffer[PROTOTYPE$2];
-	    for (var keys$4 = getOwnPropertyNames$2(NativeArrayBuffer), j$1 = 0, key$1; keys$4.length > j$1;) {
-	      if (!((key$1 = keys$4[j$1++]) in $ArrayBuffer)) {
+	    for (var keys$4 = getOwnPropertyNames$2(NativeArrayBuffer), j$2 = 0, key$1; keys$4.length > j$2;) {
+	      if (!((key$1 = keys$4[j$2++]) in $ArrayBuffer)) {
 	        createNonEnumerableProperty($ArrayBuffer, key$1, NativeArrayBuffer[key$1]);
 	      }
 	    }
@@ -22550,7 +21895,7 @@
 	};
 
 	var isTypedArray$1 = function (it) {
-	  return isObject$3(it) && has(TypedArrayConstructorsList, classof(it));
+	  return isObject$2(it) && has(TypedArrayConstructorsList, classof(it));
 	};
 
 	var aTypedArray = function (it) {
@@ -22638,7 +21983,7 @@
 	if (descriptors && !has(TypedArrayPrototype, TO_STRING_TAG$3)) {
 	  TYPED_ARRAY_TAG_REQIRED = true;
 	  defineProperty$d(TypedArrayPrototype, TO_STRING_TAG$3, { get: function () {
-	    return isObject$3(this) ? this[TYPED_ARRAY_TAG] : undefined;
+	    return isObject$2(this) ? this[TYPED_ARRAY_TAG] : undefined;
 	  } });
 	  for (NAME$1 in TypedArrayConstructorsList) if (global_1[NAME$1]) {
 	    createNonEnumerableProperty(global_1[NAME$1], TYPED_ARRAY_TAG, NAME$1);
@@ -22842,7 +22187,7 @@
 
 	var wrappedDefineProperty = function defineProperty(target, key, descriptor) {
 	  if (isTypedArrayIndex(target, key = toPrimitive(key, true))
-	    && isObject$3(descriptor)
+	    && isObject$2(descriptor)
 	    && has(descriptor, 'value')
 	    && !has(descriptor, 'get')
 	    && !has(descriptor, 'set')
@@ -22910,7 +22255,7 @@
 	        var index = 0;
 	        var byteOffset = 0;
 	        var buffer, byteLength, length;
-	        if (!isObject$3(data)) {
+	        if (!isObject$2(data)) {
 	          length = toIndex(data);
 	          byteLength = length * BYTES;
 	          buffer = new ArrayBuffer(byteLength);
@@ -22948,7 +22293,7 @@
 	      TypedArrayConstructor = wrapper(function (dummy, data, typedArrayOffset, $length) {
 	        anInstance(dummy, TypedArrayConstructor, CONSTRUCTOR_NAME);
 	        return inheritIfRequired(function () {
-	          if (!isObject$3(data)) return new NativeTypedArrayConstructor(toIndex(data));
+	          if (!isObject$2(data)) return new NativeTypedArrayConstructor(toIndex(data));
 	          if (isArrayBuffer(data)) return $length !== undefined
 	            ? new NativeTypedArrayConstructor(data, toOffset(typedArrayOffset, BYTES), $length)
 	            : typedArrayOffset !== undefined
@@ -23482,9 +22827,9 @@
 	    }
 	    // with altered newTarget, not support built-in constructors
 	    var proto = newTarget.prototype;
-	    var instance = objectCreate$1(isObject$3(proto) ? proto : Object.prototype);
+	    var instance = objectCreate$1(isObject$2(proto) ? proto : Object.prototype);
 	    var result = Function.apply.call(Target, instance, args);
-	    return isObject$3(result) ? result : instance;
+	    return isObject$2(result) ? result : instance;
 	  }
 	});
 
@@ -23532,7 +22877,7 @@
 	    : descriptor.get === undefined
 	      ? undefined
 	      : descriptor.get.call(receiver);
-	  if (isObject$3(prototype = objectGetPrototypeOf(target))) return get$4(prototype, propertyKey, receiver);
+	  if (isObject$2(prototype = objectGetPrototypeOf(target))) return get$4(prototype, propertyKey, receiver);
 	}
 
 	_export({ target: 'Reflect', stat: true }, {
@@ -23602,13 +22947,13 @@
 	  var ownDescriptor = objectGetOwnPropertyDescriptor.f(anObject(target), propertyKey);
 	  var existingDescriptor, prototype;
 	  if (!ownDescriptor) {
-	    if (isObject$3(prototype = objectGetPrototypeOf(target))) {
+	    if (isObject$2(prototype = objectGetPrototypeOf(target))) {
 	      return set$5(prototype, propertyKey, V, receiver);
 	    }
 	    ownDescriptor = createPropertyDescriptor(0);
 	  }
 	  if (has(ownDescriptor, 'value')) {
-	    if (ownDescriptor.writable === false || !isObject$3(receiver)) return false;
+	    if (ownDescriptor.writable === false || !isObject$2(receiver)) return false;
 	    if (existingDescriptor = objectGetOwnPropertyDescriptor.f(receiver, propertyKey)) {
 	      if (existingDescriptor.get || existingDescriptor.set || existingDescriptor.writable === false) return false;
 	      existingDescriptor.value = V;
@@ -23748,7 +23093,7 @@
 	var slice$1 = [].slice;
 	var MSIE = /MSIE .\./.test(engineUserAgent); // <- dirty ie9- check
 
-	var wrap$2 = function (scheduler) {
+	var wrap$1 = function (scheduler) {
 	  return function (handler, timeout /* , ...arguments */) {
 	    var boundArgs = arguments.length > 2;
 	    var args = boundArgs ? slice$1.call(arguments, 2) : undefined;
@@ -23764,10 +23109,10 @@
 	_export({ global: true, bind: true, forced: MSIE }, {
 	  // `setTimeout` method
 	  // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout
-	  setTimeout: wrap$2(global_1.setTimeout),
+	  setTimeout: wrap$1(global_1.setTimeout),
 	  // `setInterval` method
 	  // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-setinterval
-	  setInterval: wrap$2(global_1.setInterval)
+	  setInterval: wrap$1(global_1.setInterval)
 	});
 
 	var ITERATOR$7 = wellKnownSymbol('iterator');
@@ -24113,7 +23458,7 @@
 	  });
 
 	  if (init !== undefined) {
-	    if (isObject$3(init)) {
+	    if (isObject$2(init)) {
 	      iteratorMethod = getIteratorMethod(init);
 	      if (typeof iteratorMethod === 'function') {
 	        iterator = iteratorMethod.call(init);
@@ -24298,7 +23643,7 @@
 	      var init, body, headers;
 	      if (arguments.length > 1) {
 	        init = arguments[1];
-	        if (isObject$3(init)) {
+	        if (isObject$2(init)) {
 	          body = init.body;
 	          if (classof(body) === URL_SEARCH_PARAMS) {
 	            headers = init.headers ? new Headers(init.headers) : new Headers();
@@ -26276,7 +25621,7 @@
 	 * @param {Object} val The value to test
 	 * @returns {boolean} True if value is an Object, otherwise false
 	 */
-	function isObject$4(val) {
+	function isObject$3(val) {
 	  return val !== null && typeof val === 'object';
 	}
 
@@ -26327,7 +25672,7 @@
 	 * @returns {boolean} True if value is a Stream, otherwise false
 	 */
 	function isStream$1(val) {
-	  return isObject$4(val) && isFunction$2(val.pipe);
+	  return isObject$3(val) && isFunction$2(val.pipe);
 	}
 
 	/**
@@ -26502,7 +25847,7 @@
 	  isArrayBufferView: isArrayBufferView$1,
 	  isString: isString$1,
 	  isNumber: isNumber$1,
-	  isObject: isObject$4,
+	  isObject: isObject$3,
 	  isUndefined: isUndefined$1,
 	  isDate: isDate$1,
 	  isFile: isFile$1,
@@ -26805,7 +26150,7 @@
 
 	function noop$1() {}
 
-	var on$1 = noop$1;
+	var on$2 = noop$1;
 	var addListener$1 = noop$1;
 	var once$1 = noop$1;
 	var off$1 = noop$1;
@@ -26864,7 +26209,7 @@
 	  argv: argv$1,
 	  version: version$2,
 	  versions: versions$2,
-	  on: on$1,
+	  on: on$2,
 	  addListener: addListener$1,
 	  once: once$1,
 	  off: off$1,
@@ -53238,8 +52583,8 @@
 	  for (var j = 0; j < 80; j++) {
 	    var T = sum32$3(
 	      rotl32$2(
-	        sum32_4$2(A, f$8(j, B, C, D), msg[r[j] + start], K(j)),
-	        s[j]),
+	        sum32_4$2(A, f$9(j, B, C, D), msg[r$1[j] + start], K(j)),
+	        s$1[j]),
 	      E);
 	    A = E;
 	    E = D;
@@ -53248,7 +52593,7 @@
 	    B = T;
 	    T = sum32$3(
 	      rotl32$2(
-	        sum32_4$2(Ah, f$8(79 - j, Bh, Ch, Dh), msg[rh[j] + start], Kh(j)),
+	        sum32_4$2(Ah, f$9(79 - j, Bh, Ch, Dh), msg[rh[j] + start], Kh(j)),
 	        sh[j]),
 	      Eh);
 	    Ah = Eh;
@@ -53272,7 +52617,7 @@
 	    return utils$1$1.split32(this.h, 'little');
 	};
 
-	function f$8(j, x, y, z) {
+	function f$9(j, x, y, z) {
 	  if (j <= 15)
 	    return x ^ y ^ z;
 	  else if (j <= 31)
@@ -53311,7 +52656,7 @@
 	    return 0x00000000;
 	}
 
-	var r = [
+	var r$1 = [
 	  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
 	  7, 4, 13, 1, 10, 6, 15, 3, 12, 0, 9, 5, 2, 14, 11, 8,
 	  3, 10, 14, 4, 9, 15, 8, 1, 2, 7, 0, 6, 13, 11, 5, 12,
@@ -53327,7 +52672,7 @@
 	  12, 15, 10, 4, 1, 5, 8, 7, 6, 2, 13, 14, 0, 3, 9, 11
 	];
 
-	var s = [
+	var s$1 = [
 	  11, 14, 15, 12, 5, 8, 7, 9, 11, 13, 14, 15, 6, 7, 9, 8,
 	  7, 6, 8, 13, 11, 9, 7, 15, 7, 12, 15, 9, 11, 7, 13, 12,
 	  11, 13, 6, 7, 14, 9, 13, 15, 14, 8, 13, 6, 5, 12, 7, 5,
@@ -63392,8 +62737,8 @@
 	// Note, that 5 & 6-byte values and some 4-byte values can not be represented in JS,
 	// because max possible codepoint is 0x10ffff
 	var _utf8len = new common$2.Buf8(256);
-	for (var q = 0; q < 256; q++) {
-	  _utf8len[q] = (q >= 252 ? 6 : q >= 248 ? 5 : q >= 240 ? 4 : q >= 224 ? 3 : q >= 192 ? 2 : 1);
+	for (var q$1 = 0; q$1 < 256; q$1++) {
+	  _utf8len[q$1] = (q$1 >= 252 ? 6 : q$1 >= 248 ? 5 : q$1 >= 240 ? 4 : q$1 >= 224 ? 3 : q$1 >= 192 ? 2 : 1);
 	}
 	_utf8len[254] = _utf8len[254] = 1; // Invalid sequence start
 
@@ -66986,7 +66331,7 @@
 	 * - checks if given value is a valid object {}
 	 */
 
-	function isObject$5(item) {
+	function isObject$4(item) {
 	  if (item === null) return false;
 	  if (item === undefined) return false;
 	  return item && _typeof_1(item) === 'object' && !Array.isArray(item);
@@ -66994,12 +66339,12 @@
 	function mergeDeep(target, source) {
 	  var output = Object.assign({}, target);
 
-	  if (isObject$5(target) && isObject$5(source)) {
+	  if (isObject$4(target) && isObject$4(source)) {
 	    Object.keys(source).forEach(function (key) {
-	      if (isObject$5(source[key])) {
+	      if (isObject$4(source[key])) {
 	        if (!(key in target)) {
 	          Object.assign(output, defineProperty({}, key, source[key]));
-	        } else if (isObject$5(target[key])) {
+	        } else if (isObject$4(target[key])) {
 	          output[key] = mergeDeep(target[key], source[key]);
 	        } else {
 	          output[key] = source[key];
@@ -67155,4139 +66500,662 @@
 	  configUrl: 'https://public.aitmed.com/config'
 	});
 
-	var retrieveVertex = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(id) {
-	    var response;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            _context.next = 2;
-	            return store$3.level2SDK.vertexServices.retrieveVertex({
-	              idList: [id]
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+	function _objectWithoutPropertiesLoose(source, excluded) {
+	  if (source == null) return {};
+	  var target = {};
+	  var sourceKeys = Object.keys(source);
+	  var key, i;
 
-	          case 2:
-	            response = _context.sent;
-	            return _context.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
-
-	          case 4:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function retrieveVertex(_x) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-
-	var retrieveEdge = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
-	    var response;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return store$3.level2SDK.edgeServices.retrieveEdge({
-	              idList: [id]
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            response = _context2.sent;
-	            return _context2.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
-
-	          case 4:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function retrieveEdge(_x2) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	var retrieveDocument = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id) {
-	    var response;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return store$3.level2SDK.documentServices.retrieveDocument({
-	              idList: [id]
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            response = _context3.sent;
-	            return _context3.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
-
-	          case 4:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function retrieveDocument(_x3) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-
-	var setBit = function setBit(target, value, bit) {
-	  return value ? target | 1 << bit : target & ~(1 << bit);
-	};
-	var getBit = function getBit(target, bit) {
-	  return !!(target & 1 << bit) ? 1 : 0;
-	};
-
-	var TOTAL_BITS = 32; // DOC FLAGS
-
-	var FLAG_BITS = 6;
-	var IS_ON_SERVER = 0;
-	var IS_GZIP = 1;
-	var IS_BINARY = 2;
-	var IS_ENCRYPTED = 3;
-	var HAS_EXTRA_KEY = 4;
-	var IS_EDITABLE = 5; // DOC Application Data Type
-
-	var DATA_TYPE_START = 17;
-	var DATA_TYPE_LIST = ['data', 'profile', 'vital']; // DOC Media Type
-
-	var MEDIA_TYPE = 27; // 31 ~ 27: 5
-
-	var MEDIA_TYPE_BITS = TOTAL_BITS - MEDIA_TYPE;
-	var MEDIA_TYPE_LIST = ['others', 'application', 'audio', 'font', 'image', 'message', 'model', 'multipart', 'text', 'video'];
-
-	var DType = /*#__PURE__*/function () {
-	  // DOC FLAGS
-	  // DOC Application Data Type
-	  // DOC Media Type
-	  function DType() {
-	    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
-
-	    classCallCheck(this, DType);
-
-	    defineProperty(this, "_flags", 0);
-
-	    defineProperty(this, "_dataType", 0);
-
-	    defineProperty(this, "_mediaType", 0);
-
-	    this.value = value;
+	  for (i = 0; i < sourceKeys.length; i++) {
+	    key = sourceKeys[i];
+	    if (excluded.indexOf(key) >= 0) continue;
+	    target[key] = source[key];
 	  }
 
-	  createClass(DType, [{
-	    key: "getFlags",
-	    // DOC FLAGS
-	    value: function getFlags() {
-	      return {
-	        isOnServer: this.isOnServer,
-	        isGzip: this.isGzip,
-	        isBinary: this.isBinary,
-	        isEncrypted: this.isEncrypted,
-	        hasExtraKey: this.hasExtraKey,
-	        isEditable: this.isEditable
-	      };
-	    }
-	  }, {
-	    key: "getDataType",
-	    value: function getDataType() {
-	      return DATA_TYPE_LIST[this._dataType];
-	    } // Media Type
+	  return target;
+	}
 
-	  }, {
-	    key: "setMediaType",
-	    value: function setMediaType(mediaType) {
-	      var type = MEDIA_TYPE_LIST.findIndex(function (header) {
-	        var val = RegExp("^".concat(header, "/")).test(mediaType);
-	        return val;
-	      });
-	      this._mediaType = type === -1 ? 0 : type;
-	    }
-	  }, {
-	    key: "getMediaType",
-	    value: function getMediaType() {
-	      return MEDIA_TYPE_LIST[this.mediaType];
-	    }
-	  }, {
-	    key: "value",
-	    set: function set(value) {
-	      // flags
-	      this.flags = value << TOTAL_BITS - FLAG_BITS >>> TOTAL_BITS - FLAG_BITS; // data type
+	var objectWithoutPropertiesLoose = _objectWithoutPropertiesLoose;
 
-	      this.dataType = value << MEDIA_TYPE_BITS >>> DATA_TYPE_START + MEDIA_TYPE_BITS; // media type
+	function _objectWithoutProperties(source, excluded) {
+	  if (source == null) return {};
+	  var target = objectWithoutPropertiesLoose(source, excluded);
+	  var key, i;
 
-	      this.mediaType = value >>> MEDIA_TYPE;
-	    },
-	    get: function get() {
-	      // merger media type
-	      var tmpValue = this._mediaType << MEDIA_TYPE; // merge data type
+	  if (Object.getOwnPropertySymbols) {
+	    var sourceSymbolKeys = Object.getOwnPropertySymbols(source);
 
-	      tmpValue |= this._dataType << DATA_TYPE_START; // merge flags
+	    for (i = 0; i < sourceSymbolKeys.length; i++) {
+	      key = sourceSymbolKeys[i];
+	      if (excluded.indexOf(key) >= 0) continue;
+	      if (!Object.prototype.propertyIsEnumerable.call(source, key)) continue;
+	      target[key] = source[key];
+	    }
+	  }
 
-	      tmpValue |= this.flags;
-	      return tmpValue;
-	    }
-	  }, {
-	    key: "flags",
-	    set: function set(value) {
-	      this.isOnServer = !!getBit(value, IS_ON_SERVER);
-	      this.isGzip = !!getBit(value, IS_GZIP);
-	      this.isBinary = !!getBit(value, IS_BINARY);
-	      this.isEncrypted = !!getBit(value, IS_ENCRYPTED);
-	      this.hasExtraKey = !!getBit(value, HAS_EXTRA_KEY);
-	      this.isEditable = !!getBit(value, IS_EDITABLE);
-	    },
-	    get: function get() {
-	      return this._flags;
-	    }
-	  }, {
-	    key: "isOnServer",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_ON_SERVER);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_ON_SERVER);
-	    }
-	  }, {
-	    key: "isGzip",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_GZIP);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_GZIP);
-	    }
-	  }, {
-	    key: "isBinary",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_BINARY);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_BINARY);
-	    }
-	  }, {
-	    key: "isEncrypted",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_ENCRYPTED);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_ENCRYPTED);
-	    }
-	  }, {
-	    key: "hasExtraKey",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, HAS_EXTRA_KEY);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, HAS_EXTRA_KEY);
-	    }
-	  }, {
-	    key: "isEditable",
-	    set: function set(value) {
-	      this._flags = setBit(this._flags, value, IS_EDITABLE);
-	    },
-	    get: function get() {
-	      return !!getBit(this._flags, IS_EDITABLE);
-	    } // Application Data Type
+	  return target;
+	}
 
-	  }, {
-	    key: "dataType",
-	    set: function set(_type) {
-	      // const type = _type < 0 || _type >= DATA_TYPE_LIST.length ? 0 : _type
-	      this._dataType = _type;
-	    },
-	    get: function get() {
-	      return this._dataType;
-	    }
-	  }, {
-	    key: "mediaType",
-	    set: function set(_type) {
-	      var type = _type < 0 || _type >= MEDIA_TYPE_LIST.length ? 0 : _type;
-	      this._mediaType = type;
-	    },
-	    get: function get() {
-	      return this._mediaType;
-	    }
-	  }]);
+	var objectWithoutProperties = _objectWithoutProperties;
 
-	  return DType;
-	}();
+	/** Used to compose bitmasks for cloning. */
+	var CLONE_SYMBOLS_FLAG$2 = 4;
 
-	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var CONTENT_SIZE_LIMIT = 32768;
 	/**
-	 * @param content: string | Blob
-	 * @param type: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
-	 * @returns Blob
+	 * Creates a shallow clone of `value`.
+	 *
+	 * **Note:** This method is loosely based on the
+	 * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
+	 * and supports cloning arrays, array buffers, booleans, date objects, maps,
+	 * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
+	 * arrays. The own enumerable properties of `arguments` objects are cloned
+	 * as plain objects. An empty object is returned for uncloneable values such
+	 * as error objects, functions, DOM nodes, and WeakMaps.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to clone.
+	 * @returns {*} Returns the cloned value.
+	 * @see _.cloneDeep
+	 * @example
+	 *
+	 * var objects = [{ 'a': 1 }, { 'b': 2 }];
+	 *
+	 * var shallow = _.clone(objects);
+	 * console.log(shallow[0] === objects[0]);
+	 * // => true
 	 */
+	function clone(value) {
+	  return _baseClone(value, CLONE_SYMBOLS_FLAG$2);
+	}
 
-	var contentToBlob = function contentToBlob(content) {
-	  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'text/plain';
+	var clone_1 = clone;
 
-	  /* Convert content to be blob */
-	  var blob;
+	function _process (v, mod) {
+	  var i;
+	  var r;
 
-	  if (typeof content === 'string') {
-	    blob = new Blob([content], {
-	      type: type
-	    });
-	  } else if (content instanceof Blob) {
-	    blob = content;
+	  if (typeof mod === 'function') {
+	    r = mod(v);
+	    if (r !== undefined) {
+	      v = r;
+	    }
+	  } else if (Array.isArray(mod)) {
+	    for (i = 0; i < mod.length; i++) {
+	      r = mod[i](v);
+	      if (r !== undefined) {
+	        v = r;
+	      }
+	    }
+	  }
+
+	  return v
+	}
+
+	function parseKey (key, val) {
+	  // detect negative index notation
+	  if (key[0] === '-' && Array.isArray(val) && /^-\d+$/.test(key)) {
+	    return val.length + parseInt(key, 10)
+	  }
+	  return key
+	}
+
+	function isIndex$1 (k) {
+	  return /^\d+$/.test(k)
+	}
+
+	function isObject$5 (val) {
+	  return Object.prototype.toString.call(val) === '[object Object]'
+	}
+
+	function isArrayOrObject (val) {
+	  return Object(val) === val
+	}
+
+	function isEmptyObject (val) {
+	  return Object.keys(val).length === 0
+	}
+
+	var blacklist = ['__proto__', 'prototype', 'constructor'];
+	var blacklistFilter = function (part) { return blacklist.indexOf(part) === -1 };
+
+	function parsePath (path, sep) {
+	  if (path.indexOf('[') >= 0) {
+	    path = path.replace(/\[/g, '.').replace(/]/g, '');
+	  }
+
+	  var parts = path.split(sep);
+
+	  var check = parts.filter(blacklistFilter);
+
+	  if (check.length !== parts.length) {
+	    throw Error('Refusing to update blacklisted property ' + path)
+	  }
+
+	  return parts
+	}
+
+	var hasOwnProperty$b = Object.prototype.hasOwnProperty;
+
+	function DotObject (separator, override, useArray, useBrackets) {
+	  if (!(this instanceof DotObject)) {
+	    return new DotObject(separator, override, useArray, useBrackets)
+	  }
+
+	  if (typeof override === 'undefined') override = false;
+	  if (typeof useArray === 'undefined') useArray = true;
+	  if (typeof useBrackets === 'undefined') useBrackets = true;
+	  this.separator = separator || '.';
+	  this.override = override;
+	  this.useArray = useArray;
+	  this.useBrackets = useBrackets;
+	  this.keepArray = false;
+
+	  // contains touched arrays
+	  this.cleanup = [];
+	}
+
+	var dotDefault = new DotObject('.', false, true, true);
+	function wrap$2 (method) {
+	  return function () {
+	    return dotDefault[method].apply(dotDefault, arguments)
+	  }
+	}
+
+	DotObject.prototype._fill = function (a, obj, v, mod) {
+	  var k = a.shift();
+
+	  if (a.length > 0) {
+	    obj[k] = obj[k] || (this.useArray && isIndex$1(a[0]) ? [] : {});
+
+	    if (!isArrayOrObject(obj[k])) {
+	      if (this.override) {
+	        obj[k] = {};
+	      } else {
+	        if (!(isArrayOrObject(v) && isEmptyObject(v))) {
+	          throw new Error(
+	            'Trying to redefine `' + k + '` which is a ' + typeof obj[k]
+	          )
+	        }
+
+	        return
+	      }
+	    }
+
+	    this._fill(a, obj[k], v, mod);
 	  } else {
-	    try {
-	      var jsonStr = JSON.stringify(content);
-	      blob = new Blob([jsonStr], {
-	        type: 'application/json'
-	      });
-	    } catch (error) {
-	      throw new AiTmedError({
-	        name: 'NOTE_CONTENT_INVALID',
-	        message: error.message
-	      });
+	    if (!this.override && isArrayOrObject(obj[k]) && !isEmptyObject(obj[k])) {
+	      if (!(isArrayOrObject(v) && isEmptyObject(v))) {
+	        throw new Error("Trying to redefine non-empty obj['" + k + "']")
+	      }
+
+	      return
 	    }
+
+	    obj[k] = _process(v, mod);
+	  }
+	};
+
+	/**
+	 *
+	 * Converts an object with dotted-key/value pairs to it's expanded version
+	 *
+	 * Optionally transformed by a set of modifiers.
+	 *
+	 * Usage:
+	 *
+	 *   var row = {
+	 *     'nr': 200,
+	 *     'doc.name': '  My Document  '
+	 *   }
+	 *
+	 *   var mods = {
+	 *     'doc.name': [_s.trim, _s.underscored]
+	 *   }
+	 *
+	 *   dot.object(row, mods)
+	 *
+	 * @param {Object} obj
+	 * @param {Object} mods
+	 */
+	DotObject.prototype.object = function (obj, mods) {
+	  var self = this;
+
+	  Object.keys(obj).forEach(function (k) {
+	    var mod = mods === undefined ? null : mods[k];
+	    // normalize array notation.
+	    var ok = parsePath(k, self.separator).join(self.separator);
+
+	    if (ok.indexOf(self.separator) !== -1) {
+	      self._fill(ok.split(self.separator), obj, obj[k], mod);
+	      delete obj[k];
+	    } else {
+	      obj[k] = _process(obj[k], mod);
+	    }
+	  });
+
+	  return obj
+	};
+
+	/**
+	 * @param {String} path dotted path
+	 * @param {String} v value to be set
+	 * @param {Object} obj object to be modified
+	 * @param {Function|Array} mod optional modifier
+	 */
+	DotObject.prototype.str = function (path, v, obj, mod) {
+	  var ok = parsePath(path, this.separator).join(this.separator);
+
+	  if (path.indexOf(this.separator) !== -1) {
+	    this._fill(ok.split(this.separator), obj, v, mod);
+	  } else {
+	    obj[path] = _process(v, mod);
 	  }
 
-	  return blob;
+	  return obj
 	};
+
 	/**
 	 *
-	 * @param data: Uint8Array | Blob
-	 * @param besak?: string | Uint8Array
-	 * @returns Promise<obj>
-	 * @returns obj.data: Uint8Array
-	 * @returns obj.isEncrypt: boolean
-	 */
-
-	var produceEncryptData = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_data, esak, publicKeyOfReceiver) {
-	    var data, isEncrypt;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            if (!(_data instanceof Blob)) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            _context.next = 3;
-	            return store$3.level2SDK.utilServices.blobToUint8Array(_data);
-
-	          case 3:
-	            _context.t0 = _context.sent;
-	            _context.next = 7;
-	            break;
-
-	          case 6:
-	            _context.t0 = _data;
-
-	          case 7:
-	            data = _context.t0;
-	            isEncrypt = false;
-
-	            if (!(typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver)) {
-	              _context.next = 19;
-	              break;
-	            }
-
-	            _context.prev = 10;
-	            _context.next = 13;
-	            return store$3.level2SDK.commonServices.encryptData(esak, publicKeyOfReceiver, data);
-
-	          case 13:
-	            data = _context.sent;
-	            isEncrypt = true;
-	            _context.next = 19;
-	            break;
-
-	          case 17:
-	            _context.prev = 17;
-	            _context.t1 = _context["catch"](10);
-
-	          case 19:
-	            return _context.abrupt("return", {
-	              data: data,
-	              isEncrypt: isEncrypt
-	            });
-
-	          case 20:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee, null, [[10, 17]]);
-	  }));
-
-	  return function produceEncryptData(_x, _x2, _x3) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	/**
+	 * Pick a value from an object using dot notation.
 	 *
-	 * @param _data Uint8Array | Blob
-	 * @returns Promise<obj>
-	 * @returns obj.data: Uint8Array
-	 * @returns obj.isGzip: boolean
-	 */
-
-	var produceGzipData = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(_data) {
-	    var u8a, data, isGzip;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            if (!(_data instanceof Blob)) {
-	              _context2.next = 6;
-	              break;
-	            }
-
-	            _context2.next = 3;
-	            return store$3.level2SDK.utilServices.blobToUint8Array(_data);
-
-	          case 3:
-	            _context2.t0 = _context2.sent;
-	            _context2.next = 7;
-	            break;
-
-	          case 6:
-	            _context2.t0 = _data;
-
-	          case 7:
-	            u8a = _context2.t0;
-	            data = gzip$1(u8a);
-	            isGzip = data.length < u8a.length;
-	            return _context2.abrupt("return", {
-	              data: isGzip ? data : u8a,
-	              isGzip: isGzip
-	            });
-
-	          case 11:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function produceGzipData(_x4) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
+	 * Optionally remove the value
 	 *
-	 * @param document: Doc
-	 * @param edge?: Edge
-	 * @returns Promise<Note>
+	 * @param {String} path
+	 * @param {Object} obj
+	 * @param {Boolean} remove
 	 */
+	DotObject.prototype.pick = function (path, obj, remove, reindexArray) {
+	  var i;
+	  var keys;
+	  var val;
+	  var key;
+	  var cp;
 
-	var documentToNote = /*#__PURE__*/function () {
-	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref3) {
-	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, isBroken, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
-
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            document = _ref3.document, _edge = _ref3._edge, esakOfCurrentUser = _ref3.esakOfCurrentUser;
-
-	            if (!(typeof _edge === 'undefined')) {
-	              _context3.next = 7;
-	              break;
+	  keys = parsePath(path, this.separator);
+	  for (i = 0; i < keys.length; i++) {
+	    key = parseKey(keys[i], obj);
+	    if (obj && typeof obj === 'object' && key in obj) {
+	      if (i === keys.length - 1) {
+	        if (remove) {
+	          val = obj[key];
+	          if (reindexArray && Array.isArray(obj)) {
+	            obj.splice(key, 1);
+	          } else {
+	            delete obj[key];
+	          }
+	          if (Array.isArray(obj)) {
+	            cp = keys.slice(0, -1).join('.');
+	            if (this.cleanup.indexOf(cp) === -1) {
+	              this.cleanup.push(cp);
 	            }
-
-	            _context3.next = 4;
-	            return retrieveEdge(document.eid);
-
-	          case 4:
-	            _context3.t0 = _context3.sent;
-	            _context3.next = 8;
-	            break;
-
-	          case 7:
-	            _context3.t0 = _edge;
-
-	          case 8:
-	            edge = _context3.t0;
-
-	            if (!(edge === null)) {
-	              _context3.next = 11;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
-	            });
-
-	          case 11:
-	            //TODO
-	            //currently commented since does not allow comparison between shared notebook
-	            //and docs from root notebook
-	            // if (
-	            //   !store.utils.compareUint8Arrays(
-	            //     <Uint8Array>edge.eid,
-	            //     <Uint8Array>document.eid,
-	            //   )
-	            // ) {
-	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
-	            // }
-	            name = document.name;
-	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
-	            deat = document.deat; // DType
-
-	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
-	            dType = isOldDataStructure ? new DType() : new DType(document.type);
-
-	            if (isOldDataStructure) {
-	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
-	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
-	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
-	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
-	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
-	              dType.setMediaType(name.type);
-	            } // Get data
-
-
-	            content = null, isBroken = false, error = null;
-	            _context3.prev = 18;
-
-	            if (!dType.isOnServer) {
-	              _context3.next = 29;
-	              break;
-	            }
-
-	            if (!(name.data !== undefined)) {
-	              _context3.next = 26;
-	              break;
-	            }
-
-	            _context3.next = 23;
-	            return store$3.level2SDK.utilServices.base64ToUint8Array(name.data);
-
-	          case 23:
-	            data = _context3.sent;
-	            _context3.next = 27;
-	            break;
-
-	          case 26:
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'name.data is undefined'
-	            });
-
-	          case 27:
-	            _context3.next = 46;
-	            break;
-
-	          case 29:
-	            if (!(deat !== null && deat.url)) {
-	              _context3.next = 45;
-	              break;
-	            }
-
-	            _context3.next = 32;
-	            return store$3.level2SDK.documentServices.downloadDocumentFromS3({
-	              url: deat.url
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 32:
-	            response = _context3.sent;
-
-	            if (response) {
-	              _context3.next = 35;
-	              break;
-	            }
-
-	            throw 'no response';
-
-	          case 35:
-	            if (!dType.isBinary) {
-	              _context3.next = 39;
-	              break;
-	            }
-
-	            _context3.t1 = response.data;
-	            _context3.next = 42;
-	            break;
-
-	          case 39:
-	            _context3.next = 41;
-	            return store$3.level2SDK.utilServices.base64ToUint8Array(response.data);
-
-	          case 41:
-	            _context3.t1 = _context3.sent;
-
-	          case 42:
-	            data = _context3.t1;
-	            _context3.next = 46;
-	            break;
-
-	          case 45:
-	            throw 'deat.url is missing';
-
-	          case 46:
-	            // Decryption
-	            edgeHasBesak = edge.besak && edge.besak !== '';
-	            edgeHasEesak = edge.eesak && edge.eesak !== '';
-
-	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
-	              _context3.next = 71;
-	              break;
-	            }
-
-	            if (esakOfCurrentUser) {
-	              esak = esakOfCurrentUser;
-	            } else {
-	              esak = edgeHasBesak ? edge.besak : edge.eesak;
-	            }
-
-	            if (!edge.sig) {
-	              _context3.next = 57;
-	              break;
-	            }
-
-	            if (edge.sig instanceof Uint8Array) {
-	              publicKeyOfReceiver = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-	            } else {
-	              publicKeyOfReceiver = edge.sig;
-	            }
-
-	            _context3.next = 54;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 54:
-	            data = _context3.sent;
-	            _context3.next = 71;
-	            break;
-
-	          case 57:
-	            if (!(!edge.sig && edge.type === 10001)) {
-	              _context3.next = 65;
-	              break;
-	            }
-
-	            pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
-	            _context3.next = 62;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 62:
-	            data = _context3.sent;
-	            _context3.next = 71;
-	            break;
-
-	          case 65:
-	            if (!(edge.type === 10000)) {
-	              _context3.next = 71;
-	              break;
-	            }
-
-	            _pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
-	            _context3.next = 70;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 70:
-	            data = _context3.sent;
-
-	          case 71:
-	            // Ungzip
-	            if (dType.isGzip) data = ungzip$1(data);
-	            _context3.next = 74;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
-
-	          case 74:
-	            blob = _context3.sent;
-
-	            if (!/^text\//.test(blob.type)) {
-	              _context3.next = 81;
-	              break;
-	            }
-
-	            _context3.next = 78;
-	            return new Response(blob).text();
-
-	          case 78:
-	            content = _context3.sent;
-	            _context3.next = 95;
-	            break;
-
-	          case 81:
-	            if (!(blob.type === 'application/json')) {
-	              _context3.next = 94;
-	              break;
-	            }
-
-	            _context3.next = 84;
-	            return new Response(blob).text();
-
-	          case 84:
-	            jsonStr = _context3.sent;
-	            _context3.prev = 85;
-	            content = JSON.parse(jsonStr);
-	            _context3.next = 92;
-	            break;
-
-	          case 89:
-	            _context3.prev = 89;
-	            _context3.t2 = _context3["catch"](85);
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
-	            });
-
-	          case 92:
-	            _context3.next = 95;
-	            break;
-
-	          case 94:
-	            content = blob;
-
-	          case 95:
-	            _context3.next = 102;
-	            break;
-
-	          case 97:
-	            _context3.prev = 97;
-	            _context3.t3 = _context3["catch"](18);
-
-	            if (typeof _context3.t3 === 'string') {
-	              error = new AiTmedError({
-	                name: 'DOWNLOAD_FROM_S3_FAIL',
-	                message: "Note -> documentToNote -> ".concat(_context3.t3)
-	              });
-	            } else {
-	              error = _context3.t3;
-	            }
-
-	            content = null;
-	            isBroken = true;
-
-	          case 102:
-	            return _context3.abrupt("return", {
-	              id: store$3.utils.idToBase64(document.id),
-	              owner_id: store$3.utils.idToBase64(edge.bvid),
-	              notebook_id: store$3.utils.idToBase64(document.eid),
-	              info: {
-	                title: name.title,
-	                type: contentType,
-	                content: content,
-	                tags: name.tags || []
-	              },
-	              created_at: document.ctime * 1000,
-	              modified_at: document.mtime * 1000,
-	              isEditable: dType.isEditable,
-	              isEncrypt: dType.isEncrypted,
-	              isGzip: dType.isGzip,
-	              isOnServer: dType.isOnServer,
-	              size: document.size,
-	              isBroken: isBroken,
-	              error: error
-	            });
-
-	          case 103:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3, null, [[18, 97], [85, 89]]);
-	  }));
-
-	  return function documentToNote(_x5) {
-	    return _ref4.apply(this, arguments);
-	  };
-	}();
-	/**
-	 *
-	 * @param id: Uint8Array | string
-	 * @param _edge?: Edge
-	 * @returns Promise<Note>
-	 */
-
-	var retrieveNote = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id, _edge) {
-	    var document, note;
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            _context4.next = 2;
-	            return retrieveDocument(id);
-
-	          case 2:
-	            document = _context4.sent;
-
-	            if (document) {
-	              _context4.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOT_A_NOTE'
-	            });
-
-	          case 5:
-	            _context4.next = 7;
-	            return documentToNote({
-	              document: document,
-	              _edge: _edge
-	            });
-
-	          case 7:
-	            note = _context4.sent;
-	            return _context4.abrupt("return", note);
-
-	          case 9:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function retrieveNote(_x6, _x7) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string | Uint8Array
-	 * @param fields
-	 * @param fields.notebook_id?: string
-	 * @param fields.title?: string
-	 * @param fields.content?: string | Blob
-	 * @param type?: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
-	 * @param fields.tags?: string[]
-	 * @param save?: boolean
-	 * @returns Promise<Note>
-	 */
-
-	var updateNote = /*#__PURE__*/function () {
-	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, _ref6) {
-	    var notebook_id,
-	        title,
-	        content,
-	        type,
-	        tags,
-	        save,
-	        document,
-	        edge,
-	        params,
-	        name,
-	        tagsSet,
-	        isOldDataStructure,
-	        dType,
-	        note,
-	        response,
-	        blob,
-	        _yield$produceGzipDat,
-	        gzipData,
-	        isGzip,
-	        _yield$produceEncrypt,
-	        data,
-	        isEncrypt,
-	        bs64Data,
-	        _response,
-	        _response$data,
-	        _id,
-	        deat,
-	        _args5 = arguments;
-
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            notebook_id = _ref6.notebook_id, title = _ref6.title, content = _ref6.content, type = _ref6.type, tags = _ref6.tags;
-	            save = _args5.length > 2 && _args5[2] !== undefined ? _args5[2] : false;
-	            _context5.next = 4;
-	            return retrieveDocument(id);
-
-	          case 4:
-	            document = _context5.sent;
-
-	            if (document) {
-	              _context5.next = 7;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOT_A_NOTE'
-	            });
-
-	          case 7:
-	            if (!(typeof notebook_id !== 'undefined')) {
-	              _context5.next = 13;
-	              break;
-	            }
-
-	            _context5.next = 10;
-	            return retrieveEdge(notebook_id);
-
-	          case 10:
-	            edge = _context5.sent;
-	            _context5.next = 16;
-	            break;
-
-	          case 13:
-	            _context5.next = 15;
-	            return retrieveEdge(document.eid);
-
-	          case 15:
-	            edge = _context5.sent;
-
-	          case 16:
-	            if (edge) {
-	              _context5.next = 18;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 18:
-	            if (store$3.utils.compareUint8Arrays(edge.eid, document.eid)) {
-	              _context5.next = 20;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_ID_NOT_MATCH'
-	            });
-
-	          case 20:
-	            // Update Params
-	            params = {
-	              id: document.id,
-	              eid: edge.eid
-	            };
-	            if (save) params.fid = document.id; // Update name
-
-	            name = document.name;
-	            if (typeof title !== 'undefined') name.title = title;
-
-	            if (typeof tags !== 'undefined') {
-	              tagsSet = new Set([].concat(toConsumableArray(name.tags), toConsumableArray(tags)));
-	              name.tags = Array.from(tagsSet);
-	            } // DType
-
-
-	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
-	            dType = isOldDataStructure ? new DType() : new DType(document.type);
-
-	            if (isOldDataStructure) {
-	              if (typeof name.isOnS3 !== 'undefined') {
-	                dType.isOnServer = !name.isOnS3;
-	                delete name.isOnS3;
-	              }
-
-	              if (typeof name.isGzip !== 'undefined') {
-	                dType.isGzip = name.isGzip;
-	                delete name.isGzip;
-	              }
-
-	              if (typeof name.isBinary !== 'undefined') {
-	                dType.isBinary = name.isBinary;
-	                delete name.isBinary;
-	              }
-
-	              if (typeof name.isEncrypt !== 'undefined') {
-	                dType.isEncrypted = name.isEncrypt;
-	                delete name.isEncrypt;
-	              }
-
-	              if (typeof name.edit_mode !== 'undefined') {
-	                dType.isEditable = !!name.edit_mode;
-	                delete name.edit_mode;
-	              }
-
-	              dType.setMediaType(name.type);
-	            }
-
-	            if (!(typeof content === 'undefined')) {
-	              _context5.next = 40;
-	              break;
-	            }
-
-	            // Does not need to update content
-	            params.name = name;
-	            _context5.next = 32;
-	            return store$3.level2SDK.documentServices.updateDocument(_objectSpread$5(_objectSpread$5({}, params), {}, {
-	              type: dType.value
-	            })).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 32:
-	            response = _context5.sent;
-
-	            if (!(!response || response.code !== 0)) {
-	              _context5.next = 35;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> update -> updateDocument -> no response'
-	            });
-
-	          case 35:
-	            _context5.next = 37;
-	            return retrieveNote(document.id, edge);
-
-	          case 37:
-	            note = _context5.sent;
-	            _context5.next = 78;
-	            break;
-
-	          case 40:
-	            _context5.next = 42;
-	            return contentToBlob(content, type);
-
-	          case 42:
-	            blob = _context5.sent;
-	            _context5.next = 45;
-	            return produceGzipData(blob);
-
-	          case 45:
-	            _yield$produceGzipDat = _context5.sent;
-	            gzipData = _yield$produceGzipDat.data;
-	            isGzip = _yield$produceGzipDat.isGzip;
-	            dType.isGzip = isGzip;
-	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
-
-	            _context5.next = 52;
-	            return produceEncryptData(gzipData, edge.besak);
-
-	          case 52:
-	            _yield$produceEncrypt = _context5.sent;
-	            data = _yield$produceEncrypt.data;
-	            isEncrypt = _yield$produceEncrypt.isEncrypt;
-	            dType.isEncrypted = isEncrypt;
-	            _context5.next = 58;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
-
-	          case 58:
-	            bs64Data = _context5.sent;
-	            dType.isBinary = false;
-	            name.type = blob.type;
-	            params.size = blob.size;
-
-	            if (dType.isOnServer) {
-	              name.data = bs64Data;
-	            } else {
-	              if (typeof name.data !== 'undefined') delete name.data;
-	            }
-
-	            params.name = name; // Create new DOC
-
-	            _context5.next = 66;
-	            return store$3.level2SDK.documentServices.createDocument({
-	              eid: edge.eid,
-	              type: dType.value,
-	              name: name,
-	              size: blob.size
-	            });
-
-	          case 66:
-	            _response = _context5.sent;
-
-	            if (!(!_response || _response.code !== 0)) {
-	              _context5.next = 69;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> update -> updateDocument -> no response'
-	            });
-
-	          case 69:
-	            _response$data = _response.data, _id = _response$data.id, deat = _response$data.deat;
-
-	            if (!(deat !== null && deat && deat.url && deat.sig)) {
-	              _context5.next = 73;
-	              break;
-	            }
-
-	            _context5.next = 73;
-	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
-	              url: deat.url,
-	              sig: deat.sig,
-	              data: bs64Data
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 73:
-	            _context5.next = 75;
-	            return store$3.level2SDK.documentServices.deleteDocument([document.id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 75:
-	            _context5.next = 77;
-	            return retrieveNote(_id, edge);
-
-	          case 77:
-	            note = _context5.sent;
-
-	          case 78:
-	            return _context5.abrupt("return", note);
-
-	          case 79:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function updateNote(_x8, _x9) {
-	    return _ref7.apply(this, arguments);
-	  };
-	}();
-
-	var listDocsFilter = function listDocsFilter(document, _ref8) {
-	  var dataType = _ref8.dataType,
-	      mediaType = _ref8.mediaType,
-	      options = objectWithoutProperties(_ref8, ["dataType", "mediaType"]);
-
-	  var dType = new DType(document.type);
-
-	  if (dataType !== undefined) {
-	    if (typeof dataType === 'number' && dataType !== dType.dataType) {
-	      return false;
-	    } else if (typeof dataType !== 'number') {
-	      if (dataType === 'profile') {
-	        var name = document.name;
-
-	        if (name.title !== 'profile' || name.type !== 'application/json') {
-	          return false;
+	          }
+	          return val
+	        } else {
+	          return obj[key]
 	        }
 	      } else {
-	        if (dataType !== dType.getDataType()) return false;
+	        obj = obj[key];
 	      }
+	    } else {
+	      return undefined
 	    }
 	  }
-
-	  if (mediaType !== undefined) {
-	    if (typeof mediaType === 'number' && mediaType !== dType.mediaType) {
-	      return false;
-	    } else if (typeof mediaType !== 'number' && mediaType !== dType.getMediaType()) {
-	      return false;
-	    }
+	  if (remove && Array.isArray(obj)) {
+	    obj = obj.filter(function (n) {
+	      return n !== undefined
+	    });
 	  }
-
-	  for (var key in options) {
-	    var value = options[key];
-	    var dTypeValue = dType[key];
-
-	    if (value !== undefined && dTypeValue !== undefined) {
-	      if (value !== dTypeValue) return false;
-	    }
-	  }
-
-	  return true;
+	  return obj
 	};
 	/**
 	 *
-	 * @param edge: Edge
-	 * @param options: NoteUtilsTypes.ListDocsOptions
-	 * @param options.shared?: Boolean
-	 * @param options.count?: number
-	 * @param options.sort_by?: 0 | 1 | 2
+	 * Delete value from an object using dot notation.
 	 *
-	 * @param options.isOnServer?: boolean
-	 * @param options.isGzip?: boolean
-	 * @param options.isBinary?: boolean
-	 * @param options.isEncrypted?: boolean
-	 * @param options.hasExtraKey?: boolean
-	 * @param options.isEditable?: boolean
-	 *
-	 * @param options.dataType?: number
-	 * @param options.mediaType?: number
-	 *
-	 * @returns Promise<Doc[]>
+	 * @param {String} path
+	 * @param {Object} obj
+	 * @return {any} The removed value
 	 */
+	DotObject.prototype.delete = function (path, obj) {
+	  return this.remove(path, obj, true)
+	};
 
-
-	var listDocs = /*#__PURE__*/function () {
-	  var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(edge) {
-	    var options,
-	        _options$shared,
-	        shared,
-	        _options$count,
-	        _options$sort_by,
-	        otherOptions,
-	        idOfRootNotebook,
-	        response,
-	        documents,
-	        _args6 = arguments;
-
-	    return regenerator.wrap(function _callee6$(_context6) {
-	      while (1) {
-	        switch (_context6.prev = _context6.next) {
-	          case 0:
-	            options = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : {};
-	            _options$shared = options.shared, shared = _options$shared === void 0 ? false : _options$shared, _options$count = options.count, _options$sort_by = options.sort_by, otherOptions = objectWithoutProperties(options, ["shared", "count", "sort_by"]);
-
-	            if (shared) {
-	              idOfRootNotebook = edge.refid;
-	            } else {
-	              idOfRootNotebook = edge.eid;
-	            }
-
-	            _context6.next = 5;
-	            return store$3.level2SDK.documentServices.retrieveDocument({
-	              idList: [idOfRootNotebook],
-	              options: {
-	                xfname: 'eid'
-	              }
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 5:
-	            response = _context6.sent;
-
-	            if (!(!response || !response.data || !Array.isArray(response.data))) {
-	              _context6.next = 8;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> list -> retrieveDocument -> no response'
-	            });
-
-	          case 8:
-	            documents = response.data.filter(function (document) {
-	              return listDocsFilter(document, otherOptions);
-	            });
-	            return _context6.abrupt("return", documents);
-
-	          case 10:
-	          case "end":
-	            return _context6.stop();
-	        }
-	      }
-	    }, _callee6);
-	  }));
-
-	  return function listDocs(_x10) {
-	    return _ref9.apply(this, arguments);
-	  };
-	}();
-
-	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$6(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	function _createForOfIteratorHelper$e(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$f(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-	function _unsupportedIterableToArray$f(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$f(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$f(o, minLen); }
-
-	function _arrayLikeToArray$f(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-	/**
-	 * @param params
-	 * @param params.notebook_id: string
-	 * @param params.title: string
-	 * @param params.content: string | Blob
-	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
-	 * @param params.tags?: string[]
-	 * @param params.dataType?: number
-	 * @returns Promise<Note>
-	 */
-
-	var create = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var notebook_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            notebook_id = _ref.notebook_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
-	            _context.next = 3;
-	            return retrieveEdge(notebook_id);
-
-	          case 3:
-	            edge = _context.sent;
-
-	            if (edge) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 6:
-	            dType = new DType();
-	            dType.dataType = dataType; // Permission
-
-	            dType.isEditable = true; // Content to Blob
-
-	            _context.next = 11;
-	            return contentToBlob(content, type);
-
-	          case 11:
-	            blob = _context.sent;
-	            dType.setMediaType(blob.type); // Gzip
-
-	            _context.next = 15;
-	            return produceGzipData(blob);
-
-	          case 15:
-	            _yield$produceGzipDat = _context.sent;
-	            gzipData = _yield$produceGzipDat.data;
-	            isGzip = _yield$produceGzipDat.isGzip;
-	            dType.isGzip = isGzip;
-	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
-
-	            esak = '';
-	            publicKeyOfReceiver = '';
-
-	            if (!(edge.besak && edge.sig)) {
-	              _context.next = 33;
-	              break;
-	            }
-
-	            esak = edge.besak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 30;
-	              break;
-	            }
-
-	            _context.next = 27;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 27:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 31;
-	            break;
-
-	          case 30:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 31:
-	            _context.next = 42;
-	            break;
-
-	          case 33:
-	            if (!(edge.eesak && edge.sig)) {
-	              _context.next = 42;
-	              break;
-	            }
-
-	            esak = edge.eesak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 41;
-	              break;
-	            }
-
-	            _context.next = 38;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 38:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 42;
-	            break;
-
-	          case 41:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 42:
-	            _context.next = 44;
-	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
-
-	          case 44:
-	            _yield$produceEncrypt = _context.sent;
-	            data = _yield$produceEncrypt.data;
-	            isEncrypt = _yield$produceEncrypt.isEncrypt;
-	            dType.isEncrypted = isEncrypt;
-	            _context.next = 50;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
-
-	          case 50:
-	            bs64Data = _context.sent;
-	            dType.isBinary = false;
-	            name = {
-	              title: title,
-	              tags: tags,
-	              type: blob.type
-	            }; // data must be base64 in name field
-
-	            if (dType.isOnServer) name.data = bs64Data;
-	            _context.next = 56;
-	            return store$3.level2SDK.documentServices.createDocument({
-	              eid: edge.eid,
-	              type: dType.value,
-	              name: name,
-	              size: blob.size
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 56:
-	            response = _context.sent;
-
-	            if (!(!response || !response.data)) {
-	              _context.next = 59;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> create -> createDocument -> no response'
-	            });
-
-	          case 59:
-	            document = response.data;
-	            deat = document.deat;
-
-	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
-	              _context.next = 64;
-	              break;
-	            }
-
-	            _context.next = 64;
-	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
-	              url: deat.url,
-	              sig: deat.sig,
-	              data: bs64Data
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 64:
-	            _context.next = 66;
-	            return retrieveNote(document.id);
-
-	          case 66:
-	            note = _context.sent;
-	            return _context.abrupt("return", note);
-
-	          case 68:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function create(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string | Uint8Array
-	 */
-
-	var retrieve = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
-	    var note;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return retrieveNote(id);
-
-	          case 2:
-	            note = _context2.sent;
-	            return _context2.abrupt("return", note);
-
-	          case 4:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function retrieve(_x2) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string | Uint8Array
-	 * @returns Promise<Note>
-	 */
-
-	var remove = /*#__PURE__*/function () {
-	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id) {
-	    var note;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return retrieve(id);
-
-	          case 2:
-	            note = _context3.sent;
-	            _context3.next = 5;
-	            return store$3.level2SDK.documentServices.deleteDocument([note.id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 5:
-	            return _context3.abrupt("return", note);
-
-	          case 6:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function remove(_x3) {
-	    return _ref4.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @param params
-	 * @param params.notebook_id?: string
-	 * @param params.title?: string
-	 * @param params.content?: string | Blob
-	 * @param params.tags?: string[]
-	 * @returns Promise<Note>
-	 */
-
-	var update = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id, fields) {
-	    var note;
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            _context4.next = 2;
-	            return updateNote(id, fields, false);
-
-	          case 2:
-	            note = _context4.sent;
-	            return _context4.abrupt("return", note);
-
-	          case 4:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function update(_x4, _x5) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @param params
-	 * @param params.notebook_id?: string
-	 * @param params.title?: string
-	 * @param params.content?: string | Blob
-	 * @param params.tags?: string[]
-	 * @returns Promise<Note>
-	 */
-
-	var save = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, fields) {
-	    var note;
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            _context5.next = 2;
-	            return updateNote(id, fields, true);
-
-	          case 2:
-	            note = _context5.sent;
-	            return _context5.abrupt("return", note);
-
-	          case 4:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function save(_x6, _x7) {
-	    return _ref6.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param notebook_id
-	 * @param options
-	 * @param options.shared?: Boolean
-	 * @param options.types?: (NoteTypes | NoteFileTypes)[]
-	 * @param options.tags?: string[]
-	 * @param options.count?: number
-	 * @param options.edit_mode?: number
-	 * @param options.sort_by?: 0 | 1 | 2
-	 */
-
-	var list = /*#__PURE__*/function () {
-	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(notebook_id, options) {
-	    var edge, documents, ids, mapper, _iterator, _step, document, note;
-
-	    return regenerator.wrap(function _callee6$(_context6) {
-	      while (1) {
-	        switch (_context6.prev = _context6.next) {
-	          case 0:
-	            _context6.next = 2;
-	            return retrieveEdge(notebook_id);
-
-	          case 2:
-	            edge = _context6.sent;
-
-	            if (edge) {
-	              _context6.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            _context6.next = 7;
-	            return listDocs(edge, options);
-
-	          case 7:
-	            documents = _context6.sent;
-	            ids = [];
-	            mapper = {};
-	            _iterator = _createForOfIteratorHelper$e(documents);
-	            _context6.prev = 11;
-
-	            _iterator.s();
-
-	          case 13:
-	            if ((_step = _iterator.n()).done) {
-	              _context6.next = 22;
-	              break;
-	            }
-
-	            document = _step.value;
-	            _context6.next = 17;
-	            return documentToNote({
-	              document: document,
-	              edge: edge
-	            });
-
-	          case 17:
-	            note = _context6.sent;
-	            ids.push(note.id);
-	            mapper[note.id] = note;
-
-	          case 20:
-	            _context6.next = 13;
-	            break;
-
-	          case 22:
-	            _context6.next = 27;
-	            break;
-
-	          case 24:
-	            _context6.prev = 24;
-	            _context6.t0 = _context6["catch"](11);
-
-	            _iterator.e(_context6.t0);
-
-	          case 27:
-	            _context6.prev = 27;
-
-	            _iterator.f();
-
-	            return _context6.finish(27);
-
-	          case 30:
-	            return _context6.abrupt("return", {
-	              ids: ids,
-	              mapper: mapper
-	            });
-
-	          case 31:
-	          case "end":
-	            return _context6.stop();
-	        }
-	      }
-	    }, _callee6, null, [[11, 24, 27, 30]]);
-	  }));
-
-	  return function list(_x8, _x9) {
-	    return _ref7.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param notebook_id
-	 * @param options
-	 * @param options.tags?: string[]
-	 * @param options.count?: number
-	 * @param options.edit_mode?: number
-	 * @param options.sort_by?: 0 | 1 | 2
-	 */
-
-	var listSharedNotes = /*#__PURE__*/function () {
-	  var _ref8 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(rootNotebookId, options) {
-	    var _yield$store$level2SD, edges, _yield$store$level2SD2, rootEdge, sharedNotebooksWithRootNoteBook, ids, mapper, vidOfCurrentUserB64, esakOfCurrentUser;
-
-	    return regenerator.wrap(function _callee8$(_context8) {
-	      while (1) {
-	        switch (_context8.prev = _context8.next) {
-	          case 0:
-	            _context8.next = 2;
-	            return store$3.level2SDK.edgeServices.retrieveEdge({
-	              idList: [rootNotebookId],
-	              options: _objectSpread$6(_objectSpread$6({}, options), {}, {
-	                type: 10001,
-	                xfname: 'refid'
-	              })
-	            });
-
-	          case 2:
-	            _yield$store$level2SD = _context8.sent;
-	            edges = _yield$store$level2SD.data;
-	            _context8.next = 6;
-	            return store$3.level2SDK.edgeServices.retrieveEdge({
-	              idList: [rootNotebookId]
-	            });
-
-	          case 6:
-	            _yield$store$level2SD2 = _context8.sent;
-	            rootEdge = _yield$store$level2SD2.data;
-
-	            if (edges) {
-	              _context8.next = 10;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 10:
-	            sharedNotebooksWithRootNoteBook = [].concat(toConsumableArray(edges), toConsumableArray(rootEdge));
-	            ids = [];
-	            mapper = {};
-
-	            if (!sharedNotebooksWithRootNoteBook.length) {
-	              _context8.next = 18;
-	              break;
-	            }
-
-	            vidOfCurrentUserB64 = localStorage.getItem('user_vid');
-	            esakOfCurrentUser = sharedNotebooksWithRootNoteBook.filter(function (edge) {
-	              var vidOfCurrentUserUint8Array = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.evid);
-	              return vidOfCurrentUserB64 === vidOfCurrentUserUint8Array;
-	            }).map(function (edge) {
-	              return edge.eesak;
-	            }).pop();
-	            _context8.next = 18;
-	            return Promise.all(sharedNotebooksWithRootNoteBook.map( /*#__PURE__*/function () {
-	              var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(edge) {
-	                var documents, _iterator2, _step2, document, note;
-
-	                return regenerator.wrap(function _callee7$(_context7) {
-	                  while (1) {
-	                    switch (_context7.prev = _context7.next) {
-	                      case 0:
-	                        _context7.next = 2;
-	                        return listDocs(edge, options);
-
-	                      case 2:
-	                        documents = _context7.sent;
-	                        _iterator2 = _createForOfIteratorHelper$e(documents);
-	                        _context7.prev = 4;
-
-	                        _iterator2.s();
-
-	                      case 6:
-	                        if ((_step2 = _iterator2.n()).done) {
-	                          _context7.next = 15;
-	                          break;
-	                        }
-
-	                        document = _step2.value;
-	                        _context7.next = 10;
-	                        return documentToNote({
-	                          document: document,
-	                          edge: edge,
-	                          esakOfCurrentUser: esakOfCurrentUser
-	                        });
-
-	                      case 10:
-	                        note = _context7.sent;
-	                        ids.push(note.id);
-	                        mapper[note.id] = note;
-
-	                      case 13:
-	                        _context7.next = 6;
-	                        break;
-
-	                      case 15:
-	                        _context7.next = 20;
-	                        break;
-
-	                      case 17:
-	                        _context7.prev = 17;
-	                        _context7.t0 = _context7["catch"](4);
-
-	                        _iterator2.e(_context7.t0);
-
-	                      case 20:
-	                        _context7.prev = 20;
-
-	                        _iterator2.f();
-
-	                        return _context7.finish(20);
-
-	                      case 23:
-	                        return _context7.abrupt("return", documents);
-
-	                      case 24:
-	                      case "end":
-	                        return _context7.stop();
-	                    }
-	                  }
-	                }, _callee7, null, [[4, 17, 20, 23]]);
-	              }));
-
-	              return function (_x12) {
-	                return _ref9.apply(this, arguments);
-	              };
-	            }())).then(function () {
-	              return {
-	                ids: ids,
-	                mapper: mapper
-	              };
-	            })["catch"](function () {
-	              throw new AiTmedError({
-	                name: 'DECRYPTING_NOTES_FAIL'
-	              });
-	            });
-
-	          case 18:
-	            return _context8.abrupt("return", {
-	              ids: ids,
-	              mapper: mapper
-	            });
-
-	          case 19:
-	          case "end":
-	            return _context8.stop();
-	        }
-	      }
-	    }, _callee8);
-	  }));
-
-	  return function listSharedNotes(_x10, _x11) {
-	    return _ref8.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * Todo:
-	 * 1. retrieveDocument with id - check the note is exist or not
-	 * 2.
-	 * @param id
-	 * @param invite_phone_number
-	 * @param edit_mode
-	 */
-	// export async function share(
-	//   id: string | Uint8Array,
-	//   invite_phone_number: string,
-	//   edit_mode: number,
-	// ): Promise<void> {
-	//   console.log('Note->share', id, invite_phone_number, edit_mode)
-	// }
-
-	/**
-	 * Todo:
-	 * 1. retrieveDocument with id - check the note is exist or not
-	 * 2.
-	 * @param id
-	 * @param invited_phone_number
-	 */
-	// export async function unshare(
-	//   id: string | Uint8Array,
-	//   invited_phone_number: string,
-	// ): Promise<void> {
-	//   console.log('Note->unshare', id, invited_phone_number)
-	// }
-
-	var Note = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		create: create,
-		retrieve: retrieve,
-		remove: remove,
-		update: update,
-		save: save,
-		list: list,
-		listSharedNotes: listSharedNotes
-	});
-
-	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 *
-	 * @param document: Doc
-	 * @param edge?: Edge
-	 * @returns Promise<Note>
-	 */
-
-	var documentToNote$1 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            document = _ref.document, _edge = _ref._edge, esakOfCurrentUser = _ref.esakOfCurrentUser;
-
-	            if (!(typeof _edge === 'undefined')) {
-	              _context.next = 7;
-	              break;
-	            }
-
-	            _context.next = 4;
-	            return retrieveEdge(document.eid);
-
-	          case 4:
-	            _context.t0 = _context.sent;
-	            _context.next = 8;
-	            break;
-
-	          case 7:
-	            _context.t0 = _edge;
-
-	          case 8:
-	            edge = _context.t0;
-
-	            if (!(edge === null)) {
-	              _context.next = 11;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
-	            });
-
-	          case 11:
-	            //TODO
-	            //currently commented since does not allow comparison between shared notebook
-	            //and docs from root notebook
-	            // if (
-	            //   !store.utils.compareUint8Arrays(
-	            //     <Uint8Array>edge.eid,
-	            //     <Uint8Array>document.eid,
-	            //   )
-	            // ) {
-	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
-	            // }
-	            name = document.name;
-	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
-	            deat = document.deat; // DType
-
-	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
-	            dType = isOldDataStructure ? new DType() : new DType(document.type);
-
-	            if (isOldDataStructure) {
-	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
-	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
-	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
-	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
-	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
-	              dType.setMediaType(name.type);
-	            } // Get data
-
-
-	            content = null, error = null;
-	            _context.prev = 18;
-
-	            if (!dType.isOnServer) {
-	              _context.next = 29;
-	              break;
-	            }
-
-	            if (!(name.data !== undefined)) {
-	              _context.next = 26;
-	              break;
-	            }
-
-	            _context.next = 23;
-	            return store$3.level2SDK.utilServices.base64ToUint8Array(name.data);
-
-	          case 23:
-	            data = _context.sent;
-	            _context.next = 27;
-	            break;
-
-	          case 26:
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'name.data is undefined'
-	            });
-
-	          case 27:
-	            _context.next = 46;
-	            break;
-
-	          case 29:
-	            if (!(deat !== null && deat.url)) {
-	              _context.next = 45;
-	              break;
-	            }
-
-	            _context.next = 32;
-	            return store$3.level2SDK.documentServices.downloadDocumentFromS3({
-	              url: deat.url
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 32:
-	            response = _context.sent;
-
-	            if (response) {
-	              _context.next = 35;
-	              break;
-	            }
-
-	            throw 'no response';
-
-	          case 35:
-	            if (!dType.isBinary) {
-	              _context.next = 39;
-	              break;
-	            }
-
-	            _context.t1 = response.data;
-	            _context.next = 42;
-	            break;
-
-	          case 39:
-	            _context.next = 41;
-	            return store$3.level2SDK.utilServices.base64ToUint8Array(response.data);
-
-	          case 41:
-	            _context.t1 = _context.sent;
-
-	          case 42:
-	            data = _context.t1;
-	            _context.next = 46;
-	            break;
-
-	          case 45:
-	            throw 'deat.url is missing';
-
-	          case 46:
-	            // Decryption
-	            edgeHasBesak = edge.besak && edge.besak !== '';
-	            edgeHasEesak = edge.eesak && edge.eesak !== '';
-
-	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
-	              _context.next = 71;
-	              break;
-	            }
-
-	            if (esakOfCurrentUser) {
-	              esak = esakOfCurrentUser;
-	            } else {
-	              esak = edgeHasBesak ? edge.besak : edge.eesak;
-	            }
-
-	            if (!edge.sig) {
-	              _context.next = 57;
-	              break;
-	            }
-
-	            if (edge.sig instanceof Uint8Array) {
-	              publicKeyOfReceiver = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-	            } else {
-	              publicKeyOfReceiver = edge.sig;
-	            }
-
-	            _context.next = 54;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 54:
-	            data = _context.sent;
-	            _context.next = 71;
-	            break;
-
-	          case 57:
-	            if (!(!edge.sig && edge.type === 10001)) {
-	              _context.next = 65;
-	              break;
-	            }
-
-	            pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
-	            _context.next = 62;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 62:
-	            data = _context.sent;
-	            _context.next = 71;
-	            break;
-
-	          case 65:
-	            if (!(edge.type === 10000)) {
-	              _context.next = 71;
-	              break;
-	            }
-
-	            _pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
-	            _context.next = 70;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 70:
-	            data = _context.sent;
-
-	          case 71:
-	            // Ungzip
-	            if (dType.isGzip) data = ungzip$1(data);
-	            _context.next = 74;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
-
-	          case 74:
-	            blob = _context.sent;
-
-	            if (!/^text\//.test(blob.type)) {
-	              _context.next = 81;
-	              break;
-	            }
-
-	            _context.next = 78;
-	            return new Response(blob).text();
-
-	          case 78:
-	            content = _context.sent;
-	            _context.next = 95;
-	            break;
-
-	          case 81:
-	            if (!(blob.type === 'application/json')) {
-	              _context.next = 94;
-	              break;
-	            }
-
-	            _context.next = 84;
-	            return new Response(blob).text();
-
-	          case 84:
-	            jsonStr = _context.sent;
-	            _context.prev = 85;
-	            content = JSON.parse(jsonStr);
-	            _context.next = 92;
-	            break;
-
-	          case 89:
-	            _context.prev = 89;
-	            _context.t2 = _context["catch"](85);
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
-	            });
-
-	          case 92:
-	            _context.next = 95;
-	            break;
-
-	          case 94:
-	            content = blob;
-
-	          case 95:
-	            _context.next = 102;
-	            break;
-
-	          case 97:
-	            _context.prev = 97;
-	            _context.t3 = _context["catch"](18);
-
-	            if (typeof _context.t3 === 'string') {
-	              error = new AiTmedError({
-	                name: 'DOWNLOAD_FROM_S3_FAIL',
-	                message: "Note -> documentToNote -> ".concat(_context.t3)
-	              });
-	            } else {
-	              error = _context.t3;
-	            }
-
-	            content = null;
-
-	          case 102:
-	            return _context.abrupt("return", _objectSpread$7(_objectSpread$7({}, document), {}, {
-	              name: {
-	                title: name.title,
-	                type: contentType,
-	                content: content,
-	                tags: name.tags || []
-	              },
-	              created_at: document.ctime * 1000,
-	              modified_at: document.mtime * 1000,
-	              type: {
-	                isOnServer: dType.isOnServer,
-	                isZipped: dType.isGzip,
-	                isBinary: dType.isBinary,
-	                isEncrypted: dType.isEncrypted,
-	                isEditable: dType.isEditable,
-	                applicationDataType: dType.dataType,
-	                mediaType: dType.mediaType,
-	                size: document.size
-	              }
-	            }));
-
-	          case 103:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee, null, [[18, 97], [85, 89]]);
-	  }));
-
-	  return function documentToNote(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	/**
-	 * @param params
-	 * @param params.edge_id: string
-	 * @param params.title: string
-	 * @param params.content: string | Blob
-	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
-	 * @param params.tags?: string[]
-	 * @param params.dataType?: number
-	 * @returns Promise<Note>
-	 */
-
-	var create$1 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var edge_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            edge_id = _ref.edge_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
-	            _context.next = 3;
-	            return retrieveEdge(edge_id);
-
-	          case 3:
-	            edge = _context.sent;
-
-	            if (edge) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 6:
-	            dType = new DType();
-	            dType.dataType = dataType; // Permission
-
-	            dType.isEditable = true; // Content to Blob
-
-	            _context.next = 11;
-	            return contentToBlob(content, type);
-
-	          case 11:
-	            blob = _context.sent;
-	            dType.setMediaType(blob.type); // Gzip
-
-	            _context.next = 15;
-	            return produceGzipData(blob);
-
-	          case 15:
-	            _yield$produceGzipDat = _context.sent;
-	            gzipData = _yield$produceGzipDat.data;
-	            isGzip = _yield$produceGzipDat.isGzip;
-	            dType.isGzip = isGzip;
-	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
-
-	            esak = '';
-	            publicKeyOfReceiver = '';
-
-	            if (!(edge.besak && edge.sig)) {
-	              _context.next = 33;
-	              break;
-	            }
-
-	            esak = edge.besak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 30;
-	              break;
-	            }
-
-	            _context.next = 27;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 27:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 31;
-	            break;
-
-	          case 30:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 31:
-	            _context.next = 42;
-	            break;
-
-	          case 33:
-	            if (!(edge.eesak && edge.sig)) {
-	              _context.next = 42;
-	              break;
-	            }
-
-	            esak = edge.eesak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 41;
-	              break;
-	            }
-
-	            _context.next = 38;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 38:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 42;
-	            break;
-
-	          case 41:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 42:
-	            _context.next = 44;
-	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
-
-	          case 44:
-	            _yield$produceEncrypt = _context.sent;
-	            data = _yield$produceEncrypt.data;
-	            isEncrypt = _yield$produceEncrypt.isEncrypt;
-	            dType.isEncrypted = isEncrypt;
-	            _context.next = 50;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
-
-	          case 50:
-	            bs64Data = _context.sent;
-	            dType.isBinary = false;
-	            name = {
-	              title: title,
-	              tags: tags,
-	              type: blob.type
-	            }; // data must be base64 in name field
-
-	            if (dType.isOnServer) name.data = bs64Data;
-	            _context.next = 56;
-	            return store$3.level2SDK.documentServices.createDocument({
-	              eid: edge.eid,
-	              type: dType.value,
-	              name: name,
-	              size: blob.size
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 56:
-	            response = _context.sent;
-
-	            if (!(!response || !response.data)) {
-	              _context.next = 59;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> create -> createDocument -> no response'
-	            });
-
-	          case 59:
-	            document = response.data;
-	            deat = document.deat;
-
-	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
-	              _context.next = 64;
-	              break;
-	            }
-
-	            _context.next = 64;
-	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
-	              url: deat.url,
-	              sig: deat.sig,
-	              data: bs64Data
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 64:
-	            _context.next = 66;
-	            return documentToNote$1({
-	              document: document
-	            });
-
-	          case 66:
-	            note = _context.sent;
-	            return _context.abrupt("return", note);
-
-	          case 68:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function create(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
+	 * Remove value from an object using dot notation.
 	 *
-	 * @param id: Uint8Array | string
-	 * @param _edge?: Edge
-	 * @returns Promise<Note>
+	 * Will remove multiple items if path is an array.
+	 * In this case array indexes will be retained until all
+	 * removals have been processed.
+	 *
+	 * Use dot.delete() to automatically  re-index arrays.
+	 *
+	 * @param {String|Array<String>} path
+	 * @param {Object} obj
+	 * @param {Boolean} reindexArray
+	 * @return {any} The removed value
 	 */
-	//TODO: refactor to account for retrieving using edge and xfname:eid
+	DotObject.prototype.remove = function (path, obj, reindexArray) {
+	  var i;
 
-	var retrieve$1 = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id, _edge) {
-	    var document, note;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return retrieveDocument(id);
-
-	          case 2:
-	            document = _context2.sent;
-
-	            if (document) {
-	              _context2.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOT_A_NOTE'
-	            });
-
-	          case 5:
-	            _context2.next = 7;
-	            return documentToNote$1({
-	              document: document,
-	              _edge: _edge
-	            });
-
-	          case 7:
-	            note = _context2.sent;
-	            return _context2.abrupt("return", note);
-
-	          case 9:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function retrieve(_x2, _x3) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-
-	var Document$3 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		create: create$1,
-		retrieve: retrieve$1
-	});
-
-	function ownKeys$8(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$8(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	var eTypes;
-
-	(function (eTypes) {
-	  eTypes[eTypes["ROOT"] = 10000] = "ROOT";
-	  eTypes[eTypes["NOTEBOOK"] = 10001] = "NOTEBOOK";
-	  eTypes[eTypes["INVITE"] = 1050] = "INVITE";
-	  eTypes[eTypes["REJECT_INVITE"] = 1052] = "REJECT_INVITE";
-	  eTypes[eTypes["ACCEPT_INVITE"] = 1060] = "ACCEPT_INVITE";
-	  eTypes[eTypes["AUTHORIZE_INVITE"] = 1070] = "AUTHORIZE_INVITE";
-	  eTypes[eTypes["AUTHORIZE_INVITE_INDEPENDENT"] = 1071] = "AUTHORIZE_INVITE_INDEPENDENT";
-	  eTypes[eTypes["INBOX"] = 10002] = "INBOX";
-	})(eTypes || (eTypes = {}));
-
-	var _Object$keys$reduce = Object.keys(eTypes).reduce(function (acc, cur) {
-	  if (typeof eTypes[cur] === 'number') {
-	    acc[0] = _objectSpread$8(_objectSpread$8({}, acc[0]), {}, defineProperty({}, cur, parseInt(eTypes[cur])));
-	    acc[2].push(cur);
+	  this.cleanup = [];
+	  if (Array.isArray(path)) {
+	    for (i = 0; i < path.length; i++) {
+	      this.pick(path[i], obj, true, reindexArray);
+	    }
+	    if (!reindexArray) {
+	      this._cleanup(obj);
+	    }
+	    return obj
 	  } else {
-	    acc[1] = _objectSpread$8(_objectSpread$8({}, acc[1]), {}, defineProperty({}, cur, eTypes[cur]));
-	    acc[3].push(parseInt(cur));
+	    return this.pick(path, obj, true, reindexArray)
 	  }
+	};
 
-	  return acc;
-	}, [{}, {}, [], []]),
-	    _Object$keys$reduce2 = slicedToArray(_Object$keys$reduce, 4),
-	    typeMapper = _Object$keys$reduce2[0],
-	    codeMapper = _Object$keys$reduce2[1],
-	    typeList = _Object$keys$reduce2[2],
-	    codeList = _Object$keys$reduce2[3];
-
-	/**
-	 * Convert edge object to notebook object
-	 * @param edge: Edge
-	 * @returns NotebookType
-	 */
-	var edgeToNotebook = function edgeToNotebook(edge) {
-	  if (edge.type !== eTypes.NOTEBOOK && edge.type !== eTypes.ROOT) {
-	    throw new AiTmedError({
-	      name: 'NOT_A_NOTEBOOk'
-	    });
-	  }
-
-	  var info;
-
-	  if (_typeof_1(edge.name) === 'object') {
-	    info = edge.name;
-	  } else if (edge.name && typeof edge.name === 'string') {
-	    try {
-	      info = JSON.parse(edge.name);
-	    } catch (error) {
-	      throw new AiTmedError({
-	        name: 'UNKNOW_ERROR',
-	        message: 'Notebook -> edgeToNotebook -> JSON.parse edge.name failed'
+	DotObject.prototype._cleanup = function (obj) {
+	  var ret;
+	  var i;
+	  var keys;
+	  var root;
+	  if (this.cleanup.length) {
+	    for (i = 0; i < this.cleanup.length; i++) {
+	      keys = this.cleanup[i].split('.');
+	      root = keys.splice(0, -1).join('.');
+	      ret = root ? this.pick(root, obj) : obj;
+	      ret = ret[keys[0]].filter(function (v) {
+	        return v !== undefined
 	      });
+	      this.set(this.cleanup[i], ret, obj);
 	    }
+	    this.cleanup = [];
+	  }
+	};
+
+	/**
+	 * Alias method  for `dot.remove`
+	 *
+	 * Note: this is not an alias for dot.delete()
+	 *
+	 * @param {String|Array<String>} path
+	 * @param {Object} obj
+	 * @param {Boolean} reindexArray
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.del = DotObject.prototype.remove;
+
+	/**
+	 *
+	 * Move a property from one place to the other.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the target property will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.move = function (source, target, obj, mods, merge) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(target, _process(this.pick(source, obj, true), mods), obj, merge);
 	  } else {
-	    info = {};
+	    merge = mods;
+	    this.set(target, this.pick(source, obj, true), obj, merge);
 	  }
 
-	  var notebook = {
-	    id: store$3.utils.idToBase64(edge.eid),
-	    owner_id: store$3.utils.idToBase64(edge.bvid),
-	    info: info,
-	    refid: store$3.utils.idToBase64(edge.refid),
-	    created_at: edge.ctime * 1000,
-	    modified_at: edge.mtime * 1000,
-	    isEncrypt: edge.besak.length > 0 || edge.eesak.length > 0,
-	    type: edge.type
-	  };
-	  return notebook;
+	  return obj
 	};
+
 	/**
 	 *
-	 * @param id: Uint8Array | string
-	 * @returns Promise<NotebookType>
-	 */
-
-	var retrieveNotebook = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(id) {
-	    var edge;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            _context.next = 2;
-	            return retrieveEdge(id);
-
-	          case 2:
-	            edge = _context.sent;
-
-	            if (edge) {
-	              _context.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            return _context.abrupt("return", edgeToNotebook(edge));
-
-	          case 6:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function retrieveNotebook(_x) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	var listEdges = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var params,
-	        _params$shared,
-	        _params$count,
-	        count,
-	        _params$edit_mode,
-	        _params$sort_by,
-	        sort_by,
-	        _params$type,
-	        type,
-	        _params$xfname,
-	        xfname,
-	        isEncrypt,
-	        _params$loid,
-	        loid,
-	        _params$obfname,
-	        obfname,
-	        scondition,
-	        condition,
-	        response,
-	        edges,
-	        _args2 = arguments;
-
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            params = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {};
-	            _params$shared = params.shared, _params$count = params.count, count = _params$count === void 0 ? 10 : _params$count, _params$edit_mode = params.edit_mode, _params$sort_by = params.sort_by, sort_by = _params$sort_by === void 0 ? 0 : _params$sort_by, _params$type = params.type, type = _params$type === void 0 ? eTypes.NOTEBOOK : _params$type, _params$xfname = params.xfname, xfname = _params$xfname === void 0 ? 'bvid' : _params$xfname, isEncrypt = params.isEncrypt, _params$loid = params.loid, loid = _params$loid === void 0 ? '' : _params$loid, _params$obfname = params.obfname, obfname = _params$obfname === void 0 ? 'mtime' : _params$obfname, scondition = params.scondition;
-
-	            if (codeList.includes(type)) {
-	              _context2.next = 4;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_TYPE_INVALID'
-	            });
-
-	          case 4:
-	            condition = [];
-
-	            if (typeof scondition !== 'undefined') {
-	              condition.push(scondition);
-	            }
-
-	            if (isEncrypt === true) condition.push('besak is not null');else if (isEncrypt === false) condition.push('besak is null');
-	            _context2.next = 9;
-	            return store$3.level2SDK.edgeServices.retrieveEdge({
-	              idList: [],
-	              options: {
-	                xfname: xfname,
-	                type: type,
-	                asc: !!sort_by,
-	                scondition: condition.join(' and '),
-	                maxcount: count,
-	                loid: loid,
-	                obfname: obfname
-	              }
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 9:
-	            response = _context2.sent;
-
-	            if (!(!response || !response.data || !Array.isArray(response.data))) {
-	              _context2.next = 12;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Notebook -> utils -> listEdges -> no response'
-	            });
-
-	          case 12:
-	            edges = response.data;
-	            return _context2.abrupt("return", edges);
-
-	          case 14:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function listEdges() {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	function ownKeys$9(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$9(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$9(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$9(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	/**
-	 * @param params string
-	 * @param params.title: string
-	 * @param params.description?: string
-	 * @param params.isEncrypt: boolean
+	 * Transfer a property from one object to another object.
 	 *
-	 * @returns Promise<Notebook>
+	 * If the source path does not exist (undefined)
+	 * the property on the other object will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj1
+	 * @param {Object} obj2
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
 	 */
-	var create$2 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var title, _ref$description, description, _ref$type, type, _ref$isEncrypt, isEncrypt, edges, response;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            title = _ref.title, _ref$description = _ref.description, description = _ref$description === void 0 ? '' : _ref$description, _ref$type = _ref.type, type = _ref$type === void 0 ? eTypes.NOTEBOOK : _ref$type, _ref$isEncrypt = _ref.isEncrypt, isEncrypt = _ref$isEncrypt === void 0 ? false : _ref$isEncrypt;
-
-	            if (codeList.includes(type)) {
-	              _context.next = 3;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_TYPE_INVALID'
-	            });
-
-	          case 3:
-	            if (!(type === eTypes.ROOT)) {
-	              _context.next = 9;
-	              break;
-	            }
-
-	            _context.next = 6;
-	            return listEdges({
-	              type: eTypes.ROOT
-	            });
-
-	          case 6:
-	            edges = _context.sent;
-
-	            if (!(edges.length > 0)) {
-	              _context.next = 9;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'ROOT_NOTEBOOK_EXIST'
-	            });
-
-	          case 9:
-	            _context.next = 11;
-	            return store$3.level2SDK.edgeServices.createEdge({
-	              type: type,
-	              name: {
-	                title: title,
-	                description: description,
-	                edit_mode: 7
-	              },
-	              isEncrypt: isEncrypt
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 11:
-	            response = _context.sent;
-
-	            if (response) {
-	              _context.next = 14;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Notebook -> create -> createEdge -> no response'
-	            });
-
-	          case 14:
-	            return _context.abrupt("return", edgeToNotebook(response.data));
-
-	          case 15:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function create(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @returns Promise<Notebook>
-	 */
-
-
-	var remove$1 = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
-	    var notebook;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return retrieveNotebook(id);
-
-	          case 2:
-	            notebook = _context2.sent;
-
-	            if (!(notebook.type === eTypes.ROOT)) {
-	              _context2.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'ROOT_NOTEBOOK_CANNOT_BE_REMOVED'
-	            });
-
-	          case 5:
-	            _context2.next = 7;
-	            return store$3.level2SDK.edgeServices.deleteEdge([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 7:
-	            return _context2.abrupt("return", notebook);
-
-	          case 8:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function remove(_x2) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @param fields
-	 * @param fields.title?: string
-	 * @param fields.description?: string
-	 * @returns Promise<Notebook>
-	 */
-
-
-	var update$1 = /*#__PURE__*/function () {
-	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id, fields) {
-	    var edge, response, notebook;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return retrieveEdge(id);
-
-	          case 2:
-	            edge = _context3.sent;
-
-	            if (edge) {
-	              _context3.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            _context3.next = 7;
-	            return store$3.level2SDK.edgeServices.updateEdge({
-	              id: edge.eid,
-	              bvid: edge.bvid,
-	              type: edge.type,
-	              besak: edge.besak,
-	              name: _objectSpread$9(_objectSpread$9({}, edge.name), fields)
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 7:
-	            response = _context3.sent;
-
-	            if (!(!response || !response.data)) {
-	              _context3.next = 10;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Notebook -> update -> updateEdge -> no response'
-	            });
-
-	          case 10:
-	            _context3.next = 12;
-	            return retrieveNotebook(edge.eid);
-
-	          case 12:
-	            notebook = _context3.sent;
-	            return _context3.abrupt("return", notebook);
-
-	          case 14:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function update(_x3, _x4) {
-	    return _ref4.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @returns Promise<Notebook>
-	 */
-
-
-	var retrieve$2 = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id) {
-	    var notebook;
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            _context4.next = 2;
-	            return retrieveNotebook(id);
-
-	          case 2:
-	            notebook = _context4.sent;
-	            return _context4.abrupt("return", notebook);
-
-	          case 4:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function retrieve(_x5) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param param
-	 * @param param.shared?: Boolean
-	 * @param param.count?: number
-	 * @param param.edit_mode?: number
-	 * @param param.sort_by?: 0 | 1 | 2
-	 * @returns response
-	 * @returns response.ids: string[]
-	 * @returns response.mapper: Record<string, Notebook>
-	 */
-
-
-	var list$1 = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
-	    var params,
-	        edges,
-	        result,
-	        _args5 = arguments;
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            params = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : {};
-	            _context5.next = 3;
-	            return listEdges(params);
-
-	          case 3:
-	            edges = _context5.sent;
-	            result = edges.reduce(function (acc, edge) {
-	              var notebook = edgeToNotebook(edge);
-	              acc.ids.push(notebook.id);
-	              acc.mapper[notebook.id] = notebook;
-	              return acc;
-	            }, {
-	              ids: [],
-	              mapper: {}
-	            });
-	            return _context5.abrupt("return", result);
-
-	          case 6:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function list() {
-	    return _ref6.apply(this, arguments);
-	  };
-	}(); // /**
-	//  * @param param
-	//  * @param param.: number
-	//  * @param param.count?: number
-	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
-	//  * @param param.sort_by?: 0 | 1 | 2
-	//  * @returns response
-	//  * @returns response.ids: string[]
-	//  * @returns response.mapper: Record<string, Notebook>
-	//  * 
-	//  * -list of notebooks shared with user
-	//  */
-	// const listSharedNotebooks: NotebookTypes.ListSharedNotebooks = async (params = {}) => {
-	//   const edges = await listEdges({ type: 10001, xfname: 'evid', ...params })
-	//   let result
-	//   result = edges.reduce<NotebookTypes.ListReturn>(
-	//     (acc, edge) => {
-	//       const notebook = edgeToNotebook(edge)
-	//       acc.ids.push(notebook.id)
-	//       acc.mapper[notebook.id] = notebook
-	//       return acc
-	//     },
-	//     { ids: [], mapper: {} },
-	//   )
-	//   return result
-	// }
-	// /**
-	//  * @param param
-	//  * @param param.count?: number 
-	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
-	//  * @param param.fromMe? boolean -if true xfname = bvid (i.e query all invites created by user) 
-	//  * @param param.sort_by?:  0 | 1 | 2
-	//  * @returns response
-	//  * @returns response.ids: string[]
-	//  * @returns response.mapper: Record<string, Invite>
-	//  */
-	// const listInvites: NotebookTypes.ListInvites = async (params) => {
-	//   let xfname = 'evid'
-	//   if (params && params.fromMe) {
-	//     xfname = 'bvid'
-	//   }
-	//   const edges = await listEdges({ type: 1050, xfname, ...params })
-	//   let result
-	//   result = edges.reduce<NotebookTypes.ListInvitesReturn>(
-	//     (acc, edge) => {
-	//       const invite = edgeToInvite(edge)
-	//       acc.ids.push(invite.id)
-	//       acc.mapper[invite.id] = invite
-	//       return acc
-	//     },
-	//     { ids: [], mapper: {} },
-	//   )
-	//   return result
-	// }
-	// /**
-	//  * @param param
-	//  * @param param.count?: number
-	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
-	//  * @param param.fromMe? boolean -if true xfname = bvid (i.e query all accedtedInvites created by user) 
-	//  * @param param.sort_by?:  0 | 1 | 2
-	//  * @returns response
-	//  * @returns response.ids: string[]
-	//  * @returns response.mapper: Record<string, Invite>
-	//  */
-	// const listAcceptedInvites: NotebookTypes.ListAcceptedInvites = async (params) => {
-	//   let xfname = 'evid'
-	//   if (params && params.fromMe) {
-	//     xfname = 'bvid'
-	//   }
-	//   const edges = await listEdges({ type: 10060, xfname, ...params })
-	//   let result
-	//   result = edges.reduce<NotebookTypes.ListAcceptedInvitesReturn>(
-	//     (acc, edge) => {
-	//       const acceptedInvite = edgeToAcceptedInvite(edge)
-	//       acc.ids.push(acceptedInvite.id)
-	//       acc.mapper[acceptedInvite.id] = acceptedInvite
-	//       return acc
-	//     },
-	//     { ids: [], mapper: {} },
-	//   )
-	//   return result
-	// }
-	// /**
-	//  * 
-	//  * @param params
-	//  * @param params.info Record<string, any> -notebook/invitation details
-	//  * @param params.notebookId string | Uint8Array -the id of the notebook being shared
-	//  * @param params.directedToId string | Uint8Array -the vid of the receiver of the invitation
-	//  * 
-	//  * @returns Promise<Notebook>
-	//  */
-	// const createInvite: NotebookTypes.CreateInvite = async ({ info, notebookId, directedToId }) => {
-	//   const invite = await Invite.create({ info, refid: notebookId, directedToId })
-	//   return invite
-	// }
-	// /**
-	//  * 
-	//  * @param param
-	//  * @param params.info Record<string, any> -invitation/notebook details
-	//  * @param params.inviteId string | Uint8Array -edge id of the invitation being responded to
-	//  * @param params.directedToId string | Uint8Array -vid of the sender of the invitation(receiver of the acceptance)
-	//  * 
-	//  * @returns Promise<Notebook>
-	//  */
-	// const acceptInvite: NotebookTypes.AcceptInvite = async ({ info, inviteId, directedToId }) => {
-	//   const acceptedInvite = await Invite.accept({ info, inviteId, directedToId })
-	//   return acceptedInvite
-	// }
-	// /**
-	//  * 
-	//  * @param param
-	//  * @param params.notebookInfo Record<string, any> -invitation/notebook details
-	//  * @param params.acceptanceId string | Uint8Array -edge id of the acceptedInvitation edge
-	//  * @param params.directedToId string | Uint8Array -evid of the receive of the invitation(user that accepted invitation)
-	//  * 
-	//  * @returns Promise<Notebook>
-	//  */
-	// const authorizeEvent: NotebookTypes.AuthorizeEvent = async ({
-	//   info,
-	//   acceptanceId,
-	//   directedToId
-	// }) => {
-	//   const authorizedEdge = await Invite.authorize({ info, acceptanceId, directedToId })
-	//   return edgeToNotebook(authorizedEdge)
-	// }
-
-	/**
-	 * Todo:
-	 * 1. retrieveEdge - check the id is exist or not
-	 * 2.
-	 * @param id: string
-	 * @param invite_phone_number: string
-	 * @param edit_mode: number
-	 */
-	//  export const share = (
-	//   id: string,
-	//   invite_phone_number: string,
-	//   edit_mode: number,
-	// ): Promise<void> => {
-	//   console.log('Notebook->share', id, invite_phone_number, edit_mode)
-	// }
-
-	/**
-	 * Todo:
-	 * 1. retrieveEdge - check the id is exist or not
-	 * 2.
-	 * @param id: string
-	 * @param invited_phone_number: string
-	 */
-	// export const unshare = (
-	//   id: string,
-	//   invited_phone_number: string,
-	// ): Promise<void> => {
-	//   console.log('Notebook->unshare', id, invited_phone_number)
-	// }
-
-	var Notebook = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		create: create$2,
-		remove: remove$1,
-		update: update$1,
-		retrieve: retrieve$2,
-		list: list$1
-	});
-
-	function ownKeys$a(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$a(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$a(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$a(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var decodeUID = function decodeUID(uid) {
-	  var lastIOfPlus = uid.lastIndexOf('+');
-
-	  if (lastIOfPlus < 0) {
-	    throw new AiTmedError({
-	      name: 'UID_INVALID'
-	    });
+	DotObject.prototype.transfer = function (
+	  source,
+	  target,
+	  obj1,
+	  obj2,
+	  mods,
+	  merge
+	) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(
+	      target,
+	      _process(this.pick(source, obj1, true), mods),
+	      obj2,
+	      merge
+	    );
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj1, true), obj2, merge);
 	  }
 
-	  return {
-	    userId: uid.slice(0, lastIOfPlus),
-	    phone_number: uid.slice(lastIOfPlus)
-	  };
+	  return obj2
 	};
-	var generateUser = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(edge, profile) {
-	    var id, response, vertex, name, _decodeUID, userId, phone_number;
 
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            id = store$3.utils.idToBase64(edge.bvid);
-	            _context.next = 3;
-	            return store$3.level2SDK.vertexServices.retrieveVertex({
-	              idList: [id]
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 3:
-	            response = _context.sent;
-
-	            if (!(!response || response.code !== 0)) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Account -> utils -> generateUser -> no response'
-	            });
-
-	          case 6:
-	            vertex = response.data[0];
-	            name = vertex.name !== null && vertex.name !== undefined ? vertex.name : {
-	              name: ''
-	            };
-	            _decodeUID = decodeUID(vertex.uid), userId = _decodeUID.userId, phone_number = _decodeUID.phone_number;
-	            return _context.abrupt("return", {
-	              id: id,
-	              name: name.name,
-	              userId: userId,
-	              phone_number: phone_number,
-	              profile: profile || null
-	            });
-
-	          case 10:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function generateUser(_x, _x2) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	var createRootEdge = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var notebook;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return Notebook.create({
-	              title: 'root',
-	              isEncrypt: true,
-	              type: eTypes.ROOT
-	            });
-
-	          case 2:
-	            notebook = _context2.sent;
-	            return _context2.abrupt("return", notebook);
-
-	          case 4:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function createRootEdge() {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	var retrieveRootEdge = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-	    var edges;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return listEdges({
-	              type: eTypes.ROOT
-	            });
-
-	          case 2:
-	            edges = _context3.sent;
-
-	            if (!(edges.length <= 0)) {
-	              _context3.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'ROOT_NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            return _context3.abrupt("return", edges[0]);
-
-	          case 6:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function retrieveRootEdge() {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	var createProfile = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(rootId, _ref4) {
-	    var profile_photo, _profile, profile, profilePhotoNote, note;
-
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            profile_photo = _ref4.profile_photo, _profile = objectWithoutProperties(_ref4, ["profile_photo"]);
-	            profile = _profile; // Upload Profile Photo
-
-	            if (!profile_photo) {
-	              _context4.next = 9;
-	              break;
-	            }
-
-	            if (/^image/.test(profile_photo.type)) {
-	              _context4.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'PROFILE_PHOTO_INVALID'
-	            });
-
-	          case 5:
-	            _context4.next = 7;
-	            return Note.create({
-	              notebook_id: rootId,
-	              title: 'profile_photo',
-	              content: profile_photo
-	            });
-
-	          case 7:
-	            profilePhotoNote = _context4.sent;
-	            profile.profile_photo = profilePhotoNote.id;
-
-	          case 9:
-	            _context4.next = 11;
-	            return Note.create({
-	              notebook_id: rootId,
-	              title: 'profile',
-	              content: profile,
-	              dataType: 1
-	            });
-
-	          case 11:
-	            note = _context4.sent;
-	            return _context4.abrupt("return", note);
-
-	          case 13:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function createProfile(_x3, _x4) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	var removeProfile = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, note) {
-	    var profile;
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            profile = note.info.content; // Remove Profile Photo
-
-	            if (!(profile && profile.profile_photo)) {
-	              _context5.next = 4;
-	              break;
-	            }
-
-	            _context5.next = 4;
-	            return store$3.level2SDK.documentServices.deleteDocument([profile.profile_photo]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 4:
-	            _context5.next = 6;
-	            return store$3.level2SDK.documentServices.deleteDocument([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 6:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function removeProfile(_x5, _x6) {
-	    return _ref6.apply(this, arguments);
-	  };
-	}();
-	var retrieveProfile = /*#__PURE__*/function () {
-	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(rootId) {
-	    var notes, noteId, profileInDoc, profile_photo, restProfile, profile, profilePhotoNote, content;
-	    return regenerator.wrap(function _callee6$(_context6) {
-	      while (1) {
-	        switch (_context6.prev = _context6.next) {
-	          case 0:
-	            _context6.next = 2;
-	            return Note.list(rootId, {
-	              dataType: 'profile'
-	            });
-
-	          case 2:
-	            notes = _context6.sent;
-
-	            if (!(notes.ids.length <= 0)) {
-	              _context6.next = 5;
-	              break;
-	            }
-
-	            return _context6.abrupt("return", null);
-
-	          case 5:
-	            noteId = notes.ids[0];
-	            profileInDoc = notes.mapper[noteId].info.content;
-
-	            if (profileInDoc) {
-	              _context6.next = 9;
-	              break;
-	            }
-
-	            return _context6.abrupt("return", null);
-
-	          case 9:
-	            profile_photo = profileInDoc.profile_photo, restProfile = objectWithoutProperties(profileInDoc, ["profile_photo"]);
-	            profile = _objectSpread$a({}, restProfile); // Retrieve Profile Photo
-
-	            if (!profile_photo) {
-	              _context6.next = 17;
-	              break;
-	            }
-
-	            _context6.next = 14;
-	            return Note.retrieve(profile_photo);
-
-	          case 14:
-	            profilePhotoNote = _context6.sent;
-	            content = profilePhotoNote.info.content;
-
-	            if (content && content instanceof Blob) {
-	              profile.profile_photo = content;
-	            }
-
-	          case 17:
-	            return _context6.abrupt("return", {
-	              noteId: noteId,
-	              profile: profile
-	            });
-
-	          case 18:
-	          case "end":
-	            return _context6.stop();
-	        }
-	      }
-	    }, _callee6);
-	  }));
-
-	  return function retrieveProfile(_x7) {
-	    return _ref7.apply(this, arguments);
-	  };
-	}();
-
-	function ownKeys$b(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$b(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$b(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$b(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-	function _unsupportedIterableToArray$g(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$g(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$g(o, minLen); }
-
-	function _arrayLikeToArray$g(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-	/**
-	 * @param phone_number: string
-	 * @returns Promise<string>
-	 */
-
-	var requestVerificationCode = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(phone_number) {
-	    var response;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            _context.next = 2;
-	            return store$3.level2SDK.Account.requestVerificationCode({
-	              phone_number: phone_number
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            response = _context.sent;
-	            return _context.abrupt("return", response && response.data && response.data.verification_code);
-
-	          case 4:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function requestVerificationCode(_x) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param phone_number: string
-	 * @param password: string
-	 * @param verification_code: string
-	 */
-
-	var create$3 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, name) {
-	    var _yield$store$level2SD, data;
-
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return store$3.level2SDK.Account.createUser({
-	              phone_number: phone_number,
-	              password: password,
-	              verification_code: verification_code,
-	              userInfo: name
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            _yield$store$level2SD = _context2.sent;
-	            data = _yield$store$level2SD.data;
-	            _context2.next = 6;
-	            return createRootEdge();
-
-	          case 6:
-	            return _context2.abrupt("return", data);
-
-	          case 7:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function create(_x2, _x3, _x4, _x5) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
 	/**
 	 *
-	 * @param phone_number: string
-	 * @param verification_code: string
-	 * @param password: string
-	 */
-
-	var login = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(phone_number, password, verification_code) {
-	    var user, userVertex;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return loginByVerificationCode(phone_number, verification_code);
-
-	          case 2:
-	            _context3.next = 4;
-	            return loginByPassword(password);
-
-	          case 4:
-	            user = _context3.sent;
-
-	            if (!user.id) {
-	              _context3.next = 12;
-	              break;
-	            }
-
-	            _context3.next = 8;
-	            return retrieveVertex(user.id);
-
-	          case 8:
-	            userVertex = _context3.sent;
-	            return _context3.abrupt("return", userVertex);
-
-	          case 12:
-	            return _context3.abrupt("return", user);
-
-	          case 13:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function login(_x6, _x7, _x8) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * This method is only able to be used after login new device (loginByVerificationCode)
-	 * @param password: string
-	 */
-
-	var loginByPassword = /*#__PURE__*/function () {
-	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(password) {
-	    var user, userVertex;
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            _context4.next = 2;
-	            return store$3.level2SDK.Account.login({
-	              password: password
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            _context4.next = 4;
-	            return retrieve$3();
-
-	          case 4:
-	            user = _context4.sent;
-
-	            if (!user.id) {
-	              _context4.next = 12;
-	              break;
-	            }
-
-	            _context4.next = 8;
-	            return retrieveVertex(user.id);
-
-	          case 8:
-	            userVertex = _context4.sent;
-	            return _context4.abrupt("return", userVertex);
-
-	          case 12:
-	            return _context4.abrupt("return", user);
-
-	          case 13:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function loginByPassword(_x9) {
-	    return _ref4.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param phone_number: string
-	 * @param verification_code: string
-	 */
-
-	var loginByVerificationCode = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(phone_number, verification_code) {
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            _context5.next = 2;
-	            return store$3.level2SDK.Account.loginNewDevice({
-	              phone_number: phone_number,
-	              verification_code: verification_code
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function loginByVerificationCode(_x10, _x11) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Status
-	 * Status.code:
-	 *  0 - LOGGED_IN
-	 *  1 - LOGGED_OUT
-	 */
-
-	var logout = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6() {
-	    var clean,
-	        status,
-	        latestStatus,
-	        _args6 = arguments;
-	    return regenerator.wrap(function _callee6$(_context6) {
-	      while (1) {
-	        switch (_context6.prev = _context6.next) {
-	          case 0:
-	            clean = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : false;
-
-	            if (!clean) {
-	              _context6.next = 5;
-	              break;
-	            }
-
-	            store$3.level2SDK.Account.logoutClean();
-	            _context6.next = 11;
-	            break;
-
-	          case 5:
-	            _context6.next = 7;
-	            return getStatus();
-
-	          case 7:
-	            status = _context6.sent;
-
-	            if (!(status.code === 1)) {
-	              _context6.next = 10;
-	              break;
-	            }
-
-	            return _context6.abrupt("return", status);
-
-	          case 10:
-	            store$3.level2SDK.Account.logout();
-
-	          case 11:
-	            _context6.next = 13;
-	            return getStatus();
-
-	          case 13:
-	            latestStatus = _context6.sent;
-	            return _context6.abrupt("return", latestStatus);
-
-	          case 15:
-	          case "end":
-	            return _context6.stop();
-	        }
-	      }
-	    }, _callee6);
-	  }));
-
-	  return function logout() {
-	    return _ref6.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * Todo:
-	 *    waiting for backend to support verificating the verification code
-	 * @param phone_number: string
-	 * @param new_phone_number: string
-	 * @param verification_code: string
-	 * @returns Promise<User>
-	 */
-
-	/*
-	export const updatePhoneNumber = async (
-	  phone_number: string,
-	  new_phone_number: string,
-	  verification_code: string,
-	): Promise<AccountTypes.User> => {
-	  console.log(
-	    'Account->updatePhoneNumber',
-	    phone_number,
-	    new_phone_number,
-	    verification_code,
-	  )
-
-	  return mockUser
-	}
-	*/
-
-	/**
-	 * @param param
-	 * @param param.old_password: string
-	 * @param param.new_password: string
-	 */
-
-	var updatePassword$1 = /*#__PURE__*/function () {
-	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(old_password, new_password) {
-	    return regenerator.wrap(function _callee7$(_context7) {
-	      while (1) {
-	        switch (_context7.prev = _context7.next) {
-	          case 0:
-	            _context7.next = 2;
-	            return store$3.level2SDK.Account.changePasswordWithOldPassword({
-	              oldPassword: old_password,
-	              newPassword: new_password
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	          case "end":
-	            return _context7.stop();
-	        }
-	      }
-	    }, _callee7);
-	  }));
-
-	  return function updatePassword(_x12, _x13) {
-	    return _ref7.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param param
-	 * @param param.phone_number: string
-	 * @param param.verification_code: string
-	 * @param param.new_password: string
-	 */
-
-	var updatePasswordByVerificationCode = /*#__PURE__*/function () {
-	  var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(_ref8) {
-	    var phone_number, verification_code, new_password;
-	    return regenerator.wrap(function _callee8$(_context8) {
-	      while (1) {
-	        switch (_context8.prev = _context8.next) {
-	          case 0:
-	            phone_number = _ref8.phone_number, verification_code = _ref8.verification_code, new_password = _ref8.new_password;
-	            _context8.next = 3;
-	            return store$3.level2SDK.Account.changePasswordWithVerificationCode({
-	              phone_number: phone_number,
-	              verification_code: verification_code,
-	              password: new_password
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 3:
-	          case "end":
-	            return _context8.stop();
-	        }
-	      }
-	    }, _callee8);
-	  }));
-
-	  return function updatePasswordByVerificationCode(_x14) {
-	    return _ref9.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param profile: AccountTypes.Profile
+	 * Copy a property from one object to another object.
 	 *
-	 * @param profile.first_name: string
-	 * @param profile.middle_name?: string
-	 * @param profile.last_name: string
+	 * If the source path does not exist (undefined)
+	 * the property on the other object will not be set.
 	 *
-	 * @param profile.gender: 'MALE' | 'FEMALE' | 'PNS'
-	 * @param profile.birthday: number
-	 * @param profile.languages?: string[]
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj1
+	 * @param {Object} obj2
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.copy = function (source, target, obj1, obj2, mods, merge) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(
+	      target,
+	      _process(
+	        // clone what is picked
+	        JSON.parse(JSON.stringify(this.pick(source, obj1, false))),
+	        mods
+	      ),
+	      obj2,
+	      merge
+	    );
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj1, false), obj2, merge);
+	  }
+
+	  return obj2
+	};
+
+	/**
 	 *
-	 * @param profile.profile_photo?: string
+	 * Set a property on an object using dot notation.
 	 *
-	 * @returns Promise<User>
+	 * @param {String} path
+	 * @param {any} val
+	 * @param {Object} obj
+	 * @param {Boolean} merge
 	 */
+	DotObject.prototype.set = function (path, val, obj, merge) {
+	  var i;
+	  var k;
+	  var keys;
+	  var key;
 
-	var updateProfile = /*#__PURE__*/function () {
-	  var _ref10 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(profile) {
-	    var root, notes, _iterator, _step, noteId, user;
+	  // Do not operate if the value is undefined.
+	  if (typeof val === 'undefined') {
+	    return obj
+	  }
+	  keys = parsePath(path, this.separator);
 
-	    return regenerator.wrap(function _callee9$(_context9) {
-	      while (1) {
-	        switch (_context9.prev = _context9.next) {
-	          case 0:
-	            _context9.next = 2;
-	            return retrieveRootEdge();
-
-	          case 2:
-	            root = _context9.sent;
-	            _context9.next = 5;
-	            return Note.list(root.eid, {
-	              dataType: 'profile'
-	            });
-
-	          case 5:
-	            notes = _context9.sent;
-	            _iterator = _createForOfIteratorHelper$f(notes.ids);
-	            _context9.prev = 7;
-
-	            _iterator.s();
-
-	          case 9:
-	            if ((_step = _iterator.n()).done) {
-	              _context9.next = 15;
-	              break;
-	            }
-
-	            noteId = _step.value;
-	            _context9.next = 13;
-	            return removeProfile(noteId, notes.mapper[noteId]);
-
-	          case 13:
-	            _context9.next = 9;
-	            break;
-
-	          case 15:
-	            _context9.next = 20;
-	            break;
-
-	          case 17:
-	            _context9.prev = 17;
-	            _context9.t0 = _context9["catch"](7);
-
-	            _iterator.e(_context9.t0);
-
-	          case 20:
-	            _context9.prev = 20;
-
-	            _iterator.f();
-
-	            return _context9.finish(20);
-
-	          case 23:
-	            _context9.next = 25;
-	            return createProfile(root.eid, profile);
-
-	          case 25:
-	            _context9.next = 27;
-	            return retrieve$3();
-
-	          case 27:
-	            user = _context9.sent;
-	            return _context9.abrupt("return", user);
-
-	          case 29:
-	          case "end":
-	            return _context9.stop();
+	  for (i = 0; i < keys.length; i++) {
+	    key = keys[i];
+	    if (i === keys.length - 1) {
+	      if (merge && isObject$5(val) && isObject$5(obj[key])) {
+	        for (k in val) {
+	          if (hasOwnProperty$b.call(val, k)) {
+	            obj[key][k] = val[k];
+	          }
 	        }
-	      }
-	    }, _callee9, null, [[7, 17, 20, 23]]);
-	  }));
-
-	  return function updateProfile(_x15) {
-	    return _ref10.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Promise<User>
-	 */
-
-	var retrieve$3 = /*#__PURE__*/function () {
-	  var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10() {
-	    var root, profile, user;
-	    return regenerator.wrap(function _callee10$(_context10) {
-	      while (1) {
-	        switch (_context10.prev = _context10.next) {
-	          case 0:
-	            _context10.next = 2;
-	            return retrieveRootEdge();
-
-	          case 2:
-	            root = _context10.sent;
-	            _context10.next = 5;
-	            return retrieveProfile(root.eid);
-
-	          case 5:
-	            profile = _context10.sent;
-	            _context10.next = 8;
-	            return generateUser(root, profile ? profile.profile : null);
-
-	          case 8:
-	            user = _context10.sent;
-	            return _context10.abrupt("return", user);
-
-	          case 10:
-	          case "end":
-	            return _context10.stop();
+	      } else if (merge && Array.isArray(obj[key]) && Array.isArray(val)) {
+	        for (var j = 0; j < val.length; j++) {
+	          obj[keys[i]].push(val[j]);
 	        }
+	      } else {
+	        obj[key] = val;
 	      }
-	    }, _callee10);
-	  }));
-
-	  return function retrieve() {
-	    return _ref11.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Promise<User>
-	 */
-
-	var remove$2 = /*#__PURE__*/function () {
-	  var _ref12 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
-	    var user, edge, notes, _iterator2, _step2, noteId;
-
-	    return regenerator.wrap(function _callee11$(_context11) {
-	      while (1) {
-	        switch (_context11.prev = _context11.next) {
-	          case 0:
-	            _context11.next = 2;
-	            return retrieve$3();
-
-	          case 2:
-	            user = _context11.sent;
-	            _context11.next = 5;
-	            return retrieveRootEdge();
-
-	          case 5:
-	            edge = _context11.sent;
-	            _context11.next = 8;
-	            return Note.list(edge.eid);
-
-	          case 8:
-	            notes = _context11.sent;
-	            // Remove all note under root edge
-	            _iterator2 = _createForOfIteratorHelper$f(notes.ids);
-	            _context11.prev = 10;
-
-	            _iterator2.s();
-
-	          case 12:
-	            if ((_step2 = _iterator2.n()).done) {
-	              _context11.next = 18;
-	              break;
-	            }
-
-	            noteId = _step2.value;
-	            _context11.next = 16;
-	            return store$3.level2SDK.documentServices.deleteDocument([noteId]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 16:
-	            _context11.next = 12;
-	            break;
-
-	          case 18:
-	            _context11.next = 23;
-	            break;
-
-	          case 20:
-	            _context11.prev = 20;
-	            _context11.t0 = _context11["catch"](10);
-
-	            _iterator2.e(_context11.t0);
-
-	          case 23:
-	            _context11.prev = 23;
-
-	            _iterator2.f();
-
-	            return _context11.finish(23);
-
-	          case 26:
-	            _context11.next = 28;
-	            return store$3.level2SDK.edgeServices.deleteEdge([edge.eid]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 28:
-	            _context11.next = 30;
-	            return store$3.level2SDK.vertexServices.deleteVertex([edge.bvid]);
-
-	          case 30:
-	            _context11.next = 32;
-	            return logout(true);
-
-	          case 32:
-	            return _context11.abrupt("return", user);
-
-	          case 33:
-	          case "end":
-	            return _context11.stop();
-	        }
+	    } else if (
+	      // force the value to be an object
+	      !hasOwnProperty$b.call(obj, key) ||
+	      (!isObject$5(obj[key]) && !Array.isArray(obj[key]))
+	    ) {
+	      // initialize as array if next key is numeric
+	      if (/^\d+$/.test(keys[i + 1])) {
+	        obj[key] = [];
+	      } else {
+	        obj[key] = {};
 	      }
-	    }, _callee11, null, [[10, 20, 23, 26]]);
-	  }));
-
-	  return function remove() {
-	    return _ref12.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Status
-	 * Status.code:
-	 *  0 - LOGGED_IN
-	 *  1 - LOGGED_OUT
-	 *  2 - NEW_DEVICE
-	 * Status.userId: string
-	 * Status.code: string
-	 */
-
-	var getStatus = /*#__PURE__*/function () {
-	  var _ref13 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12() {
-	    var status, uid, utf8Uid, _accountUtils$decodeU, userId, phone_number;
-
-	    return regenerator.wrap(function _callee12$(_context12) {
-	      while (1) {
-	        switch (_context12.prev = _context12.next) {
-	          case 0:
-	            _context12.next = 2;
-	            return store$3.level2SDK.Account.getStatus();
-
-	          case 2:
-	            status = _context12.sent;
-	            _context12.prev = 3;
-	            uid = localStorage.getItem('uid');
-
-	            if (!(uid === null)) {
-	              _context12.next = 7;
-	              break;
-	            }
-
-	            throw new Error('uid is null');
-
-	          case 7:
-	            utf8Uid = store$3.level2SDK.utilServices.base64ToUTF8(uid);
-	            _accountUtils$decodeU = decodeUID(utf8Uid), userId = _accountUtils$decodeU.userId, phone_number = _accountUtils$decodeU.phone_number;
-	            return _context12.abrupt("return", _objectSpread$b(_objectSpread$b({}, status), {}, {
-	              userId: userId,
-	              phone_number: phone_number
-	            }));
-
-	          case 12:
-	            _context12.prev = 12;
-	            _context12.t0 = _context12["catch"](3);
-	            return _context12.abrupt("return", _objectSpread$b(_objectSpread$b({}, status), {}, {
-	              userId: '',
-	              phone_number: ''
-	            }));
-
-	          case 15:
-	          case "end":
-	            return _context12.stop();
-	        }
-	      }
-	    }, _callee12, null, [[3, 12]]);
-	  }));
-
-	  return function getStatus() {
-	    return _ref13.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * 
-	 * @param password string
-	 * @returns boolean
-	 */
-
-	var verifyUserPassword = function verifyUserPassword(password) {
-	  try {
-	    var _store$level2SDK$Acco = store$3.level2SDK.Account.verifyUserPassword({
-	      password: password
-	    }),
-	        _store$level2SDK$Acco2 = slicedToArray(_store$level2SDK$Acco, 1),
-	        isPasswordValid = _store$level2SDK$Acco2[0];
-
-	    if (isPasswordValid) return true;
-	  } catch (error) {
-	    if (error.name = 'PASSWORD_INVALID') {
-	      return false;
 	    }
+	    obj = obj[key];
 	  }
-
-	  return false;
+	  return obj
 	};
 
-	var Account$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		requestVerificationCode: requestVerificationCode,
-		create: create$3,
-		login: login,
-		loginByPassword: loginByPassword,
-		loginByVerificationCode: loginByVerificationCode,
-		logout: logout,
-		updatePassword: updatePassword$1,
-		updatePasswordByVerificationCode: updatePasswordByVerificationCode,
-		updateProfile: updateProfile,
-		retrieve: retrieve$3,
-		remove: remove$2,
-		getStatus: getStatus,
-		verifyUserPassword: verifyUserPassword
+	/**
+	 *
+	 * Transform an object
+	 *
+	 * Usage:
+	 *
+	 *   var obj = {
+	 *     "id": 1,
+	 *    "some": {
+	 *      "thing": "else"
+	 *    }
+	 *   }
+	 *
+	 *   var transform = {
+	 *     "id": "nr",
+	 *    "some.thing": "name"
+	 *   }
+	 *
+	 *   var tgt = dot.transform(transform, obj)
+	 *
+	 * @param {Object} recipe Transform recipe
+	 * @param {Object} obj Object to be transformed
+	 * @param {Array} mods modifiers for the target
+	 */
+	DotObject.prototype.transform = function (recipe, obj, tgt) {
+	  obj = obj || {};
+	  tgt = tgt || {};
+	  Object.keys(recipe).forEach(
+	    function (key) {
+	      this.set(recipe[key], this.pick(key, obj), tgt);
+	    }.bind(this)
+	  );
+	  return tgt
+	};
+
+	/**
+	 *
+	 * Convert object to dotted-key/value pair
+	 *
+	 * Usage:
+	 *
+	 *   var tgt = dot.dot(obj)
+	 *
+	 *   or
+	 *
+	 *   var tgt = {}
+	 *   dot.dot(obj, tgt)
+	 *
+	 * @param {Object} obj source object
+	 * @param {Object} tgt target object
+	 * @param {Array} path path array (internal)
+	 */
+	DotObject.prototype.dot = function (obj, tgt, path) {
+	  tgt = tgt || {};
+	  path = path || [];
+	  var isArray = Array.isArray(obj);
+
+	  Object.keys(obj).forEach(
+	    function (key) {
+	      var index = isArray && this.useBrackets ? '[' + key + ']' : key;
+	      if (
+	        isArrayOrObject(obj[key]) &&
+	        ((isObject$5(obj[key]) && !isEmptyObject(obj[key])) ||
+	          (Array.isArray(obj[key]) && !this.keepArray && obj[key].length !== 0))
+	      ) {
+	        if (isArray && this.useBrackets) {
+	          var previousKey = path[path.length - 1] || '';
+	          return this.dot(
+	            obj[key],
+	            tgt,
+	            path.slice(0, -1).concat(previousKey + index)
+	          )
+	        } else {
+	          return this.dot(obj[key], tgt, path.concat(index))
+	        }
+	      } else {
+	        if (isArray && this.useBrackets) {
+	          tgt[path.join(this.separator).concat('[' + key + ']')] = obj[key];
+	        } else {
+	          tgt[path.concat(index).join(this.separator)] = obj[key];
+	        }
+	      }
+	    }.bind(this)
+	  );
+	  return tgt
+	};
+
+	DotObject.pick = wrap$2('pick');
+	DotObject.move = wrap$2('move');
+	DotObject.transfer = wrap$2('transfer');
+	DotObject.transform = wrap$2('transform');
+	DotObject.copy = wrap$2('copy');
+	DotObject.object = wrap$2('object');
+	DotObject.str = wrap$2('str');
+	DotObject.set = wrap$2('set');
+	DotObject.delete = wrap$2('delete');
+	DotObject.del = DotObject.remove = wrap$2('remove');
+	DotObject.dot = wrap$2('dot');
+	['override', 'overwrite'].forEach(function (prop) {
+	  Object.defineProperty(DotObject, prop, {
+	    get: function () {
+	      return dotDefault.override
+	    },
+	    set: function (val) {
+	      dotDefault.override = !!val;
+	    }
+	  });
 	});
+	['useArray', 'keepArray', 'useBrackets'].forEach(function (prop) {
+	  Object.defineProperty(DotObject, prop, {
+	    get: function () {
+	      return dotDefault[prop]
+	    },
+	    set: function (val) {
+	      dotDefault[prop] = val;
+	    }
+	  });
+	});
+
+	DotObject._process = _process;
+
+	var dotObject = DotObject;
 
 	var moment = createCommonjsModule(function (module, exports) {
 	(function (global, factory) {
@@ -78247,6 +74115,4140 @@
 	})(); // eslint-disable-line semi
 	});
 
+	var retrieveVertex = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(id) {
+	    var response;
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            _context.next = 2;
+	            return store$3.level2SDK.vertexServices.retrieveVertex({
+	              idList: [id]
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            response = _context.sent;
+	            return _context.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
+
+	          case 4:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function retrieveVertex(_x) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+
+	var retrieveEdge = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
+	    var response;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return store$3.level2SDK.edgeServices.retrieveEdge({
+	              idList: [id]
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            response = _context2.sent;
+	            return _context2.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
+
+	          case 4:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function retrieveEdge(_x2) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+
+	var retrieveDocument = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id) {
+	    var response;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return store$3.level2SDK.documentServices.retrieveDocument({
+	              idList: [id]
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            response = _context3.sent;
+	            return _context3.abrupt("return", response && Array.isArray(response.data) && response.data.length > 0 ? response.data[0] : null);
+
+	          case 4:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function retrieveDocument(_x3) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+
+	var setBit = function setBit(target, value, bit) {
+	  return value ? target | 1 << bit : target & ~(1 << bit);
+	};
+	var getBit = function getBit(target, bit) {
+	  return !!(target & 1 << bit) ? 1 : 0;
+	};
+
+	var TOTAL_BITS = 32; // DOC FLAGS
+
+	var FLAG_BITS = 6;
+	var IS_ON_SERVER = 0;
+	var IS_GZIP = 1;
+	var IS_BINARY = 2;
+	var IS_ENCRYPTED = 3;
+	var HAS_EXTRA_KEY = 4;
+	var IS_EDITABLE = 5; // DOC Application Data Type
+
+	var DATA_TYPE_START = 17;
+	var DATA_TYPE_LIST = ['data', 'profile', 'vital']; // DOC Media Type
+
+	var MEDIA_TYPE = 27; // 31 ~ 27: 5
+
+	var MEDIA_TYPE_BITS = TOTAL_BITS - MEDIA_TYPE;
+	var MEDIA_TYPE_LIST = ['others', 'application', 'audio', 'font', 'image', 'message', 'model', 'multipart', 'text', 'video'];
+
+	var DType = /*#__PURE__*/function () {
+	  // DOC FLAGS
+	  // DOC Application Data Type
+	  // DOC Media Type
+	  function DType() {
+	    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+	    classCallCheck(this, DType);
+
+	    defineProperty(this, "_flags", 0);
+
+	    defineProperty(this, "_dataType", 0);
+
+	    defineProperty(this, "_mediaType", 0);
+
+	    this.value = value;
+	  }
+
+	  createClass(DType, [{
+	    key: "getFlags",
+	    // DOC FLAGS
+	    value: function getFlags() {
+	      return {
+	        isOnServer: this.isOnServer,
+	        isGzip: this.isGzip,
+	        isBinary: this.isBinary,
+	        isEncrypted: this.isEncrypted,
+	        hasExtraKey: this.hasExtraKey,
+	        isEditable: this.isEditable
+	      };
+	    }
+	  }, {
+	    key: "getDataType",
+	    value: function getDataType() {
+	      return DATA_TYPE_LIST[this._dataType];
+	    } // Media Type
+
+	  }, {
+	    key: "setMediaType",
+	    value: function setMediaType(mediaType) {
+	      var type = MEDIA_TYPE_LIST.findIndex(function (header) {
+	        var val = RegExp("^".concat(header, "/")).test(mediaType);
+	        return val;
+	      });
+	      this._mediaType = type === -1 ? 0 : type;
+	    }
+	  }, {
+	    key: "getMediaType",
+	    value: function getMediaType() {
+	      return MEDIA_TYPE_LIST[this.mediaType];
+	    }
+	  }, {
+	    key: "value",
+	    set: function set(value) {
+	      // flags
+	      this.flags = value << TOTAL_BITS - FLAG_BITS >>> TOTAL_BITS - FLAG_BITS; // data type
+
+	      this.dataType = value << MEDIA_TYPE_BITS >>> DATA_TYPE_START + MEDIA_TYPE_BITS; // media type
+
+	      this.mediaType = value >>> MEDIA_TYPE;
+	    },
+	    get: function get() {
+	      // merger media type
+	      var tmpValue = this._mediaType << MEDIA_TYPE; // merge data type
+
+	      tmpValue |= this._dataType << DATA_TYPE_START; // merge flags
+
+	      tmpValue |= this.flags;
+	      return tmpValue;
+	    }
+	  }, {
+	    key: "flags",
+	    set: function set(value) {
+	      this.isOnServer = !!getBit(value, IS_ON_SERVER);
+	      this.isGzip = !!getBit(value, IS_GZIP);
+	      this.isBinary = !!getBit(value, IS_BINARY);
+	      this.isEncrypted = !!getBit(value, IS_ENCRYPTED);
+	      this.hasExtraKey = !!getBit(value, HAS_EXTRA_KEY);
+	      this.isEditable = !!getBit(value, IS_EDITABLE);
+	    },
+	    get: function get() {
+	      return this._flags;
+	    }
+	  }, {
+	    key: "isOnServer",
+	    set: function set(value) {
+	      this._flags = setBit(this._flags, value, IS_ON_SERVER);
+	    },
+	    get: function get() {
+	      return !!getBit(this._flags, IS_ON_SERVER);
+	    }
+	  }, {
+	    key: "isGzip",
+	    set: function set(value) {
+	      this._flags = setBit(this._flags, value, IS_GZIP);
+	    },
+	    get: function get() {
+	      return !!getBit(this._flags, IS_GZIP);
+	    }
+	  }, {
+	    key: "isBinary",
+	    set: function set(value) {
+	      this._flags = setBit(this._flags, value, IS_BINARY);
+	    },
+	    get: function get() {
+	      return !!getBit(this._flags, IS_BINARY);
+	    }
+	  }, {
+	    key: "isEncrypted",
+	    set: function set(value) {
+	      this._flags = setBit(this._flags, value, IS_ENCRYPTED);
+	    },
+	    get: function get() {
+	      return !!getBit(this._flags, IS_ENCRYPTED);
+	    }
+	  }, {
+	    key: "hasExtraKey",
+	    set: function set(value) {
+	      this._flags = setBit(this._flags, value, HAS_EXTRA_KEY);
+	    },
+	    get: function get() {
+	      return !!getBit(this._flags, HAS_EXTRA_KEY);
+	    }
+	  }, {
+	    key: "isEditable",
+	    set: function set(value) {
+	      this._flags = setBit(this._flags, value, IS_EDITABLE);
+	    },
+	    get: function get() {
+	      return !!getBit(this._flags, IS_EDITABLE);
+	    } // Application Data Type
+
+	  }, {
+	    key: "dataType",
+	    set: function set(_type) {
+	      // const type = _type < 0 || _type >= DATA_TYPE_LIST.length ? 0 : _type
+	      this._dataType = _type;
+	    },
+	    get: function get() {
+	      return this._dataType;
+	    }
+	  }, {
+	    key: "mediaType",
+	    set: function set(_type) {
+	      var type = _type < 0 || _type >= MEDIA_TYPE_LIST.length ? 0 : _type;
+	      this._mediaType = type;
+	    },
+	    get: function get() {
+	      return this._mediaType;
+	    }
+	  }]);
+
+	  return DType;
+	}();
+
+	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	var CONTENT_SIZE_LIMIT = 32768;
+	/**
+	 * @param content: string | Blob
+	 * @param type: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
+	 * @returns Blob
+	 */
+
+	var contentToBlob = function contentToBlob(content) {
+	  var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'text/plain';
+
+	  /* Convert content to be blob */
+	  var blob;
+
+	  if (typeof content === 'string') {
+	    blob = new Blob([content], {
+	      type: type
+	    });
+	  } else if (content instanceof Blob) {
+	    blob = content;
+	  } else {
+	    try {
+	      var jsonStr = JSON.stringify(content);
+	      blob = new Blob([jsonStr], {
+	        type: 'application/json'
+	      });
+	    } catch (error) {
+	      throw new AiTmedError({
+	        name: 'NOTE_CONTENT_INVALID',
+	        message: error.message
+	      });
+	    }
+	  }
+
+	  return blob;
+	};
+	/**
+	 *
+	 * @param data: Uint8Array | Blob
+	 * @param besak?: string | Uint8Array
+	 * @returns Promise<obj>
+	 * @returns obj.data: Uint8Array
+	 * @returns obj.isEncrypt: boolean
+	 */
+
+	var produceEncryptData = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_data, esak, publicKeyOfReceiver) {
+	    var data, isEncrypt;
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            if (!(_data instanceof Blob)) {
+	              _context.next = 6;
+	              break;
+	            }
+
+	            _context.next = 3;
+	            return store$3.level2SDK.utilServices.blobToUint8Array(_data);
+
+	          case 3:
+	            _context.t0 = _context.sent;
+	            _context.next = 7;
+	            break;
+
+	          case 6:
+	            _context.t0 = _data;
+
+	          case 7:
+	            data = _context.t0;
+	            isEncrypt = false;
+
+	            if (!(typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver)) {
+	              _context.next = 19;
+	              break;
+	            }
+
+	            _context.prev = 10;
+	            _context.next = 13;
+	            return store$3.level2SDK.commonServices.encryptData(esak, publicKeyOfReceiver, data);
+
+	          case 13:
+	            data = _context.sent;
+	            isEncrypt = true;
+	            _context.next = 19;
+	            break;
+
+	          case 17:
+	            _context.prev = 17;
+	            _context.t1 = _context["catch"](10);
+
+	          case 19:
+	            return _context.abrupt("return", {
+	              data: data,
+	              isEncrypt: isEncrypt
+	            });
+
+	          case 20:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee, null, [[10, 17]]);
+	  }));
+
+	  return function produceEncryptData(_x, _x2, _x3) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param _data Uint8Array | Blob
+	 * @returns Promise<obj>
+	 * @returns obj.data: Uint8Array
+	 * @returns obj.isGzip: boolean
+	 */
+
+	var produceGzipData = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(_data) {
+	    var u8a, data, isGzip;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            if (!(_data instanceof Blob)) {
+	              _context2.next = 6;
+	              break;
+	            }
+
+	            _context2.next = 3;
+	            return store$3.level2SDK.utilServices.blobToUint8Array(_data);
+
+	          case 3:
+	            _context2.t0 = _context2.sent;
+	            _context2.next = 7;
+	            break;
+
+	          case 6:
+	            _context2.t0 = _data;
+
+	          case 7:
+	            u8a = _context2.t0;
+	            data = gzip$1(u8a);
+	            isGzip = data.length < u8a.length;
+	            return _context2.abrupt("return", {
+	              data: isGzip ? data : u8a,
+	              isGzip: isGzip
+	            });
+
+	          case 11:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function produceGzipData(_x4) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param document: Doc
+	 * @param edge?: Edge
+	 * @returns Promise<Note>
+	 */
+
+	var documentToNote = /*#__PURE__*/function () {
+	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref3) {
+	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, isBroken, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
+
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            document = _ref3.document, _edge = _ref3._edge, esakOfCurrentUser = _ref3.esakOfCurrentUser;
+
+	            if (!(typeof _edge === 'undefined')) {
+	              _context3.next = 7;
+	              break;
+	            }
+
+	            _context3.next = 4;
+	            return retrieveEdge(document.eid);
+
+	          case 4:
+	            _context3.t0 = _context3.sent;
+	            _context3.next = 8;
+	            break;
+
+	          case 7:
+	            _context3.t0 = _edge;
+
+	          case 8:
+	            edge = _context3.t0;
+
+	            if (!(edge === null)) {
+	              _context3.next = 11;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
+	            });
+
+	          case 11:
+	            //TODO
+	            //currently commented since does not allow comparison between shared notebook
+	            //and docs from root notebook
+	            // if (
+	            //   !store.utils.compareUint8Arrays(
+	            //     <Uint8Array>edge.eid,
+	            //     <Uint8Array>document.eid,
+	            //   )
+	            // ) {
+	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
+	            // }
+	            name = document.name;
+	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
+	            deat = document.deat; // DType
+
+	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
+	            dType = isOldDataStructure ? new DType() : new DType(document.type);
+
+	            if (isOldDataStructure) {
+	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
+	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
+	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
+	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
+	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
+	              dType.setMediaType(name.type);
+	            } // Get data
+
+
+	            content = null, isBroken = false, error = null;
+	            _context3.prev = 18;
+
+	            if (!dType.isOnServer) {
+	              _context3.next = 29;
+	              break;
+	            }
+
+	            if (!(name.data !== undefined)) {
+	              _context3.next = 26;
+	              break;
+	            }
+
+	            _context3.next = 23;
+	            return store$3.level2SDK.utilServices.base64ToUint8Array(name.data);
+
+	          case 23:
+	            data = _context3.sent;
+	            _context3.next = 27;
+	            break;
+
+	          case 26:
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'name.data is undefined'
+	            });
+
+	          case 27:
+	            _context3.next = 46;
+	            break;
+
+	          case 29:
+	            if (!(deat !== null && deat.url)) {
+	              _context3.next = 45;
+	              break;
+	            }
+
+	            _context3.next = 32;
+	            return store$3.level2SDK.documentServices.downloadDocumentFromS3({
+	              url: deat.url
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 32:
+	            response = _context3.sent;
+
+	            if (response) {
+	              _context3.next = 35;
+	              break;
+	            }
+
+	            throw 'no response';
+
+	          case 35:
+	            if (!dType.isBinary) {
+	              _context3.next = 39;
+	              break;
+	            }
+
+	            _context3.t1 = response.data;
+	            _context3.next = 42;
+	            break;
+
+	          case 39:
+	            _context3.next = 41;
+	            return store$3.level2SDK.utilServices.base64ToUint8Array(response.data);
+
+	          case 41:
+	            _context3.t1 = _context3.sent;
+
+	          case 42:
+	            data = _context3.t1;
+	            _context3.next = 46;
+	            break;
+
+	          case 45:
+	            throw 'deat.url is missing';
+
+	          case 46:
+	            // Decryption
+	            edgeHasBesak = edge.besak && edge.besak !== '';
+	            edgeHasEesak = edge.eesak && edge.eesak !== '';
+
+	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
+	              _context3.next = 71;
+	              break;
+	            }
+
+	            if (esakOfCurrentUser) {
+	              esak = esakOfCurrentUser;
+	            } else {
+	              esak = edgeHasBesak ? edge.besak : edge.eesak;
+	            }
+
+	            if (!edge.sig) {
+	              _context3.next = 57;
+	              break;
+	            }
+
+	            if (edge.sig instanceof Uint8Array) {
+	              publicKeyOfReceiver = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+	            } else {
+	              publicKeyOfReceiver = edge.sig;
+	            }
+
+	            _context3.next = 54;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 54:
+	            data = _context3.sent;
+	            _context3.next = 71;
+	            break;
+
+	          case 57:
+	            if (!(!edge.sig && edge.type === 10001)) {
+	              _context3.next = 65;
+	              break;
+	            }
+
+	            pkLocalStorage = localStorage.getItem('pk');
+	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
+	            _context3.next = 62;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 62:
+	            data = _context3.sent;
+	            _context3.next = 71;
+	            break;
+
+	          case 65:
+	            if (!(edge.type === 10000)) {
+	              _context3.next = 71;
+	              break;
+	            }
+
+	            _pkLocalStorage = localStorage.getItem('pk');
+	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
+	            _context3.next = 70;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 70:
+	            data = _context3.sent;
+
+	          case 71:
+	            // Ungzip
+	            if (dType.isGzip) data = ungzip$1(data);
+	            _context3.next = 74;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
+
+	          case 74:
+	            blob = _context3.sent;
+
+	            if (!/^text\//.test(blob.type)) {
+	              _context3.next = 81;
+	              break;
+	            }
+
+	            _context3.next = 78;
+	            return new Response(blob).text();
+
+	          case 78:
+	            content = _context3.sent;
+	            _context3.next = 95;
+	            break;
+
+	          case 81:
+	            if (!(blob.type === 'application/json')) {
+	              _context3.next = 94;
+	              break;
+	            }
+
+	            _context3.next = 84;
+	            return new Response(blob).text();
+
+	          case 84:
+	            jsonStr = _context3.sent;
+	            _context3.prev = 85;
+	            content = JSON.parse(jsonStr);
+	            _context3.next = 92;
+	            break;
+
+	          case 89:
+	            _context3.prev = 89;
+	            _context3.t2 = _context3["catch"](85);
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
+	            });
+
+	          case 92:
+	            _context3.next = 95;
+	            break;
+
+	          case 94:
+	            content = blob;
+
+	          case 95:
+	            _context3.next = 102;
+	            break;
+
+	          case 97:
+	            _context3.prev = 97;
+	            _context3.t3 = _context3["catch"](18);
+
+	            if (typeof _context3.t3 === 'string') {
+	              error = new AiTmedError({
+	                name: 'DOWNLOAD_FROM_S3_FAIL',
+	                message: "Note -> documentToNote -> ".concat(_context3.t3)
+	              });
+	            } else {
+	              error = _context3.t3;
+	            }
+
+	            content = null;
+	            isBroken = true;
+
+	          case 102:
+	            return _context3.abrupt("return", {
+	              id: store$3.utils.idToBase64(document.id),
+	              owner_id: store$3.utils.idToBase64(edge.bvid),
+	              notebook_id: store$3.utils.idToBase64(document.eid),
+	              info: {
+	                title: name.title,
+	                type: contentType,
+	                content: content,
+	                tags: name.tags || []
+	              },
+	              created_at: document.ctime * 1000,
+	              modified_at: document.mtime * 1000,
+	              isEditable: dType.isEditable,
+	              isEncrypt: dType.isEncrypted,
+	              isGzip: dType.isGzip,
+	              isOnServer: dType.isOnServer,
+	              size: document.size,
+	              isBroken: isBroken,
+	              error: error
+	            });
+
+	          case 103:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3, null, [[18, 97], [85, 89]]);
+	  }));
+
+	  return function documentToNote(_x5) {
+	    return _ref4.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param id: Uint8Array | string
+	 * @param _edge?: Edge
+	 * @returns Promise<Note>
+	 */
+
+	var retrieveNote = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id, _edge) {
+	    var document, note;
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            _context4.next = 2;
+	            return retrieveDocument(id);
+
+	          case 2:
+	            document = _context4.sent;
+
+	            if (document) {
+	              _context4.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOT_A_NOTE'
+	            });
+
+	          case 5:
+	            _context4.next = 7;
+	            return documentToNote({
+	              document: document,
+	              _edge: _edge
+	            });
+
+	          case 7:
+	            note = _context4.sent;
+	            return _context4.abrupt("return", note);
+
+	          case 9:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function retrieveNote(_x6, _x7) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string | Uint8Array
+	 * @param fields
+	 * @param fields.notebook_id?: string
+	 * @param fields.title?: string
+	 * @param fields.content?: string | Blob
+	 * @param type?: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
+	 * @param fields.tags?: string[]
+	 * @param save?: boolean
+	 * @returns Promise<Note>
+	 */
+
+	var updateNote = /*#__PURE__*/function () {
+	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, _ref6) {
+	    var notebook_id,
+	        title,
+	        content,
+	        type,
+	        tags,
+	        save,
+	        document,
+	        edge,
+	        params,
+	        name,
+	        tagsSet,
+	        isOldDataStructure,
+	        dType,
+	        note,
+	        response,
+	        blob,
+	        _yield$produceGzipDat,
+	        gzipData,
+	        isGzip,
+	        _yield$produceEncrypt,
+	        data,
+	        isEncrypt,
+	        bs64Data,
+	        _response,
+	        _response$data,
+	        _id,
+	        deat,
+	        _args5 = arguments;
+
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            notebook_id = _ref6.notebook_id, title = _ref6.title, content = _ref6.content, type = _ref6.type, tags = _ref6.tags;
+	            save = _args5.length > 2 && _args5[2] !== undefined ? _args5[2] : false;
+	            _context5.next = 4;
+	            return retrieveDocument(id);
+
+	          case 4:
+	            document = _context5.sent;
+
+	            if (document) {
+	              _context5.next = 7;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOT_A_NOTE'
+	            });
+
+	          case 7:
+	            if (!(typeof notebook_id !== 'undefined')) {
+	              _context5.next = 13;
+	              break;
+	            }
+
+	            _context5.next = 10;
+	            return retrieveEdge(notebook_id);
+
+	          case 10:
+	            edge = _context5.sent;
+	            _context5.next = 16;
+	            break;
+
+	          case 13:
+	            _context5.next = 15;
+	            return retrieveEdge(document.eid);
+
+	          case 15:
+	            edge = _context5.sent;
+
+	          case 16:
+	            if (edge) {
+	              _context5.next = 18;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 18:
+	            if (store$3.utils.compareUint8Arrays(edge.eid, document.eid)) {
+	              _context5.next = 20;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_ID_NOT_MATCH'
+	            });
+
+	          case 20:
+	            // Update Params
+	            params = {
+	              id: document.id,
+	              eid: edge.eid
+	            };
+	            if (save) params.fid = document.id; // Update name
+
+	            name = document.name;
+	            if (typeof title !== 'undefined') name.title = title;
+
+	            if (typeof tags !== 'undefined') {
+	              tagsSet = new Set([].concat(toConsumableArray(name.tags), toConsumableArray(tags)));
+	              name.tags = Array.from(tagsSet);
+	            } // DType
+
+
+	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
+	            dType = isOldDataStructure ? new DType() : new DType(document.type);
+
+	            if (isOldDataStructure) {
+	              if (typeof name.isOnS3 !== 'undefined') {
+	                dType.isOnServer = !name.isOnS3;
+	                delete name.isOnS3;
+	              }
+
+	              if (typeof name.isGzip !== 'undefined') {
+	                dType.isGzip = name.isGzip;
+	                delete name.isGzip;
+	              }
+
+	              if (typeof name.isBinary !== 'undefined') {
+	                dType.isBinary = name.isBinary;
+	                delete name.isBinary;
+	              }
+
+	              if (typeof name.isEncrypt !== 'undefined') {
+	                dType.isEncrypted = name.isEncrypt;
+	                delete name.isEncrypt;
+	              }
+
+	              if (typeof name.edit_mode !== 'undefined') {
+	                dType.isEditable = !!name.edit_mode;
+	                delete name.edit_mode;
+	              }
+
+	              dType.setMediaType(name.type);
+	            }
+
+	            if (!(typeof content === 'undefined')) {
+	              _context5.next = 40;
+	              break;
+	            }
+
+	            // Does not need to update content
+	            params.name = name;
+	            _context5.next = 32;
+	            return store$3.level2SDK.documentServices.updateDocument(_objectSpread$5(_objectSpread$5({}, params), {}, {
+	              type: dType.value
+	            })).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 32:
+	            response = _context5.sent;
+
+	            if (!(!response || response.code !== 0)) {
+	              _context5.next = 35;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> update -> updateDocument -> no response'
+	            });
+
+	          case 35:
+	            _context5.next = 37;
+	            return retrieveNote(document.id, edge);
+
+	          case 37:
+	            note = _context5.sent;
+	            _context5.next = 78;
+	            break;
+
+	          case 40:
+	            _context5.next = 42;
+	            return contentToBlob(content, type);
+
+	          case 42:
+	            blob = _context5.sent;
+	            _context5.next = 45;
+	            return produceGzipData(blob);
+
+	          case 45:
+	            _yield$produceGzipDat = _context5.sent;
+	            gzipData = _yield$produceGzipDat.data;
+	            isGzip = _yield$produceGzipDat.isGzip;
+	            dType.isGzip = isGzip;
+	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
+
+	            _context5.next = 52;
+	            return produceEncryptData(gzipData, edge.besak);
+
+	          case 52:
+	            _yield$produceEncrypt = _context5.sent;
+	            data = _yield$produceEncrypt.data;
+	            isEncrypt = _yield$produceEncrypt.isEncrypt;
+	            dType.isEncrypted = isEncrypt;
+	            _context5.next = 58;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
+
+	          case 58:
+	            bs64Data = _context5.sent;
+	            dType.isBinary = false;
+	            name.type = blob.type;
+	            params.size = blob.size;
+
+	            if (dType.isOnServer) {
+	              name.data = bs64Data;
+	            } else {
+	              if (typeof name.data !== 'undefined') delete name.data;
+	            }
+
+	            params.name = name; // Create new DOC
+
+	            _context5.next = 66;
+	            return store$3.level2SDK.documentServices.createDocument({
+	              eid: edge.eid,
+	              type: dType.value,
+	              name: name,
+	              size: blob.size
+	            });
+
+	          case 66:
+	            _response = _context5.sent;
+
+	            if (!(!_response || _response.code !== 0)) {
+	              _context5.next = 69;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> update -> updateDocument -> no response'
+	            });
+
+	          case 69:
+	            _response$data = _response.data, _id = _response$data.id, deat = _response$data.deat;
+
+	            if (!(deat !== null && deat && deat.url && deat.sig)) {
+	              _context5.next = 73;
+	              break;
+	            }
+
+	            _context5.next = 73;
+	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
+	              url: deat.url,
+	              sig: deat.sig,
+	              data: bs64Data
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 73:
+	            _context5.next = 75;
+	            return store$3.level2SDK.documentServices.deleteDocument([document.id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 75:
+	            _context5.next = 77;
+	            return retrieveNote(_id, edge);
+
+	          case 77:
+	            note = _context5.sent;
+
+	          case 78:
+	            return _context5.abrupt("return", note);
+
+	          case 79:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function updateNote(_x8, _x9) {
+	    return _ref7.apply(this, arguments);
+	  };
+	}();
+
+	var listDocsFilter = function listDocsFilter(document, _ref8) {
+	  var dataType = _ref8.dataType,
+	      mediaType = _ref8.mediaType,
+	      options = objectWithoutProperties(_ref8, ["dataType", "mediaType"]);
+
+	  var dType = new DType(document.type);
+
+	  if (dataType !== undefined) {
+	    if (typeof dataType === 'number' && dataType !== dType.dataType) {
+	      return false;
+	    } else if (typeof dataType !== 'number') {
+	      if (dataType === 'profile') {
+	        var name = document.name;
+
+	        if (name.title !== 'profile' || name.type !== 'application/json') {
+	          return false;
+	        }
+	      } else {
+	        if (dataType !== dType.getDataType()) return false;
+	      }
+	    }
+	  }
+
+	  if (mediaType !== undefined) {
+	    if (typeof mediaType === 'number' && mediaType !== dType.mediaType) {
+	      return false;
+	    } else if (typeof mediaType !== 'number' && mediaType !== dType.getMediaType()) {
+	      return false;
+	    }
+	  }
+
+	  for (var key in options) {
+	    var value = options[key];
+	    var dTypeValue = dType[key];
+
+	    if (value !== undefined && dTypeValue !== undefined) {
+	      if (value !== dTypeValue) return false;
+	    }
+	  }
+
+	  return true;
+	};
+	/**
+	 *
+	 * @param edge: Edge
+	 * @param options: NoteUtilsTypes.ListDocsOptions
+	 * @param options.shared?: Boolean
+	 * @param options.count?: number
+	 * @param options.sort_by?: 0 | 1 | 2
+	 *
+	 * @param options.isOnServer?: boolean
+	 * @param options.isGzip?: boolean
+	 * @param options.isBinary?: boolean
+	 * @param options.isEncrypted?: boolean
+	 * @param options.hasExtraKey?: boolean
+	 * @param options.isEditable?: boolean
+	 *
+	 * @param options.dataType?: number
+	 * @param options.mediaType?: number
+	 *
+	 * @returns Promise<Doc[]>
+	 */
+
+
+	var listDocs = /*#__PURE__*/function () {
+	  var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(edge) {
+	    var options,
+	        _options$shared,
+	        shared,
+	        _options$count,
+	        _options$sort_by,
+	        otherOptions,
+	        idOfRootNotebook,
+	        response,
+	        documents,
+	        _args6 = arguments;
+
+	    return regenerator.wrap(function _callee6$(_context6) {
+	      while (1) {
+	        switch (_context6.prev = _context6.next) {
+	          case 0:
+	            options = _args6.length > 1 && _args6[1] !== undefined ? _args6[1] : {};
+	            _options$shared = options.shared, shared = _options$shared === void 0 ? false : _options$shared, _options$count = options.count, _options$sort_by = options.sort_by, otherOptions = objectWithoutProperties(options, ["shared", "count", "sort_by"]);
+
+	            if (shared) {
+	              idOfRootNotebook = edge.refid;
+	            } else {
+	              idOfRootNotebook = edge.eid;
+	            }
+
+	            _context6.next = 5;
+	            return store$3.level2SDK.documentServices.retrieveDocument({
+	              idList: [idOfRootNotebook],
+	              options: {
+	                xfname: 'eid'
+	              }
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 5:
+	            response = _context6.sent;
+
+	            if (!(!response || !response.data || !Array.isArray(response.data))) {
+	              _context6.next = 8;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> list -> retrieveDocument -> no response'
+	            });
+
+	          case 8:
+	            documents = response.data.filter(function (document) {
+	              return listDocsFilter(document, otherOptions);
+	            });
+	            return _context6.abrupt("return", documents);
+
+	          case 10:
+	          case "end":
+	            return _context6.stop();
+	        }
+	      }
+	    }, _callee6);
+	  }));
+
+	  return function listDocs(_x10) {
+	    return _ref9.apply(this, arguments);
+	  };
+	}();
+
+	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$6(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+	function _createForOfIteratorHelper$e(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$f(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+	function _unsupportedIterableToArray$f(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$f(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$f(o, minLen); }
+
+	function _arrayLikeToArray$f(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+	/**
+	 * @param params
+	 * @param params.notebook_id: string
+	 * @param params.title: string
+	 * @param params.content: string | Blob
+	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
+	 * @param params.tags?: string[]
+	 * @param params.dataType?: number
+	 * @returns Promise<Note>
+	 */
+
+	var create = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
+	    var notebook_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            notebook_id = _ref.notebook_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
+	            _context.next = 3;
+	            return retrieveEdge(notebook_id);
+
+	          case 3:
+	            edge = _context.sent;
+
+	            if (edge) {
+	              _context.next = 6;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 6:
+	            dType = new DType();
+	            dType.dataType = dataType; // Permission
+
+	            dType.isEditable = true; // Content to Blob
+
+	            _context.next = 11;
+	            return contentToBlob(content, type);
+
+	          case 11:
+	            blob = _context.sent;
+	            dType.setMediaType(blob.type); // Gzip
+
+	            _context.next = 15;
+	            return produceGzipData(blob);
+
+	          case 15:
+	            _yield$produceGzipDat = _context.sent;
+	            gzipData = _yield$produceGzipDat.data;
+	            isGzip = _yield$produceGzipDat.isGzip;
+	            dType.isGzip = isGzip;
+	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
+
+	            esak = '';
+	            publicKeyOfReceiver = '';
+
+	            if (!(edge.besak && edge.sig)) {
+	              _context.next = 33;
+	              break;
+	            }
+
+	            esak = edge.besak;
+
+	            if (!(edge.sig instanceof Uint8Array)) {
+	              _context.next = 30;
+	              break;
+	            }
+
+	            _context.next = 27;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+
+	          case 27:
+	            publicKeyOfReceiver = _context.sent;
+	            _context.next = 31;
+	            break;
+
+	          case 30:
+	            publicKeyOfReceiver = edge.sig;
+
+	          case 31:
+	            _context.next = 42;
+	            break;
+
+	          case 33:
+	            if (!(edge.eesak && edge.sig)) {
+	              _context.next = 42;
+	              break;
+	            }
+
+	            esak = edge.eesak;
+
+	            if (!(edge.sig instanceof Uint8Array)) {
+	              _context.next = 41;
+	              break;
+	            }
+
+	            _context.next = 38;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+
+	          case 38:
+	            publicKeyOfReceiver = _context.sent;
+	            _context.next = 42;
+	            break;
+
+	          case 41:
+	            publicKeyOfReceiver = edge.sig;
+
+	          case 42:
+	            _context.next = 44;
+	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
+
+	          case 44:
+	            _yield$produceEncrypt = _context.sent;
+	            data = _yield$produceEncrypt.data;
+	            isEncrypt = _yield$produceEncrypt.isEncrypt;
+	            dType.isEncrypted = isEncrypt;
+	            _context.next = 50;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
+
+	          case 50:
+	            bs64Data = _context.sent;
+	            dType.isBinary = false;
+	            name = {
+	              title: title,
+	              tags: tags,
+	              type: blob.type
+	            }; // data must be base64 in name field
+
+	            if (dType.isOnServer) name.data = bs64Data;
+	            _context.next = 56;
+	            return store$3.level2SDK.documentServices.createDocument({
+	              eid: edge.eid,
+	              type: dType.value,
+	              name: name,
+	              size: blob.size
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 56:
+	            response = _context.sent;
+
+	            if (!(!response || !response.data)) {
+	              _context.next = 59;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> create -> createDocument -> no response'
+	            });
+
+	          case 59:
+	            document = response.data;
+	            deat = document.deat;
+
+	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
+	              _context.next = 64;
+	              break;
+	            }
+
+	            _context.next = 64;
+	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
+	              url: deat.url,
+	              sig: deat.sig,
+	              data: bs64Data
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 64:
+	            _context.next = 66;
+	            return retrieveNote(document.id);
+
+	          case 66:
+	            note = _context.sent;
+	            return _context.abrupt("return", note);
+
+	          case 68:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function create(_x) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string | Uint8Array
+	 */
+
+	var retrieve = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
+	    var note;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return retrieveNote(id);
+
+	          case 2:
+	            note = _context2.sent;
+	            return _context2.abrupt("return", note);
+
+	          case 4:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function retrieve(_x2) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string | Uint8Array
+	 * @returns Promise<Note>
+	 */
+
+	var remove = /*#__PURE__*/function () {
+	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id) {
+	    var note;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return retrieve(id);
+
+	          case 2:
+	            note = _context3.sent;
+	            _context3.next = 5;
+	            return store$3.level2SDK.documentServices.deleteDocument([note.id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 5:
+	            return _context3.abrupt("return", note);
+
+	          case 6:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function remove(_x3) {
+	    return _ref4.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string
+	 * @param params
+	 * @param params.notebook_id?: string
+	 * @param params.title?: string
+	 * @param params.content?: string | Blob
+	 * @param params.tags?: string[]
+	 * @returns Promise<Note>
+	 */
+
+	var update = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id, fields) {
+	    var note;
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            _context4.next = 2;
+	            return updateNote(id, fields, false);
+
+	          case 2:
+	            note = _context4.sent;
+	            return _context4.abrupt("return", note);
+
+	          case 4:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function update(_x4, _x5) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string
+	 * @param params
+	 * @param params.notebook_id?: string
+	 * @param params.title?: string
+	 * @param params.content?: string | Blob
+	 * @param params.tags?: string[]
+	 * @returns Promise<Note>
+	 */
+
+	var save = /*#__PURE__*/function () {
+	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, fields) {
+	    var note;
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            _context5.next = 2;
+	            return updateNote(id, fields, true);
+
+	          case 2:
+	            note = _context5.sent;
+	            return _context5.abrupt("return", note);
+
+	          case 4:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function save(_x6, _x7) {
+	    return _ref6.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param notebook_id
+	 * @param options
+	 * @param options.shared?: Boolean
+	 * @param options.types?: (NoteTypes | NoteFileTypes)[]
+	 * @param options.tags?: string[]
+	 * @param options.count?: number
+	 * @param options.edit_mode?: number
+	 * @param options.sort_by?: 0 | 1 | 2
+	 */
+
+	var list = /*#__PURE__*/function () {
+	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(notebook_id, options) {
+	    var edge, documents, ids, mapper, _iterator, _step, document, note;
+
+	    return regenerator.wrap(function _callee6$(_context6) {
+	      while (1) {
+	        switch (_context6.prev = _context6.next) {
+	          case 0:
+	            _context6.next = 2;
+	            return retrieveEdge(notebook_id);
+
+	          case 2:
+	            edge = _context6.sent;
+
+	            if (edge) {
+	              _context6.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 5:
+	            _context6.next = 7;
+	            return listDocs(edge, options);
+
+	          case 7:
+	            documents = _context6.sent;
+	            ids = [];
+	            mapper = {};
+	            _iterator = _createForOfIteratorHelper$e(documents);
+	            _context6.prev = 11;
+
+	            _iterator.s();
+
+	          case 13:
+	            if ((_step = _iterator.n()).done) {
+	              _context6.next = 22;
+	              break;
+	            }
+
+	            document = _step.value;
+	            _context6.next = 17;
+	            return documentToNote({
+	              document: document,
+	              edge: edge
+	            });
+
+	          case 17:
+	            note = _context6.sent;
+	            ids.push(note.id);
+	            mapper[note.id] = note;
+
+	          case 20:
+	            _context6.next = 13;
+	            break;
+
+	          case 22:
+	            _context6.next = 27;
+	            break;
+
+	          case 24:
+	            _context6.prev = 24;
+	            _context6.t0 = _context6["catch"](11);
+
+	            _iterator.e(_context6.t0);
+
+	          case 27:
+	            _context6.prev = 27;
+
+	            _iterator.f();
+
+	            return _context6.finish(27);
+
+	          case 30:
+	            return _context6.abrupt("return", {
+	              ids: ids,
+	              mapper: mapper
+	            });
+
+	          case 31:
+	          case "end":
+	            return _context6.stop();
+	        }
+	      }
+	    }, _callee6, null, [[11, 24, 27, 30]]);
+	  }));
+
+	  return function list(_x8, _x9) {
+	    return _ref7.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param notebook_id
+	 * @param options
+	 * @param options.tags?: string[]
+	 * @param options.count?: number
+	 * @param options.edit_mode?: number
+	 * @param options.sort_by?: 0 | 1 | 2
+	 */
+
+	var listSharedNotes = /*#__PURE__*/function () {
+	  var _ref8 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(rootNotebookId, options) {
+	    var _yield$store$level2SD, edges, _yield$store$level2SD2, rootEdge, sharedNotebooksWithRootNoteBook, ids, mapper, vidOfCurrentUserB64, esakOfCurrentUser;
+
+	    return regenerator.wrap(function _callee8$(_context8) {
+	      while (1) {
+	        switch (_context8.prev = _context8.next) {
+	          case 0:
+	            _context8.next = 2;
+	            return store$3.level2SDK.edgeServices.retrieveEdge({
+	              idList: [rootNotebookId],
+	              options: _objectSpread$6(_objectSpread$6({}, options), {}, {
+	                type: 10001,
+	                xfname: 'refid'
+	              })
+	            });
+
+	          case 2:
+	            _yield$store$level2SD = _context8.sent;
+	            edges = _yield$store$level2SD.data;
+	            _context8.next = 6;
+	            return store$3.level2SDK.edgeServices.retrieveEdge({
+	              idList: [rootNotebookId]
+	            });
+
+	          case 6:
+	            _yield$store$level2SD2 = _context8.sent;
+	            rootEdge = _yield$store$level2SD2.data;
+
+	            if (edges) {
+	              _context8.next = 10;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 10:
+	            sharedNotebooksWithRootNoteBook = [].concat(toConsumableArray(edges), toConsumableArray(rootEdge));
+	            ids = [];
+	            mapper = {};
+
+	            if (!sharedNotebooksWithRootNoteBook.length) {
+	              _context8.next = 18;
+	              break;
+	            }
+
+	            vidOfCurrentUserB64 = localStorage.getItem('user_vid');
+	            esakOfCurrentUser = sharedNotebooksWithRootNoteBook.filter(function (edge) {
+	              var vidOfCurrentUserUint8Array = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.evid);
+	              return vidOfCurrentUserB64 === vidOfCurrentUserUint8Array;
+	            }).map(function (edge) {
+	              return edge.eesak;
+	            }).pop();
+	            _context8.next = 18;
+	            return Promise.all(sharedNotebooksWithRootNoteBook.map( /*#__PURE__*/function () {
+	              var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(edge) {
+	                var documents, _iterator2, _step2, document, note;
+
+	                return regenerator.wrap(function _callee7$(_context7) {
+	                  while (1) {
+	                    switch (_context7.prev = _context7.next) {
+	                      case 0:
+	                        _context7.next = 2;
+	                        return listDocs(edge, options);
+
+	                      case 2:
+	                        documents = _context7.sent;
+	                        _iterator2 = _createForOfIteratorHelper$e(documents);
+	                        _context7.prev = 4;
+
+	                        _iterator2.s();
+
+	                      case 6:
+	                        if ((_step2 = _iterator2.n()).done) {
+	                          _context7.next = 15;
+	                          break;
+	                        }
+
+	                        document = _step2.value;
+	                        _context7.next = 10;
+	                        return documentToNote({
+	                          document: document,
+	                          edge: edge,
+	                          esakOfCurrentUser: esakOfCurrentUser
+	                        });
+
+	                      case 10:
+	                        note = _context7.sent;
+	                        ids.push(note.id);
+	                        mapper[note.id] = note;
+
+	                      case 13:
+	                        _context7.next = 6;
+	                        break;
+
+	                      case 15:
+	                        _context7.next = 20;
+	                        break;
+
+	                      case 17:
+	                        _context7.prev = 17;
+	                        _context7.t0 = _context7["catch"](4);
+
+	                        _iterator2.e(_context7.t0);
+
+	                      case 20:
+	                        _context7.prev = 20;
+
+	                        _iterator2.f();
+
+	                        return _context7.finish(20);
+
+	                      case 23:
+	                        return _context7.abrupt("return", documents);
+
+	                      case 24:
+	                      case "end":
+	                        return _context7.stop();
+	                    }
+	                  }
+	                }, _callee7, null, [[4, 17, 20, 23]]);
+	              }));
+
+	              return function (_x12) {
+	                return _ref9.apply(this, arguments);
+	              };
+	            }())).then(function () {
+	              return {
+	                ids: ids,
+	                mapper: mapper
+	              };
+	            })["catch"](function () {
+	              throw new AiTmedError({
+	                name: 'DECRYPTING_NOTES_FAIL'
+	              });
+	            });
+
+	          case 18:
+	            return _context8.abrupt("return", {
+	              ids: ids,
+	              mapper: mapper
+	            });
+
+	          case 19:
+	          case "end":
+	            return _context8.stop();
+	        }
+	      }
+	    }, _callee8);
+	  }));
+
+	  return function listSharedNotes(_x10, _x11) {
+	    return _ref8.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * Todo:
+	 * 1. retrieveDocument with id - check the note is exist or not
+	 * 2.
+	 * @param id
+	 * @param invite_phone_number
+	 * @param edit_mode
+	 */
+	// export async function share(
+	//   id: string | Uint8Array,
+	//   invite_phone_number: string,
+	//   edit_mode: number,
+	// ): Promise<void> {
+	//   console.log('Note->share', id, invite_phone_number, edit_mode)
+	// }
+
+	/**
+	 * Todo:
+	 * 1. retrieveDocument with id - check the note is exist or not
+	 * 2.
+	 * @param id
+	 * @param invited_phone_number
+	 */
+	// export async function unshare(
+	//   id: string | Uint8Array,
+	//   invited_phone_number: string,
+	// ): Promise<void> {
+	//   console.log('Note->unshare', id, invited_phone_number)
+	// }
+
+	var Note = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		create: create,
+		retrieve: retrieve,
+		remove: remove,
+		update: update,
+		save: save,
+		list: list,
+		listSharedNotes: listSharedNotes
+	});
+
+	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	/**
+	 *
+	 * @param document: Doc
+	 * @param edge?: Edge
+	 * @returns Promise<Note>
+	 */
+
+	var documentToNote$1 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
+	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            document = _ref.document, _edge = _ref._edge, esakOfCurrentUser = _ref.esakOfCurrentUser;
+
+	            if (!(typeof _edge === 'undefined')) {
+	              _context.next = 7;
+	              break;
+	            }
+
+	            _context.next = 4;
+	            return retrieveEdge(document.eid);
+
+	          case 4:
+	            _context.t0 = _context.sent;
+	            _context.next = 8;
+	            break;
+
+	          case 7:
+	            _context.t0 = _edge;
+
+	          case 8:
+	            edge = _context.t0;
+
+	            if (!(edge === null)) {
+	              _context.next = 11;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
+	            });
+
+	          case 11:
+	            //TODO
+	            //currently commented since does not allow comparison between shared notebook
+	            //and docs from root notebook
+	            // if (
+	            //   !store.utils.compareUint8Arrays(
+	            //     <Uint8Array>edge.eid,
+	            //     <Uint8Array>document.eid,
+	            //   )
+	            // ) {
+	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
+	            // }
+	            name = document.name;
+	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
+	            deat = document.deat; // DType
+
+	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
+	            dType = isOldDataStructure ? new DType() : new DType(document.type);
+
+	            if (isOldDataStructure) {
+	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
+	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
+	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
+	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
+	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
+	              dType.setMediaType(name.type);
+	            } // Get data
+
+
+	            content = null, error = null;
+	            _context.prev = 18;
+
+	            if (!dType.isOnServer) {
+	              _context.next = 29;
+	              break;
+	            }
+
+	            if (!(name.data !== undefined)) {
+	              _context.next = 26;
+	              break;
+	            }
+
+	            _context.next = 23;
+	            return store$3.level2SDK.utilServices.base64ToUint8Array(name.data);
+
+	          case 23:
+	            data = _context.sent;
+	            _context.next = 27;
+	            break;
+
+	          case 26:
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'name.data is undefined'
+	            });
+
+	          case 27:
+	            _context.next = 46;
+	            break;
+
+	          case 29:
+	            if (!(deat !== null && deat.url)) {
+	              _context.next = 45;
+	              break;
+	            }
+
+	            _context.next = 32;
+	            return store$3.level2SDK.documentServices.downloadDocumentFromS3({
+	              url: deat.url
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 32:
+	            response = _context.sent;
+
+	            if (response) {
+	              _context.next = 35;
+	              break;
+	            }
+
+	            throw 'no response';
+
+	          case 35:
+	            if (!dType.isBinary) {
+	              _context.next = 39;
+	              break;
+	            }
+
+	            _context.t1 = response.data;
+	            _context.next = 42;
+	            break;
+
+	          case 39:
+	            _context.next = 41;
+	            return store$3.level2SDK.utilServices.base64ToUint8Array(response.data);
+
+	          case 41:
+	            _context.t1 = _context.sent;
+
+	          case 42:
+	            data = _context.t1;
+	            _context.next = 46;
+	            break;
+
+	          case 45:
+	            throw 'deat.url is missing';
+
+	          case 46:
+	            // Decryption
+	            edgeHasBesak = edge.besak && edge.besak !== '';
+	            edgeHasEesak = edge.eesak && edge.eesak !== '';
+
+	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
+	              _context.next = 71;
+	              break;
+	            }
+
+	            if (esakOfCurrentUser) {
+	              esak = esakOfCurrentUser;
+	            } else {
+	              esak = edgeHasBesak ? edge.besak : edge.eesak;
+	            }
+
+	            if (!edge.sig) {
+	              _context.next = 57;
+	              break;
+	            }
+
+	            if (edge.sig instanceof Uint8Array) {
+	              publicKeyOfReceiver = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+	            } else {
+	              publicKeyOfReceiver = edge.sig;
+	            }
+
+	            _context.next = 54;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 54:
+	            data = _context.sent;
+	            _context.next = 71;
+	            break;
+
+	          case 57:
+	            if (!(!edge.sig && edge.type === 10001)) {
+	              _context.next = 65;
+	              break;
+	            }
+
+	            pkLocalStorage = localStorage.getItem('pk');
+	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
+	            _context.next = 62;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 62:
+	            data = _context.sent;
+	            _context.next = 71;
+	            break;
+
+	          case 65:
+	            if (!(edge.type === 10000)) {
+	              _context.next = 71;
+	              break;
+	            }
+
+	            _pkLocalStorage = localStorage.getItem('pk');
+	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
+	            _context.next = 70;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 70:
+	            data = _context.sent;
+
+	          case 71:
+	            // Ungzip
+	            if (dType.isGzip) data = ungzip$1(data);
+	            _context.next = 74;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
+
+	          case 74:
+	            blob = _context.sent;
+
+	            if (!/^text\//.test(blob.type)) {
+	              _context.next = 81;
+	              break;
+	            }
+
+	            _context.next = 78;
+	            return new Response(blob).text();
+
+	          case 78:
+	            content = _context.sent;
+	            _context.next = 95;
+	            break;
+
+	          case 81:
+	            if (!(blob.type === 'application/json')) {
+	              _context.next = 94;
+	              break;
+	            }
+
+	            _context.next = 84;
+	            return new Response(blob).text();
+
+	          case 84:
+	            jsonStr = _context.sent;
+	            _context.prev = 85;
+	            content = JSON.parse(jsonStr);
+	            _context.next = 92;
+	            break;
+
+	          case 89:
+	            _context.prev = 89;
+	            _context.t2 = _context["catch"](85);
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
+	            });
+
+	          case 92:
+	            _context.next = 95;
+	            break;
+
+	          case 94:
+	            content = blob;
+
+	          case 95:
+	            _context.next = 102;
+	            break;
+
+	          case 97:
+	            _context.prev = 97;
+	            _context.t3 = _context["catch"](18);
+
+	            if (typeof _context.t3 === 'string') {
+	              error = new AiTmedError({
+	                name: 'DOWNLOAD_FROM_S3_FAIL',
+	                message: "Note -> documentToNote -> ".concat(_context.t3)
+	              });
+	            } else {
+	              error = _context.t3;
+	            }
+
+	            content = null;
+
+	          case 102:
+	            return _context.abrupt("return", _objectSpread$7(_objectSpread$7({}, document), {}, {
+	              name: {
+	                title: name.title,
+	                type: contentType,
+	                content: content,
+	                tags: name.tags || []
+	              },
+	              created_at: document.ctime * 1000,
+	              modified_at: document.mtime * 1000,
+	              type: {
+	                isOnServer: dType.isOnServer,
+	                isZipped: dType.isGzip,
+	                isBinary: dType.isBinary,
+	                isEncrypted: dType.isEncrypted,
+	                isEditable: dType.isEditable,
+	                applicationDataType: dType.dataType,
+	                mediaType: dType.mediaType,
+	                size: document.size
+	              }
+	            }));
+
+	          case 103:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee, null, [[18, 97], [85, 89]]);
+	  }));
+
+	  return function documentToNote(_x) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+
+	/**
+	 * @param params
+	 * @param params.edge_id: string
+	 * @param params.title: string
+	 * @param params.content: string | Blob
+	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
+	 * @param params.tags?: string[]
+	 * @param params.dataType?: number
+	 * @returns Promise<Note>
+	 */
+
+	var create$1 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
+	    var edge_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            edge_id = _ref.edge_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
+	            _context.next = 3;
+	            return retrieveEdge(edge_id);
+
+	          case 3:
+	            edge = _context.sent;
+
+	            if (edge) {
+	              _context.next = 6;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 6:
+	            dType = new DType();
+	            dType.dataType = dataType; // Permission
+
+	            dType.isEditable = true; // Content to Blob
+
+	            _context.next = 11;
+	            return contentToBlob(content, type);
+
+	          case 11:
+	            blob = _context.sent;
+	            dType.setMediaType(blob.type); // Gzip
+
+	            _context.next = 15;
+	            return produceGzipData(blob);
+
+	          case 15:
+	            _yield$produceGzipDat = _context.sent;
+	            gzipData = _yield$produceGzipDat.data;
+	            isGzip = _yield$produceGzipDat.isGzip;
+	            dType.isGzip = isGzip;
+	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
+
+	            esak = '';
+	            publicKeyOfReceiver = '';
+
+	            if (!(edge.besak && edge.sig)) {
+	              _context.next = 33;
+	              break;
+	            }
+
+	            esak = edge.besak;
+
+	            if (!(edge.sig instanceof Uint8Array)) {
+	              _context.next = 30;
+	              break;
+	            }
+
+	            _context.next = 27;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+
+	          case 27:
+	            publicKeyOfReceiver = _context.sent;
+	            _context.next = 31;
+	            break;
+
+	          case 30:
+	            publicKeyOfReceiver = edge.sig;
+
+	          case 31:
+	            _context.next = 42;
+	            break;
+
+	          case 33:
+	            if (!(edge.eesak && edge.sig)) {
+	              _context.next = 42;
+	              break;
+	            }
+
+	            esak = edge.eesak;
+
+	            if (!(edge.sig instanceof Uint8Array)) {
+	              _context.next = 41;
+	              break;
+	            }
+
+	            _context.next = 38;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+
+	          case 38:
+	            publicKeyOfReceiver = _context.sent;
+	            _context.next = 42;
+	            break;
+
+	          case 41:
+	            publicKeyOfReceiver = edge.sig;
+
+	          case 42:
+	            _context.next = 44;
+	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
+
+	          case 44:
+	            _yield$produceEncrypt = _context.sent;
+	            data = _yield$produceEncrypt.data;
+	            isEncrypt = _yield$produceEncrypt.isEncrypt;
+	            dType.isEncrypted = isEncrypt;
+	            _context.next = 50;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
+
+	          case 50:
+	            bs64Data = _context.sent;
+	            dType.isBinary = false;
+	            name = {
+	              title: title,
+	              tags: tags,
+	              type: blob.type
+	            }; // data must be base64 in name field
+
+	            if (dType.isOnServer) name.data = bs64Data;
+	            _context.next = 56;
+	            return store$3.level2SDK.documentServices.createDocument({
+	              eid: edge.eid,
+	              type: dType.value,
+	              name: name,
+	              size: blob.size
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 56:
+	            response = _context.sent;
+
+	            if (!(!response || !response.data)) {
+	              _context.next = 59;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> create -> createDocument -> no response'
+	            });
+
+	          case 59:
+	            document = response.data;
+	            deat = document.deat;
+
+	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
+	              _context.next = 64;
+	              break;
+	            }
+
+	            _context.next = 64;
+	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
+	              url: deat.url,
+	              sig: deat.sig,
+	              data: bs64Data
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 64:
+	            _context.next = 66;
+	            return documentToNote$1({
+	              document: document
+	            });
+
+	          case 66:
+	            note = _context.sent;
+	            return _context.abrupt("return", note);
+
+	          case 68:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function create(_x) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param id: Uint8Array | string
+	 * @param _edge?: Edge
+	 * @returns Promise<Note>
+	 */
+	//TODO: refactor to account for retrieving using edge and xfname:eid
+
+	var retrieve$1 = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id, _edge) {
+	    var document, note;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return retrieveDocument(id);
+
+	          case 2:
+	            document = _context2.sent;
+
+	            if (document) {
+	              _context2.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOT_A_NOTE'
+	            });
+
+	          case 5:
+	            _context2.next = 7;
+	            return documentToNote$1({
+	              document: document,
+	              _edge: _edge
+	            });
+
+	          case 7:
+	            note = _context2.sent;
+	            return _context2.abrupt("return", note);
+
+	          case 9:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function retrieve(_x2, _x3) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+
+	var Document$3 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		create: create$1,
+		retrieve: retrieve$1
+	});
+
+	function ownKeys$8(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$8(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+	var eTypes;
+
+	(function (eTypes) {
+	  eTypes[eTypes["ROOT"] = 10000] = "ROOT";
+	  eTypes[eTypes["NOTEBOOK"] = 10001] = "NOTEBOOK";
+	  eTypes[eTypes["INVITE"] = 1050] = "INVITE";
+	  eTypes[eTypes["REJECT_INVITE"] = 1052] = "REJECT_INVITE";
+	  eTypes[eTypes["ACCEPT_INVITE"] = 1060] = "ACCEPT_INVITE";
+	  eTypes[eTypes["AUTHORIZE_INVITE"] = 1070] = "AUTHORIZE_INVITE";
+	  eTypes[eTypes["AUTHORIZE_INVITE_INDEPENDENT"] = 1071] = "AUTHORIZE_INVITE_INDEPENDENT";
+	  eTypes[eTypes["INBOX"] = 10002] = "INBOX";
+	})(eTypes || (eTypes = {}));
+
+	var _Object$keys$reduce = Object.keys(eTypes).reduce(function (acc, cur) {
+	  if (typeof eTypes[cur] === 'number') {
+	    acc[0] = _objectSpread$8(_objectSpread$8({}, acc[0]), {}, defineProperty({}, cur, parseInt(eTypes[cur])));
+	    acc[2].push(cur);
+	  } else {
+	    acc[1] = _objectSpread$8(_objectSpread$8({}, acc[1]), {}, defineProperty({}, cur, eTypes[cur]));
+	    acc[3].push(parseInt(cur));
+	  }
+
+	  return acc;
+	}, [{}, {}, [], []]),
+	    _Object$keys$reduce2 = slicedToArray(_Object$keys$reduce, 4),
+	    typeMapper = _Object$keys$reduce2[0],
+	    codeMapper = _Object$keys$reduce2[1],
+	    typeList = _Object$keys$reduce2[2],
+	    codeList = _Object$keys$reduce2[3];
+
+	/**
+	 * Convert edge object to notebook object
+	 * @param edge: Edge
+	 * @returns NotebookType
+	 */
+	var edgeToNotebook = function edgeToNotebook(edge) {
+	  if (edge.type !== eTypes.NOTEBOOK && edge.type !== eTypes.ROOT) {
+	    throw new AiTmedError({
+	      name: 'NOT_A_NOTEBOOk'
+	    });
+	  }
+
+	  var info;
+
+	  if (_typeof_1(edge.name) === 'object') {
+	    info = edge.name;
+	  } else if (edge.name && typeof edge.name === 'string') {
+	    try {
+	      info = JSON.parse(edge.name);
+	    } catch (error) {
+	      throw new AiTmedError({
+	        name: 'UNKNOW_ERROR',
+	        message: 'Notebook -> edgeToNotebook -> JSON.parse edge.name failed'
+	      });
+	    }
+	  } else {
+	    info = {};
+	  }
+
+	  var notebook = {
+	    id: store$3.utils.idToBase64(edge.eid),
+	    owner_id: store$3.utils.idToBase64(edge.bvid),
+	    info: info,
+	    refid: store$3.utils.idToBase64(edge.refid),
+	    created_at: edge.ctime * 1000,
+	    modified_at: edge.mtime * 1000,
+	    isEncrypt: edge.besak.length > 0 || edge.eesak.length > 0,
+	    type: edge.type
+	  };
+	  return notebook;
+	};
+	/**
+	 *
+	 * @param id: Uint8Array | string
+	 * @returns Promise<NotebookType>
+	 */
+
+	var retrieveNotebook = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(id) {
+	    var edge;
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            _context.next = 2;
+	            return retrieveEdge(id);
+
+	          case 2:
+	            edge = _context.sent;
+
+	            if (edge) {
+	              _context.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 5:
+	            return _context.abrupt("return", edgeToNotebook(edge));
+
+	          case 6:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function retrieveNotebook(_x) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+	var listEdges = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
+	    var params,
+	        _params$shared,
+	        _params$count,
+	        count,
+	        _params$edit_mode,
+	        _params$sort_by,
+	        sort_by,
+	        _params$type,
+	        type,
+	        _params$xfname,
+	        xfname,
+	        isEncrypt,
+	        _params$loid,
+	        loid,
+	        _params$obfname,
+	        obfname,
+	        scondition,
+	        condition,
+	        response,
+	        edges,
+	        _args2 = arguments;
+
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            params = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {};
+	            _params$shared = params.shared, _params$count = params.count, count = _params$count === void 0 ? 10 : _params$count, _params$edit_mode = params.edit_mode, _params$sort_by = params.sort_by, sort_by = _params$sort_by === void 0 ? 0 : _params$sort_by, _params$type = params.type, type = _params$type === void 0 ? eTypes.NOTEBOOK : _params$type, _params$xfname = params.xfname, xfname = _params$xfname === void 0 ? 'bvid' : _params$xfname, isEncrypt = params.isEncrypt, _params$loid = params.loid, loid = _params$loid === void 0 ? '' : _params$loid, _params$obfname = params.obfname, obfname = _params$obfname === void 0 ? 'mtime' : _params$obfname, scondition = params.scondition;
+
+	            if (codeList.includes(type)) {
+	              _context2.next = 4;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_TYPE_INVALID'
+	            });
+
+	          case 4:
+	            condition = [];
+
+	            if (typeof scondition !== 'undefined') {
+	              condition.push(scondition);
+	            }
+
+	            if (isEncrypt === true) condition.push('besak is not null');else if (isEncrypt === false) condition.push('besak is null');
+	            _context2.next = 9;
+	            return store$3.level2SDK.edgeServices.retrieveEdge({
+	              idList: [],
+	              options: {
+	                xfname: xfname,
+	                type: type,
+	                asc: !!sort_by,
+	                scondition: condition.join(' and '),
+	                maxcount: count,
+	                loid: loid,
+	                obfname: obfname
+	              }
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 9:
+	            response = _context2.sent;
+
+	            if (!(!response || !response.data || !Array.isArray(response.data))) {
+	              _context2.next = 12;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Notebook -> utils -> listEdges -> no response'
+	            });
+
+	          case 12:
+	            edges = response.data;
+	            return _context2.abrupt("return", edges);
+
+	          case 14:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function listEdges() {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+
+	function ownKeys$9(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$9(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$9(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$9(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+	/**
+	 * @param params string
+	 * @param params.title: string
+	 * @param params.description?: string
+	 * @param params.isEncrypt: boolean
+	 *
+	 * @returns Promise<Notebook>
+	 */
+	var create$2 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
+	    var title, _ref$description, description, _ref$type, type, _ref$isEncrypt, isEncrypt, edges, response;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            title = _ref.title, _ref$description = _ref.description, description = _ref$description === void 0 ? '' : _ref$description, _ref$type = _ref.type, type = _ref$type === void 0 ? eTypes.NOTEBOOK : _ref$type, _ref$isEncrypt = _ref.isEncrypt, isEncrypt = _ref$isEncrypt === void 0 ? false : _ref$isEncrypt;
+
+	            if (codeList.includes(type)) {
+	              _context.next = 3;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_TYPE_INVALID'
+	            });
+
+	          case 3:
+	            if (!(type === eTypes.ROOT)) {
+	              _context.next = 9;
+	              break;
+	            }
+
+	            _context.next = 6;
+	            return listEdges({
+	              type: eTypes.ROOT
+	            });
+
+	          case 6:
+	            edges = _context.sent;
+
+	            if (!(edges.length > 0)) {
+	              _context.next = 9;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'ROOT_NOTEBOOK_EXIST'
+	            });
+
+	          case 9:
+	            _context.next = 11;
+	            return store$3.level2SDK.edgeServices.createEdge({
+	              type: type,
+	              name: {
+	                title: title,
+	                description: description,
+	                edit_mode: 7
+	              },
+	              isEncrypt: isEncrypt
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 11:
+	            response = _context.sent;
+
+	            if (response) {
+	              _context.next = 14;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Notebook -> create -> createEdge -> no response'
+	            });
+
+	          case 14:
+	            return _context.abrupt("return", edgeToNotebook(response.data));
+
+	          case 15:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function create(_x) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string
+	 * @returns Promise<Notebook>
+	 */
+
+
+	var remove$1 = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
+	    var notebook;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return retrieveNotebook(id);
+
+	          case 2:
+	            notebook = _context2.sent;
+
+	            if (!(notebook.type === eTypes.ROOT)) {
+	              _context2.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'ROOT_NOTEBOOK_CANNOT_BE_REMOVED'
+	            });
+
+	          case 5:
+	            _context2.next = 7;
+	            return store$3.level2SDK.edgeServices.deleteEdge([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 7:
+	            return _context2.abrupt("return", notebook);
+
+	          case 8:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function remove(_x2) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string
+	 * @param fields
+	 * @param fields.title?: string
+	 * @param fields.description?: string
+	 * @returns Promise<Notebook>
+	 */
+
+
+	var update$1 = /*#__PURE__*/function () {
+	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id, fields) {
+	    var edge, response, notebook;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return retrieveEdge(id);
+
+	          case 2:
+	            edge = _context3.sent;
+
+	            if (edge) {
+	              _context3.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 5:
+	            _context3.next = 7;
+	            return store$3.level2SDK.edgeServices.updateEdge({
+	              id: edge.eid,
+	              bvid: edge.bvid,
+	              type: edge.type,
+	              besak: edge.besak,
+	              name: _objectSpread$9(_objectSpread$9({}, edge.name), fields)
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 7:
+	            response = _context3.sent;
+
+	            if (!(!response || !response.data)) {
+	              _context3.next = 10;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Notebook -> update -> updateEdge -> no response'
+	            });
+
+	          case 10:
+	            _context3.next = 12;
+	            return retrieveNotebook(edge.eid);
+
+	          case 12:
+	            notebook = _context3.sent;
+	            return _context3.abrupt("return", notebook);
+
+	          case 14:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function update(_x3, _x4) {
+	    return _ref4.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param id: string
+	 * @returns Promise<Notebook>
+	 */
+
+
+	var retrieve$2 = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id) {
+	    var notebook;
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            _context4.next = 2;
+	            return retrieveNotebook(id);
+
+	          case 2:
+	            notebook = _context4.sent;
+	            return _context4.abrupt("return", notebook);
+
+	          case 4:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function retrieve(_x5) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param param
+	 * @param param.shared?: Boolean
+	 * @param param.count?: number
+	 * @param param.edit_mode?: number
+	 * @param param.sort_by?: 0 | 1 | 2
+	 * @returns response
+	 * @returns response.ids: string[]
+	 * @returns response.mapper: Record<string, Notebook>
+	 */
+
+
+	var list$1 = /*#__PURE__*/function () {
+	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
+	    var params,
+	        edges,
+	        result,
+	        _args5 = arguments;
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            params = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : {};
+	            _context5.next = 3;
+	            return listEdges(params);
+
+	          case 3:
+	            edges = _context5.sent;
+	            result = edges.reduce(function (acc, edge) {
+	              var notebook = edgeToNotebook(edge);
+	              acc.ids.push(notebook.id);
+	              acc.mapper[notebook.id] = notebook;
+	              return acc;
+	            }, {
+	              ids: [],
+	              mapper: {}
+	            });
+	            return _context5.abrupt("return", result);
+
+	          case 6:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function list() {
+	    return _ref6.apply(this, arguments);
+	  };
+	}(); // /**
+	//  * @param param
+	//  * @param param.: number
+	//  * @param param.count?: number
+	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
+	//  * @param param.sort_by?: 0 | 1 | 2
+	//  * @returns response
+	//  * @returns response.ids: string[]
+	//  * @returns response.mapper: Record<string, Notebook>
+	//  * 
+	//  * -list of notebooks shared with user
+	//  */
+	// const listSharedNotebooks: NotebookTypes.ListSharedNotebooks = async (params = {}) => {
+	//   const edges = await listEdges({ type: 10001, xfname: 'evid', ...params })
+	//   let result
+	//   result = edges.reduce<NotebookTypes.ListReturn>(
+	//     (acc, edge) => {
+	//       const notebook = edgeToNotebook(edge)
+	//       acc.ids.push(notebook.id)
+	//       acc.mapper[notebook.id] = notebook
+	//       return acc
+	//     },
+	//     { ids: [], mapper: {} },
+	//   )
+	//   return result
+	// }
+	// /**
+	//  * @param param
+	//  * @param param.count?: number 
+	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
+	//  * @param param.fromMe? boolean -if true xfname = bvid (i.e query all invites created by user) 
+	//  * @param param.sort_by?:  0 | 1 | 2
+	//  * @returns response
+	//  * @returns response.ids: string[]
+	//  * @returns response.mapper: Record<string, Invite>
+	//  */
+	// const listInvites: NotebookTypes.ListInvites = async (params) => {
+	//   let xfname = 'evid'
+	//   if (params && params.fromMe) {
+	//     xfname = 'bvid'
+	//   }
+	//   const edges = await listEdges({ type: 1050, xfname, ...params })
+	//   let result
+	//   result = edges.reduce<NotebookTypes.ListInvitesReturn>(
+	//     (acc, edge) => {
+	//       const invite = edgeToInvite(edge)
+	//       acc.ids.push(invite.id)
+	//       acc.mapper[invite.id] = invite
+	//       return acc
+	//     },
+	//     { ids: [], mapper: {} },
+	//   )
+	//   return result
+	// }
+	// /**
+	//  * @param param
+	//  * @param param.count?: number
+	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
+	//  * @param param.fromMe? boolean -if true xfname = bvid (i.e query all accedtedInvites created by user) 
+	//  * @param param.sort_by?:  0 | 1 | 2
+	//  * @returns response
+	//  * @returns response.ids: string[]
+	//  * @returns response.mapper: Record<string, Invite>
+	//  */
+	// const listAcceptedInvites: NotebookTypes.ListAcceptedInvites = async (params) => {
+	//   let xfname = 'evid'
+	//   if (params && params.fromMe) {
+	//     xfname = 'bvid'
+	//   }
+	//   const edges = await listEdges({ type: 10060, xfname, ...params })
+	//   let result
+	//   result = edges.reduce<NotebookTypes.ListAcceptedInvitesReturn>(
+	//     (acc, edge) => {
+	//       const acceptedInvite = edgeToAcceptedInvite(edge)
+	//       acc.ids.push(acceptedInvite.id)
+	//       acc.mapper[acceptedInvite.id] = acceptedInvite
+	//       return acc
+	//     },
+	//     { ids: [], mapper: {} },
+	//   )
+	//   return result
+	// }
+	// /**
+	//  * 
+	//  * @param params
+	//  * @param params.info Record<string, any> -notebook/invitation details
+	//  * @param params.notebookId string | Uint8Array -the id of the notebook being shared
+	//  * @param params.directedToId string | Uint8Array -the vid of the receiver of the invitation
+	//  * 
+	//  * @returns Promise<Notebook>
+	//  */
+	// const createInvite: NotebookTypes.CreateInvite = async ({ info, notebookId, directedToId }) => {
+	//   const invite = await Invite.create({ info, refid: notebookId, directedToId })
+	//   return invite
+	// }
+	// /**
+	//  * 
+	//  * @param param
+	//  * @param params.info Record<string, any> -invitation/notebook details
+	//  * @param params.inviteId string | Uint8Array -edge id of the invitation being responded to
+	//  * @param params.directedToId string | Uint8Array -vid of the sender of the invitation(receiver of the acceptance)
+	//  * 
+	//  * @returns Promise<Notebook>
+	//  */
+	// const acceptInvite: NotebookTypes.AcceptInvite = async ({ info, inviteId, directedToId }) => {
+	//   const acceptedInvite = await Invite.accept({ info, inviteId, directedToId })
+	//   return acceptedInvite
+	// }
+	// /**
+	//  * 
+	//  * @param param
+	//  * @param params.notebookInfo Record<string, any> -invitation/notebook details
+	//  * @param params.acceptanceId string | Uint8Array -edge id of the acceptedInvitation edge
+	//  * @param params.directedToId string | Uint8Array -evid of the receive of the invitation(user that accepted invitation)
+	//  * 
+	//  * @returns Promise<Notebook>
+	//  */
+	// const authorizeEvent: NotebookTypes.AuthorizeEvent = async ({
+	//   info,
+	//   acceptanceId,
+	//   directedToId
+	// }) => {
+	//   const authorizedEdge = await Invite.authorize({ info, acceptanceId, directedToId })
+	//   return edgeToNotebook(authorizedEdge)
+	// }
+
+	/**
+	 * Todo:
+	 * 1. retrieveEdge - check the id is exist or not
+	 * 2.
+	 * @param id: string
+	 * @param invite_phone_number: string
+	 * @param edit_mode: number
+	 */
+	//  export const share = (
+	//   id: string,
+	//   invite_phone_number: string,
+	//   edit_mode: number,
+	// ): Promise<void> => {
+	//   console.log('Notebook->share', id, invite_phone_number, edit_mode)
+	// }
+
+	/**
+	 * Todo:
+	 * 1. retrieveEdge - check the id is exist or not
+	 * 2.
+	 * @param id: string
+	 * @param invited_phone_number: string
+	 */
+	// export const unshare = (
+	//   id: string,
+	//   invited_phone_number: string,
+	// ): Promise<void> => {
+	//   console.log('Notebook->unshare', id, invited_phone_number)
+	// }
+
+	var Notebook = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		create: create$2,
+		remove: remove$1,
+		update: update$1,
+		retrieve: retrieve$2,
+		list: list$1
+	});
+
+	function ownKeys$a(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$a(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$a(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$a(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	var decodeUID = function decodeUID(uid) {
+	  var lastIOfPlus = uid.lastIndexOf('+');
+
+	  if (lastIOfPlus < 0) {
+	    throw new AiTmedError({
+	      name: 'UID_INVALID'
+	    });
+	  }
+
+	  return {
+	    userId: uid.slice(0, lastIOfPlus),
+	    phone_number: uid.slice(lastIOfPlus)
+	  };
+	};
+	var generateUser = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(edge, profile) {
+	    var id, response, vertex, name, _decodeUID, userId, phone_number;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            id = store$3.utils.idToBase64(edge.bvid);
+	            _context.next = 3;
+	            return store$3.level2SDK.vertexServices.retrieveVertex({
+	              idList: [id]
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 3:
+	            response = _context.sent;
+
+	            if (!(!response || response.code !== 0)) {
+	              _context.next = 6;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Account -> utils -> generateUser -> no response'
+	            });
+
+	          case 6:
+	            vertex = response.data[0];
+	            name = vertex.name !== null && vertex.name !== undefined ? vertex.name : {
+	              name: ''
+	            };
+	            _decodeUID = decodeUID(vertex.uid), userId = _decodeUID.userId, phone_number = _decodeUID.phone_number;
+	            return _context.abrupt("return", {
+	              id: id,
+	              name: name.name,
+	              userId: userId,
+	              phone_number: phone_number,
+	              profile: profile || null
+	            });
+
+	          case 10:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function generateUser(_x, _x2) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+	var createRootEdge = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
+	    var notebook;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return Notebook.create({
+	              title: 'root',
+	              isEncrypt: true,
+	              type: eTypes.ROOT
+	            });
+
+	          case 2:
+	            notebook = _context2.sent;
+	            return _context2.abrupt("return", notebook);
+
+	          case 4:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function createRootEdge() {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	var retrieveRootEdge = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
+	    var edges;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return listEdges({
+	              type: eTypes.ROOT
+	            });
+
+	          case 2:
+	            edges = _context3.sent;
+
+	            if (!(edges.length <= 0)) {
+	              _context3.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'ROOT_NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 5:
+	            return _context3.abrupt("return", edges[0]);
+
+	          case 6:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function retrieveRootEdge() {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+	var createProfile = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(rootId, _ref4) {
+	    var profile_photo, _profile, profile, profilePhotoNote, note;
+
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            profile_photo = _ref4.profile_photo, _profile = objectWithoutProperties(_ref4, ["profile_photo"]);
+	            profile = _profile; // Upload Profile Photo
+
+	            if (!profile_photo) {
+	              _context4.next = 9;
+	              break;
+	            }
+
+	            if (/^image/.test(profile_photo.type)) {
+	              _context4.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'PROFILE_PHOTO_INVALID'
+	            });
+
+	          case 5:
+	            _context4.next = 7;
+	            return Note.create({
+	              notebook_id: rootId,
+	              title: 'profile_photo',
+	              content: profile_photo
+	            });
+
+	          case 7:
+	            profilePhotoNote = _context4.sent;
+	            profile.profile_photo = profilePhotoNote.id;
+
+	          case 9:
+	            _context4.next = 11;
+	            return Note.create({
+	              notebook_id: rootId,
+	              title: 'profile',
+	              content: profile,
+	              dataType: 1
+	            });
+
+	          case 11:
+	            note = _context4.sent;
+	            return _context4.abrupt("return", note);
+
+	          case 13:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function createProfile(_x3, _x4) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	var removeProfile = /*#__PURE__*/function () {
+	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, note) {
+	    var profile;
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            profile = note.info.content; // Remove Profile Photo
+
+	            if (!(profile && profile.profile_photo)) {
+	              _context5.next = 4;
+	              break;
+	            }
+
+	            _context5.next = 4;
+	            return store$3.level2SDK.documentServices.deleteDocument([profile.profile_photo]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 4:
+	            _context5.next = 6;
+	            return store$3.level2SDK.documentServices.deleteDocument([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 6:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function removeProfile(_x5, _x6) {
+	    return _ref6.apply(this, arguments);
+	  };
+	}();
+	var retrieveProfile = /*#__PURE__*/function () {
+	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(rootId) {
+	    var notes, noteId, profileInDoc, profile_photo, restProfile, profile, profilePhotoNote, content;
+	    return regenerator.wrap(function _callee6$(_context6) {
+	      while (1) {
+	        switch (_context6.prev = _context6.next) {
+	          case 0:
+	            _context6.next = 2;
+	            return Note.list(rootId, {
+	              dataType: 'profile'
+	            });
+
+	          case 2:
+	            notes = _context6.sent;
+
+	            if (!(notes.ids.length <= 0)) {
+	              _context6.next = 5;
+	              break;
+	            }
+
+	            return _context6.abrupt("return", null);
+
+	          case 5:
+	            noteId = notes.ids[0];
+	            profileInDoc = notes.mapper[noteId].info.content;
+
+	            if (profileInDoc) {
+	              _context6.next = 9;
+	              break;
+	            }
+
+	            return _context6.abrupt("return", null);
+
+	          case 9:
+	            profile_photo = profileInDoc.profile_photo, restProfile = objectWithoutProperties(profileInDoc, ["profile_photo"]);
+	            profile = _objectSpread$a({}, restProfile); // Retrieve Profile Photo
+
+	            if (!profile_photo) {
+	              _context6.next = 17;
+	              break;
+	            }
+
+	            _context6.next = 14;
+	            return Note.retrieve(profile_photo);
+
+	          case 14:
+	            profilePhotoNote = _context6.sent;
+	            content = profilePhotoNote.info.content;
+
+	            if (content && content instanceof Blob) {
+	              profile.profile_photo = content;
+	            }
+
+	          case 17:
+	            return _context6.abrupt("return", {
+	              noteId: noteId,
+	              profile: profile
+	            });
+
+	          case 18:
+	          case "end":
+	            return _context6.stop();
+	        }
+	      }
+	    }, _callee6);
+	  }));
+
+	  return function retrieveProfile(_x7) {
+	    return _ref7.apply(this, arguments);
+	  };
+	}();
+
+	function ownKeys$b(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$b(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$b(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$b(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+	function _unsupportedIterableToArray$g(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$g(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$g(o, minLen); }
+
+	function _arrayLikeToArray$g(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+	/**
+	 * @param phone_number: string
+	 * @returns Promise<string>
+	 */
+
+	var requestVerificationCode = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(phone_number) {
+	    var response;
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            _context.next = 2;
+	            return store$3.level2SDK.Account.requestVerificationCode({
+	              phone_number: phone_number
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            response = _context.sent;
+	            return _context.abrupt("return", response && response.data && response.data.verification_code);
+
+	          case 4:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function requestVerificationCode(_x) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param phone_number: string
+	 * @param password: string
+	 * @param verification_code: string
+	 */
+
+	var create$3 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, name) {
+	    var _yield$store$level2SD, data;
+
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return store$3.level2SDK.Account.createUser({
+	              phone_number: phone_number,
+	              password: password,
+	              verification_code: verification_code,
+	              userInfo: name
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            _yield$store$level2SD = _context2.sent;
+	            data = _yield$store$level2SD.data;
+	            _context2.next = 6;
+	            return createRootEdge();
+
+	          case 6:
+	            return _context2.abrupt("return", data);
+
+	          case 7:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function create(_x2, _x3, _x4, _x5) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param phone_number: string
+	 * @param verification_code: string
+	 * @param password: string
+	 */
+
+	var login = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(phone_number, password, verification_code) {
+	    var user, userVertex;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return loginByVerificationCode(phone_number, verification_code);
+
+	          case 2:
+	            _context3.next = 4;
+	            return loginByPassword(password);
+
+	          case 4:
+	            user = _context3.sent;
+
+	            if (!user.id) {
+	              _context3.next = 12;
+	              break;
+	            }
+
+	            _context3.next = 8;
+	            return retrieveVertex(user.id);
+
+	          case 8:
+	            userVertex = _context3.sent;
+	            return _context3.abrupt("return", userVertex);
+
+	          case 12:
+	            return _context3.abrupt("return", user);
+
+	          case 13:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function login(_x6, _x7, _x8) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * This method is only able to be used after login new device (loginByVerificationCode)
+	 * @param password: string
+	 */
+
+	var loginByPassword = /*#__PURE__*/function () {
+	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(password) {
+	    var user, userVertex;
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            _context4.next = 2;
+	            return store$3.level2SDK.Account.login({
+	              password: password
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            _context4.next = 4;
+	            return retrieve$3();
+
+	          case 4:
+	            user = _context4.sent;
+
+	            if (!user.id) {
+	              _context4.next = 12;
+	              break;
+	            }
+
+	            _context4.next = 8;
+	            return retrieveVertex(user.id);
+
+	          case 8:
+	            userVertex = _context4.sent;
+	            return _context4.abrupt("return", userVertex);
+
+	          case 12:
+	            return _context4.abrupt("return", user);
+
+	          case 13:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function loginByPassword(_x9) {
+	    return _ref4.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param phone_number: string
+	 * @param verification_code: string
+	 */
+
+	var loginByVerificationCode = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(phone_number, verification_code) {
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            _context5.next = 2;
+	            return store$3.level2SDK.Account.loginNewDevice({
+	              phone_number: phone_number,
+	              verification_code: verification_code
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function loginByVerificationCode(_x10, _x11) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Status
+	 * Status.code:
+	 *  0 - LOGGED_IN
+	 *  1 - LOGGED_OUT
+	 */
+
+	var logout = /*#__PURE__*/function () {
+	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6() {
+	    var clean,
+	        status,
+	        latestStatus,
+	        _args6 = arguments;
+	    return regenerator.wrap(function _callee6$(_context6) {
+	      while (1) {
+	        switch (_context6.prev = _context6.next) {
+	          case 0:
+	            clean = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : false;
+
+	            if (!clean) {
+	              _context6.next = 5;
+	              break;
+	            }
+
+	            store$3.level2SDK.Account.logoutClean();
+	            _context6.next = 11;
+	            break;
+
+	          case 5:
+	            _context6.next = 7;
+	            return getStatus();
+
+	          case 7:
+	            status = _context6.sent;
+
+	            if (!(status.code === 1)) {
+	              _context6.next = 10;
+	              break;
+	            }
+
+	            return _context6.abrupt("return", status);
+
+	          case 10:
+	            store$3.level2SDK.Account.logout();
+
+	          case 11:
+	            _context6.next = 13;
+	            return getStatus();
+
+	          case 13:
+	            latestStatus = _context6.sent;
+	            return _context6.abrupt("return", latestStatus);
+
+	          case 15:
+	          case "end":
+	            return _context6.stop();
+	        }
+	      }
+	    }, _callee6);
+	  }));
+
+	  return function logout() {
+	    return _ref6.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * Todo:
+	 *    waiting for backend to support verificating the verification code
+	 * @param phone_number: string
+	 * @param new_phone_number: string
+	 * @param verification_code: string
+	 * @returns Promise<User>
+	 */
+
+	/*
+	export const updatePhoneNumber = async (
+	  phone_number: string,
+	  new_phone_number: string,
+	  verification_code: string,
+	): Promise<AccountTypes.User> => {
+	  console.log(
+	    'Account->updatePhoneNumber',
+	    phone_number,
+	    new_phone_number,
+	    verification_code,
+	  )
+
+	  return mockUser
+	}
+	*/
+
+	/**
+	 * @param param
+	 * @param param.old_password: string
+	 * @param param.new_password: string
+	 */
+
+	var updatePassword$1 = /*#__PURE__*/function () {
+	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(old_password, new_password) {
+	    return regenerator.wrap(function _callee7$(_context7) {
+	      while (1) {
+	        switch (_context7.prev = _context7.next) {
+	          case 0:
+	            _context7.next = 2;
+	            return store$3.level2SDK.Account.changePasswordWithOldPassword({
+	              oldPassword: old_password,
+	              newPassword: new_password
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	          case "end":
+	            return _context7.stop();
+	        }
+	      }
+	    }, _callee7);
+	  }));
+
+	  return function updatePassword(_x12, _x13) {
+	    return _ref7.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param param
+	 * @param param.phone_number: string
+	 * @param param.verification_code: string
+	 * @param param.new_password: string
+	 */
+
+	var updatePasswordByVerificationCode = /*#__PURE__*/function () {
+	  var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(_ref8) {
+	    var phone_number, verification_code, new_password;
+	    return regenerator.wrap(function _callee8$(_context8) {
+	      while (1) {
+	        switch (_context8.prev = _context8.next) {
+	          case 0:
+	            phone_number = _ref8.phone_number, verification_code = _ref8.verification_code, new_password = _ref8.new_password;
+	            _context8.next = 3;
+	            return store$3.level2SDK.Account.changePasswordWithVerificationCode({
+	              phone_number: phone_number,
+	              verification_code: verification_code,
+	              password: new_password
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 3:
+	          case "end":
+	            return _context8.stop();
+	        }
+	      }
+	    }, _callee8);
+	  }));
+
+	  return function updatePasswordByVerificationCode(_x14) {
+	    return _ref9.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param profile: AccountTypes.Profile
+	 *
+	 * @param profile.first_name: string
+	 * @param profile.middle_name?: string
+	 * @param profile.last_name: string
+	 *
+	 * @param profile.gender: 'MALE' | 'FEMALE' | 'PNS'
+	 * @param profile.birthday: number
+	 * @param profile.languages?: string[]
+	 *
+	 * @param profile.profile_photo?: string
+	 *
+	 * @returns Promise<User>
+	 */
+
+	var updateProfile = /*#__PURE__*/function () {
+	  var _ref10 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(profile) {
+	    var root, notes, _iterator, _step, noteId, user;
+
+	    return regenerator.wrap(function _callee9$(_context9) {
+	      while (1) {
+	        switch (_context9.prev = _context9.next) {
+	          case 0:
+	            _context9.next = 2;
+	            return retrieveRootEdge();
+
+	          case 2:
+	            root = _context9.sent;
+	            _context9.next = 5;
+	            return Note.list(root.eid, {
+	              dataType: 'profile'
+	            });
+
+	          case 5:
+	            notes = _context9.sent;
+	            _iterator = _createForOfIteratorHelper$f(notes.ids);
+	            _context9.prev = 7;
+
+	            _iterator.s();
+
+	          case 9:
+	            if ((_step = _iterator.n()).done) {
+	              _context9.next = 15;
+	              break;
+	            }
+
+	            noteId = _step.value;
+	            _context9.next = 13;
+	            return removeProfile(noteId, notes.mapper[noteId]);
+
+	          case 13:
+	            _context9.next = 9;
+	            break;
+
+	          case 15:
+	            _context9.next = 20;
+	            break;
+
+	          case 17:
+	            _context9.prev = 17;
+	            _context9.t0 = _context9["catch"](7);
+
+	            _iterator.e(_context9.t0);
+
+	          case 20:
+	            _context9.prev = 20;
+
+	            _iterator.f();
+
+	            return _context9.finish(20);
+
+	          case 23:
+	            _context9.next = 25;
+	            return createProfile(root.eid, profile);
+
+	          case 25:
+	            _context9.next = 27;
+	            return retrieve$3();
+
+	          case 27:
+	            user = _context9.sent;
+	            return _context9.abrupt("return", user);
+
+	          case 29:
+	          case "end":
+	            return _context9.stop();
+	        }
+	      }
+	    }, _callee9, null, [[7, 17, 20, 23]]);
+	  }));
+
+	  return function updateProfile(_x15) {
+	    return _ref10.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Promise<User>
+	 */
+
+	var retrieve$3 = /*#__PURE__*/function () {
+	  var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10() {
+	    var root, profile, user;
+	    return regenerator.wrap(function _callee10$(_context10) {
+	      while (1) {
+	        switch (_context10.prev = _context10.next) {
+	          case 0:
+	            _context10.next = 2;
+	            return retrieveRootEdge();
+
+	          case 2:
+	            root = _context10.sent;
+	            _context10.next = 5;
+	            return retrieveProfile(root.eid);
+
+	          case 5:
+	            profile = _context10.sent;
+	            _context10.next = 8;
+	            return generateUser(root, profile ? profile.profile : null);
+
+	          case 8:
+	            user = _context10.sent;
+	            return _context10.abrupt("return", user);
+
+	          case 10:
+	          case "end":
+	            return _context10.stop();
+	        }
+	      }
+	    }, _callee10);
+	  }));
+
+	  return function retrieve() {
+	    return _ref11.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Promise<User>
+	 */
+
+	var remove$2 = /*#__PURE__*/function () {
+	  var _ref12 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
+	    var user, edge, notes, _iterator2, _step2, noteId;
+
+	    return regenerator.wrap(function _callee11$(_context11) {
+	      while (1) {
+	        switch (_context11.prev = _context11.next) {
+	          case 0:
+	            _context11.next = 2;
+	            return retrieve$3();
+
+	          case 2:
+	            user = _context11.sent;
+	            _context11.next = 5;
+	            return retrieveRootEdge();
+
+	          case 5:
+	            edge = _context11.sent;
+	            _context11.next = 8;
+	            return Note.list(edge.eid);
+
+	          case 8:
+	            notes = _context11.sent;
+	            // Remove all note under root edge
+	            _iterator2 = _createForOfIteratorHelper$f(notes.ids);
+	            _context11.prev = 10;
+
+	            _iterator2.s();
+
+	          case 12:
+	            if ((_step2 = _iterator2.n()).done) {
+	              _context11.next = 18;
+	              break;
+	            }
+
+	            noteId = _step2.value;
+	            _context11.next = 16;
+	            return store$3.level2SDK.documentServices.deleteDocument([noteId]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 16:
+	            _context11.next = 12;
+	            break;
+
+	          case 18:
+	            _context11.next = 23;
+	            break;
+
+	          case 20:
+	            _context11.prev = 20;
+	            _context11.t0 = _context11["catch"](10);
+
+	            _iterator2.e(_context11.t0);
+
+	          case 23:
+	            _context11.prev = 23;
+
+	            _iterator2.f();
+
+	            return _context11.finish(23);
+
+	          case 26:
+	            _context11.next = 28;
+	            return store$3.level2SDK.edgeServices.deleteEdge([edge.eid]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 28:
+	            _context11.next = 30;
+	            return store$3.level2SDK.vertexServices.deleteVertex([edge.bvid]);
+
+	          case 30:
+	            _context11.next = 32;
+	            return logout(true);
+
+	          case 32:
+	            return _context11.abrupt("return", user);
+
+	          case 33:
+	          case "end":
+	            return _context11.stop();
+	        }
+	      }
+	    }, _callee11, null, [[10, 20, 23, 26]]);
+	  }));
+
+	  return function remove() {
+	    return _ref12.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Status
+	 * Status.code:
+	 *  0 - LOGGED_IN
+	 *  1 - LOGGED_OUT
+	 *  2 - NEW_DEVICE
+	 * Status.userId: string
+	 * Status.code: string
+	 */
+
+	var getStatus = /*#__PURE__*/function () {
+	  var _ref13 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12() {
+	    var status, uid, utf8Uid, _accountUtils$decodeU, userId, phone_number;
+
+	    return regenerator.wrap(function _callee12$(_context12) {
+	      while (1) {
+	        switch (_context12.prev = _context12.next) {
+	          case 0:
+	            _context12.next = 2;
+	            return store$3.level2SDK.Account.getStatus();
+
+	          case 2:
+	            status = _context12.sent;
+	            _context12.prev = 3;
+	            uid = localStorage.getItem('uid');
+
+	            if (!(uid === null)) {
+	              _context12.next = 7;
+	              break;
+	            }
+
+	            throw new Error('uid is null');
+
+	          case 7:
+	            utf8Uid = store$3.level2SDK.utilServices.base64ToUTF8(uid);
+	            _accountUtils$decodeU = decodeUID(utf8Uid), userId = _accountUtils$decodeU.userId, phone_number = _accountUtils$decodeU.phone_number;
+	            return _context12.abrupt("return", _objectSpread$b(_objectSpread$b({}, status), {}, {
+	              userId: userId,
+	              phone_number: phone_number
+	            }));
+
+	          case 12:
+	            _context12.prev = 12;
+	            _context12.t0 = _context12["catch"](3);
+	            return _context12.abrupt("return", _objectSpread$b(_objectSpread$b({}, status), {}, {
+	              userId: '',
+	              phone_number: ''
+	            }));
+
+	          case 15:
+	          case "end":
+	            return _context12.stop();
+	        }
+	      }
+	    }, _callee12, null, [[3, 12]]);
+	  }));
+
+	  return function getStatus() {
+	    return _ref13.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * 
+	 * @param password string
+	 * @returns boolean
+	 */
+
+	var verifyUserPassword = function verifyUserPassword(password) {
+	  try {
+	    var _store$level2SDK$Acco = store$3.level2SDK.Account.verifyUserPassword({
+	      password: password
+	    }),
+	        _store$level2SDK$Acco2 = slicedToArray(_store$level2SDK$Acco, 1),
+	        isPasswordValid = _store$level2SDK$Acco2[0];
+
+	    if (isPasswordValid) return true;
+	  } catch (error) {
+	    if (error.name = 'PASSWORD_INVALID') {
+	      return false;
+	    }
+	  }
+
+	  return false;
+	};
+
+	var Account$1 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		requestVerificationCode: requestVerificationCode,
+		create: create$3,
+		login: login,
+		loginByPassword: loginByPassword,
+		loginByVerificationCode: loginByVerificationCode,
+		logout: logout,
+		updatePassword: updatePassword$1,
+		updatePasswordByVerificationCode: updatePasswordByVerificationCode,
+		updateProfile: updateProfile,
+		retrieve: retrieve$3,
+		remove: remove$2,
+		getStatus: getStatus,
+		verifyUserPassword: verifyUserPassword
+	});
+
 	function _createForOfIteratorHelper$g(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$h(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 	function _unsupportedIterableToArray$h(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$h(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$h(o, minLen); }
@@ -78257,6 +78259,7 @@
 
 	function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$c(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
+	 * Maps ecos.eid to id.
 	 * 
 	 * @param edge 
 	 * @returns edge
@@ -78279,13 +78282,13 @@
 	  }
 	}
 	/**
+	 * Merges keys in source object with objects in locations where keys match lookFor.
 	 * 
-	 * @param PopulateKeysArgs {}
-	 * @param PopulateKeysArgs.source Record<string, any>
-	 * @param PopulateKeysArgs.lookFor string
-	 * @param PopulateKeysArgs.locations Record<string, any>[]
-	 * @returns Record<string, any>
-	 * - merges source object with objects in locations where keys match lookFor
+	 * @param PopulateKeysArgs 
+	 * @param PopulateKeysArgs.source Object to populate.
+	 * @param PopulateKeysArgs.lookFor Symbols to lookFor in properties e.g ['..,.']
+	 * @param PopulateKeysArgs.locations 
+	 * @returns Populated object.
 	 */
 
 
@@ -78357,7 +78360,7 @@
 	        output = mergeDeep(_mergedObjects, output);
 	        delete output[key];
 	      }
-	    } else if (isObject$5(output[key])) {
+	    } else if (isObject$4(output[key])) {
 	      output[key] = populateKeys({
 	        source: output[key],
 	        lookFor: lookFor,
@@ -78365,7 +78368,7 @@
 	      });
 	    } else if (Array.isArray(output[key])) {
 	      output[key] = output[key].map(function (elem) {
-	        if (isObject$5(elem)) {
+	        if (isObject$4(elem)) {
 	          return populateKeys({
 	            source: elem,
 	            lookFor: lookFor,
@@ -78380,11 +78383,12 @@
 	  return output;
 	}
 	/**
+	 * Used to look up value of a key given the path and source locations to for the value in.
 	 * 
-	 * @param directions string -dot notation leading to location of value
-	 * @param location - Record<string, any> -place to look for value
-	 * @returns any - whatever value that was attached to the location object at the given directions
-	 * @throws UnableToLocateValue if value is not found given the directions and location
+	 * @param directions  Path leading to the location of value
+	 * @param location Sources to look for value in.
+	 * @returns Whatever value that was attached to the property at the given directions.
+	 * @throws {UnableToLocateValue} When value is not found given the directions and location.
 	 */
 
 
@@ -78401,10 +78405,11 @@
 	  }
 	}
 	/**
+	 * Checks whether or not an object has been de-referenced.
 	 * 
-	 * @param item string | Record<string, any>
-	 * @returns boolean
-	 * -takes in an object or string and checks whether or not the item has been populated
+	 * @param item 
+	 * @returns true if the object has already been dereferenced and false otherwise.
+	 * 
 	 */
 
 
@@ -78413,16 +78418,16 @@
 
 	  var isPop = true;
 
-	  if (isObject$5(itemCopy)) {
+	  if (isObject$4(itemCopy)) {
 	    for (var _i = 0, _Object$keys = Object.keys(itemCopy); _i < _Object$keys.length; _i++) {
 	      var key = _Object$keys[_i];
 	      if (!isPop) return isPop;
 
-	      if (isObject$5(itemCopy[key])) {
+	      if (isObject$4(itemCopy[key])) {
 	        isPop = isPopulated(itemCopy[key]);
 	      } else if (Array.isArray(itemCopy[key])) {
 	        isPop = itemCopy[key].forEach(function (elem) {
-	          if (isObject$5(elem)) {
+	          if (isObject$4(elem)) {
 	            isPop = isPopulated(elem);
 	          } else if (typeof elem === 'string') {
 	            if (elem.startsWith('.') || elem.startsWith('..')) {
@@ -78443,10 +78448,11 @@
 	  return isPop;
 	}
 	/**
+	 * Attaches ecos functions to the object.
 	 * 
-	 * @param cadlObject Record<string, any>
-	 * @param dispatch Function
-	 * @returns Record<string,any>
+	 * @param cadlObject 
+	 * @param dispatch 
+	 * @returns The object with functions attached to it.
 	 */
 
 
@@ -78479,9 +78485,9 @@
 	    //traverse through the page object and look for the api keyword
 	    var output = cloneDeep_1(cadlObject || {});
 
-	    if (isObject$5(output)) {
+	    if (isObject$4(output)) {
 	      Object.keys(output).forEach(function (key) {
-	        if (isObject$5(output[key])) {
+	        if (isObject$4(output[key])) {
 	          output[key] = attachFnsHelper({
 	            pageName: pageName,
 	            cadlObject: output[key],
@@ -78489,7 +78495,7 @@
 	          });
 	        } else if (Array.isArray(output[key])) {
 	          output[key] = output[key].map(function (elem) {
-	            if (isObject$5(elem)) return attachFnsHelper({
+	            if (isObject$4(elem)) return attachFnsHelper({
 	              pageName: pageName,
 	              cadlObject: elem,
 	              dispatch: dispatch
@@ -78540,10 +78546,14 @@
 	                            }
 
 	                            _context.prev = 7;
-	                            console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
-	                              idList: idList,
-	                              options: _objectSpread$c({}, options)
-	                            });
+
+	                            if (store$3.env === 'development') {
+	                              console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
+	                                idList: idList,
+	                                options: _objectSpread$c({}, options)
+	                              });
+	                            }
+
 	                            _context.next = 11;
 	                            return store$3.level2SDK.edgeServices.retrieveEdge({
 	                              idList: idList,
@@ -78567,7 +78577,11 @@
 	                              res = res.map(function (edge) {
 	                                return replaceEidWithId(edge);
 	                              });
-	                              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+
+	                              if (store$3.env === 'development') {
+	                                console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	                              }
+
 	                              dispatch({
 	                                type: 'update-data',
 	                                //TODO: handle case for data is an array or an object
@@ -78588,7 +78602,10 @@
 	                            } //TODO:handle else case
 
 
-	                            console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	                            if (store$3.env === 'development') {
+	                              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	                            }
+
 	                            return _context.abrupt("return", res);
 
 	                          case 22:
@@ -78649,9 +78666,13 @@
 	                              }
 
 	                              _context2.prev = 7;
-	                              console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
-	                                id: id
-	                              }));
+
+	                              if (store$3.env === 'development') {
+	                                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                                  id: id
+	                                }));
+	                              }
+
 	                              _context2.next = 11;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
@@ -78661,7 +78682,11 @@
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
+
+	                              if (store$3.env === 'development') {
+	                                console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
+	                              }
+
 	                              _context2.next = 20;
 	                              break;
 
@@ -78676,9 +78701,13 @@
 
 	                            case 22:
 	                              _context2.prev = 22;
-	                              console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
-	                                id: id
-	                              }));
+
+	                              if (store$3.env === 'development') {
+	                                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                                  id: id
+	                                }));
+	                              }
+
 	                              _context2.next = 26;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
@@ -78686,7 +78715,11 @@
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
+
+	                              if (store$3.env === 'development') {
+	                                console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
+	                              }
+
 	                              _context2.next = 35;
 	                              break;
 
@@ -79128,9 +79161,13 @@
 	                            _cloneDeep7 = cloneDeep_1(output || {}), api = _cloneDeep7.api, dataKey = _cloneDeep7.dataKey, dataIn = _cloneDeep7.dataIn, dataOut = _cloneDeep7.dataOut, options = objectWithoutProperties(_cloneDeep7, ["api", "dataKey", "dataIn", "dataOut"]);
 	                            res = [];
 	                            _context7.prev = 2;
-	                            console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
-	                              options: _objectSpread$c({}, options)
-	                            });
+
+	                            if (store$3.env === 'development') {
+	                              console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
+	                                options: _objectSpread$c({}, options)
+	                              });
+	                            }
+
 	                            _context7.next = 6;
 	                            return store$3.level2SDK.vertexServices.retrieveVertex({
 	                              idList: [],
@@ -79155,7 +79192,10 @@
 	                              break;
 	                            }
 
-	                            console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+	                            if (store$3.env === 'development') {
+	                              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+	                            }
+
 	                            dispatch({
 	                              type: 'update-data',
 	                              //TODO: handle case for data is an array or an object
@@ -79176,7 +79216,10 @@
 	                            return _context7.abrupt("return", res);
 
 	                          case 19:
-	                            console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res); //TODO:handle else case
+	                            if (store$3.env === 'development') {
+	                              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+	                            } //TODO:handle else case
+
 
 	                            return _context7.abrupt("return", null);
 
@@ -79231,7 +79274,7 @@
 	                              throw _context8.t0;
 
 	                            case 13:
-	                              if (!(Array.isArray(res) && res.length > 0 || isObject$5(res))) {
+	                              if (!(Array.isArray(res) && res.length > 0 || isObject$4(res))) {
 	                                _context8.next = 17;
 	                                break;
 	                              }
@@ -79375,13 +79418,14 @@
 	  }
 	}
 	/**
+	 * Returns a function that is used to evalutate actionType evalObject.
+	 * 
 	 * @param EvalStateArgs
-	 * @param EvalStateArgs.pageName string
-	 * @param EvalStateArgs.updateObject Record<string, any>
-	 * @param EvalStateArgs.dispatch Function
-	 * @returns Function
+	 * @param EvalStateArgs.pageName 
+	 * @param EvalStateArgs.updateObject 
+	 * @param EvalStateArgs.dispatch 
+	 * @returns Function that runs the series of operations detailed in the updateObject.
 	 *
-	 *  - returns a function that is used to evalutate actionType evalObject
 	 */
 
 
@@ -79415,12 +79459,13 @@
 	  }));
 	}
 	/**
-	 * @param ReplaceEvalObjectArgs
-	 * @param ReplaceEvalObjectArgs.cadlObject Record<string, any>
-	 * @param ReplaceEvalObjectArgs.dispatch Function
-	 * @returns Record<string, any>
+	 * Replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
 	 * 
-	 * - replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
+	 * @param ReplaceEvalObjectArgs
+	 * @param ReplaceEvalObjectArgs.cadlObject 
+	 * @param ReplaceEvalObjectArgs.dispatch 
+	 * @returns Object with evalObject replaced by a function.
+	 * 
 	 */
 
 
@@ -79432,10 +79477,7 @@
 	  var cadlCopy = cloneDeep_1(cadlObject || {});
 
 	  Object.keys(cadlCopy).forEach(function (key) {
-	    // if (key === 'update') {
-	    //     cadlCopy[key] = evalState({ pageName, updateObject: cadlCopy[key], dispatch })
-	    // } else 
-	    if (key === 'object' && isObject$5(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
+	    if (key === 'object' && isObject$4(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
 	      var updateObject = cloneDeep_1(cadlCopy[key]);
 
 	      cadlCopy[key] = evalState({
@@ -79457,7 +79499,7 @@
 	          }
 	        });
 	      }
-	    } else if (isObject$5(cadlCopy[key])) {
+	    } else if (isObject$4(cadlCopy[key])) {
 	      cadlCopy[key] = replaceEvalObject({
 	        pageName: pageName,
 	        cadlObject: cadlCopy[key],
@@ -79465,7 +79507,7 @@
 	      });
 	    } else if (Array.isArray(cadlCopy[key])) {
 	      cadlCopy[key] = cadlCopy[key].map(function (elem) {
-	        if (isObject$5(elem)) {
+	        if (isObject$4(elem)) {
 	          return replaceEvalObject({
 	            pageName: pageName,
 	            cadlObject: elem,
@@ -79480,15 +79522,17 @@
 	  return cadlCopy;
 	}
 	/**
-	 * @param PopulateStringArgs
-	 * @param PopulateStringArgs.source  string -object that has values that need to be replaced
-	 * @param PopulateStringArgs.lookFor string -item to look for in object
-	 * @param PopulateStringArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
-	 * @param PopulateStringArgs.path string
-	 * @param PopulateStringArgs.dispatch Function
-	 * @param PopulateStringArgs.pageName string
+	 * Used to de-reference a string by looking for value in locations. 
 	 * 
-	 * @returns Record<string. any> 
+	 * @param PopulateStringArgs
+	 * @param PopulateStringArgs.source Object that has values that need to be replaced
+	 * @param PopulateStringArgs.lookFor Item to look for in object
+	 * @param PopulateStringArgs.locations Array of objects that may contain the values for the source object
+	 * @param PopulateStringArgs.path The path to the value that will be changed.
+	 * @param PopulateStringArgs.dispatch Function to change the state.
+	 * @param PopulateStringArgs.pageName 
+	 * 
+	 * @returns De-referenced object. 
 	 */
 
 
@@ -79502,19 +79546,6 @@
 	      pageName = _ref18.pageName;
 	  if (skip && skip.includes(source)) return source;
 	  if (!source.startsWith(lookFor)) return source;
-
-	  if (dispatch && pageName && path) {
-	    var pathStr = path.slice(1).join('.');
-	    dispatch({
-	      type: 'save-ref',
-	      payload: {
-	        pageName: pageName,
-	        path: pathStr,
-	        ref: source
-	      }
-	    });
-	  }
-
 	  var currVal = source;
 	  var replacement;
 
@@ -79538,18 +79569,9 @@
 	  } else if (lookFor === '=') {
 	    if (source.startsWith('=..')) {
 	      currVal = currVal.slice(2);
-	    } // else if (source.startsWith('=.builtIn')) {
-	    //     const builtInFuncs = builtInFns()
-	    //     const pathArr = source.slice(2).split('.')[1]
-	    //     const fn = _.get(builtInFuncs, pathArr)
-	    //     if (fn) {
-	    //         replacement = fn
-	    //         return replacement
-	    //     }
-	    // } 
-	    else if (source.startsWith('=.')) {
-	        currVal = currVal.slice(1);
-	      }
+	    } else if (source.startsWith('=.')) {
+	      currVal = currVal.slice(1);
+	    }
 	  }
 
 	  if (currVal.startsWith('.')) {
@@ -79602,15 +79624,17 @@
 	  return source;
 	}
 	/**
-	 * @param PopulateArrayArgs
-	 * @param PopulateArrayArgs.source  any[] -object that has values that need to be replaced
-	 * @param PopulateArrayArgs.lookFor string -item to look for in object
-	 * @param PopulateArrayArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
-	 * @param PopulateArrayArgs.path string[]
-	 * @param PopulateArrayArgs.dispatch Function
-	 * @param PopulateArrayArgs.pageName string
+	 * Dereference values in an array data structure.
 	 * 
-	 * @returns any[] 
+	 * @param PopulateArrayArgs
+	 * @param PopulateArrayArgs.source Object that has values that need to be replaced.
+	 * @param PopulateArrayArgs.lookFor Item to look for in object
+	 * @param PopulateArrayArgs.locations Array of objects that may contain the values for the source object
+	 * @param PopulateArrayArgs.path 
+	 * @param PopulateArrayArgs.dispatch Function to change the state.
+	 * @param PopulateArrayArgs.pageName 
+	 * 
+	 * @returns Dereferenced array.
 	 */
 
 
@@ -79639,8 +79663,8 @@
 	        dispatch: dispatch,
 	        pageName: pageName
 	      });
-	    } else if (isObject$5(elem)) {
-	      if (!('actionType' in elem && elem.actionType === 'evalObject' && elem.object && isObject$5(elem.object))) {
+	    } else if (isObject$4(elem)) {
+	      if (!('actionType' in elem && elem.actionType === 'evalObject' && elem.object && isObject$4(elem.object))) {
 	        return populateObject({
 	          source: elem,
 	          skip: skip,
@@ -79668,16 +79692,18 @@
 	  return replacement;
 	}
 	/**
-	 * @param PopulateObjectArgs
-	 * @param PopulateObjectArgs.source  Record<string, any> -object that has values that need to be replaced
-	 * @param PopulateObjectArgs.lookFor string -item to look for in object
-	 * @param PopulateObjectArgs.locations Record<string, any>[] -array of objects that may contain the values for the source object
-	 * @param PopulateObjectArgs.skip string[]
-	 * @param PopulateObjectArgs.path string[]
-	 * @param PopulateObjectArgs.dispatch Function
-	 * @param PopulateObjectArgs.pageName string
+	 * De-references source object by looking for items in the given locations.
 	 * 
-	 * @returns Record<string. any> 
+	 * @param PopulateObjectArgs
+	 * @param PopulateObjectArgs.source Object that has values that need to be replaced
+	 * @param PopulateObjectArgs.lookFor Item to look for in object
+	 * @param PopulateObjectArgs.locations Array of objects that may contain the values for the source object
+	 * @param PopulateObjectArgs.skip 
+	 * @param PopulateObjectArgs.path 
+	 * @param PopulateObjectArgs.dispatch 
+	 * @param PopulateObjectArgs.pageName 
+	 * 
+	 * @returns Dereferenced object
 	 */
 
 
@@ -79698,8 +79724,8 @@
 	    var index = key;
 
 	    if (!skip.includes(key) && key !== 'dataKey') {
-	      if (isObject$5(sourceCopy[key])) {
-	        if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject$5(sourceCopy[key].object))) {
+	      if (isObject$4(sourceCopy[key])) {
+	        if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject$4(sourceCopy[key].object))) {
 	          sourceCopy[key] = populateObject({
 	            source: sourceCopy[key],
 	            lookFor: lookFor,
@@ -79736,8 +79762,8 @@
 	  return sourceCopy;
 	}
 	/**
-	 * @param dispatch Function
-	 * @returns Record<string, Function>
+	 * @param dispatch Function to change the state.
+	 * @returns Object of builtIn functions.
 	 */
 
 
@@ -79881,15 +79907,16 @@
 	  };
 	}
 	/**
+	 * De-reference source object by looking for multiple items in multiple locations.
 	 * 
 	 * @param PopulateValsArgs 
-	 * @param PopulateValsArgs.source Record<string, any>
-	 * @param PopulateValsArgs.lookFor string[]
-	 * @param PopulateValsArgs.locations any[]
-	 * @param PopulateValsArgs.skip string[]
-	 * @param PopulateValsArgs.pageName string
-	 * @param PopulateValsArgs.dispatch Function
-	 * @returns Record<string, any>
+	 * @param PopulateValsArgs.source Object that needs de-referencing.
+	 * @param PopulateValsArgs.lookFor An array of items to look for e.g ['.','..']
+	 * @param PopulateValsArgs.locations Locations to look for values.
+	 * @param PopulateValsArgs.skip Keys to skip in the de-referencing process.
+	 * @param PopulateValsArgs.pageName 
+	 * @param PopulateValsArgs.dispatch Function to alter the state.
+	 * @returns 
 	 */
 
 
@@ -79927,20 +79954,21 @@
 	  return sourceCopy;
 	}
 	/**
+	 * Replaces Uint8Array values with base64 values
 	 * 
-	 * @param source Record<string, any>
-	 * @returns Record<string, any>
+	 * @param source Object that needs values replaced.
+	 * @returns Object that has had Uint8Array values mapped to base64.
 	 */
 
 
 	function replaceUint8ArrayWithBase64(source) {
 	  var sourceCopy = cloneDeep_1(source || {});
 
-	  if (isObject$5(source)) {
+	  if (isObject$4(source)) {
 	    Object.keys(sourceCopy).forEach(function (key) {
 	      if (sourceCopy[key] instanceof Uint8Array) {
 	        sourceCopy[key] = store$3.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key]);
-	      } else if (isObject$5(sourceCopy[key])) {
+	      } else if (isObject$4(sourceCopy[key])) {
 	        sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key]);
 	      } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
 	        sourceCopy[key] = sourceCopy[key].map(function (elem) {
@@ -79975,8 +80003,8 @@
 	  /**
 	   * 
 	   * @param CADLARGS
-	   * @param CADLARGS.env string 
-	   * @param CADLARGS.configUrl string 
+	   * @param CADLARGS.env 'development' | 'production'
+	   * @param CADLARGS.configUrl  
 	   * @param CADLARGS.cadlVersion 'test' | 'stable' 
 	   */
 	  function CADL(_ref) {
@@ -80000,13 +80028,7 @@
 
 	    defineProperty(assertThisInitialized(_this), "_assetsUrl", void 0);
 
-	    defineProperty(assertThisInitialized(_this), "_map", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "_root", {
-	      actions: {},
-	      refs: {},
-	      builtIn: builtInFns(_this.dispatch.bind(assertThisInitialized(_this)))
-	    });
+	    defineProperty(assertThisInitialized(_this), "_root", _this.initRoot({}));
 
 	    defineProperty(assertThisInitialized(_this), "_initCallQueue", void 0);
 
@@ -80017,10 +80039,10 @@
 	  }
 	  /**
 	   * @param InitArgs 
-	   * @param InitArgs.BaseDataModel Record<string, any>
-	   * @param InitArgs.BaseCSS Record<string, any>
-	   * @param InitArgs.BasePage Record<string, any>
-	   * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
+	   * @param InitArgs.BaseDataModel 
+	   * @param InitArgs.BaseCSS 
+	   * @param InitArgs.BasePage 
+	   * @throws {UnableToRetrieveYAML} -if unable to retrieve noodlYAML
 	   * @throws {UnableToParseYAML} -if unable to parse yaml file
 	   * @throws {UnableToLoadConfig} -if unable to load config data
 	   * 
@@ -80289,9 +80311,6 @@
 	                  }
 	                }
 
-	                this.dispatch({
-	                  type: 'update-map'
-	                });
 	                this.emit('stateChanged', {
 	                  name: 'update',
 	                  path: '.',
@@ -80299,7 +80318,7 @@
 	                  newVal: this.root
 	                });
 
-	              case 82:
+	              case 81:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -80315,13 +80334,13 @@
 	    }()
 	    /**
 	     * 
-	     * @param string pageName
-	     * @param skip string[] -denotes the keys to skip in the population process 
-	     * @param options { builtIn?: Record<string, any> } -object that takes in set of options for the page
+	     * @param pageName
+	     * @param skip Denotes the keys to skip in the population process 
+	     * @param options Object that takes in set of options for the page
 	     * 
-	     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
-	     * @throws {UnableToParseYAML} -if unable to parse yaml file
-	     * @throws {UnableToExecuteFn} -if something goes wrong while executing any init function
+	     * @throws {UnableToRetrieveYAML} -When unable to retrieve noodlYAML
+	     * @throws {UnableToParseYAML} -When unable to parse yaml file
+	     * @throws {UnableToExecuteFn} -When something goes wrong while executing any init function
 	     * 
 	     * - initiates cadlObject for page specified
 	     */
@@ -80331,6 +80350,8 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
+	        var _this2 = this;
+
 	        var skip,
 	            options,
 	            builtIn,
@@ -80341,59 +80362,49 @@
 	            boundDispatch,
 	            processedPage,
 	            init,
-	            currIndex,
-	            command,
-	            actionType,
-	            dataKey,
-	            dataObject,
-	            funcName,
-	            _command$if,
-	            condExpression,
-	            elseEffect,
-	            condResult,
-	            updatedPage,
-	            populatedUpdatedPage,
-	            populatedUpdatedPageWithFns,
+	            _loop,
+	            _ret,
 	            processedComponents,
 	            replaceUpdateJob2,
-	            _args2 = arguments;
+	            _args3 = arguments;
 
-	        return regenerator.wrap(function _callee2$(_context2) {
+	        return regenerator.wrap(function _callee2$(_context3) {
 	          while (1) {
-	            switch (_context2.prev = _context2.next) {
+	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                skip = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
-	                options = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
+	                skip = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : [];
+	                options = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : {};
 
 	                if (this.cadlEndpoint) {
-	                  _context2.next = 5;
+	                  _context3.next = 5;
 	                  break;
 	                }
 
-	                _context2.next = 5;
+	                _context3.next = 5;
 	                return this.init();
 
 	              case 5:
 	                builtIn = options.builtIn;
 
-	                if (builtIn && isObject_1(builtIn)) {
-	                  this.root.builtIn = _objectSpread$d(_objectSpread$d({}, this.root.builtIn), builtIn);
+	                if (builtIn && isObject$4(builtIn)) {
+	                  this.root = an(this.root, function (draft) {
+	                    draft.builtIn = _objectSpread$d(_objectSpread$d({}, draft.builtIn), builtIn);
+	                  });
 	                }
 
-	                _context2.next = 9;
+	                _context3.next = 9;
 	                return this.getPage(pageName);
 
 	              case 9:
-	                pageCADL = _context2.sent;
+	                pageCADL = _context3.sent;
 	                prevVal = {}; //FOR FORMDATA
 	                //process formData
 
 	                if (this.root[pageName]) {
 	                  prevVal = cloneDeep_1(this.root[pageName]);
-	                  delete this.root[pageName]; // const cloneCurrPage = _.cloneDeep(this.root[pageName])
-	                  // //TODO: test order of overrides
-	                  // const mergedPage = _.merge(pageCADL, { [pageName]: cloneCurrPage })
-	                  // pageCADL = mergedPage
+	                  this.root = an(this.root, function (draft) {
+	                    delete draft[pageName];
+	                  });
 	                }
 
 	                processedFormData = this.processPopulate({
@@ -80411,182 +80422,218 @@
 	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                }); // //replace updateObj with Fn
+	                }); //replace updateObj with Fn
 
-	                boundDispatch = this.dispatch.bind(this); // let replaceUpdateJob = replaceUpdate({ pageName, cadlObject: processedFormData, dispatch: boundDispatch })
-
+	                boundDispatch = this.dispatch.bind(this);
 	                processedPage = processedWithFns;
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedPage); //run init commands if any
+	                this.root = an(this.root, function (draft) {
+	                  return _objectSpread$d(_objectSpread$d({}, draft), processedPage);
+	                }); //run init commands if any
 
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 80;
+	                  _context3.next = 28;
 	                  break;
 	                }
 
 	                this.initCallQueue = init.map(function (_command, index) {
 	                  return index;
 	                });
+	                _loop = /*#__PURE__*/regenerator.mark(function _loop() {
+	                  var currIndex, command, actionType, dataKey, dataObject, funcName, _command$if, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	              case 20:
+	                  return regenerator.wrap(function _loop$(_context2) {
+	                    while (1) {
+	                      switch (_context2.prev = _context2.next) {
+	                        case 0:
+	                          currIndex = _this2.initCallQueue.shift();
+	                          command = init[currIndex];
+
+	                          if (!(typeof command === 'function')) {
+	                            _context2.next = 13;
+	                            break;
+	                          }
+
+	                          _context2.prev = 3;
+	                          _context2.next = 6;
+	                          return command();
+
+	                        case 6:
+	                          _context2.next = 11;
+	                          break;
+
+	                        case 8:
+	                          _context2.prev = 8;
+	                          _context2.t0 = _context2["catch"](3);
+	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
+
+	                        case 11:
+	                          _context2.next = 51;
+	                          break;
+
+	                        case 13:
+	                          if (!(isObject$4(command) && 'actionType' in command)) {
+	                            _context2.next = 28;
+	                            break;
+	                          }
+
+	                          actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
+	                          _context2.t1 = actionType;
+	                          _context2.next = _context2.t1 === 'updateObject' ? 18 : _context2.t1 === 'builtIn' ? 20 : 25;
+	                          break;
+
+	                        case 18:
+	                          _this2.updateObject({
+	                            dataKey: dataKey,
+	                            dataObject: dataObject
+	                          });
+
+	                          return _context2.abrupt("break", 26);
+
+	                        case 20:
+	                          if (!(funcName === 'videoChat')) {
+	                            _context2.next = 24;
+	                            break;
+	                          }
+
+	                          if (!(funcName in _this2.root.builtIn && typeof _this2.root.builtIn[funcName] === 'function')) {
+	                            _context2.next = 24;
+	                            break;
+	                          }
+
+	                          _context2.next = 24;
+	                          return _this2.root.builtIn[funcName](command);
+
+	                        case 24:
+	                          return _context2.abrupt("break", 26);
+
+	                        case 25:
+	                          return _context2.abrupt("return", {
+	                            v: void 0
+	                          });
+
+	                        case 26:
+	                          _context2.next = 51;
+	                          break;
+
+	                        case 28:
+	                          if (!(isObject$4(command) && 'if' in command)) {
+	                            _context2.next = 41;
+	                            break;
+	                          }
+
+	                          //TODO: add the then condition
+	                          _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
+
+	                          if (!(typeof condExpression === 'function')) {
+	                            _context2.next = 39;
+	                            break;
+	                          }
+
+	                          _context2.next = 33;
+	                          return condExpression();
+
+	                        case 33:
+	                          condResult = _context2.sent;
+
+	                          if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
+	                            _context2.next = 39;
+	                            break;
+	                          }
+
+	                          if (!('goto' in _this2.root.builtIn && typeof _this2.root.builtIn['goto'] === 'function')) {
+	                            _context2.next = 39;
+	                            break;
+	                          }
+
+	                          _context2.next = 38;
+	                          return _this2.root.builtIn['goto'](elseEffect['goto']);
+
+	                        case 38:
+	                          return _context2.abrupt("return", {
+	                            v: void 0
+	                          });
+
+	                        case 39:
+	                          _context2.next = 51;
+	                          break;
+
+	                        case 41:
+	                          if (!Array.isArray(command)) {
+	                            _context2.next = 51;
+	                            break;
+	                          }
+
+	                          if (!(typeof command[0][1] === 'function')) {
+	                            _context2.next = 51;
+	                            break;
+	                          }
+
+	                          _context2.prev = 43;
+	                          _context2.next = 46;
+	                          return command[0][1]();
+
+	                        case 46:
+	                          _context2.next = 51;
+	                          break;
+
+	                        case 48:
+	                          _context2.prev = 48;
+	                          _context2.t2 = _context2["catch"](43);
+	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
+
+	                        case 51:
+	                          //updating page after command has been called
+	                          updatedPage = _this2.root[pageName]; //populateObject again to populate any data that was dependant on the command call
+
+	                          populatedUpdatedPage = populateObject({
+	                            source: updatedPage,
+	                            lookFor: '..',
+	                            skip: ['components'],
+	                            locations: [_this2.root[pageName]]
+	                          });
+	                          populatedUpdatedPageWithFns = attachFns({
+	                            cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
+	                            dispatch: boundDispatch
+	                          });
+	                          processedPage = populatedUpdatedPageWithFns;
+	                          init = Object.values(populatedUpdatedPageWithFns)[0].init;
+	                          _this2.root[pageName] = an(_this2.root[pageName], function (draft) {
+	                            Object.assign(draft[pageName], Object.values(populatedUpdatedPageWithFns)[0]);
+	                          });
+
+	                        case 57:
+	                        case "end":
+	                          return _context2.stop();
+	                      }
+	                    }
+	                  }, _loop, null, [[3, 8], [43, 48]]);
+	                });
+
+	              case 21:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 80;
+	                  _context3.next = 28;
 	                  break;
 	                }
 
-	                currIndex = this.initCallQueue.shift();
-	                command = init[currIndex];
+	                return _context3.delegateYield(_loop(), "t0", 23);
 
-	                if (!(typeof command === 'function')) {
-	                  _context2.next = 34;
+	              case 23:
+	                _ret = _context3.t0;
+
+	                if (!(_typeof_1(_ret) === "object")) {
+	                  _context3.next = 26;
 	                  break;
 	                }
 
-	                _context2.prev = 24;
-	                _context2.next = 27;
-	                return command();
+	                return _context3.abrupt("return", _ret.v);
 
-	              case 27:
-	                _context2.next = 32;
+	              case 26:
+	                _context3.next = 21;
 	                break;
 
-	              case 29:
-	                _context2.prev = 29;
-	                _context2.t0 = _context2["catch"](24);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
-
-	              case 32:
-	                _context2.next = 72;
-	                break;
-
-	              case 34:
-	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context2.next = 49;
-	                  break;
-	                }
-
-	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
-	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 41 : 46;
-	                break;
-
-	              case 39:
-	                this.updateObject({
-	                  dataKey: dataKey,
-	                  dataObject: dataObject
-	                });
-	                return _context2.abrupt("break", 47);
-
-	              case 41:
-	                if (!(funcName === 'videoChat')) {
-	                  _context2.next = 45;
-	                  break;
-	                }
-
-	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
-	                  _context2.next = 45;
-	                  break;
-	                }
-
-	                _context2.next = 45;
-	                return this.root.builtIn[funcName](command);
-
-	              case 45:
-	                return _context2.abrupt("break", 47);
-
-	              case 46:
-	                return _context2.abrupt("return");
-
-	              case 47:
-	                _context2.next = 72;
-	                break;
-
-	              case 49:
-	                if (!(isObject_1(command) && 'if' in command)) {
-	                  _context2.next = 62;
-	                  break;
-	                }
-
-	                //TODO: add the then condition
-	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
-
-	                if (!(typeof condExpression === 'function')) {
-	                  _context2.next = 60;
-	                  break;
-	                }
-
-	                _context2.next = 54;
-	                return condExpression();
-
-	              case 54:
-	                condResult = _context2.sent;
-
-	                if (!(!condResult && isObject_1(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                  _context2.next = 60;
-	                  break;
-	                }
-
-	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context2.next = 60;
-	                  break;
-	                }
-
-	                _context2.next = 59;
-	                return this.root.builtIn['goto'](elseEffect['goto']);
-
-	              case 59:
-	                return _context2.abrupt("return");
-
-	              case 60:
-	                _context2.next = 72;
-	                break;
-
-	              case 62:
-	                if (!Array.isArray(command)) {
-	                  _context2.next = 72;
-	                  break;
-	                }
-
-	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 72;
-	                  break;
-	                }
-
-	                _context2.prev = 64;
-	                _context2.next = 67;
-	                return command[0][1]();
-
-	              case 67:
-	                _context2.next = 72;
-	                break;
-
-	              case 69:
-	                _context2.prev = 69;
-	                _context2.t2 = _context2["catch"](64);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
-
-	              case 72:
-	                //updating page after command has been called
-	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
-
-	                populatedUpdatedPage = populateObject({
-	                  source: updatedPage,
-	                  lookFor: '..',
-	                  skip: ['components'],
-	                  locations: [this.root[pageName]]
-	                });
-	                populatedUpdatedPageWithFns = attachFns({
-	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
-	                  dispatch: boundDispatch
-	                });
-	                processedPage = populatedUpdatedPageWithFns;
-	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
-	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context2.next = 20;
-	                break;
-
-	              case 80:
+	              case 28:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -80601,23 +80648,22 @@
 	                  cadlObject: processedComponents,
 	                  dispatch: boundDispatch
 	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), replaceUpdateJob2);
+	                this.root = an(this.root, function (draft) {
+	                  return _objectSpread$d(_objectSpread$d({}, draft), replaceUpdateJob2);
+	                });
 	                this.emit('stateChanged', {
 	                  name: 'update',
 	                  path: "".concat(pageName),
 	                  prevVal: prevVal,
 	                  newVal: this.root
 	                });
-	                this.dispatch({
-	                  type: 'update-map'
-	                });
 
-	              case 85:
+	              case 32:
 	              case "end":
-	                return _context2.stop();
+	                return _context3.stop();
 	            }
 	          }
-	        }, _callee2, this, [[24, 29], [64, 69]]);
+	        }, _callee2, this);
 	      }));
 
 	      function initPage(_x) {
@@ -80627,10 +80673,10 @@
 	      return initPage;
 	    }()
 	    /**
-	     * @param pageName string
+	     * @param pageName 
 	     * @returns CADL_OBJECT
-	     * @throws UnableToRetrieveYAML -if unable to retrieve cadlYAML
-	     * @throws UnableToParseYAML -if unable to parse yaml file
+	     * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
+	     * @throws {UnableToParseYAML} -When unable to parse yaml file
 	     */
 
 	  }, {
@@ -80638,31 +80684,31 @@
 	    value: function () {
 	      var _getPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(pageName) {
 	        var pageCADL, url;
-	        return regenerator.wrap(function _callee3$(_context3) {
+	        return regenerator.wrap(function _callee3$(_context4) {
 	          while (1) {
-	            switch (_context3.prev = _context3.next) {
+	            switch (_context4.prev = _context4.next) {
 	              case 0:
-	                _context3.prev = 0;
+	                _context4.prev = 0;
 	                url = "".concat(this.baseUrl).concat(pageName, "_en.yml");
-	                _context3.next = 4;
+	                _context4.next = 4;
 	                return this.defaultObject(url);
 
 	              case 4:
-	                pageCADL = _context3.sent;
-	                _context3.next = 10;
+	                pageCADL = _context4.sent;
+	                _context4.next = 10;
 	                break;
 
 	              case 7:
-	                _context3.prev = 7;
-	                _context3.t0 = _context3["catch"](0);
-	                throw _context3.t0;
+	                _context4.prev = 7;
+	                _context4.t0 = _context4["catch"](0);
+	                throw _context4.t0;
 
 	              case 10:
-	                return _context3.abrupt("return", pageCADL);
+	                return _context4.abrupt("return", pageCADL);
 
 	              case 11:
 	              case "end":
-	                return _context3.stop();
+	                return _context4.stop();
 	            }
 	          }
 	        }, _callee3, this, [[0, 7]]);
@@ -80675,13 +80721,13 @@
 	      return getPage;
 	    }()
 	    /**
+	     * Retrieves and parses cadl yaml file.
 	     * 
-	     * @param url string
-	     * @returns Promise<Record<string, any>>
-	     * @throws {UnableToRetrieveYAML} -if unable to retrieve cadlYAML
-	     * @throws {UnableToParseYAML} -if unable to parse yaml file
+	     * @param url 
+	     * @returns The raw object version of the noodl file
+	     * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
+	     * @throws {UnableToParseYAML} -When unable to parse yaml file
 	     * 
-	     * -retrieves and parses cadl yaml file
 	     */
 
 	  }, {
@@ -80690,43 +80736,43 @@
 	      var _defaultObject = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(url) {
 	        var cadlYAML, cadlObject, _yield$axios$get, data;
 
-	        return regenerator.wrap(function _callee4$(_context4) {
+	        return regenerator.wrap(function _callee4$(_context5) {
 	          while (1) {
-	            switch (_context4.prev = _context4.next) {
+	            switch (_context5.prev = _context5.next) {
 	              case 0:
-	                _context4.prev = 0;
-	                _context4.next = 3;
+	                _context5.prev = 0;
+	                _context5.next = 3;
 	                return axios$1.get(url);
 
 	              case 3:
-	                _yield$axios$get = _context4.sent;
+	                _yield$axios$get = _context5.sent;
 	                data = _yield$axios$get.data;
 	                cadlYAML = data;
-	                _context4.next = 11;
+	                _context5.next = 11;
 	                break;
 
 	              case 8:
-	                _context4.prev = 8;
-	                _context4.t0 = _context4["catch"](0);
-	                throw new UnableToRetrieveYAML("Unable to retrieve yaml for ".concat(url), _context4.t0);
+	                _context5.prev = 8;
+	                _context5.t0 = _context5["catch"](0);
+	                throw new UnableToRetrieveYAML("Unable to retrieve yaml for ".concat(url), _context5.t0);
 
 	              case 11:
-	                _context4.prev = 11;
+	                _context5.prev = 11;
 	                cadlObject = YAML.parse(cadlYAML);
-	                _context4.next = 18;
+	                _context5.next = 18;
 	                break;
 
 	              case 15:
-	                _context4.prev = 15;
-	                _context4.t1 = _context4["catch"](11);
-	                throw new UnableToParseYAML("Unable to parse yaml for ".concat(url), _context4.t1);
+	                _context5.prev = 15;
+	                _context5.t1 = _context5["catch"](11);
+	                throw new UnableToParseYAML("Unable to parse yaml for ".concat(url), _context5.t1);
 
 	              case 18:
-	                return _context4.abrupt("return", cadlObject);
+	                return _context5.abrupt("return", cadlObject);
 
 	              case 19:
 	              case "end":
-	                return _context4.stop();
+	                return _context5.stop();
 	            }
 	          }
 	        }, _callee4, null, [[0, 8], [11, 15]]);
@@ -80740,11 +80786,12 @@
 	    }()
 	    /**
 	     * 
-	     * @param pageName string
-	     * @param dataKey string
-	     * @returns any
+	     * Returns data associated with given pageName and dataKey.
 	     * 
-	     * -returns data associated with given pageName and dataKey
+	     * @param pageName 
+	     * @param dataKey 
+	     * @returns The data that is assigned to the given path.
+	     * 
 	     */
 
 	  }, {
@@ -80764,17 +80811,17 @@
 	      return dataKey;
 	    }
 	    /**
+	     * Used to populate the references of the noodl files. 
 	     * 
 	     * @param ProcessPopulateArgs 
-	     * @param ProcessPopulateArgs.source  Record<string, any> -item being de-referenced
-	     * @param ProcessPopulateArgs.lookFor  string[] -reference tokens to look for e.g ['.','..']
-	     * @param ProcessPopulateArgs.pageName?  string
-	     * @param ProcessPopulateArgs.skip?  string[] -keys that should not be de-referenced e.g ['name','country']
-	     * @param ProcessPopulateArgs.withFns?  boolean -choose to attach ecos functions to the source
+	     * @param ProcessPopulateArgs.source  The item being de-referenced.
+	     * @param ProcessPopulateArgs.lookFor  Reference tokens to look for e.g ['.','..'].
+	     * @param ProcessPopulateArgs.pageName 
+	     * @param ProcessPopulateArgs.skip Keys that should not be de-referenced e.g ['name','country'].
+	     * @param ProcessPopulateArgs.withFns Choose to attach ecos functions to the source
 	     * 
-	     * @returns Record<string, any> -the processed/de-referenced object
+	     * @returns The processed/de-referenced object.
 	     * 
-	     * - used to populate the references 
 	     */
 
 	  }, {
@@ -80831,7 +80878,7 @@
 	  }, {
 	    key: "dispatch",
 	    value: function dispatch(action) {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      switch (action.type) {
 	        case 'populate':
@@ -80860,7 +80907,9 @@
 	              cadlObject: populateAfterInheriting,
 	              dispatch: boundDispatch
 	            });
-	            this.root[pageName] = withFNs;
+	            this.root = an(this.root, function (draft) {
+	              draft[pageName] = withFNs;
+	            });
 	            this.dispatch({
 	              type: 'update-localStorage'
 	            });
@@ -80878,13 +80927,16 @@
 	            var pathArr = dataKey.split('.');
 
 	            if (_pageName === 'builtIn') {
-	              set_1(this.root, pathArr, data);
+	              this.root = an(this.root, function (draft) {
+	                set_1(draft, pathArr, data);
+	              });
 	            } else if (firstCharacter === firstCharacter.toUpperCase()) {
 	              var currentVal = get_1(this.root, pathArr);
 
 	              var mergedVal = mergeDeep(currentVal, data);
-
-	              set_1(this.root, pathArr, mergedVal);
+	              this.root = an(this.root, function (draft) {
+	                set_1(draft, pathArr, mergedVal);
+	              });
 	            } else {
 	              var _currentVal = get_1(this.root[_pageName], pathArr);
 
@@ -80901,7 +80953,9 @@
 	                _mergedVal = data;
 	              }
 
-	              set_1(this.root[_pageName], pathArr, _mergedVal);
+	              this.root = an(this.root, function (draft) {
+	                set_1(draft[_pageName], pathArr, _mergedVal);
+	              });
 	            }
 
 	            this.dispatch({
@@ -80949,14 +81003,14 @@
 
 	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
 	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                var trimPath, location, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
+	                var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
 
-	                return regenerator.wrap(function _callee5$(_context5) {
+	                return regenerator.wrap(function _callee5$(_context6) {
 	                  while (1) {
-	                    switch (_context5.prev = _context5.next) {
+	                    switch (_context6.prev = _context6.next) {
 	                      case 0:
 	                        if (key.startsWith('=')) {
-	                          _context5.next = 5;
+	                          _context6.next = 5;
 	                          break;
 	                        }
 
@@ -80964,74 +81018,74 @@
 
 	                        if (key.startsWith('..')) {
 	                          trimPath = key.substring(2, key.length - 1);
-	                          location = _this2.root[_pageName3];
 	                          _pathArr2 = trimPath.split('.');
+	                          _this3.root = an(_this3.root, function (draft) {
+	                            set_1(draft[_pageName3], _pathArr2, val);
+	                          });
 
-	                          set_1(location, _pathArr2, val);
-
-	                          _this2.emit('stateChanged', {
+	                          _this3.emit('stateChanged', {
 	                            name: 'update',
 	                            path: "".concat(_pageName3, ".").concat(trimPath),
 	                            newVal: val
 	                          });
 	                        } else if (key.startsWith('.')) {
 	                          trimPath = key.substring(1, key.length - 1);
-	                          location = _this2.root;
 	                          _pathArr3 = trimPath.split('.');
+	                          _this3.root = an(_this3.root, function (draft) {
+	                            set_1(draft, _pathArr3, val);
+	                          });
 
-	                          set_1(location, _pathArr3, val);
-
-	                          _this2.emit('stateChanged', {
+	                          _this3.emit('stateChanged', {
 	                            name: 'update',
 	                            path: "".concat(trimPath),
 	                            newVal: val
 	                          });
 	                        }
 
-	                        _context5.next = 17;
+	                        _context6.next = 17;
 	                        break;
 
 	                      case 5:
 	                        if (!key.startsWith('=')) {
-	                          _context5.next = 17;
+	                          _context6.next = 17;
 	                          break;
 	                        }
 
 	                        _trimPath = key.substring(2, key.length);
 	                        _pathArr4 = _trimPath.split('.');
-	                        _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
+	                        _val = get_1(_this3.root, _pathArr4) || get_1(_this3.root[_pageName3], _pathArr4);
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
-	                          locations: [_this2.root, _this2.root[_pageName3]]
+	                          locations: [_this3.root, _this3.root[_pageName3]]
 	                        });
 	                        _populateWithSelf2 = populateObject({
 	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this2.root, _this2.root[_pageName3]]
+	                          locations: [_this3.root, _this3.root[_pageName3]]
 	                        });
 	                        _populateAfterInheriting2 = populateObject({
 	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this2.root, _this2.root[_pageName3]]
+	                          locations: [_this3.root, _this3.root[_pageName3]]
 	                        });
-	                        _boundDispatch = _this2.dispatch.bind(_this2);
+	                        _boundDispatch = _this3.dispatch.bind(_this3);
 	                        withFn = attachFns({
 	                          cadlObject: _populateAfterInheriting2,
 	                          dispatch: _boundDispatch
 	                        });
 
 	                        if (!(typeof withFn === 'function')) {
-	                          _context5.next = 17;
+	                          _context6.next = 17;
 	                          break;
 	                        }
 
-	                        _context5.next = 17;
+	                        _context6.next = 17;
 	                        return withFn();
 
 	                      case 17:
 	                      case "end":
-	                        return _context5.stop();
+	                        return _context6.stop();
 	                    }
 	                  }
 	                }, _callee5);
@@ -81065,13 +81119,6 @@
 	            break;
 	          }
 
-	        case 'update-map':
-	          {
-	            //TODO: consider adding update-page-map
-	            this.map = dotObject.dot(this.root);
-	            break;
-	          }
-
 	        case 'add-fn':
 	          {
 	            //actions for page currently used for signIn 
@@ -81080,29 +81127,15 @@
 	                fn = _action$payload4.fn;
 
 	            if (this.root.actions[_pageName4]) {
-	              this.root.actions[_pageName4].update = fn;
+	              this.root = an(this.root, function (draft) {
+	                draft.actions[_pageName4].update = fn;
+	              });
 	            } else {
-	              this.root.actions[_pageName4] = {
-	                update: fn
-	              };
-	            }
-
-	            break;
-	          }
-
-	        case 'save-ref':
-	          {
-	            //saves path to references as object is populated
-	            var _action$payload5 = action.payload,
-	                _pageName5 = _action$payload5.pageName,
-	                ref = _action$payload5.ref,
-	                path = _action$payload5.path;
-
-	            if (this.root.refs[_pageName5]) {
-	              this.root.refs[_pageName5][path] = ref;
-	            } else {
-	              this.root.refs[_pageName5] = {};
-	              this.root.refs[_pageName5][path] = ref;
+	              this.root = an(this.root, function (draft) {
+	                draft.actions[_pageName4] = {
+	                  update: fn
+	                };
+	              });
 	            }
 
 	            break;
@@ -81110,13 +81143,13 @@
 
 	        case 'emit-update':
 	          {
-	            var _action$payload6 = action.payload,
-	                _pageName6 = _action$payload6.pageName,
-	                _dataKey2 = _action$payload6.dataKey,
-	                newVal = _action$payload6.newVal;
+	            var _action$payload5 = action.payload,
+	                _pageName5 = _action$payload5.pageName,
+	                _dataKey2 = _action$payload5.dataKey,
+	                newVal = _action$payload5.newVal;
 	            this.emit('stateChanged', {
 	              name: 'update',
-	              path: "".concat(_pageName6, ".").concat(_dataKey2),
+	              path: "".concat(_pageName5, ".").concat(_dataKey2),
 	              newVal: newVal
 	            });
 	          }
@@ -81128,14 +81161,14 @@
 	      }
 	    }
 	    /**
+	     * Used for the actionType 'updateObject'. It updates the value of an object at the given path.
 	     * 
 	     * @param UpdateObjectArgs
-	     * @param UpdateObjectArgs.dataKey string
-	     * @param UpdateObjectArgs.dataObject Record<string, any>
-	     * @param UpdateObjectArgs.dataObjectKey string
+	     * @param UpdateObjectArgs.dataKey The path to the property being changed.
+	     * @param UpdateObjectArgs.dataObject The object that will be updated.
+	     * @param UpdateObjectArgs.dataObjectKey The specific key of the dataObject to be used as the new value. 
 	     * @emits CADL#stateChanged
 	     * 
-	     * -used for actionType updateObject
 	     */
 
 	  }, {
@@ -81144,7 +81177,6 @@
 	      var dataKey = _ref5.dataKey,
 	          dataObject = _ref5.dataObject,
 	          dataObjectKey = _ref5.dataObjectKey;
-	      var location = this.root;
 	      var path;
 
 	      if (dataKey.startsWith('.')) {
@@ -81155,9 +81187,9 @@
 
 	      var pathArr = path.split('.');
 	      var newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject;
-
-	      set_1(location, pathArr, newVal);
-
+	      this.root = an(this.root, function (draft) {
+	        set_1(draft, pathArr, newVal);
+	      });
 	      this.dispatch({
 	        type: 'update-localStorage'
 	      });
@@ -81168,19 +81200,22 @@
 	      });
 	    }
 	    /**
+	     * Runs the init functions of the page matching the pageName.
 	     * 
-	     * @param pageName string
-	     * - runs the init functions of the page matching the pageName
+	     * @param pageName 
 	     */
 
 	  }, {
 	    key: "runInit",
 	    value: function () {
 	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(pageName) {
-	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
-	        return regenerator.wrap(function _callee6$(_context6) {
+	        var _this4 = this;
+
+	        var boundDispatch, page, init, _loop2, _ret2;
+
+	        return regenerator.wrap(function _callee6$(_context8) {
 	          while (1) {
-	            switch (_context6.prev = _context6.next) {
+	            switch (_context8.prev = _context8.next) {
 	              case 0:
 	                boundDispatch = this.dispatch.bind(this); //run init commands if any
 
@@ -81188,120 +81223,212 @@
 	                init = page.init;
 
 	                if (!init) {
-	                  _context6.next = 47;
+	                  _context8.next = 13;
 	                  break;
 	                }
 
 	                this.initCallQueue = init.map(function (_command, index) {
 	                  return index;
 	                });
+	                _loop2 = /*#__PURE__*/regenerator.mark(function _loop2() {
+	                  var currIndex, command, actionType, dataKey, dataObject, funcName, _command$if2, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	              case 5:
+	                  return regenerator.wrap(function _loop2$(_context7) {
+	                    while (1) {
+	                      switch (_context7.prev = _context7.next) {
+	                        case 0:
+	                          currIndex = _this4.initCallQueue.shift();
+	                          command = init[currIndex];
+
+	                          if (!(typeof command === 'function')) {
+	                            _context7.next = 13;
+	                            break;
+	                          }
+
+	                          _context7.prev = 3;
+	                          _context7.next = 6;
+	                          return command();
+
+	                        case 6:
+	                          _context7.next = 11;
+	                          break;
+
+	                        case 8:
+	                          _context7.prev = 8;
+	                          _context7.t0 = _context7["catch"](3);
+	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t0);
+
+	                        case 11:
+	                          _context7.next = 51;
+	                          break;
+
+	                        case 13:
+	                          if (!(isObject$4(command) && 'actionType' in command)) {
+	                            _context7.next = 28;
+	                            break;
+	                          }
+
+	                          actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
+	                          _context7.t1 = actionType;
+	                          _context7.next = _context7.t1 === 'updateObject' ? 18 : _context7.t1 === 'builtIn' ? 20 : 25;
+	                          break;
+
+	                        case 18:
+	                          _this4.updateObject({
+	                            dataKey: dataKey,
+	                            dataObject: dataObject
+	                          });
+
+	                          return _context7.abrupt("break", 26);
+
+	                        case 20:
+	                          if (!(funcName === 'videoChat')) {
+	                            _context7.next = 24;
+	                            break;
+	                          }
+
+	                          if (!(funcName in _this4.root.builtIn && typeof _this4.root.builtIn[funcName] === 'function')) {
+	                            _context7.next = 24;
+	                            break;
+	                          }
+
+	                          _context7.next = 24;
+	                          return _this4.root.builtIn[funcName](command);
+
+	                        case 24:
+	                          return _context7.abrupt("break", 26);
+
+	                        case 25:
+	                          return _context7.abrupt("return", {
+	                            v: void 0
+	                          });
+
+	                        case 26:
+	                          _context7.next = 51;
+	                          break;
+
+	                        case 28:
+	                          if (!(isObject$4(command) && 'if' in command)) {
+	                            _context7.next = 41;
+	                            break;
+	                          }
+
+	                          //TODO: add the then condition
+	                          _command$if2 = slicedToArray(command['if'], 3), condExpression = _command$if2[0], elseEffect = _command$if2[2];
+
+	                          if (!(typeof condExpression === 'function')) {
+	                            _context7.next = 39;
+	                            break;
+	                          }
+
+	                          _context7.next = 33;
+	                          return condExpression();
+
+	                        case 33:
+	                          condResult = _context7.sent;
+
+	                          if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
+	                            _context7.next = 39;
+	                            break;
+	                          }
+
+	                          if (!('goto' in _this4.root.builtIn && typeof _this4.root.builtIn['goto'] === 'function')) {
+	                            _context7.next = 39;
+	                            break;
+	                          }
+
+	                          _context7.next = 38;
+	                          return _this4.root.builtIn['goto'](elseEffect['goto']);
+
+	                        case 38:
+	                          return _context7.abrupt("return", {
+	                            v: void 0
+	                          });
+
+	                        case 39:
+	                          _context7.next = 51;
+	                          break;
+
+	                        case 41:
+	                          if (!Array.isArray(command)) {
+	                            _context7.next = 51;
+	                            break;
+	                          }
+
+	                          if (!(typeof command[0][1] === 'function')) {
+	                            _context7.next = 51;
+	                            break;
+	                          }
+
+	                          _context7.prev = 43;
+	                          _context7.next = 46;
+	                          return command[0][1]();
+
+	                        case 46:
+	                          _context7.next = 51;
+	                          break;
+
+	                        case 48:
+	                          _context7.prev = 48;
+	                          _context7.t2 = _context7["catch"](43);
+	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t2);
+
+	                        case 51:
+	                          //updating page after command has been called
+	                          updatedPage = _this4.root[pageName]; //populateObject again to populate any data that was dependant on the command call
+
+	                          populatedUpdatedPage = populateObject({
+	                            source: updatedPage,
+	                            lookFor: '..',
+	                            skip: ['components'],
+	                            locations: [_this4.root[pageName]]
+	                          });
+	                          populatedUpdatedPageWithFns = attachFns({
+	                            cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
+	                            dispatch: boundDispatch
+	                          });
+	                          page = populatedUpdatedPageWithFns;
+	                          init = Object.values(populatedUpdatedPageWithFns)[0].init;
+	                          _this4.root = an(_this4.root, function (draft) {
+	                            draft[pageName] = _objectSpread$d(_objectSpread$d({}, draft[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
+	                          });
+
+	                        case 57:
+	                        case "end":
+	                          return _context7.stop();
+	                      }
+	                    }
+	                  }, _loop2, null, [[3, 8], [43, 48]]);
+	                });
+
+	              case 6:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context6.next = 47;
+	                  _context8.next = 13;
 	                  break;
 	                }
 
-	                currIndex = this.initCallQueue.shift();
-	                command = init[currIndex];
+	                return _context8.delegateYield(_loop2(), "t0", 8);
 
-	                if (!(typeof command === 'function')) {
-	                  _context6.next = 19;
+	              case 8:
+	                _ret2 = _context8.t0;
+
+	                if (!(_typeof_1(_ret2) === "object")) {
+	                  _context8.next = 11;
 	                  break;
 	                }
 
-	                _context6.prev = 9;
-	                _context6.next = 12;
-	                return command();
+	                return _context8.abrupt("return", _ret2.v);
 
-	              case 12:
-	                _context6.next = 17;
+	              case 11:
+	                _context8.next = 6;
 	                break;
 
-	              case 14:
-	                _context6.prev = 14;
-	                _context6.t0 = _context6["catch"](9);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t0);
-
-	              case 17:
-	                _context6.next = 39;
-	                break;
-
-	              case 19:
-	                if (!(isObject_1(command) && 'actionType' in command)) {
-	                  _context6.next = 29;
-	                  break;
-	                }
-
-	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject;
-	                _context6.t1 = actionType;
-	                _context6.next = _context6.t1 === 'updateObject' ? 24 : 26;
-	                break;
-
-	              case 24:
-	                this.updateObject({
-	                  dataKey: dataKey,
-	                  dataObject: dataObject
-	                });
-	                return _context6.abrupt("break", 27);
-
-	              case 26:
-	                return _context6.abrupt("return");
-
-	              case 27:
-	                _context6.next = 39;
-	                break;
-
-	              case 29:
-	                if (!Array.isArray(command)) {
-	                  _context6.next = 39;
-	                  break;
-	                }
-
-	                if (!(typeof command[0][1] === 'function')) {
-	                  _context6.next = 39;
-	                  break;
-	                }
-
-	                _context6.prev = 31;
-	                _context6.next = 34;
-	                return command[0][1]();
-
-	              case 34:
-	                _context6.next = 39;
-	                break;
-
-	              case 36:
-	                _context6.prev = 36;
-	                _context6.t2 = _context6["catch"](31);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t2);
-
-	              case 39:
-	                //updating page after command has been called
-	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
-
-	                populatedUpdatedPage = populateObject({
-	                  source: updatedPage,
-	                  lookFor: '..',
-	                  skip: ['components'],
-	                  locations: [this.root[pageName]]
-	                });
-	                populatedUpdatedPageWithFns = attachFns({
-	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
-	                  dispatch: boundDispatch
-	                });
-	                page = populatedUpdatedPageWithFns;
-	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
-	                this.root[pageName] = _objectSpread$d(_objectSpread$d({}, this.root[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                _context6.next = 5;
-	                break;
-
-	              case 47:
+	              case 13:
 	              case "end":
-	                return _context6.stop();
+	                return _context8.stop();
 	            }
 	          }
-	        }, _callee6, this, [[9, 14], [31, 36]]);
+	        }, _callee6, this);
 	      }));
 
 	      function runInit(_x5) {
@@ -81311,11 +81438,12 @@
 	      return runInit;
 	    }()
 	    /**
+	     * Sets either the user or meetroom value from localStorage to the corresponding root value in memory
 	     * 
 	     * @param key "user" | "meetroom"
 	     * 
-	     * -sets either the user or meetroom value from localStorage to the corresponding root value in memory
 	     */
+	    //TODO: ask Chris if he uses this
 
 	  }, {
 	    key: "setFromLocalStorage",
@@ -81337,14 +81465,18 @@
 	          case "user":
 	            {
 	              var user = localStorageGlobal.currentUser.vertex;
-	              this.root.Global.currentUser.vertex = user;
+	              this.root = an(this.root, function (draft) {
+	                draft.Global.currentUser.vertex = user;
+	              });
 	              break;
 	            }
 
 	          case "meetroom":
 	            {
 	              var currMeetroom = localStorageGlobal.meetroom.edge;
-	              this.root.Global.meetroom.edge = currMeetroom;
+	              this.root = an(this.root, function (draft) {
+	                draft.Global.meetroom.edge = currMeetroom;
+	              });
 	              break;
 	            }
 
@@ -81356,12 +81488,12 @@
 	      }
 	    }
 	    /**
+	     * Set a new value at a given path. Assume the path begins at the root.
 	     * 
 	     * @param SetValueArgs
-	     * @param SetValueArgs.path string
-	     * @param SetValueArgs.value any
+	     * @param SetValueArgs.path The path to the property being changed.
+	     * @param SetValueArgs.value The new value being set at the given path
 	     * 
-	     * - set value to a given path. Assume the path begins at the root.
 	     */
 
 	  }, {
@@ -81370,18 +81502,18 @@
 	      var path = _ref6.path,
 	          value = _ref6.value;
 	      var pathArr = path.split('.');
-
-	      set_1(this.root, pathArr, value);
-
+	      this.root = an(this.root, function (draft) {
+	        set_1(draft, pathArr, value);
+	      });
 	      return;
 	    }
 	    /**
+	     * Add a value to an array at a given path. Assume the path begins at root.
 	     * 
 	     * @param AddValueArgs 
-	     * @param AddValueArgs.path string
-	     * @param AddValueArgs.value any
+	     * @param AddValueArgs.path Path to an array from the root.
+	     * @param AddValueArgs.value Value that will be added to the array at the given path.
 	     * 
-	     * - add value to a given path. Assume the path begins at the root.
 	     */
 
 	  }, {
@@ -81399,17 +81531,18 @@
 	        currVal.push(value);
 	      }
 
-	      set_1(this.root, pathArr, currVal);
-
+	      this.root = an(this.root, function (draft) {
+	        set_1(draft, pathArr, currVal);
+	      });
 	      return;
 	    }
 	    /**
+	     * Remove a value from an array at a given path. Assume the path begins at the root.
 	     * 
 	     * @param RemoveValue 
-	     * @param RemoveValue.path string
-	     * @param RemoveValue.Predicate Record<string, number | string>
+	     * @param RemoveValue.path Path to the array being altered.
+	     * @param RemoveValue.Predicate The condition to be met for items being deleted from the array e.g {id:'123'}
 	     * 
-	     * - remove value from a given path. Assume the path begins at the root.
 	     */
 
 	  }, {
@@ -81437,18 +81570,19 @@
 
 	          return passes;
 	        });
-
-	        set_1(this.root, pathArr, newVal);
+	        this.root = an(this.root, function (draft) {
+	          set_1(draft, pathArr, newVal);
+	        });
 	      }
 	    }
 	    /**
+	     * Replace value at a given path. Assume the path begins at the root.
 	     * 
 	     * @param ReplaceValueArgs 
-	     * @param ReplaceValueArgs.path string
-	     * @param ReplaceValueArgs.predicate Record<string, number | string>
-	     * @param ReplaceValueArgs.value any
+	     * @param ReplaceValueArgs.path Path to an array beginning from the root level.
+	     * @param ReplaceValueArgs.predicate Condition to be met for value being replaced.
+	     * @param ReplaceValueArgs.value Value that will replace the value in question.
 	     * 
-	     * - replace value at a given path. Assume the path begins at the root.
 	     */
 
 	  }, {
@@ -81481,25 +81615,58 @@
 
 	        if (valIndex >= 0) {
 	          currValCopy.splice(valIndex, 1, value);
-
-	          set_1(this.root, pathArr, currValCopy);
+	          this.root = an(this.root, function (draft) {
+	            set_1(draft, pathArr, currValCopy);
+	          });
 	        }
 	      }
 
 	      return;
 	    }
 	  }, {
-	    key: "resetReferences",
-	    value: function resetReferences(pageName) {
-	      var pageRefs = cloneDeep_1(this.root.refs[pageName]);
+	    key: "initRoot",
+	    value: function initRoot(root) {
+	      var _this5 = this;
 
-	      for (var _i3 = 0, _Object$entries3 = Object.entries(pageRefs); _i3 < _Object$entries3.length; _i3++) {
-	        var _Object$entries3$_i = slicedToArray(_Object$entries3[_i3], 2),
-	            path = _Object$entries3$_i[0],
-	            ref = _Object$entries3$_i[1];
+	      return an(root, function (draft) {
+	        draft.actions = {};
+	        draft.builtIn = builtInFns(_this5.dispatch.bind(_this5));
+	      });
+	    }
+	  }, {
+	    key: "newDispatch",
+	    value: function newDispatch(action) {
+	      if (!isObject$4(action)) {
+	        throw new Error('Actions must be plain objects');
+	      }
 
-	        // let pathArr = path.split('.')
-	        set_1(this.root[pageName], path, ref);
+	      if (typeof action.type === 'undefined') {
+	        throw new Error('Actions types cannot be undefined.');
+	      }
+
+	      this.reducer(this.root, action);
+	      return action;
+	    }
+	  }, {
+	    key: "reducer",
+	    value: function reducer() {
+	      var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.root;
+	      var action = arguments.length > 1 ? arguments[1] : undefined;
+
+	      switch (action.type) {
+	        case 'SET_VALUE':
+	          {
+	            var _action$payload6 = action.payload,
+	                pageName = _action$payload6.pageName,
+	                dataKey = _action$payload6.dataKey,
+	                value = _action$payload6.value;
+	            an(state, function (draft) {
+	              set_1(draft[pageName], dataKey, value);
+	            });
+	          }
+
+	        default:
+	          return state;
 	      }
 	    }
 	  }, {
@@ -81584,14 +81751,6 @@
 	      return store$3.apiVersion;
 	    }
 	  }, {
-	    key: "map",
-	    set: function set(map) {
-	      this._map = map;
-	    },
-	    get: function get() {
-	      return this._map;
-	    }
-	  }, {
 	    key: "initCallQueue",
 	    set: function set(initCallQueue) {
 	      this._initCallQueue = initCallQueue;
@@ -81627,25 +81786,31 @@
 	        case 0:
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
-	          cadl = new CADL(_objectSpread$e({}, defaultConfig$1));
+	          cadl = new CADL(_objectSpread$e(_objectSpread$e({}, defaultConfig$1), {}, {
+	            env: 'production'
+	          }));
 	          debugger;
-	          cadl.on('stateChanged', function (change) {
-	            debugger;
-	            console.log(change);
-	          });
-	          debugger;
-	          _context.next = 6;
+	          _context.next = 4;
 	          return cadl.init();
 
-	        case 6:
+	        case 4:
 	          debugger;
 	          console.log(cadl.root.builtIn.string.formatUnixtime_en(1595970704255));
 	          console.log(cadl.root.builtIn.string.formatDurationInSecond(3388333000));
-	          _context.next = 11;
+	          _context.next = 9;
 	          return cadl.initPage('SignIn');
 
-	        case 11:
-	          // await cadl.initPage('CreateNewAccount')
+	        case 9:
+	          cadl.newDispatch({
+	            type: 'SET_VALUE',
+	            payload: {
+	              pageName: 'SignIn',
+	              dataKey: 'formData.password',
+	              value: 'ghost'
+	            }
+	          });
+	          debugger; // await cadl.initPage('CreateNewAccount')
+
 	          debugger;
 	          _context.next = 14;
 	          return Account$1.requestVerificationCode('+1 7015168317');

@@ -1,7 +1,7 @@
 {
   "name": "@aitmed/cadl",
   "version": "1.0.61",
-  "description": "A package with utilities to manage and process CADL files.",
+  "description": "A package with utilities to manage and process Noodl files.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
@@ -12,10 +12,10 @@
     "build:types": "tsc --emitDeclarationOnly",
     "clean": "rm -rf dist",
     "watch": "rollup -c -w",
-    "test:start": "serve test_public",
-    "start": "serve public",
-    "dev": "npm-run-all --parallel start watch",
-    "test:dev": "npm-run-all --parallel test:start watch",
+    "serve:test": "serve test_public",
+    "serve:val_ui": "serve public",
+    "start:val_ui": "npm-run-all --parallel start:val_ui watch",
+    "start:test": "npm-run-all --parallel serve:test watch ",
     "test": "jest",
     "bump-version": "npm version patch",
     "prepublish:public": "npm run build && npm run bump-version",
@@ -74,7 +74,8 @@
     "jquery": "^3.5.1",
     "moment": "^2.27.0",
     "pako": "^1.0.11",
-    "rollup-plugin-node-resolve": "^5.2.0"
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-replace": "^2.2.0"
   },
   "peerDependencies": {
     "@aitmed/ecos-lvl2-sdk": "1.x"
