@@ -13,10 +13,7 @@ import {
     replaceUint8ArrayWithBase64,
     replaceEvalObject,
 } from './utils'
-import store, {
-    ResponseCatcher,
-    ErrorCatcher
-} from '../common/store'
+import store from '../common/store'
 import {
     UnableToParseYAML,
     UnableToRetrieveYAML,
@@ -43,14 +40,13 @@ export default class CADL extends EventEmitter {
     /**
      * 
      * @param CADLARGS
-     * @param CADLARGS.env string 
      * @param CADLARGS.configUrl string 
      * @param CADLARGS.cadlVersion 'test' | 'stable' 
      */
-    constructor({ env, configUrl, cadlVersion }: CADLARGS) {
+    constructor({ configUrl, cadlVersion }: CADLARGS) {
         super()
         //replace default arguments
-        store.env = env
+        store.env = cadlVersion
         store.configUrl = configUrl
         this._cadlVersion = cadlVersion
     }
@@ -972,22 +968,6 @@ export default class CADL extends EventEmitter {
 
     public getConfig() {
         return store.getConfig()
-    }
-
-    /**
-     * Only able to be set when env = development
-     * @param catcher if undefined, reset the catcher to be default
-     */
-    public setResponseCatcher(catcher?: ResponseCatcher) {
-        store.setResponseCatcher(catcher)
-    }
-
-    /**
-     * Only able to be set when env = development
-     * @param catcher if undefined, reset the catcher to be default
-     */
-    public setErrorCatcher(catcher?: ErrorCatcher) {
-        store.setErrorCatcher(catcher)
     }
 
 

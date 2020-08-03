@@ -14,7 +14,6 @@ export interface DataModel {
 }
 
 export interface CADLARGS {
-    env: 'development' | 'production'
     configUrl: string
     cadlVersion: 'test' | 'stable'
 } 

@@ -67052,10 +67052,11 @@
 	    defineProperty(this, "errorCatcher", defaultErrorCatcher);
 
 	    this._env = env;
+	    var sdkEnv = env === 'test' ? 'development' : 'production';
 	    this.level2SDK = new SDK({
 	      apiVersion: apiVersion,
 	      apiHost: apiHost,
-	      env: env,
+	      env: sdkEnv,
 	      configUrl: configUrl
 	    });
 
@@ -67087,32 +67088,6 @@
 	    value: function getConfig() {
 	      return this.level2SDK.getConfigData();
 	    }
-	    /**
-	     * @param catcher if null, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setResponseCatcher",
-	    value: function setResponseCatcher() {
-	      var catcher = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultResponseCatcher;
-
-	      if (this.env === 'development') {
-	        this.responseCatcher = catcher;
-	      }
-	    }
-	    /**
-	     * @param catcher if null, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setErrorCatcher",
-	    value: function setErrorCatcher() {
-	      var catcher = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultErrorCatcher;
-
-	      if (this.env === 'development') {
-	        this.errorCatcher = catcher;
-	      }
-	    }
 	  }, {
 	    key: "apiVersion",
 	    set: function set(value) {
@@ -67124,10 +67099,10 @@
 	  }, {
 	    key: "env",
 	    set: function set(value) {
-	      this.level2SDK.env = value;
+	      this._env = value;
 	    },
 	    get: function get() {
-	      return this.level2SDK.env;
+	      return this._env;
 	    }
 	  }, {
 	    key: "apiHost",
@@ -67151,7 +67126,7 @@
 	}();
 
 	var store$3 = new Store$1({
-	  env: 'development',
+	  env: 'test',
 	  configUrl: 'https://public.aitmed.com/config'
 	});
 
@@ -78540,10 +78515,14 @@
 	                            }
 
 	                            _context.prev = 7;
-	                            console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
-	                              idList: idList,
-	                              options: _objectSpread$c({}, options)
-	                            });
+
+	                            if (store$3.env === 'test') {
+	                              console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
+	                                idList: idList,
+	                                options: _objectSpread$c({}, options)
+	                              });
+	                            }
+
 	                            _context.next = 11;
 	                            return store$3.level2SDK.edgeServices.retrieveEdge({
 	                              idList: idList,
@@ -78563,35 +78542,42 @@
 	                            throw _context.t0;
 
 	                          case 19:
-	                            if (res.length > 0) {
-	                              res = res.map(function (edge) {
-	                                return replaceEidWithId(edge);
-	                              });
-	                              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-	                              dispatch({
-	                                type: 'update-data',
-	                                //TODO: handle case for data is an array or an object
-	                                payload: {
-	                                  pageName: pageName,
-	                                  dataKey: dataOut ? dataOut : dataKey,
-	                                  data: res
-	                                }
-	                              });
-	                              dispatch({
-	                                type: 'emit-update',
-	                                payload: {
-	                                  pageName: pageName,
-	                                  dataKey: dataOut ? dataOut : dataKey,
-	                                  newVal: res
-	                                }
-	                              });
-	                            } //TODO:handle else case
-
+	                            if (!(!res.length && store$3.env === 'test')) {
+	                              _context.next = 24;
+	                              break;
+	                            }
 
 	                            console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
 	                            return _context.abrupt("return", res);
 
-	                          case 22:
+	                          case 24:
+	                            res = res.map(function (edge) {
+	                              return replaceEidWithId(edge);
+	                            });
+
+	                            if (store$3.env === 'test') {
+	                              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	                            }
+
+	                            dispatch({
+	                              type: 'update-data',
+	                              //TODO: handle case for data is an array or an object
+	                              payload: {
+	                                pageName: pageName,
+	                                dataKey: dataOut ? dataOut : dataKey,
+	                                data: res
+	                              }
+	                            });
+	                            dispatch({
+	                              type: 'emit-update',
+	                              payload: {
+	                                pageName: pageName,
+	                                dataKey: dataOut ? dataOut : dataKey,
+	                                newVal: res
+	                              }
+	                            });
+
+	                          case 28:
 	                          case "end":
 	                            return _context.stop();
 	                        }
@@ -78649,9 +78635,13 @@
 	                              }
 
 	                              _context2.prev = 7;
-	                              console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
-	                                id: id
-	                              }));
+
+	                              if (store$3.env === 'test') {
+	                                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                                  id: id
+	                                }));
+	                              }
+
 	                              _context2.next = 11;
 	                              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                id: id
@@ -78661,7 +78651,11 @@
 	                              _yield$store$level2SD2 = _context2.sent;
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
-	                              console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
+
+	                              if (store$3.env === 'test') {
+	                                console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
+	                              }
+
 	                              _context2.next = 20;
 	                              break;
 
@@ -78676,9 +78670,13 @@
 
 	                            case 22:
 	                              _context2.prev = 22;
-	                              console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
-	                                id: id
-	                              }));
+
+	                              if (store$3.env === 'test') {
+	                                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
+	                                  id: id
+	                                }));
+	                              }
+
 	                              _context2.next = 26;
 	                              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$c({}, mergedVal));
 
@@ -78686,7 +78684,11 @@
 	                              _yield$store$level2SD3 = _context2.sent;
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
-	                              console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
+
+	                              if (store$3.env) {
+	                                console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
+	                              }
+
 	                              _context2.next = 35;
 	                              break;
 
@@ -79128,9 +79130,13 @@
 	                            _cloneDeep7 = cloneDeep_1(output || {}), api = _cloneDeep7.api, dataKey = _cloneDeep7.dataKey, dataIn = _cloneDeep7.dataIn, dataOut = _cloneDeep7.dataOut, options = objectWithoutProperties(_cloneDeep7, ["api", "dataKey", "dataIn", "dataOut"]);
 	                            res = [];
 	                            _context7.prev = 2;
-	                            console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
-	                              options: _objectSpread$c({}, options)
-	                            });
+
+	                            if (store$3.env === 'test') {
+	                              console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
+	                                options: _objectSpread$c({}, options)
+	                              });
+	                            }
+
 	                            _context7.next = 6;
 	                            return store$3.level2SDK.vertexServices.retrieveVertex({
 	                              idList: [],
@@ -79155,7 +79161,10 @@
 	                              break;
 	                            }
 
-	                            console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+	                            if (store$3.env === 'test') {
+	                              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+	                            }
+
 	                            dispatch({
 	                              type: 'update-data',
 	                              //TODO: handle case for data is an array or an object
@@ -79176,7 +79185,10 @@
 	                            return _context7.abrupt("return", res);
 
 	                          case 19:
-	                            console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res); //TODO:handle else case
+	                            if (store$3.env === 'test') {
+	                              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
+	                            } //TODO:handle else case
+
 
 	                            return _context7.abrupt("return", null);
 
@@ -79975,15 +79987,13 @@
 	  /**
 	   * 
 	   * @param CADLARGS
-	   * @param CADLARGS.env string 
 	   * @param CADLARGS.configUrl string 
 	   * @param CADLARGS.cadlVersion 'test' | 'stable' 
 	   */
 	  function CADL(_ref) {
 	    var _this;
 
-	    var env = _ref.env,
-	        configUrl = _ref.configUrl,
+	    var configUrl = _ref.configUrl,
 	        cadlVersion = _ref.cadlVersion;
 
 	    classCallCheck(this, CADL);
@@ -80010,7 +80020,7 @@
 
 	    defineProperty(assertThisInitialized(_this), "_initCallQueue", void 0);
 
-	    store$3.env = env;
+	    store$3.env = cadlVersion;
 	    store$3.configUrl = configUrl;
 	    _this._cadlVersion = cadlVersion;
 	    return _this;
@@ -81506,26 +81516,6 @@
 	    key: "getConfig",
 	    value: function getConfig() {
 	      return store$3.getConfig();
-	    }
-	    /**
-	     * Only able to be set when env = development
-	     * @param catcher if undefined, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setResponseCatcher",
-	    value: function setResponseCatcher(catcher) {
-	      store$3.setResponseCatcher(catcher);
-	    }
-	    /**
-	     * Only able to be set when env = development
-	     * @param catcher if undefined, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setErrorCatcher",
-	    value: function setErrorCatcher(catcher) {
-	      store$3.setErrorCatcher(catcher);
 	    }
 	  }, {
 	    key: "cadlVersion",

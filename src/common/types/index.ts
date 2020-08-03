@@ -1,11 +1,11 @@
 import { CommonTypes, Level2Response as Response, Level2Error, DocumentTypes, Status } from '@aitmed/ecos-lvl2-sdk'
 
 
-export { CommonTypes, Response, Level2Error, DocumentTypes,  Status }
+export { CommonTypes, Response, Level2Error, DocumentTypes, Status }
 
 export type APIVersion = string
 
-export type ENV = 'development' | 'production'
+export type ENV = 'test' | 'stable'
 
 export interface ConfigProps {
   configUrl: string
