@@ -81602,7 +81602,6 @@
 
 	var defaultConfig$1 = {
 	  cadlVersion: 'test',
-	  env: 'development',
 	  configUrl: 'https://public.aitmed.com/config'
 	};
 
