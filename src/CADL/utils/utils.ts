@@ -278,6 +278,7 @@ function attachFns({
                                     })
                                     dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
                                 }
+                                return
                             }
                             output = isPopulated(output) ? getFn(output) : output
 
