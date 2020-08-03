@@ -9,7 +9,6 @@ export type ENV = 'test' | 'stable'
 
 export interface ConfigProps {
   configUrl: string
-  env: ENV
   cadlVersion: 'test' | 'stable'
 }
 
