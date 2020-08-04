@@ -14,7 +14,7 @@ export default (async function () {
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
-    const cadl = new CADL({ ...defaultConfig, env: 'production' })
+    const cadl = new CADL({ ...defaultConfig })
 
 
     debugger
@@ -103,8 +103,7 @@ export default (async function () {
     debugger
     console.log(cadl)
 
-    cadl.resetReferences('MeetingLobbyStart')
-    debugger
+   
     cadl.initPage('MeetingLobbyStart', [])
     console.log(cadl)
 

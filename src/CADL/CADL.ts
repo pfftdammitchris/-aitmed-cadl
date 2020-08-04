@@ -883,7 +883,7 @@ export default class CADL extends EventEmitter {
      * @param SetValueArgs.value The new value being set at the given path
      * 
      */
-    public setValue({ path, value, callback }: { path: string, value: any }): void {
+    public setValue({ path, value }: { path: string, value: any }): void {
         let pathArr = path.split('.')
 
         this.newDispatch({ type: 'SET_VALUE', payload: { dataKey: pathArr, value } })
