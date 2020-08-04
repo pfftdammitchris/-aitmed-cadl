@@ -81523,8 +81523,7 @@
 	    key: "setValue",
 	    value: function setValue(_ref6) {
 	      var path = _ref6.path,
-	          value = _ref6.value,
-	          callback = _ref6.callback;
+	          value = _ref6.value;
 	      var pathArr = path.split('.');
 	      this.newDispatch({
 	        type: 'SET_VALUE',
@@ -81889,9 +81888,7 @@
 	        case 0:
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
-	          cadl = new CADL(_objectSpread$e(_objectSpread$e({}, defaultConfig$1), {}, {
-	            env: 'production'
-	          }));
+	          cadl = new CADL(_objectSpread$e({}, defaultConfig$1));
 	          debugger;
 	          _context.next = 4;
 	          return cadl.init();
@@ -82061,8 +82058,6 @@
 	          });
 	          debugger;
 	          console.log(cadl);
-	          cadl.resetReferences('MeetingLobbyStart');
-	          debugger;
 	          cadl.initPage('MeetingLobbyStart', []);
 	          console.log(cadl); // await cadl.initPage('InviteeInfo')
 	          // debugger
@@ -82123,7 +82118,7 @@
 	          //     }
 	          // }
 
-	        case 61:
+	        case 59:
 	        case "end":
 	          return _context.stop();
 	      }
