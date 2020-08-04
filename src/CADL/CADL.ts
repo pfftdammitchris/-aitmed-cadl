@@ -4,10 +4,7 @@ import YAML from 'yaml'
 import { EventEmitter } from 'events'
 import produce from 'immer'
 
-import store, {
-    ResponseCatcher,
-    ErrorCatcher
-} from '../common/store'
+import store from '../common/store'
 import {
     UnableToParseYAML,
     UnableToRetrieveYAML,
@@ -42,14 +39,13 @@ export default class CADL extends EventEmitter {
     /**
      * 
      * @param CADLARGS
-     * @param CADLARGS.env 'development' | 'production'
      * @param CADLARGS.configUrl  
      * @param CADLARGS.cadlVersion 'test' | 'stable' 
      */
-    constructor({ env, configUrl, cadlVersion }: CADLARGS) {
+    constructor({ configUrl, cadlVersion }: CADLARGS) {
         super()
         //replace default arguments
-        store.env = env
+        store.env = cadlVersion
         store.configUrl = configUrl
         this._cadlVersion = cadlVersion
     }
@@ -111,21 +107,21 @@ export default class CADL extends EventEmitter {
                 source: BaseDataModel,
                 lookFor: ['.', '..', '='],
             })
-            this.root = { ...this.root, ...processedBaseDataModel }
+            this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedBaseDataModel } })
         }
         if (BaseCSS) {
             const processedBaseCSS = this.processPopulate({
                 source: BaseCSS,
                 lookFor: ['.', '..', '='],
             })
-            this.root = { ...this.root, ...processedBaseCSS }
+            this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedBaseCSS } })
         }
         if (BasePage) {
             const processedBasePage = this.processPopulate({
                 source: BasePage,
                 lookFor: ['.', '..', '='],
             })
-            this.root = { ...this.root, ...processedBasePage }
+            this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedBasePage } })
         }
 
         if (preload && preload.length) {
@@ -138,7 +134,7 @@ export default class CADL extends EventEmitter {
                             source: rawBaseDataModel,
                             lookFor: ['.', '..', '='],
                         })
-                        this.root = { ...this.root, ...processedBaseDataModel }
+                        this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedBaseDataModel } })
                         break
                     }
                     case ('BaseCSS'): {
@@ -148,7 +144,7 @@ export default class CADL extends EventEmitter {
                             source: rawBaseCSS,
                             lookFor: ['.', '..', '='],
                         })
-                        this.root = { ...this.root, ...processedBaseCSS }
+                        this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedBaseCSS } })
                         break
                     }
                     case ('BasePage'): {
@@ -158,7 +154,7 @@ export default class CADL extends EventEmitter {
                             source: rawBasePage,
                             lookFor: ['.', '..', '='],
                         })
-                        this.root = { ...this.root, ...processedBasePage }
+                        this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedBasePage } })
                         break
                     }
                     default: {
@@ -167,7 +163,7 @@ export default class CADL extends EventEmitter {
                             source: rawPage,
                             lookFor: ['.', '..', '='],
                         })
-                        this.root = { ...this.root, ...processedRawPage }
+                        this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: processedRawPage } })
                         break
                     }
                 }
@@ -183,7 +179,7 @@ export default class CADL extends EventEmitter {
                 console.log(error)
             }
             if (localStorageGlobalParsed) {
-                this.root = { ...this.root, Global: localStorageGlobalParsed }
+                this.newDispatch({ type: 'SET_ROOT_PROPERTIES', payload: { properties: { Global: localStorageGlobalParsed } } })
                 this.dispatch({
                     type: 'update-data',
                     //TODO: handle case for data is an array or an object
@@ -217,18 +213,16 @@ export default class CADL extends EventEmitter {
 
         const { builtIn } = options
         if (builtIn && isObject(builtIn)) {
-            this.root = produce(this.root, draft => {
-                draft.builtIn = { ...draft.builtIn, ...builtIn }
-            })
+            this.newDispatch({ type: 'ADD_BUILTIN_FNS', payload: { builtInFns: { ...builtIn } } })
         }
         let pageCADL = await this.getPage(pageName)
         let prevVal = {}
         //FOR FORMDATA
         //process formData
         if (this.root[pageName]) {
-            prevVal = _.cloneDeep(this.root[pageName])
-            this.root = produce(this.root, draft => {
-                delete draft[pageName]
+            this.newDispatch({
+                type: 'DELETE_PAGE',
+                payload: { pageName }
             })
         }
         const processedFormData = this.processPopulate({
@@ -253,8 +247,9 @@ export default class CADL extends EventEmitter {
         const boundDispatch = this.dispatch.bind(this)
 
         let processedPage = processedWithFns
-        this.root = produce(this.root, draft => {
-            return { ...draft, ...processedPage }
+        this.newDispatch({
+            type: 'SET_ROOT_PROPERTIES',
+            payload: { properties: processedPage }
         })
 
         //run init commands if any
@@ -328,9 +323,12 @@ export default class CADL extends EventEmitter {
 
                 init = Object.values(populatedUpdatedPageWithFns)[0].init
 
-
-                this.root[pageName] = produce(this.root[pageName], draft => {
-                    Object.assign(draft[pageName], Object.values(populatedUpdatedPageWithFns)[0])
+                this.newDispatch({
+                    type: 'SET_LOCAL_PROPERTIES',
+                    payload: {
+                        pageName,
+                        properties: Object.values(populatedUpdatedPageWithFns)[0]
+                    }
                 })
             }
         }
@@ -345,8 +343,10 @@ export default class CADL extends EventEmitter {
             pageName
         })
         let replaceUpdateJob2 = replaceEvalObject({ pageName, cadlObject: processedComponents, dispatch: boundDispatch })
-        this.root = produce(this.root, draft => {
-            return { ...draft, ...replaceUpdateJob2 }
+
+        this.newDispatch({
+            type: 'SET_ROOT_PROPERTIES',
+            payload: { properties: replaceUpdateJob2 }
         })
         this.emit('stateChanged', { name: 'update', path: `${pageName}`, prevVal, newVal: this.root })
     }
@@ -513,8 +513,9 @@ export default class CADL extends EventEmitter {
                     dispatch: boundDispatch
                 })
 
-                this.root = produce(this.root, draft => {
-                    draft[pageName] = withFNs
+                this.newDispatch({
+                    type: 'SET_ROOT_PROPERTIES',
+                    payload: { properties: { [pageName]: withFNs } }
                 })
                 this.dispatch({ type: 'update-localStorage' })
                 break
@@ -525,14 +526,23 @@ export default class CADL extends EventEmitter {
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
                 if (pageName === 'builtIn') {
-                    this.root = produce(this.root, draft => {
-                        _.set(draft, pathArr, data)
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            dataKey: pathArr,
+                            value: data
+                        }
                     })
                 } else if (firstCharacter === firstCharacter.toUpperCase()) {
                     const currentVal = _.get(this.root, pathArr)
                     const mergedVal = mergeDeep(currentVal, data)
-                    this.root = produce(this.root, draft => {
-                        _.set(draft, pathArr, mergedVal)
+
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            dataKey: pathArr,
+                            value: mergedVal
+                        }
                     })
                 } else {
                     const currentVal = _.get(this.root[pageName], pathArr)
@@ -547,8 +557,14 @@ export default class CADL extends EventEmitter {
                     } else {
                         mergedVal = data
                     }
-                    this.root = produce(this.root, draft => {
-                        _.set(draft[pageName], pathArr, mergedVal)
+
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            pageName,
+                            dataKey: pathArr,
+                            value: mergedVal
+                        }
                     })
                 }
 
@@ -575,15 +591,26 @@ export default class CADL extends EventEmitter {
                         if (key.startsWith('..')) {
                             trimPath = key.substring(2, key.length - 1)
                             const pathArr = trimPath.split('.')
-                            this.root = produce(this.root, draft => {
-                                _.set(draft[pageName], pathArr, val)
+
+                            this.newDispatch({
+                                type: 'SET_VALUE',
+                                payload: {
+                                    pageName,
+                                    dataKey: pathArr,
+                                    value: val
+                                }
                             })
                             this.emit('stateChanged', { name: 'update', path: `${pageName}.${trimPath}`, newVal: val })
                         } else if (key.startsWith('.')) {
                             trimPath = key.substring(1, key.length - 1)
                             const pathArr = trimPath.split('.')
-                            this.root = produce(this.root, draft => {
-                                _.set(draft, pathArr, val)
+
+                            this.newDispatch({
+                                type: 'SET_VALUE',
+                                payload: {
+                                    dataKey: pathArr,
+                                    value: val
+                                }
                             })
                             this.emit('stateChanged', { name: 'update', path: `${trimPath}`, newVal: val })
                         }
@@ -642,12 +669,22 @@ export default class CADL extends EventEmitter {
                 //actions for page currently used for signIn 
                 const { pageName, fn } = action.payload
                 if (this.root.actions[pageName]) {
-                    this.root = produce(this.root, draft => {
-                        draft.actions[pageName].update = fn
+
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            dataKey: `actions.${pageName}.update`,
+                            value: fn
+                        }
                     })
                 } else {
-                    this.root = produce(this.root, draft => {
-                        draft.actions[pageName] = { update: fn }
+
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            dataKey: `actions.${pageName}`,
+                            value: { update: fn }
+                        }
                     })
                 }
                 break
@@ -682,8 +719,13 @@ export default class CADL extends EventEmitter {
         }
         const pathArr = path.split('.')
         const newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject
-        this.root = produce(this.root, draft => {
-            _.set(draft, pathArr, newVal)
+
+        this.newDispatch({
+            type: 'SET_VALUE',
+            payload: {
+                dataKey: pathArr,
+                value: newVal
+            }
         })
 
         this.dispatch({
@@ -773,8 +815,12 @@ export default class CADL extends EventEmitter {
                 init = Object.values(populatedUpdatedPageWithFns)[0].init
 
 
-                this.root = produce(this.root, draft => {
-                    draft[pageName] = { ...draft[pageName], ...Object.values(populatedUpdatedPageWithFns)[0] }
+                this.newDispatch({
+                    type: 'SET_LOCAL_PROPERTIES',
+                    payload: {
+                        properties: Object.values(populatedUpdatedPageWithFns)[0],
+                        pageName
+                    }
                 })
             }
         }
@@ -801,15 +847,24 @@ export default class CADL extends EventEmitter {
             switch (key) {
                 case ("user"): {
                     let user = localStorageGlobal.currentUser.vertex
-                    this.root = produce(this.root, draft => {
-                        draft.Global.currentUser.vertex = user
+
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            dataKey: 'Global.currentUser.vertex',
+                            value: user
+                        }
                     })
                     break
                 }
                 case ("meetroom"): {
                     let currMeetroom = localStorageGlobal.meetroom.edge
-                    this.root = produce(this.root, draft => {
-                        draft.Global.meetroom.edge = currMeetroom
+                    this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                            dataKey: 'Global.meetroom.edge',
+                            value: currMeetroom
+                        }
                     })
                     break
                 }
@@ -828,11 +883,10 @@ export default class CADL extends EventEmitter {
      * @param SetValueArgs.value The new value being set at the given path
      * 
      */
-    public setValue({ path, value }: { path: string, value: any }): void {
+    public setValue({ path, value, callback }: { path: string, value: any }): void {
         let pathArr = path.split('.')
-        this.root = produce(this.root, draft => {
-            _.set(draft, pathArr, value)
-        })
+
+        this.newDispatch({ type: 'SET_VALUE', payload: { dataKey: pathArr, value } })
         return
     }
 
@@ -852,8 +906,10 @@ export default class CADL extends EventEmitter {
         } else if (Array.isArray(currVal)) {
             currVal.push(value)
         }
-        this.root = produce(this.root, draft => {
-            _.set(draft, pathArr, currVal)
+
+        this.newDispatch({
+            type: 'SET_VALUE',
+            payload: { dataKey: pathArr, value: currVal }
         })
         return
     }
@@ -879,8 +935,10 @@ export default class CADL extends EventEmitter {
                 }
                 return passes
             })
-            this.root = produce(this.root, draft => {
-                _.set(draft, pathArr, newVal)
+
+            this.newDispatch({
+                type: 'SET_VALUE',
+                payload: { dataKey: pathArr, value: newVal }
             })
         }
 
@@ -920,12 +978,29 @@ export default class CADL extends EventEmitter {
             }
             if (valIndex >= 0) {
                 currValCopy.splice(valIndex, 1, value)
-                this.root = produce(this.root, draft => {
-                    _.set(draft, pathArr, currValCopy)
+
+                this.newDispatch({
+                    type: 'SET_VALUE',
+                    payload: {
+                        dataKey: pathArr,
+                        value: currValCopy
+                    }
                 })
             }
         }
         return
+    }
+
+    /**
+     * Used to mutate the draft state.
+     * 
+     * @param callback Function used to update the state
+     */
+    public editDraft(callback) {
+        if (typeof callback !== 'function') {
+            throw new Error('Callback must be a function')
+        }
+        this.newDispatch({ type: 'EDIT_DRAFT', payload: { callback } })
     }
 
     private initRoot(root) {
@@ -941,25 +1016,60 @@ export default class CADL extends EventEmitter {
         }
 
         if (typeof action.type === 'undefined') {
-            throw new Error('Actions types cannot be undefined.')
+            throw new Error('Action types cannot be undefined.')
         }
 
-        this.reducer(this.root, action)
+        //TODO: add is Dispatching
+        this.root = this.reducer(this.root, action)
 
         return action
     }
 
+
     private reducer(state = this.root, action) {
-        switch (action.type) {
-            case 'SET_VALUE': {
-                const { pageName, dataKey, value } = action.payload
-                produce(state, draft => {
-                    _.set(draft[pageName], dataKey, value)
-                })
+        return produce(state, draft => {
+            switch (action.type) {
+                case 'SET_VALUE': {
+                    const { pageName, dataKey, value } = action.payload
+                    if (typeof pageName === 'undefined') {
+                        _.set(draft, dataKey, value)
+                    } else {
+                        _.set(draft[pageName], dataKey, value)
+                    }
+                    break
+                }
+                case 'SET_ROOT_PROPERTIES': {
+                    const { properties } = action.payload
+                    for (let [key, val] of Object.entries(properties)) {
+                        _.set(draft, key, val)
+                    }
+                    break
+                }
+                case 'SET_LOCAL_PROPERTIES': {
+                    const { properties, pageName } = action.payload
+                    for (let [key, val] of Object.entries(properties)) {
+                        _.set(draft[pageName], key, val)
+                    }
+                    break
+                }
+                case 'ADD_BUILTIN_FNS': {
+                    const { builtInFns } = action.payload
+                    for (let [key, val] of Object.entries(builtInFns)) {
+                        _.set(draft['builtIn'], key, val)
+                    }
+                    break
+                }
+                case 'DELETE_PAGE': {
+                    const { pageName } = action.payload
+                    delete draft[pageName]
+                    break
+                }
+                case 'EDIT_DRAFT': {
+                    const { callback } = action.payload
+                    callback(draft)
+                }
             }
-            default:
-                return state
-        }
+        })
     }
     public get cadlVersion() {
         return this._cadlVersion
@@ -1026,22 +1136,6 @@ export default class CADL extends EventEmitter {
 
     public getConfig() {
         return store.getConfig()
-    }
-
-    /**
-     * Only able to be set when env = development
-     * @param catcher if undefined, reset the catcher to be default
-     */
-    public setResponseCatcher(catcher?: ResponseCatcher) {
-        store.setResponseCatcher(catcher)
-    }
-
-    /**
-     * Only able to be set when env = development
-     * @param catcher if undefined, reset the catcher to be default
-     */
-    public setErrorCatcher(catcher?: ErrorCatcher) {
-        store.setErrorCatcher(catcher)
     }
 
 

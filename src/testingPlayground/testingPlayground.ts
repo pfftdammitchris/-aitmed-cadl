@@ -23,8 +23,12 @@ export default (async function () {
 
     console.log(cadl.root.builtIn.string.formatUnixtime_en(1595970704255))
     console.log(cadl.root.builtIn.string.formatDurationInSecond(3388333000))
-    await cadl.initPage('SignIn')
-    cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
+    await cadl.initPage('SignIn', [], { builtIn: { goto: () => console.log('lolo') } })
+    const cb = (draft) => {
+        draft.SignIn.formData.phoneNumber = 'lolita'
+    }
+    // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
+    cadl.newDispatch({ type: 'EDIT_DRAFT', payload: { callback: cb } })
     debugger
     // await cadl.initPage('CreateNewAccount')
     debugger

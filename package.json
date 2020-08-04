@@ -1,12 +1,12 @@
 {
   "name": "@aitmed/cadl",
-  "version": "1.0.61",
-  "description": "A package with utilities to manage and process Noodl files.",
+  "version": "1.0.62",
+  "description": "A package with utilities to manage and process CADL files.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
   "jsnext:main": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
-  "scripts": {
+  "scripts": { 
     "build": "npm run clean && npm run build:js && npm run build:types",
     "build:js": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",

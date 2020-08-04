@@ -252,7 +252,7 @@ function attachFns({
                                     options.scondition = sCondition
                                 }
                                 try {
-                                    if (store.env === 'development') {
+                                    if (store.env === 'test') {
                                         console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', { idList, options: { ...options } });
                                     }
 
@@ -263,11 +263,15 @@ function attachFns({
                                     throw error
                                 }
 
-                                if (res.length > 0) {
+                                if (!res.length && store.env === 'test') {
+                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+                                    return res
+                                }
+                                else {
                                     res = res.map((edge) => {
                                         return replaceEidWithId(edge)
                                     })
-                                    if (store.env === 'development') {
+                                    if (store.env === 'test') {
                                         console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
                                     }
 
@@ -277,14 +281,8 @@ function attachFns({
                                         payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
                                     })
                                     dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
-
-
                                 }
-                                //TODO:handle else case
-                                if (store.env === 'development') {
-                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-                                }
-                                return res
+                                return
                             }
                             output = isPopulated(output) ? getFn(output) : output
 
@@ -313,14 +311,14 @@ function attachFns({
                                 if (id && !id.startsWith('.')) {
                                     try {
 
-                                        if (store.env === 'development') {
+                                        if (store.env === 'test') {
                                             console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
                                         }
 
                                         const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
                                         res = data
 
-                                        if (store.env === 'development') {
+                                        if (store.env === 'test') {
                                             console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
                                         }
 
@@ -329,14 +327,14 @@ function attachFns({
                                     }
                                 } else {
                                     try {
-                                        if (store.env === 'development') {
+                                        if (store.env === 'test') {
                                             console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
                                         }
 
                                         const { data } = await store.level2SDK.edgeServices.createEdge({ ...mergedVal })
                                         res = data
 
-                                        if (store.env === 'development') {
+                                        if (store.env === 'test') {
                                             console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
                                         }
                                     } catch (error) {
@@ -507,7 +505,7 @@ function attachFns({
 
                                 let res: any[] = []
                                 try {
-                                    if (store.env === 'development') {
+                                    if (store.env === 'test') {
                                         console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', { options: { ...options } });
                                     }
                                     const { data } = await store.level2SDK.vertexServices.retrieveVertex({
@@ -518,7 +516,7 @@ function attachFns({
                                     throw error
                                 }
                                 if (res.length > 0) {
-                                    if (store.env === 'development') {
+                                    if (store.env === 'test') {
                                         console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
                                     }
                                     dispatch({
@@ -530,7 +528,7 @@ function attachFns({
 
                                     return res
                                 }
-                                if (store.env === 'development') {
+                                if (store.env === 'test') {
                                     console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
                                 }
                                 //TODO:handle else case

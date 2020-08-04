@@ -875,26 +875,6 @@
 
 	var slicedToArray = _slicedToArray;
 
-	var _typeof_1 = createCommonjsModule(function (module) {
-	function _typeof(obj) {
-	  "@babel/helpers - typeof";
-
-	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return typeof obj;
-	    };
-	  } else {
-	    module.exports = _typeof = function _typeof(obj) {
-	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-	    };
-	  }
-
-	  return _typeof(obj);
-	}
-
-	module.exports = _typeof;
-	});
-
 	function _arrayWithoutHoles(arr) {
 	  if (Array.isArray(arr)) return arrayLikeToArray(arr);
 	}
@@ -984,6 +964,26 @@
 	}
 
 	var inherits = _inherits;
+
+	var _typeof_1 = createCommonjsModule(function (module) {
+	function _typeof(obj) {
+	  "@babel/helpers - typeof";
+
+	  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return typeof obj;
+	    };
+	  } else {
+	    module.exports = _typeof = function _typeof(obj) {
+	      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+	    };
+	  }
+
+	  return _typeof(obj);
+	}
+
+	module.exports = _typeof;
+	});
 
 	function _possibleConstructorReturn(self, call) {
 	  if (call && (_typeof_1(call) === "object" || typeof call === "function")) {
@@ -2300,60 +2300,6 @@
 	}
 
 	var set_1 = set;
-
-	/**
-	 * The base implementation of `_.get` without support for default values.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array|string} path The path of the property to get.
-	 * @returns {*} Returns the resolved value.
-	 */
-	function baseGet(object, path) {
-	  path = _castPath(path, object);
-
-	  var index = 0,
-	      length = path.length;
-
-	  while (object != null && index < length) {
-	    object = object[_toKey(path[index++])];
-	  }
-	  return (index && index == length) ? object : undefined;
-	}
-
-	var _baseGet = baseGet;
-
-	/**
-	 * Gets the value at `path` of `object`. If the resolved value is
-	 * `undefined`, the `defaultValue` is returned in its place.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 3.7.0
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @param {Array|string} path The path of the property to get.
-	 * @param {*} [defaultValue] The value returned for `undefined` resolved values.
-	 * @returns {*} Returns the resolved value.
-	 * @example
-	 *
-	 * var object = { 'a': [{ 'b': { 'c': 3 } }] };
-	 *
-	 * _.get(object, 'a[0].b.c');
-	 * // => 3
-	 *
-	 * _.get(object, ['a', '0', 'b', 'c']);
-	 * // => 3
-	 *
-	 * _.get(object, 'a.b.c', 'default');
-	 * // => 'default'
-	 */
-	function get(object, path, defaultValue) {
-	  var result = object == null ? undefined : _baseGet(object, path);
-	  return result === undefined ? defaultValue : result;
-	}
-
-	var get_1 = get;
 
 	/**
 	 * Removes all key-value entries from the stack.
@@ -3913,6 +3859,60 @@
 	}
 
 	var cloneDeep_1 = cloneDeep;
+
+	/**
+	 * The base implementation of `_.get` without support for default values.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {Array|string} path The path of the property to get.
+	 * @returns {*} Returns the resolved value.
+	 */
+	function baseGet(object, path) {
+	  path = _castPath(path, object);
+
+	  var index = 0,
+	      length = path.length;
+
+	  while (object != null && index < length) {
+	    object = object[_toKey(path[index++])];
+	  }
+	  return (index && index == length) ? object : undefined;
+	}
+
+	var _baseGet = baseGet;
+
+	/**
+	 * Gets the value at `path` of `object`. If the resolved value is
+	 * `undefined`, the `defaultValue` is returned in its place.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 3.7.0
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @param {Array|string} path The path of the property to get.
+	 * @param {*} [defaultValue] The value returned for `undefined` resolved values.
+	 * @returns {*} Returns the resolved value.
+	 * @example
+	 *
+	 * var object = { 'a': [{ 'b': { 'c': 3 } }] };
+	 *
+	 * _.get(object, 'a[0].b.c');
+	 * // => 3
+	 *
+	 * _.get(object, ['a', '0', 'b', 'c']);
+	 * // => 3
+	 *
+	 * _.get(object, 'a.b.c', 'default');
+	 * // => 'default'
+	 */
+	function get(object, path, defaultValue) {
+	  var result = object == null ? undefined : _baseGet(object, path);
+	  return result === undefined ? defaultValue : result;
+	}
+
+	var get_1 = get;
 
 	var bind = function bind(fn, thisArg) {
 	  return function wrap() {
@@ -66397,10 +66397,11 @@
 	    defineProperty(this, "errorCatcher", defaultErrorCatcher);
 
 	    this._env = env;
+	    var sdkEnv = env === 'test' ? 'development' : 'production';
 	    this.level2SDK = new SDK({
 	      apiVersion: apiVersion,
 	      apiHost: apiHost,
-	      env: env,
+	      env: sdkEnv,
 	      configUrl: configUrl
 	    });
 
@@ -66432,32 +66433,6 @@
 	    value: function getConfig() {
 	      return this.level2SDK.getConfigData();
 	    }
-	    /**
-	     * @param catcher if null, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setResponseCatcher",
-	    value: function setResponseCatcher() {
-	      var catcher = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultResponseCatcher;
-
-	      if (this.env === 'development') {
-	        this.responseCatcher = catcher;
-	      }
-	    }
-	    /**
-	     * @param catcher if null, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setErrorCatcher",
-	    value: function setErrorCatcher() {
-	      var catcher = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : defaultErrorCatcher;
-
-	      if (this.env === 'development') {
-	        this.errorCatcher = catcher;
-	      }
-	    }
 	  }, {
 	    key: "apiVersion",
 	    set: function set(value) {
@@ -66469,10 +66444,10 @@
 	  }, {
 	    key: "env",
 	    set: function set(value) {
-	      this.level2SDK.env = value;
+	      this._env = value;
 	    },
 	    get: function get() {
-	      return this.level2SDK.env;
+	      return this._env;
 	    }
 	  }, {
 	    key: "apiHost",
@@ -66496,7 +66471,7 @@
 	}();
 
 	var store$3 = new Store$1({
-	  env: 'development',
+	  env: 'test',
 	  configUrl: 'https://public.aitmed.com/config'
 	});
 
@@ -78547,7 +78522,7 @@
 
 	                            _context.prev = 7;
 
-	                            if (store$3.env === 'development') {
+	                            if (store$3.env === 'test') {
 	                              console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
 	                                idList: idList,
 	                                options: _objectSpread$c({}, options)
@@ -78573,42 +78548,45 @@
 	                            throw _context.t0;
 
 	                          case 19:
-	                            if (res.length > 0) {
-	                              res = res.map(function (edge) {
-	                                return replaceEidWithId(edge);
-	                              });
+	                            if (!(!res.length && store$3.env === 'test')) {
+	                              _context.next = 24;
+	                              break;
+	                            }
 
-	                              if (store$3.env === 'development') {
-	                                console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-	                              }
+	                            console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	                            return _context.abrupt("return", res);
 
-	                              dispatch({
-	                                type: 'update-data',
-	                                //TODO: handle case for data is an array or an object
-	                                payload: {
-	                                  pageName: pageName,
-	                                  dataKey: dataOut ? dataOut : dataKey,
-	                                  data: res
-	                                }
-	                              });
-	                              dispatch({
-	                                type: 'emit-update',
-	                                payload: {
-	                                  pageName: pageName,
-	                                  dataKey: dataOut ? dataOut : dataKey,
-	                                  newVal: res
-	                                }
-	                              });
-	                            } //TODO:handle else case
+	                          case 24:
+	                            res = res.map(function (edge) {
+	                              return replaceEidWithId(edge);
+	                            });
 
-
-	                            if (store$3.env === 'development') {
+	                            if (store$3.env === 'test') {
 	                              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
 	                            }
 
-	                            return _context.abrupt("return", res);
+	                            dispatch({
+	                              type: 'update-data',
+	                              //TODO: handle case for data is an array or an object
+	                              payload: {
+	                                pageName: pageName,
+	                                dataKey: dataOut ? dataOut : dataKey,
+	                                data: res
+	                              }
+	                            });
+	                            dispatch({
+	                              type: 'emit-update',
+	                              payload: {
+	                                pageName: pageName,
+	                                dataKey: dataOut ? dataOut : dataKey,
+	                                newVal: res
+	                              }
+	                            });
 
-	                          case 22:
+	                          case 28:
+	                            return _context.abrupt("return");
+
+	                          case 29:
 	                          case "end":
 	                            return _context.stop();
 	                        }
@@ -78667,7 +78645,7 @@
 
 	                              _context2.prev = 7;
 
-	                              if (store$3.env === 'development') {
+	                              if (store$3.env === 'test') {
 	                                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                  id: id
 	                                }));
@@ -78683,7 +78661,7 @@
 	                              data = _yield$store$level2SD2.data;
 	                              res = data;
 
-	                              if (store$3.env === 'development') {
+	                              if (store$3.env === 'test') {
 	                                console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
 	                              }
 
@@ -78702,7 +78680,7 @@
 	                            case 22:
 	                              _context2.prev = 22;
 
-	                              if (store$3.env === 'development') {
+	                              if (store$3.env === 'test') {
 	                                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$c(_objectSpread$c({}, mergedVal), {}, {
 	                                  id: id
 	                                }));
@@ -78716,7 +78694,7 @@
 	                              _data = _yield$store$level2SD3.data;
 	                              res = _data;
 
-	                              if (store$3.env === 'development') {
+	                              if (store$3.env === 'test') {
 	                                console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
 	                              }
 
@@ -79162,7 +79140,7 @@
 	                            res = [];
 	                            _context7.prev = 2;
 
-	                            if (store$3.env === 'development') {
+	                            if (store$3.env === 'test') {
 	                              console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
 	                                options: _objectSpread$c({}, options)
 	                              });
@@ -79192,7 +79170,7 @@
 	                              break;
 	                            }
 
-	                            if (store$3.env === 'development') {
+	                            if (store$3.env === 'test') {
 	                              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
 	                            }
 
@@ -79216,7 +79194,7 @@
 	                            return _context7.abrupt("return", res);
 
 	                          case 19:
-	                            if (store$3.env === 'development') {
+	                            if (store$3.env === 'test') {
 	                              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
 	                            } //TODO:handle else case
 
@@ -79981,15 +79959,15 @@
 	  return sourceCopy;
 	}
 
+	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 	function _createForOfIteratorHelper$h(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$i(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 	function _unsupportedIterableToArray$i(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$i(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$i(o, minLen); }
 
 	function _arrayLikeToArray$i(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
@@ -80003,15 +79981,13 @@
 	  /**
 	   * 
 	   * @param CADLARGS
-	   * @param CADLARGS.env 'development' | 'production'
 	   * @param CADLARGS.configUrl  
 	   * @param CADLARGS.cadlVersion 'test' | 'stable' 
 	   */
 	  function CADL(_ref) {
 	    var _this;
 
-	    var env = _ref.env,
-	        configUrl = _ref.configUrl,
+	    var configUrl = _ref.configUrl,
 	        cadlVersion = _ref.cadlVersion;
 
 	    classCallCheck(this, CADL);
@@ -80032,7 +80008,7 @@
 
 	    defineProperty(assertThisInitialized(_this), "_initCallQueue", void 0);
 
-	    store$3.env = env;
+	    store$3.env = cadlVersion;
 	    store$3.configUrl = configUrl;
 	    _this._cadlVersion = cadlVersion;
 	    return _this;
@@ -80147,7 +80123,12 @@
 	                    source: BaseDataModel,
 	                    lookFor: ['.', '..', '=']
 	                  });
-	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedBaseDataModel);
+	                  this.newDispatch({
+	                    type: 'SET_ROOT_PROPERTIES',
+	                    payload: {
+	                      properties: processedBaseDataModel
+	                    }
+	                  });
 	                }
 
 	                if (BaseCSS) {
@@ -80155,7 +80136,12 @@
 	                    source: BaseCSS,
 	                    lookFor: ['.', '..', '=']
 	                  });
-	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedBaseCSS);
+	                  this.newDispatch({
+	                    type: 'SET_ROOT_PROPERTIES',
+	                    payload: {
+	                      properties: processedBaseCSS
+	                    }
+	                  });
 	                }
 
 	                if (BasePage) {
@@ -80163,7 +80149,12 @@
 	                    source: BasePage,
 	                    lookFor: ['.', '..', '=']
 	                  });
-	                  this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedBasePage);
+	                  this.newDispatch({
+	                    type: 'SET_ROOT_PROPERTIES',
+	                    payload: {
+	                      properties: processedBasePage
+	                    }
+	                  });
 	                }
 
 	                if (!(preload && preload.length)) {
@@ -80205,7 +80196,12 @@
 	                  source: rawBaseDataModel,
 	                  lookFor: ['.', '..', '=']
 	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _processedBaseDataModel);
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: _processedBaseDataModel
+	                  }
+	                });
 	                return _context.abrupt("break", 67);
 
 	              case 45:
@@ -80226,7 +80222,12 @@
 	                  source: rawBaseCSS,
 	                  lookFor: ['.', '..', '=']
 	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _processedBaseCSS);
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: _processedBaseCSS
+	                  }
+	                });
 	                return _context.abrupt("break", 67);
 
 	              case 53:
@@ -80247,7 +80248,12 @@
 	                  source: rawBasePage,
 	                  lookFor: ['.', '..', '=']
 	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), _processedBasePage);
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: _processedBasePage
+	                  }
+	                });
 	                return _context.abrupt("break", 67);
 
 	              case 61:
@@ -80260,7 +80266,12 @@
 	                  source: rawPage,
 	                  lookFor: ['.', '..', '=']
 	                });
-	                this.root = _objectSpread$d(_objectSpread$d({}, this.root), processedRawPage);
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: processedRawPage
+	                  }
+	                });
 	                return _context.abrupt("break", 67);
 
 	              case 67:
@@ -80296,8 +80307,13 @@
 	                  }
 
 	                  if (localStorageGlobalParsed) {
-	                    this.root = _objectSpread$d(_objectSpread$d({}, this.root), {}, {
-	                      Global: localStorageGlobalParsed
+	                    this.newDispatch({
+	                      type: 'SET_ROOT_PROPERTIES',
+	                      payload: {
+	                        properties: {
+	                          Global: localStorageGlobalParsed
+	                        }
+	                      }
 	                    });
 	                    this.dispatch({
 	                      type: 'update-data',
@@ -80350,8 +80366,6 @@
 	    key: "initPage",
 	    value: function () {
 	      var _initPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(pageName) {
-	        var _this2 = this;
-
 	        var skip,
 	            options,
 	            builtIn,
@@ -80362,48 +80376,64 @@
 	            boundDispatch,
 	            processedPage,
 	            init,
-	            _loop,
-	            _ret,
+	            currIndex,
+	            command,
+	            actionType,
+	            dataKey,
+	            dataObject,
+	            funcName,
+	            _command$if,
+	            condExpression,
+	            elseEffect,
+	            condResult,
+	            updatedPage,
+	            populatedUpdatedPage,
+	            populatedUpdatedPageWithFns,
 	            processedComponents,
 	            replaceUpdateJob2,
-	            _args3 = arguments;
+	            _args2 = arguments;
 
-	        return regenerator.wrap(function _callee2$(_context3) {
+	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
-	            switch (_context3.prev = _context3.next) {
+	            switch (_context2.prev = _context2.next) {
 	              case 0:
-	                skip = _args3.length > 1 && _args3[1] !== undefined ? _args3[1] : [];
-	                options = _args3.length > 2 && _args3[2] !== undefined ? _args3[2] : {};
+	                skip = _args2.length > 1 && _args2[1] !== undefined ? _args2[1] : [];
+	                options = _args2.length > 2 && _args2[2] !== undefined ? _args2[2] : {};
 
 	                if (this.cadlEndpoint) {
-	                  _context3.next = 5;
+	                  _context2.next = 5;
 	                  break;
 	                }
 
-	                _context3.next = 5;
+	                _context2.next = 5;
 	                return this.init();
 
 	              case 5:
 	                builtIn = options.builtIn;
 
 	                if (builtIn && isObject$4(builtIn)) {
-	                  this.root = an(this.root, function (draft) {
-	                    draft.builtIn = _objectSpread$d(_objectSpread$d({}, draft.builtIn), builtIn);
+	                  this.newDispatch({
+	                    type: 'ADD_BUILTIN_FNS',
+	                    payload: {
+	                      builtInFns: _objectSpread$d({}, builtIn)
+	                    }
 	                  });
 	                }
 
-	                _context3.next = 9;
+	                _context2.next = 9;
 	                return this.getPage(pageName);
 
 	              case 9:
-	                pageCADL = _context3.sent;
+	                pageCADL = _context2.sent;
 	                prevVal = {}; //FOR FORMDATA
 	                //process formData
 
 	                if (this.root[pageName]) {
-	                  prevVal = cloneDeep_1(this.root[pageName]);
-	                  this.root = an(this.root, function (draft) {
-	                    delete draft[pageName];
+	                  this.newDispatch({
+	                    type: 'DELETE_PAGE',
+	                    payload: {
+	                      pageName: pageName
+	                    }
 	                  });
 	                }
 
@@ -80426,214 +80456,188 @@
 
 	                boundDispatch = this.dispatch.bind(this);
 	                processedPage = processedWithFns;
-	                this.root = an(this.root, function (draft) {
-	                  return _objectSpread$d(_objectSpread$d({}, draft), processedPage);
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: processedPage
+	                  }
 	                }); //run init commands if any
 
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context3.next = 28;
+	                  _context2.next = 80;
 	                  break;
 	                }
 
 	                this.initCallQueue = init.map(function (_command, index) {
 	                  return index;
 	                });
-	                _loop = /*#__PURE__*/regenerator.mark(function _loop() {
-	                  var currIndex, command, actionType, dataKey, dataObject, funcName, _command$if, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	                  return regenerator.wrap(function _loop$(_context2) {
-	                    while (1) {
-	                      switch (_context2.prev = _context2.next) {
-	                        case 0:
-	                          currIndex = _this2.initCallQueue.shift();
-	                          command = init[currIndex];
-
-	                          if (!(typeof command === 'function')) {
-	                            _context2.next = 13;
-	                            break;
-	                          }
-
-	                          _context2.prev = 3;
-	                          _context2.next = 6;
-	                          return command();
-
-	                        case 6:
-	                          _context2.next = 11;
-	                          break;
-
-	                        case 8:
-	                          _context2.prev = 8;
-	                          _context2.t0 = _context2["catch"](3);
-	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
-
-	                        case 11:
-	                          _context2.next = 51;
-	                          break;
-
-	                        case 13:
-	                          if (!(isObject$4(command) && 'actionType' in command)) {
-	                            _context2.next = 28;
-	                            break;
-	                          }
-
-	                          actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
-	                          _context2.t1 = actionType;
-	                          _context2.next = _context2.t1 === 'updateObject' ? 18 : _context2.t1 === 'builtIn' ? 20 : 25;
-	                          break;
-
-	                        case 18:
-	                          _this2.updateObject({
-	                            dataKey: dataKey,
-	                            dataObject: dataObject
-	                          });
-
-	                          return _context2.abrupt("break", 26);
-
-	                        case 20:
-	                          if (!(funcName === 'videoChat')) {
-	                            _context2.next = 24;
-	                            break;
-	                          }
-
-	                          if (!(funcName in _this2.root.builtIn && typeof _this2.root.builtIn[funcName] === 'function')) {
-	                            _context2.next = 24;
-	                            break;
-	                          }
-
-	                          _context2.next = 24;
-	                          return _this2.root.builtIn[funcName](command);
-
-	                        case 24:
-	                          return _context2.abrupt("break", 26);
-
-	                        case 25:
-	                          return _context2.abrupt("return", {
-	                            v: void 0
-	                          });
-
-	                        case 26:
-	                          _context2.next = 51;
-	                          break;
-
-	                        case 28:
-	                          if (!(isObject$4(command) && 'if' in command)) {
-	                            _context2.next = 41;
-	                            break;
-	                          }
-
-	                          //TODO: add the then condition
-	                          _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
-
-	                          if (!(typeof condExpression === 'function')) {
-	                            _context2.next = 39;
-	                            break;
-	                          }
-
-	                          _context2.next = 33;
-	                          return condExpression();
-
-	                        case 33:
-	                          condResult = _context2.sent;
-
-	                          if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                            _context2.next = 39;
-	                            break;
-	                          }
-
-	                          if (!('goto' in _this2.root.builtIn && typeof _this2.root.builtIn['goto'] === 'function')) {
-	                            _context2.next = 39;
-	                            break;
-	                          }
-
-	                          _context2.next = 38;
-	                          return _this2.root.builtIn['goto'](elseEffect['goto']);
-
-	                        case 38:
-	                          return _context2.abrupt("return", {
-	                            v: void 0
-	                          });
-
-	                        case 39:
-	                          _context2.next = 51;
-	                          break;
-
-	                        case 41:
-	                          if (!Array.isArray(command)) {
-	                            _context2.next = 51;
-	                            break;
-	                          }
-
-	                          if (!(typeof command[0][1] === 'function')) {
-	                            _context2.next = 51;
-	                            break;
-	                          }
-
-	                          _context2.prev = 43;
-	                          _context2.next = 46;
-	                          return command[0][1]();
-
-	                        case 46:
-	                          _context2.next = 51;
-	                          break;
-
-	                        case 48:
-	                          _context2.prev = 48;
-	                          _context2.t2 = _context2["catch"](43);
-	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
-
-	                        case 51:
-	                          //updating page after command has been called
-	                          updatedPage = _this2.root[pageName]; //populateObject again to populate any data that was dependant on the command call
-
-	                          populatedUpdatedPage = populateObject({
-	                            source: updatedPage,
-	                            lookFor: '..',
-	                            skip: ['components'],
-	                            locations: [_this2.root[pageName]]
-	                          });
-	                          populatedUpdatedPageWithFns = attachFns({
-	                            cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
-	                            dispatch: boundDispatch
-	                          });
-	                          processedPage = populatedUpdatedPageWithFns;
-	                          init = Object.values(populatedUpdatedPageWithFns)[0].init;
-	                          _this2.root[pageName] = an(_this2.root[pageName], function (draft) {
-	                            Object.assign(draft[pageName], Object.values(populatedUpdatedPageWithFns)[0]);
-	                          });
-
-	                        case 57:
-	                        case "end":
-	                          return _context2.stop();
-	                      }
-	                    }
-	                  }, _loop, null, [[3, 8], [43, 48]]);
-	                });
-
-	              case 21:
+	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context3.next = 28;
+	                  _context2.next = 80;
 	                  break;
 	                }
 
-	                return _context3.delegateYield(_loop(), "t0", 23);
+	                currIndex = this.initCallQueue.shift();
+	                command = init[currIndex];
 
-	              case 23:
-	                _ret = _context3.t0;
-
-	                if (!(_typeof_1(_ret) === "object")) {
-	                  _context3.next = 26;
+	                if (!(typeof command === 'function')) {
+	                  _context2.next = 34;
 	                  break;
 	                }
 
-	                return _context3.abrupt("return", _ret.v);
+	                _context2.prev = 24;
+	                _context2.next = 27;
+	                return command();
 
-	              case 26:
-	                _context3.next = 21;
+	              case 27:
+	                _context2.next = 32;
 	                break;
 
-	              case 28:
+	              case 29:
+	                _context2.prev = 29;
+	                _context2.t0 = _context2["catch"](24);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
+
+	              case 32:
+	                _context2.next = 72;
+	                break;
+
+	              case 34:
+	                if (!(isObject$4(command) && 'actionType' in command)) {
+	                  _context2.next = 49;
+	                  break;
+	                }
+
+	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
+	                _context2.t1 = actionType;
+	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 41 : 46;
+	                break;
+
+	              case 39:
+	                this.updateObject({
+	                  dataKey: dataKey,
+	                  dataObject: dataObject
+	                });
+	                return _context2.abrupt("break", 47);
+
+	              case 41:
+	                if (!(funcName === 'videoChat')) {
+	                  _context2.next = 45;
+	                  break;
+	                }
+
+	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
+	                  _context2.next = 45;
+	                  break;
+	                }
+
+	                _context2.next = 45;
+	                return this.root.builtIn[funcName](command);
+
+	              case 45:
+	                return _context2.abrupt("break", 47);
+
+	              case 46:
+	                return _context2.abrupt("return");
+
+	              case 47:
+	                _context2.next = 72;
+	                break;
+
+	              case 49:
+	                if (!(isObject$4(command) && 'if' in command)) {
+	                  _context2.next = 62;
+	                  break;
+	                }
+
+	                //TODO: add the then condition
+	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
+
+	                if (!(typeof condExpression === 'function')) {
+	                  _context2.next = 60;
+	                  break;
+	                }
+
+	                _context2.next = 54;
+	                return condExpression();
+
+	              case 54:
+	                condResult = _context2.sent;
+
+	                if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
+	                  _context2.next = 60;
+	                  break;
+	                }
+
+	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
+	                  _context2.next = 60;
+	                  break;
+	                }
+
+	                _context2.next = 59;
+	                return this.root.builtIn['goto'](elseEffect['goto']);
+
+	              case 59:
+	                return _context2.abrupt("return");
+
+	              case 60:
+	                _context2.next = 72;
+	                break;
+
+	              case 62:
+	                if (!Array.isArray(command)) {
+	                  _context2.next = 72;
+	                  break;
+	                }
+
+	                if (!(typeof command[0][1] === 'function')) {
+	                  _context2.next = 72;
+	                  break;
+	                }
+
+	                _context2.prev = 64;
+	                _context2.next = 67;
+	                return command[0][1]();
+
+	              case 67:
+	                _context2.next = 72;
+	                break;
+
+	              case 69:
+	                _context2.prev = 69;
+	                _context2.t2 = _context2["catch"](64);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
+
+	              case 72:
+	                //updating page after command has been called
+	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
+
+	                populatedUpdatedPage = populateObject({
+	                  source: updatedPage,
+	                  lookFor: '..',
+	                  skip: ['components'],
+	                  locations: [this.root[pageName]]
+	                });
+	                populatedUpdatedPageWithFns = attachFns({
+	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
+	                  dispatch: boundDispatch
+	                });
+	                processedPage = populatedUpdatedPageWithFns;
+	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
+	                this.newDispatch({
+	                  type: 'SET_LOCAL_PROPERTIES',
+	                  payload: {
+	                    pageName: pageName,
+	                    properties: Object.values(populatedUpdatedPageWithFns)[0]
+	                  }
+	                });
+	                _context2.next = 20;
+	                break;
+
+	              case 80:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -80648,8 +80652,11 @@
 	                  cadlObject: processedComponents,
 	                  dispatch: boundDispatch
 	                });
-	                this.root = an(this.root, function (draft) {
-	                  return _objectSpread$d(_objectSpread$d({}, draft), replaceUpdateJob2);
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: replaceUpdateJob2
+	                  }
 	                });
 	                this.emit('stateChanged', {
 	                  name: 'update',
@@ -80658,12 +80665,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 32:
+	              case 84:
 	              case "end":
-	                return _context3.stop();
+	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this);
+	        }, _callee2, this, [[24, 29], [64, 69]]);
 	      }));
 
 	      function initPage(_x) {
@@ -80684,31 +80691,31 @@
 	    value: function () {
 	      var _getPage = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(pageName) {
 	        var pageCADL, url;
-	        return regenerator.wrap(function _callee3$(_context4) {
+	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
-	            switch (_context4.prev = _context4.next) {
+	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                _context4.prev = 0;
+	                _context3.prev = 0;
 	                url = "".concat(this.baseUrl).concat(pageName, "_en.yml");
-	                _context4.next = 4;
+	                _context3.next = 4;
 	                return this.defaultObject(url);
 
 	              case 4:
-	                pageCADL = _context4.sent;
-	                _context4.next = 10;
+	                pageCADL = _context3.sent;
+	                _context3.next = 10;
 	                break;
 
 	              case 7:
-	                _context4.prev = 7;
-	                _context4.t0 = _context4["catch"](0);
-	                throw _context4.t0;
+	                _context3.prev = 7;
+	                _context3.t0 = _context3["catch"](0);
+	                throw _context3.t0;
 
 	              case 10:
-	                return _context4.abrupt("return", pageCADL);
+	                return _context3.abrupt("return", pageCADL);
 
 	              case 11:
 	              case "end":
-	                return _context4.stop();
+	                return _context3.stop();
 	            }
 	          }
 	        }, _callee3, this, [[0, 7]]);
@@ -80736,43 +80743,43 @@
 	      var _defaultObject = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(url) {
 	        var cadlYAML, cadlObject, _yield$axios$get, data;
 
-	        return regenerator.wrap(function _callee4$(_context5) {
+	        return regenerator.wrap(function _callee4$(_context4) {
 	          while (1) {
-	            switch (_context5.prev = _context5.next) {
+	            switch (_context4.prev = _context4.next) {
 	              case 0:
-	                _context5.prev = 0;
-	                _context5.next = 3;
+	                _context4.prev = 0;
+	                _context4.next = 3;
 	                return axios$1.get(url);
 
 	              case 3:
-	                _yield$axios$get = _context5.sent;
+	                _yield$axios$get = _context4.sent;
 	                data = _yield$axios$get.data;
 	                cadlYAML = data;
-	                _context5.next = 11;
+	                _context4.next = 11;
 	                break;
 
 	              case 8:
-	                _context5.prev = 8;
-	                _context5.t0 = _context5["catch"](0);
-	                throw new UnableToRetrieveYAML("Unable to retrieve yaml for ".concat(url), _context5.t0);
+	                _context4.prev = 8;
+	                _context4.t0 = _context4["catch"](0);
+	                throw new UnableToRetrieveYAML("Unable to retrieve yaml for ".concat(url), _context4.t0);
 
 	              case 11:
-	                _context5.prev = 11;
+	                _context4.prev = 11;
 	                cadlObject = YAML.parse(cadlYAML);
-	                _context5.next = 18;
+	                _context4.next = 18;
 	                break;
 
 	              case 15:
-	                _context5.prev = 15;
-	                _context5.t1 = _context5["catch"](11);
-	                throw new UnableToParseYAML("Unable to parse yaml for ".concat(url), _context5.t1);
+	                _context4.prev = 15;
+	                _context4.t1 = _context4["catch"](11);
+	                throw new UnableToParseYAML("Unable to parse yaml for ".concat(url), _context4.t1);
 
 	              case 18:
-	                return _context5.abrupt("return", cadlObject);
+	                return _context4.abrupt("return", cadlObject);
 
 	              case 19:
 	              case "end":
-	                return _context5.stop();
+	                return _context4.stop();
 	            }
 	          }
 	        }, _callee4, null, [[0, 8], [11, 15]]);
@@ -80878,7 +80885,7 @@
 	  }, {
 	    key: "dispatch",
 	    value: function dispatch(action) {
-	      var _this3 = this;
+	      var _this2 = this;
 
 	      switch (action.type) {
 	        case 'populate':
@@ -80907,8 +80914,11 @@
 	              cadlObject: populateAfterInheriting,
 	              dispatch: boundDispatch
 	            });
-	            this.root = an(this.root, function (draft) {
-	              draft[pageName] = withFNs;
+	            this.newDispatch({
+	              type: 'SET_ROOT_PROPERTIES',
+	              payload: {
+	                properties: defineProperty({}, pageName, withFNs)
+	              }
 	            });
 	            this.dispatch({
 	              type: 'update-localStorage'
@@ -80927,15 +80937,23 @@
 	            var pathArr = dataKey.split('.');
 
 	            if (_pageName === 'builtIn') {
-	              this.root = an(this.root, function (draft) {
-	                set_1(draft, pathArr, data);
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  dataKey: pathArr,
+	                  value: data
+	                }
 	              });
 	            } else if (firstCharacter === firstCharacter.toUpperCase()) {
 	              var currentVal = get_1(this.root, pathArr);
 
 	              var mergedVal = mergeDeep(currentVal, data);
-	              this.root = an(this.root, function (draft) {
-	                set_1(draft, pathArr, mergedVal);
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  dataKey: pathArr,
+	                  value: mergedVal
+	                }
 	              });
 	            } else {
 	              var _currentVal = get_1(this.root[_pageName], pathArr);
@@ -80953,8 +80971,13 @@
 	                _mergedVal = data;
 	              }
 
-	              this.root = an(this.root, function (draft) {
-	                set_1(draft[_pageName], pathArr, _mergedVal);
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  pageName: _pageName,
+	                  dataKey: pathArr,
+	                  value: _mergedVal
+	                }
 	              });
 	            }
 
@@ -81005,12 +81028,12 @@
 	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
 	                var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
 
-	                return regenerator.wrap(function _callee5$(_context6) {
+	                return regenerator.wrap(function _callee5$(_context5) {
 	                  while (1) {
-	                    switch (_context6.prev = _context6.next) {
+	                    switch (_context5.prev = _context5.next) {
 	                      case 0:
 	                        if (key.startsWith('=')) {
-	                          _context6.next = 5;
+	                          _context5.next = 5;
 	                          break;
 	                        }
 
@@ -81019,11 +81042,17 @@
 	                        if (key.startsWith('..')) {
 	                          trimPath = key.substring(2, key.length - 1);
 	                          _pathArr2 = trimPath.split('.');
-	                          _this3.root = an(_this3.root, function (draft) {
-	                            set_1(draft[_pageName3], _pathArr2, val);
+
+	                          _this2.newDispatch({
+	                            type: 'SET_VALUE',
+	                            payload: {
+	                              pageName: _pageName3,
+	                              dataKey: _pathArr2,
+	                              value: val
+	                            }
 	                          });
 
-	                          _this3.emit('stateChanged', {
+	                          _this2.emit('stateChanged', {
 	                            name: 'update',
 	                            path: "".concat(_pageName3, ".").concat(trimPath),
 	                            newVal: val
@@ -81031,61 +81060,66 @@
 	                        } else if (key.startsWith('.')) {
 	                          trimPath = key.substring(1, key.length - 1);
 	                          _pathArr3 = trimPath.split('.');
-	                          _this3.root = an(_this3.root, function (draft) {
-	                            set_1(draft, _pathArr3, val);
+
+	                          _this2.newDispatch({
+	                            type: 'SET_VALUE',
+	                            payload: {
+	                              dataKey: _pathArr3,
+	                              value: val
+	                            }
 	                          });
 
-	                          _this3.emit('stateChanged', {
+	                          _this2.emit('stateChanged', {
 	                            name: 'update',
 	                            path: "".concat(trimPath),
 	                            newVal: val
 	                          });
 	                        }
 
-	                        _context6.next = 17;
+	                        _context5.next = 17;
 	                        break;
 
 	                      case 5:
 	                        if (!key.startsWith('=')) {
-	                          _context6.next = 17;
+	                          _context5.next = 17;
 	                          break;
 	                        }
 
 	                        _trimPath = key.substring(2, key.length);
 	                        _pathArr4 = _trimPath.split('.');
-	                        _val = get_1(_this3.root, _pathArr4) || get_1(_this3.root[_pageName3], _pathArr4);
+	                        _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
 	                        _populateWithRoot2 = populateObject({
 	                          source: _val,
 	                          lookFor: '.',
-	                          locations: [_this3.root, _this3.root[_pageName3]]
+	                          locations: [_this2.root, _this2.root[_pageName3]]
 	                        });
 	                        _populateWithSelf2 = populateObject({
 	                          source: _populateWithRoot2,
 	                          lookFor: '..',
-	                          locations: [_this3.root, _this3.root[_pageName3]]
+	                          locations: [_this2.root, _this2.root[_pageName3]]
 	                        });
 	                        _populateAfterInheriting2 = populateObject({
 	                          source: _populateWithSelf2,
 	                          lookFor: '=',
-	                          locations: [_this3.root, _this3.root[_pageName3]]
+	                          locations: [_this2.root, _this2.root[_pageName3]]
 	                        });
-	                        _boundDispatch = _this3.dispatch.bind(_this3);
+	                        _boundDispatch = _this2.dispatch.bind(_this2);
 	                        withFn = attachFns({
 	                          cadlObject: _populateAfterInheriting2,
 	                          dispatch: _boundDispatch
 	                        });
 
 	                        if (!(typeof withFn === 'function')) {
-	                          _context6.next = 17;
+	                          _context5.next = 17;
 	                          break;
 	                        }
 
-	                        _context6.next = 17;
+	                        _context5.next = 17;
 	                        return withFn();
 
 	                      case 17:
 	                      case "end":
-	                        return _context6.stop();
+	                        return _context5.stop();
 	                    }
 	                  }
 	                }, _callee5);
@@ -81127,14 +81161,22 @@
 	                fn = _action$payload4.fn;
 
 	            if (this.root.actions[_pageName4]) {
-	              this.root = an(this.root, function (draft) {
-	                draft.actions[_pageName4].update = fn;
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  dataKey: "actions.".concat(_pageName4, ".update"),
+	                  value: fn
+	                }
 	              });
 	            } else {
-	              this.root = an(this.root, function (draft) {
-	                draft.actions[_pageName4] = {
-	                  update: fn
-	                };
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  dataKey: "actions.".concat(_pageName4),
+	                  value: {
+	                    update: fn
+	                  }
+	                }
 	              });
 	            }
 
@@ -81187,8 +81229,12 @@
 
 	      var pathArr = path.split('.');
 	      var newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject;
-	      this.root = an(this.root, function (draft) {
-	        set_1(draft, pathArr, newVal);
+	      this.newDispatch({
+	        type: 'SET_VALUE',
+	        payload: {
+	          dataKey: pathArr,
+	          value: newVal
+	        }
 	      });
 	      this.dispatch({
 	        type: 'update-localStorage'
@@ -81209,13 +81255,11 @@
 	    key: "runInit",
 	    value: function () {
 	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(pageName) {
-	        var _this4 = this;
+	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, funcName, _command$if2, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	        var boundDispatch, page, init, _loop2, _ret2;
-
-	        return regenerator.wrap(function _callee6$(_context8) {
+	        return regenerator.wrap(function _callee6$(_context6) {
 	          while (1) {
-	            switch (_context8.prev = _context8.next) {
+	            switch (_context6.prev = _context6.next) {
 	              case 0:
 	                boundDispatch = this.dispatch.bind(this); //run init commands if any
 
@@ -81223,212 +81267,183 @@
 	                init = page.init;
 
 	                if (!init) {
-	                  _context8.next = 13;
+	                  _context6.next = 65;
 	                  break;
 	                }
 
 	                this.initCallQueue = init.map(function (_command, index) {
 	                  return index;
 	                });
-	                _loop2 = /*#__PURE__*/regenerator.mark(function _loop2() {
-	                  var currIndex, command, actionType, dataKey, dataObject, funcName, _command$if2, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	                  return regenerator.wrap(function _loop2$(_context7) {
-	                    while (1) {
-	                      switch (_context7.prev = _context7.next) {
-	                        case 0:
-	                          currIndex = _this4.initCallQueue.shift();
-	                          command = init[currIndex];
-
-	                          if (!(typeof command === 'function')) {
-	                            _context7.next = 13;
-	                            break;
-	                          }
-
-	                          _context7.prev = 3;
-	                          _context7.next = 6;
-	                          return command();
-
-	                        case 6:
-	                          _context7.next = 11;
-	                          break;
-
-	                        case 8:
-	                          _context7.prev = 8;
-	                          _context7.t0 = _context7["catch"](3);
-	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t0);
-
-	                        case 11:
-	                          _context7.next = 51;
-	                          break;
-
-	                        case 13:
-	                          if (!(isObject$4(command) && 'actionType' in command)) {
-	                            _context7.next = 28;
-	                            break;
-	                          }
-
-	                          actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
-	                          _context7.t1 = actionType;
-	                          _context7.next = _context7.t1 === 'updateObject' ? 18 : _context7.t1 === 'builtIn' ? 20 : 25;
-	                          break;
-
-	                        case 18:
-	                          _this4.updateObject({
-	                            dataKey: dataKey,
-	                            dataObject: dataObject
-	                          });
-
-	                          return _context7.abrupt("break", 26);
-
-	                        case 20:
-	                          if (!(funcName === 'videoChat')) {
-	                            _context7.next = 24;
-	                            break;
-	                          }
-
-	                          if (!(funcName in _this4.root.builtIn && typeof _this4.root.builtIn[funcName] === 'function')) {
-	                            _context7.next = 24;
-	                            break;
-	                          }
-
-	                          _context7.next = 24;
-	                          return _this4.root.builtIn[funcName](command);
-
-	                        case 24:
-	                          return _context7.abrupt("break", 26);
-
-	                        case 25:
-	                          return _context7.abrupt("return", {
-	                            v: void 0
-	                          });
-
-	                        case 26:
-	                          _context7.next = 51;
-	                          break;
-
-	                        case 28:
-	                          if (!(isObject$4(command) && 'if' in command)) {
-	                            _context7.next = 41;
-	                            break;
-	                          }
-
-	                          //TODO: add the then condition
-	                          _command$if2 = slicedToArray(command['if'], 3), condExpression = _command$if2[0], elseEffect = _command$if2[2];
-
-	                          if (!(typeof condExpression === 'function')) {
-	                            _context7.next = 39;
-	                            break;
-	                          }
-
-	                          _context7.next = 33;
-	                          return condExpression();
-
-	                        case 33:
-	                          condResult = _context7.sent;
-
-	                          if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                            _context7.next = 39;
-	                            break;
-	                          }
-
-	                          if (!('goto' in _this4.root.builtIn && typeof _this4.root.builtIn['goto'] === 'function')) {
-	                            _context7.next = 39;
-	                            break;
-	                          }
-
-	                          _context7.next = 38;
-	                          return _this4.root.builtIn['goto'](elseEffect['goto']);
-
-	                        case 38:
-	                          return _context7.abrupt("return", {
-	                            v: void 0
-	                          });
-
-	                        case 39:
-	                          _context7.next = 51;
-	                          break;
-
-	                        case 41:
-	                          if (!Array.isArray(command)) {
-	                            _context7.next = 51;
-	                            break;
-	                          }
-
-	                          if (!(typeof command[0][1] === 'function')) {
-	                            _context7.next = 51;
-	                            break;
-	                          }
-
-	                          _context7.prev = 43;
-	                          _context7.next = 46;
-	                          return command[0][1]();
-
-	                        case 46:
-	                          _context7.next = 51;
-	                          break;
-
-	                        case 48:
-	                          _context7.prev = 48;
-	                          _context7.t2 = _context7["catch"](43);
-	                          throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t2);
-
-	                        case 51:
-	                          //updating page after command has been called
-	                          updatedPage = _this4.root[pageName]; //populateObject again to populate any data that was dependant on the command call
-
-	                          populatedUpdatedPage = populateObject({
-	                            source: updatedPage,
-	                            lookFor: '..',
-	                            skip: ['components'],
-	                            locations: [_this4.root[pageName]]
-	                          });
-	                          populatedUpdatedPageWithFns = attachFns({
-	                            cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
-	                            dispatch: boundDispatch
-	                          });
-	                          page = populatedUpdatedPageWithFns;
-	                          init = Object.values(populatedUpdatedPageWithFns)[0].init;
-	                          _this4.root = an(_this4.root, function (draft) {
-	                            draft[pageName] = _objectSpread$d(_objectSpread$d({}, draft[pageName]), Object.values(populatedUpdatedPageWithFns)[0]);
-	                          });
-
-	                        case 57:
-	                        case "end":
-	                          return _context7.stop();
-	                      }
-	                    }
-	                  }, _loop2, null, [[3, 8], [43, 48]]);
-	                });
-
-	              case 6:
+	              case 5:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context8.next = 13;
+	                  _context6.next = 65;
 	                  break;
 	                }
 
-	                return _context8.delegateYield(_loop2(), "t0", 8);
+	                currIndex = this.initCallQueue.shift();
+	                command = init[currIndex];
 
-	              case 8:
-	                _ret2 = _context8.t0;
-
-	                if (!(_typeof_1(_ret2) === "object")) {
-	                  _context8.next = 11;
+	                if (!(typeof command === 'function')) {
+	                  _context6.next = 19;
 	                  break;
 	                }
 
-	                return _context8.abrupt("return", _ret2.v);
+	                _context6.prev = 9;
+	                _context6.next = 12;
+	                return command();
 
-	              case 11:
-	                _context8.next = 6;
+	              case 12:
+	                _context6.next = 17;
 	                break;
 
-	              case 13:
+	              case 14:
+	                _context6.prev = 14;
+	                _context6.t0 = _context6["catch"](9);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t0);
+
+	              case 17:
+	                _context6.next = 57;
+	                break;
+
+	              case 19:
+	                if (!(isObject$4(command) && 'actionType' in command)) {
+	                  _context6.next = 34;
+	                  break;
+	                }
+
+	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
+	                _context6.t1 = actionType;
+	                _context6.next = _context6.t1 === 'updateObject' ? 24 : _context6.t1 === 'builtIn' ? 26 : 31;
+	                break;
+
+	              case 24:
+	                this.updateObject({
+	                  dataKey: dataKey,
+	                  dataObject: dataObject
+	                });
+	                return _context6.abrupt("break", 32);
+
+	              case 26:
+	                if (!(funcName === 'videoChat')) {
+	                  _context6.next = 30;
+	                  break;
+	                }
+
+	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
+	                  _context6.next = 30;
+	                  break;
+	                }
+
+	                _context6.next = 30;
+	                return this.root.builtIn[funcName](command);
+
+	              case 30:
+	                return _context6.abrupt("break", 32);
+
+	              case 31:
+	                return _context6.abrupt("return");
+
+	              case 32:
+	                _context6.next = 57;
+	                break;
+
+	              case 34:
+	                if (!(isObject$4(command) && 'if' in command)) {
+	                  _context6.next = 47;
+	                  break;
+	                }
+
+	                //TODO: add the then condition
+	                _command$if2 = slicedToArray(command['if'], 3), condExpression = _command$if2[0], elseEffect = _command$if2[2];
+
+	                if (!(typeof condExpression === 'function')) {
+	                  _context6.next = 45;
+	                  break;
+	                }
+
+	                _context6.next = 39;
+	                return condExpression();
+
+	              case 39:
+	                condResult = _context6.sent;
+
+	                if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
+	                  _context6.next = 45;
+	                  break;
+	                }
+
+	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
+	                  _context6.next = 45;
+	                  break;
+	                }
+
+	                _context6.next = 44;
+	                return this.root.builtIn['goto'](elseEffect['goto']);
+
+	              case 44:
+	                return _context6.abrupt("return");
+
+	              case 45:
+	                _context6.next = 57;
+	                break;
+
+	              case 47:
+	                if (!Array.isArray(command)) {
+	                  _context6.next = 57;
+	                  break;
+	                }
+
+	                if (!(typeof command[0][1] === 'function')) {
+	                  _context6.next = 57;
+	                  break;
+	                }
+
+	                _context6.prev = 49;
+	                _context6.next = 52;
+	                return command[0][1]();
+
+	              case 52:
+	                _context6.next = 57;
+	                break;
+
+	              case 54:
+	                _context6.prev = 54;
+	                _context6.t2 = _context6["catch"](49);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t2);
+
+	              case 57:
+	                //updating page after command has been called
+	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
+
+	                populatedUpdatedPage = populateObject({
+	                  source: updatedPage,
+	                  lookFor: '..',
+	                  skip: ['components'],
+	                  locations: [this.root[pageName]]
+	                });
+	                populatedUpdatedPageWithFns = attachFns({
+	                  cadlObject: defineProperty({}, pageName, populatedUpdatedPage),
+	                  dispatch: boundDispatch
+	                });
+	                page = populatedUpdatedPageWithFns;
+	                init = Object.values(populatedUpdatedPageWithFns)[0].init;
+	                this.newDispatch({
+	                  type: 'SET_LOCAL_PROPERTIES',
+	                  payload: {
+	                    properties: Object.values(populatedUpdatedPageWithFns)[0],
+	                    pageName: pageName
+	                  }
+	                });
+	                _context6.next = 5;
+	                break;
+
+	              case 65:
 	              case "end":
-	                return _context8.stop();
+	                return _context6.stop();
 	            }
 	          }
-	        }, _callee6, this);
+	        }, _callee6, this, [[9, 14], [49, 54]]);
 	      }));
 
 	      function runInit(_x5) {
@@ -81465,8 +81480,12 @@
 	          case "user":
 	            {
 	              var user = localStorageGlobal.currentUser.vertex;
-	              this.root = an(this.root, function (draft) {
-	                draft.Global.currentUser.vertex = user;
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  dataKey: 'Global.currentUser.vertex',
+	                  value: user
+	                }
 	              });
 	              break;
 	            }
@@ -81474,8 +81493,12 @@
 	          case "meetroom":
 	            {
 	              var currMeetroom = localStorageGlobal.meetroom.edge;
-	              this.root = an(this.root, function (draft) {
-	                draft.Global.meetroom.edge = currMeetroom;
+	              this.newDispatch({
+	                type: 'SET_VALUE',
+	                payload: {
+	                  dataKey: 'Global.meetroom.edge',
+	                  value: currMeetroom
+	                }
 	              });
 	              break;
 	            }
@@ -81500,10 +81523,15 @@
 	    key: "setValue",
 	    value: function setValue(_ref6) {
 	      var path = _ref6.path,
-	          value = _ref6.value;
+	          value = _ref6.value,
+	          callback = _ref6.callback;
 	      var pathArr = path.split('.');
-	      this.root = an(this.root, function (draft) {
-	        set_1(draft, pathArr, value);
+	      this.newDispatch({
+	        type: 'SET_VALUE',
+	        payload: {
+	          dataKey: pathArr,
+	          value: value
+	        }
 	      });
 	      return;
 	    }
@@ -81531,8 +81559,12 @@
 	        currVal.push(value);
 	      }
 
-	      this.root = an(this.root, function (draft) {
-	        set_1(draft, pathArr, currVal);
+	      this.newDispatch({
+	        type: 'SET_VALUE',
+	        payload: {
+	          dataKey: pathArr,
+	          value: currVal
+	        }
 	      });
 	      return;
 	    }
@@ -81570,8 +81602,12 @@
 
 	          return passes;
 	        });
-	        this.root = an(this.root, function (draft) {
-	          set_1(draft, pathArr, newVal);
+	        this.newDispatch({
+	          type: 'SET_VALUE',
+	          payload: {
+	            dataKey: pathArr,
+	            value: newVal
+	          }
 	        });
 	      }
 	    }
@@ -81615,22 +81651,46 @@
 
 	        if (valIndex >= 0) {
 	          currValCopy.splice(valIndex, 1, value);
-	          this.root = an(this.root, function (draft) {
-	            set_1(draft, pathArr, currValCopy);
+	          this.newDispatch({
+	            type: 'SET_VALUE',
+	            payload: {
+	              dataKey: pathArr,
+	              value: currValCopy
+	            }
 	          });
 	        }
 	      }
 
 	      return;
 	    }
+	    /**
+	     * Used to mutate the draft state.
+	     * 
+	     * @param callback Function used to update the state
+	     */
+
+	  }, {
+	    key: "editDraft",
+	    value: function editDraft(callback) {
+	      if (typeof callback !== 'function') {
+	        throw new Error('Callback must be a function');
+	      }
+
+	      this.newDispatch({
+	        type: 'EDIT_DRAFT',
+	        payload: {
+	          callback: callback
+	        }
+	      });
+	    }
 	  }, {
 	    key: "initRoot",
 	    value: function initRoot(root) {
-	      var _this5 = this;
+	      var _this3 = this;
 
 	      return an(root, function (draft) {
 	        draft.actions = {};
-	        draft.builtIn = builtInFns(_this5.dispatch.bind(_this5));
+	        draft.builtIn = builtInFns(_this3.dispatch.bind(_this3));
 	      });
 	    }
 	  }, {
@@ -81641,10 +81701,11 @@
 	      }
 
 	      if (typeof action.type === 'undefined') {
-	        throw new Error('Actions types cannot be undefined.');
-	      }
+	        throw new Error('Action types cannot be undefined.');
+	      } //TODO: add is Dispatching
 
-	      this.reducer(this.root, action);
+
+	      this.root = this.reducer(this.root, action);
 	      return action;
 	    }
 	  }, {
@@ -81652,47 +81713,90 @@
 	    value: function reducer() {
 	      var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.root;
 	      var action = arguments.length > 1 ? arguments[1] : undefined;
+	      return an(state, function (draft) {
+	        switch (action.type) {
+	          case 'SET_VALUE':
+	            {
+	              var _action$payload6 = action.payload,
+	                  pageName = _action$payload6.pageName,
+	                  dataKey = _action$payload6.dataKey,
+	                  value = _action$payload6.value;
 
-	      switch (action.type) {
-	        case 'SET_VALUE':
-	          {
-	            var _action$payload6 = action.payload,
-	                pageName = _action$payload6.pageName,
-	                dataKey = _action$payload6.dataKey,
-	                value = _action$payload6.value;
-	            an(state, function (draft) {
-	              set_1(draft[pageName], dataKey, value);
-	            });
-	          }
+	              if (typeof pageName === 'undefined') {
+	                set_1(draft, dataKey, value);
+	              } else {
+	                set_1(draft[pageName], dataKey, value);
+	              }
 
-	        default:
-	          return state;
-	      }
+	              break;
+	            }
+
+	          case 'SET_ROOT_PROPERTIES':
+	            {
+	              var properties = action.payload.properties;
+
+	              for (var _i3 = 0, _Object$entries3 = Object.entries(properties); _i3 < _Object$entries3.length; _i3++) {
+	                var _Object$entries3$_i = slicedToArray(_Object$entries3[_i3], 2),
+	                    key = _Object$entries3$_i[0],
+	                    val = _Object$entries3$_i[1];
+
+	                set_1(draft, key, val);
+	              }
+
+	              break;
+	            }
+
+	          case 'SET_LOCAL_PROPERTIES':
+	            {
+	              var _action$payload7 = action.payload,
+	                  _properties2 = _action$payload7.properties,
+	                  _pageName6 = _action$payload7.pageName;
+
+	              for (var _i4 = 0, _Object$entries4 = Object.entries(_properties2); _i4 < _Object$entries4.length; _i4++) {
+	                var _Object$entries4$_i = slicedToArray(_Object$entries4[_i4], 2),
+	                    _key = _Object$entries4$_i[0],
+	                    _val2 = _Object$entries4$_i[1];
+
+	                set_1(draft[_pageName6], _key, _val2);
+	              }
+
+	              break;
+	            }
+
+	          case 'ADD_BUILTIN_FNS':
+	            {
+	              var _builtInFns = action.payload.builtInFns;
+
+	              for (var _i5 = 0, _Object$entries5 = Object.entries(_builtInFns); _i5 < _Object$entries5.length; _i5++) {
+	                var _Object$entries5$_i = slicedToArray(_Object$entries5[_i5], 2),
+	                    _key2 = _Object$entries5$_i[0],
+	                    _val3 = _Object$entries5$_i[1];
+
+	                set_1(draft['builtIn'], _key2, _val3);
+	              }
+
+	              break;
+	            }
+
+	          case 'DELETE_PAGE':
+	            {
+	              var _pageName7 = action.payload.pageName;
+	              delete draft[_pageName7];
+	              break;
+	            }
+
+	          case 'EDIT_DRAFT':
+	            {
+	              var callback = action.payload.callback;
+	              callback(draft);
+	            }
+	        }
+	      });
 	    }
 	  }, {
 	    key: "getConfig",
 	    value: function getConfig() {
 	      return store$3.getConfig();
-	    }
-	    /**
-	     * Only able to be set when env = development
-	     * @param catcher if undefined, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setResponseCatcher",
-	    value: function setResponseCatcher(catcher) {
-	      store$3.setResponseCatcher(catcher);
-	    }
-	    /**
-	     * Only able to be set when env = development
-	     * @param catcher if undefined, reset the catcher to be default
-	     */
-
-	  }, {
-	    key: "setErrorCatcher",
-	    value: function setErrorCatcher(catcher) {
-	      store$3.setErrorCatcher(catcher);
 	    }
 	  }, {
 	    key: "cadlVersion",
@@ -81771,7 +81875,6 @@
 
 	var defaultConfig$1 = {
 	  cadlVersion: 'test',
-	  env: 'development',
 	  configUrl: 'https://public.aitmed.com/config'
 	};
 
@@ -81779,7 +81882,7 @@
 
 	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	  var cadl, vc, ed;
+	  var cadl, cb, vc, ed;
 	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
 	      switch (_context.prev = _context.next) {
@@ -81798,33 +81901,42 @@
 	          console.log(cadl.root.builtIn.string.formatUnixtime_en(1595970704255));
 	          console.log(cadl.root.builtIn.string.formatDurationInSecond(3388333000));
 	          _context.next = 9;
-	          return cadl.initPage('SignIn');
+	          return cadl.initPage('SignIn', [], {
+	            builtIn: {
+	              "goto": function _goto() {
+	                return console.log('lolo');
+	              }
+	            }
+	          });
 
 	        case 9:
+	          cb = function cb(draft) {
+	            draft.SignIn.formData.phoneNumber = 'lolita';
+	          }; // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
+
+
 	          cadl.newDispatch({
-	            type: 'SET_VALUE',
+	            type: 'EDIT_DRAFT',
 	            payload: {
-	              pageName: 'SignIn',
-	              dataKey: 'formData.password',
-	              value: 'ghost'
+	              callback: cb
 	            }
 	          });
 	          debugger; // await cadl.initPage('CreateNewAccount')
 
 	          debugger;
-	          _context.next = 14;
+	          _context.next = 15;
 	          return Account$1.requestVerificationCode('+1 7015168317');
 
-	        case 14:
+	        case 15:
 	          vc = _context.sent;
-	          _context.next = 17;
+	          _context.next = 18;
 	          return cadl.root.builtIn['signIn']({
 	            password: "letmein123",
 	            phoneNumber: "+1 7015168317",
 	            verificationCode: vc
 	          });
 
-	        case 17:
+	        case 18:
 	          debugger;
 	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
 
@@ -81833,26 +81945,26 @@
 	          // await cadl.runInit('MeetingRoomInvited')
 	          // debugger
 
-	          _context.next = 22;
+	          _context.next = 23;
 	          return cadl.initPage('MeetingRoomCreate', [], {
 	            builtIn: {
-	              "goto": function _goto(destination) {
+	              "goto": function _goto2(destination) {
 	                console.log(destination);
 	              }
 	            }
 	          });
 
-	        case 22:
+	        case 23:
 	          debugger;
-	          _context.next = 25;
+	          _context.next = 26;
 	          return cadl.root['MeetingRoomCreate'].save[0][1]();
 
-	        case 25:
+	        case 26:
 	          debugger;
-	          _context.next = 28;
+	          _context.next = 29;
 	          return cadl.initPage('MeetingLobbyStart');
 
-	        case 28:
+	        case 29:
 	          debugger; // await cadl.runInit('MeetingRoomCreate')
 	          // debugger
 	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
@@ -81870,28 +81982,28 @@
 	          // debugger
 	          // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
 
-	          _context.next = 31;
+	          _context.next = 32;
 	          return cadl.root['MeetingLobbyStart'].save[0][1]();
 
-	        case 31:
+	        case 32:
 	          ed = _context.sent;
 	          debugger;
 	          cadl.root.VideoChatObjStore.reference = ed;
 	          debugger;
-	          _context.next = 37;
+	          _context.next = 38;
 	          return cadl.initPage('InviteeInfo01');
 
-	        case 37:
+	        case 38:
 	          debugger;
-	          _context.next = 40;
+	          _context.next = 41;
 	          return cadl.root['InviteeInfo01'].save[0][1]({
 	            firstName: "Stan",
 	            lastName: "koko"
 	          });
 
-	        case 40:
+	        case 41:
 	          debugger;
-	          _context.next = 43;
+	          _context.next = 44;
 	          return cadl.initPage('VideoChat', [], {
 	            builtIn: {
 	              videoChat: function videoChat(_ref2) {
@@ -81903,12 +82015,12 @@
 	            }
 	          });
 
-	        case 43:
+	        case 44:
 	          debugger;
-	          _context.next = 46;
+	          _context.next = 47;
 	          return cadl.initPage('MeetingLobbyClose');
 
-	        case 46:
+	        case 47:
 	          debugger;
 	          cadl.setValue({
 	            path: 'VideoChat.listData.participants',
@@ -82011,7 +82123,7 @@
 	          //     }
 	          // }
 
-	        case 60:
+	        case 61:
 	        case "end":
 	          return _context.stop();
 	      }

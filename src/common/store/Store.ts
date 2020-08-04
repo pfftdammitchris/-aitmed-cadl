@@ -40,7 +40,8 @@ export default class Store {
 
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {
     this._env = env
-    this.level2SDK = new SDK({ apiVersion, apiHost, env, configUrl })
+    const sdkEnv = env === 'test' ? 'development' : 'production'
+    this.level2SDK = new SDK({ apiVersion, apiHost, env: sdkEnv, configUrl })
 
     const idToBase64 = (id: Uint8Array | string): string => {
       if (typeof id === 'string') {
@@ -75,11 +76,11 @@ export default class Store {
   }
 
   set env(value: ENV) {
-    this.level2SDK.env = value
+    this._env = value
   }
 
   get env() {
-    return this.level2SDK.env
+    return this._env
   }
 
   get apiHost() {
@@ -103,21 +104,4 @@ export default class Store {
     return this.level2SDK.getConfigData()
   }
 
-  /**
-   * @param catcher if null, reset the catcher to be default
-   */
-  public setResponseCatcher(catcher: ResponseCatcher = defaultResponseCatcher) {
-    if (this.env === 'development') {
-      this.responseCatcher = catcher
-    }
-  }
-
-  /**
-   * @param catcher if null, reset the catcher to be default
-   */
-  public setErrorCatcher(catcher: ErrorCatcher = defaultErrorCatcher) {
-    if (this.env === 'development') {
-      this.errorCatcher = catcher
-    }
-  }
 }

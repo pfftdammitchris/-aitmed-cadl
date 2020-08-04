@@ -3,6 +3,6 @@ export * from './types'
 
 export { Store }
 export default new Store({
-    env: 'development',
+    env: 'test',
     configUrl: 'https://public.aitmed.com/config',
 })
