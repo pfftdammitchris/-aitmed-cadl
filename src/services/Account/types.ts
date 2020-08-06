@@ -29,7 +29,7 @@ export interface User extends VertexName {
 }
 
 export interface RequestVerificationCode {
-  (phone_number: string): Promise<string>
+  (phone_number: string): Promise<string | null>
 }
 
 // Create User
