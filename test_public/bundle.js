@@ -45189,6 +45189,7 @@
 	  Codes[Codes["ERROR_UPLOADING_TO_AWS_S3"] = 5] = "ERROR_UPLOADING_TO_AWS_S3";
 	  Codes[Codes["ERROR_DOWNLOADING_FROM_AWS_S3"] = 6] = "ERROR_DOWNLOADING_FROM_AWS_S3";
 	  Codes[Codes["ERROR_CREATING_ESAK"] = 7] = "ERROR_CREATING_ESAK";
+	  Codes[Codes["TEMP_ACCOUNT"] = 8] = "TEMP_ACCOUNT";
 	  Codes[Codes["PHONE_NUMBER_INVALID"] = 1000] = "PHONE_NUMBER_INVALID";
 	  Codes[Codes["PASSWORD_INVALID"] = 1001] = "PASSWORD_INVALID";
 	  Codes[Codes["VERIFICATION_CODE_INVALID"] = 1002] = "VERIFICATION_CODE_INVALID";
@@ -45257,6 +45258,7 @@
 	  ERROR_UPLOADING_TO_AWS_S3: 'Error uploading document to aws S3',
 	  ERROR_DOWNLOADING_FROM_AWS_S3: 'Error downloading document from aws S3',
 	  ERROR_CREATING_ESAK: 'Please provide a public key',
+	  TEMP_ACCOUNT: "The user has been invited to join and needs to complete registration.",
 
 	  /* Account    - 1000 */
 	  PHONE_NUMBER_INVALID: 'phone number is invalid',
@@ -58227,14 +58229,12 @@
 	  StatusCodes[StatusCodes["LOGGED_IN"] = 0] = "LOGGED_IN";
 	  StatusCodes[StatusCodes["LOGGED_OUT"] = 1] = "LOGGED_OUT";
 	  StatusCodes[StatusCodes["NEW_DEVICE"] = 2] = "NEW_DEVICE";
-	  StatusCodes[StatusCodes["TEMP_ACCOUNT"] = 3] = "TEMP_ACCOUNT";
 	})(StatusCodes || (StatusCodes = {}));
 
 	var defaultMessages$1 = {
 	  LOGGED_IN: 'User is already in a logged in state.',
 	  LOGGED_OUT: "User needs to verify their password to be logged in.",
-	  NEW_DEVICE: "There are no user credentials stored. User must be authenticated.",
-	  TEMP_ACCOUNT: "The user has been invited to join and needs to complete registration."
+	  NEW_DEVICE: "There are no user credentials stored. User must be authenticated."
 	};
 
 	var Status = function Status(_ref) {
@@ -58703,9 +58703,9 @@
 	                  break;
 	                }
 
-	                return _context4.abrupt("return", new Status({
-	                  code: 3
-	                }));
+	                throw new AitmedError({
+	                  name: 'TEMP_ACCOUNT'
+	                });
 
 	              case 25:
 	                throw new AitmedError({
@@ -80327,48 +80327,31 @@
 	            switch (_context.prev = _context.next) {
 	              case 0:
 	                _ref2 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, BaseDataModel = _ref2.BaseDataModel, BaseCSS = _ref2.BaseCSS, BasePage = _ref2.BasePage;
+	                _context.prev = 1;
+	                _context.next = 4;
+	                return store$3.level2SDK.loadConfigData();
 
-	                if (!this.cadlEndpoint) {
-	                  _context.next = 3;
-	                  break;
-	                }
-
-	                return _context.abrupt("return");
-
-	              case 3:
-	                //get config
-	                config = store$3.getConfig();
-
-	                if (!(config === null)) {
-	                  _context.next = 14;
-	                  break;
-	                }
-
-	                _context.prev = 5;
-	                _context.next = 8;
-	                return store$3.level2SDK.loadConfigData('meet');
-
-	              case 8:
+	              case 4:
 	                config = _context.sent;
-	                _context.next = 14;
+	                _context.next = 10;
 	                break;
 
-	              case 11:
-	                _context.prev = 11;
-	                _context.t0 = _context["catch"](5);
+	              case 7:
+	                _context.prev = 7;
+	                _context.t0 = _context["catch"](1);
 	                throw new UnableToLoadConfig('An error occured while trying to load the config', _context.t0);
 
-	              case 14:
+	              case 10:
 	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
 	                this.cadlBaseUrl = cadlBaseUrl; //set cadlEndpoint
 
 	                cadlEndpointUrl = "".concat(this.cadlBaseUrl).concat(cadlMain);
-	                _context.next = 20;
+	                _context.next = 16;
 	                return this.defaultObject(cadlEndpointUrl);
 
-	              case 20:
+	              case 16:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
 	                _this$cadlEndpoint = this.cadlEndpoint, baseUrl = _this$cadlEndpoint.baseUrl, assetsUrl = _this$cadlEndpoint.assetsUrl, preload = _this$cadlEndpoint.preload; //set baseUrl and assets Url
@@ -80416,39 +80399,39 @@
 	                }
 
 	                if (!(preload && preload.length)) {
-	                  _context.next = 77;
+	                  _context.next = 73;
 	                  break;
 	                }
 
 	                _iterator = _createForOfIteratorHelper$h(preload);
-	                _context.prev = 30;
+	                _context.prev = 26;
 
 	                _iterator.s();
 
-	              case 32:
+	              case 28:
 	                if ((_step = _iterator.n()).done) {
-	                  _context.next = 69;
+	                  _context.next = 65;
 	                  break;
 	                }
 
 	                pageName = _step.value;
 	                _context.t1 = pageName;
-	                _context.next = _context.t1 === 'BaseDataModel' ? 37 : _context.t1 === 'BaseCSS' ? 45 : _context.t1 === 'BasePage' ? 53 : 61;
+	                _context.next = _context.t1 === 'BaseDataModel' ? 33 : _context.t1 === 'BaseCSS' ? 41 : _context.t1 === 'BasePage' ? 49 : 57;
 	                break;
 
-	              case 37:
+	              case 33:
 	                if (!BaseDataModel) {
-	                  _context.next = 39;
+	                  _context.next = 35;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
 
-	              case 39:
-	                _context.next = 41;
+	              case 35:
+	                _context.next = 37;
 	                return this.getPage('BaseDataModel');
 
-	              case 41:
+	              case 37:
 	                rawBaseDataModel = _context.sent;
 	                _processedBaseDataModel = this.processPopulate({
 	                  source: rawBaseDataModel,
@@ -80460,21 +80443,21 @@
 	                    properties: _processedBaseDataModel
 	                  }
 	                });
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
 
-	              case 45:
+	              case 41:
 	                if (!BaseCSS) {
-	                  _context.next = 47;
+	                  _context.next = 43;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
 
-	              case 47:
-	                _context.next = 49;
+	              case 43:
+	                _context.next = 45;
 	                return this.getPage('BaseCSS');
 
-	              case 49:
+	              case 45:
 	                rawBaseCSS = _context.sent;
 	                _processedBaseCSS = this.processPopulate({
 	                  source: rawBaseCSS,
@@ -80486,21 +80469,21 @@
 	                    properties: _processedBaseCSS
 	                  }
 	                });
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
 
-	              case 53:
+	              case 49:
 	                if (!BasePage) {
-	                  _context.next = 55;
+	                  _context.next = 51;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
 
-	              case 55:
-	                _context.next = 57;
+	              case 51:
+	                _context.next = 53;
 	                return this.getPage('BasePage');
 
-	              case 57:
+	              case 53:
 	                rawBasePage = _context.sent;
 	                _processedBasePage = this.processPopulate({
 	                  source: rawBasePage,
@@ -80512,13 +80495,13 @@
 	                    properties: _processedBasePage
 	                  }
 	                });
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
 
-	              case 61:
-	                _context.next = 63;
+	              case 57:
+	                _context.next = 59;
 	                return this.getPage(pageName);
 
-	              case 63:
+	              case 59:
 	                rawPage = _context.sent;
 	                processedRawPage = this.processPopulate({
 	                  source: rawPage,
@@ -80530,30 +80513,30 @@
 	                    properties: processedRawPage
 	                  }
 	                });
-	                return _context.abrupt("break", 67);
+	                return _context.abrupt("break", 63);
+
+	              case 63:
+	                _context.next = 28;
+	                break;
+
+	              case 65:
+	                _context.next = 70;
+	                break;
 
 	              case 67:
-	                _context.next = 32;
-	                break;
-
-	              case 69:
-	                _context.next = 74;
-	                break;
-
-	              case 71:
-	                _context.prev = 71;
-	                _context.t2 = _context["catch"](30);
+	                _context.prev = 67;
+	                _context.t2 = _context["catch"](26);
 
 	                _iterator.e(_context.t2);
 
-	              case 74:
-	                _context.prev = 74;
+	              case 70:
+	                _context.prev = 70;
 
 	                _iterator.f();
 
-	                return _context.finish(74);
+	                return _context.finish(70);
 
-	              case 77:
+	              case 73:
 	                localStorageGlobal = localStorage.getItem('Global');
 	                localStorageGlobalParsed = null;
 
@@ -80592,12 +80575,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 81:
+	              case 77:
 	              case "end":
 	                return _context.stop();
 	            }
 	          }
-	        }, _callee, this, [[5, 11], [30, 71, 74, 77]]);
+	        }, _callee, this, [[1, 7], [26, 67, 70, 73]]);
 	      }));
 
 	      function init() {
@@ -82187,7 +82170,7 @@
 	          _context.next = 15;
 	          return cadl.root.builtIn['signIn']({
 	            password: "letmein123",
-	            phoneNumber: "+1 7015168317",
+	            phoneNumber: "+1 8888677306",
 	            verificationCode: vc
 	          });
 

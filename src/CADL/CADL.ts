@@ -72,16 +72,12 @@ export default class CADL extends EventEmitter {
         BasePage?: Record<string, any>
     } = {}
     ): Promise<void> {
-
-        if (this.cadlEndpoint) return
-        //get config
-        let config: any = store.getConfig()
-        if (config === null) {
-            try {
-                config = await store.level2SDK.loadConfigData('meet')
-            } catch (error) {
-                throw new UnableToLoadConfig('An error occured while trying to load the config', error)
-            }
+        //load config
+        let config: any
+        try {
+            config = await store.level2SDK.loadConfigData()
+        } catch (error) {
+            throw new UnableToLoadConfig('An error occured while trying to load the config', error)
         }
 
         const { web, cadlBaseUrl, cadlMain } = config
