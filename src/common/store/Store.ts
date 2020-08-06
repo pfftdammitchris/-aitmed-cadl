@@ -1,6 +1,6 @@
 import 'core-js/stable'
 import 'regenerator-runtime'
-import SDK from '@aitmed/ecos-lvl2-sdk'
+import lvl2SDK from '@aitmed/ecos-lvl2-sdk'
 
 import AiTmedError, { getErrorCode } from '../AiTmedError'
 import { compareUint8Arrays } from '../../utils'
@@ -31,7 +31,7 @@ const defaultErrorCatcher: ErrorCatcher = (error) => {
 
 export default class Store {
   public _env: ENV
-  public readonly level2SDK: SDK
+  public readonly level2SDK: lvl2SDK
   public readonly utils: Utils
 
   public responseCatcher: ResponseCatcher = defaultResponseCatcher
@@ -41,7 +41,7 @@ export default class Store {
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {
     this._env = env
     const sdkEnv = env === 'test' ? 'development' : 'production'
-    this.level2SDK = new SDK({ apiVersion, apiHost, env: sdkEnv, configUrl })
+    this.level2SDK = new lvl2SDK({ apiVersion, apiHost, env: sdkEnv, configUrl })
 
     const idToBase64 = (id: Uint8Array | string): string => {
       if (typeof id === 'string') {

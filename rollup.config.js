@@ -5,6 +5,7 @@ import json from 'rollup-plugin-json'
 import external from 'rollup-plugin-peer-deps-external'
 import globals from 'rollup-plugin-node-globals'
 import nodePolyfills from 'rollup-plugin-node-polyfills';
+import pkg from './package.json'
 
 const extensions = ['.js', '.ts']
 
@@ -25,7 +26,17 @@ export default [
 				sourcemap: true,
 				globals: {},
 				name: 'aitmedCadl',
-			}
+			},
+			{
+				file: pkg.main,
+				format: 'cjs', // CommonJS output
+				sourcemap: true,
+			},
+			{
+				file: pkg.module,
+				format: 'es', // ES6 output - the preferred format
+				sourcemap: true,
+			},
 		],
 		plugins: [
 			external(),

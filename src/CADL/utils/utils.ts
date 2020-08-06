@@ -4,11 +4,13 @@ import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 
 import store from '../../common/store'
-import Document from '../../services/document'
 import { Account } from '../../services'
 import { mergeDeep, isObject } from '../../utils'
-import { documentToNote } from '../../services/document/utils'
 import { UnableToLocateValue } from '../errors'
+import * as edgeServices from '../services/edges'
+import * as vertexServices from '../services/vertexes'
+import * as documentServices from '../services/documents'
+import * as builtInServices from '../services/builtIn'
 
 export {
     isPopulated,
@@ -186,7 +188,6 @@ function attachFns({
     dispatch: Function
 }): Record<string, any> {
     //the localRoot object is the page object
-    const localRoot = cadlObject
 
     //we need the pageName to use as a key to store the data
     //when using the dataKey
@@ -234,350 +235,86 @@ function attachFns({
                     const apiType = apiSplit[0]
                     switch (apiType) {
                         case ('re'): {
-                            const getFn = (output) => async () => {
-                                const { api, dataKey, dataIn, dataOut, id, maxcount, type, sCondition, ...options } = _.cloneDeep(output || {})
-                                let res: any[] = []
-                                let idList: string[] | Uint8Array[] = []
-                                if (id) {
-                                    idList = Array.isArray(id) ? [...id] : [id]
-                                }
-                                if (maxcount) {
-                                    options.maxcount = parseInt(maxcount)
-                                }
-                                if (type) {
-                                    options.type = parseInt(type)
-
-                                }
-                                if (sCondition) {
-                                    options.scondition = sCondition
-                                }
-                                try {
-                                    if (store.env === 'test') {
-                                        console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', { idList, options: { ...options } });
-                                    }
-
-                                    const { data } = await store.level2SDK.edgeServices.retrieveEdge({ idList, options: { ...options } })
-                                    res = data
-
-                                } catch (error) {
-                                    throw error
-                                }
-
-                                if (!res.length && store.env === 'test') {
-                                    console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-                                    return res
-                                }
-                                else {
-                                    res = res.map((edge) => {
-                                        return replaceEidWithId(edge)
-                                    })
-                                    if (store.env === 'test') {
-                                        console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-                                    }
-
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
-                                }
-                                return
-                            }
-                            output = isPopulated(output) ? getFn(output) : output
-
+                            output = isPopulated(output) ?
+                                edgeServices.get({
+                                    pageName,
+                                    apiObject: output,
+                                    dispatch
+                                }) :
+                                output
                             break
                         }
                         case ('ce'): {
-                            const storeFn = (output) => async (name) => {
-                                const { dataKey, dataIn, dataOut } = _.cloneDeep(output || {})
-                                // const pathArr = dataKey.split('.')
-                                //get current object name value
-                                const { deat, id, ...currentVal } = dispatch({ type: 'get-data', payload: { pageName, dataKey: dataIn ? dataIn : dataKey } })
-
-                                //TODO: remove when backend fixes message type problem
-                                if (currentVal.name && currentVal.name.message) {
-                                    currentVal.name.message = "temp"
-                                }
-
-                                //merging existing name field and incoming name field
-                                let parsedType = parseInt(currentVal.type)
-                                let mergedVal = { ...currentVal, type: parsedType }
-                                if (name) {
-                                    mergedVal = mergeDeep(mergedVal, { name })
-                                }
-                                // mergedVal.type = parseInt(mergedVal.type)
-                                let res
-                                if (id && !id.startsWith('.')) {
-                                    try {
-
-                                        if (store.env === 'test') {
-                                            console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
-                                        }
-
-                                        const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
-                                        res = data
-
-                                        if (store.env === 'test') {
-                                            console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
-                                        }
-
-                                    } catch (error) {
-                                        throw error
-                                    }
-                                } else {
-                                    try {
-                                        if (store.env === 'test') {
-                                            console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', { ...mergedVal, id });
-                                        }
-
-                                        const { data } = await store.level2SDK.edgeServices.createEdge({ ...mergedVal })
-                                        res = data
-
-                                        if (store.env === 'test') {
-                                            console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
-                                        }
-                                    } catch (error) {
-                                        throw error
-                                    }
-                                }
-                                if (res) {
-                                    const replacedEidWithId = replaceEidWithId(res)
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: replacedEidWithId }
-                                    })
-
-                                    //dispatch action to update state that is dependant of this response
-                                    //TODO: optimize by updating a slice rather than entire object
-                                    dispatch({
-                                        type: 'populate',
-                                        payload: { pageName }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
-
-                                    return res
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-
-                            output = isPopulated(output) ? [`${output.dataOut ? output.dataOut : output.dataKey}.name`, storeFn(output)] : output
+                            output = isPopulated(output) ? [
+                                `${output.dataOut ?
+                                    output.dataOut :
+                                    output.dataKey}.name`,
+                                edgeServices.create({
+                                    pageName,
+                                    apiObject: output,
+                                    dispatch
+                                })
+                            ] :
+                                output
                             break
                         }
                         case ('rd'): {
-                            const getFn = (output) => async () => {
-                                let res
-                                //TODO:update to new format
-                                const { api, dataKey, dataIn, dataOut, ids, ...rest } = _.cloneDeep(output || {})
-                                try {
-                                    // const parsedType = type.split('-')[1]
-                                    const data = await store.level2SDK.documentServices.retrieveDocument({ idList: [ids], options: { ...rest } }).then(({ data }) => {
-                                        return Promise.all(data.map(async (document) => {
-                                            const note = await documentToNote({ document })
-                                            return note
-                                        }))
-                                    }).then((res) => {
-                                        return res
-                                    }).catch((err) => { console.log(err) })
-
-                                    res = data
-                                } catch (error) {
-                                    throw error
-                                }
-                                if (res) {
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
-
-                                    return res
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-
-                            output = isPopulated(output) ? getFn(output) : output
+                            output = isPopulated(output) ? documentServices.get({
+                                pageName,
+                                apiObject: output,
+                                dispatch
+                            }) : output
                             break
                         }
                         case ('cd'): {
-                            const storeFn = (output) => async ({ data, type, id = null }) => {
-                                //TODO:update to new format after ApplyBusiness is updated
-                                //@ts-ignore
-                                const { dataKey, dataIn, dataOut, ...cloneOutput } = _.cloneDeep(output || {})
-                                // const pathArr = dataKey.split('.')
-                                // const currentVal = _.get(localRoot[pageName], pathArr)
-                                const currentVal = dispatch({ type: 'get-data', payload: { dataKey: dataIn ? dataIn : dataKey, pageName } })
-
-                                const mergedVal = mergeDeep(currentVal, { name: { data, type } })
-                                const { api, ...options } = mergedVal
-
-                                let res
-                                if (id) {
-                                    try {
-                                        const { data } = await store.level2SDK.documentServices.updateDocument({ ...options, id })
-                                        res = data
-                                    } catch (error) {
-                                        throw error
-                                    }
-                                } else {
-                                    //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
-                                    try {
-                                        const { type: appDataType, eid, name } = options
-                                        const response = await Document.create({
-                                            edge_id: eid,
-                                            dataType: parseInt(appDataType.applicationDataType),
-                                            content: data,
-                                            type,
-                                            title: name.title,
-                                        })
-                                        res = response
-                                    } catch (error) {
-                                        throw error
-                                    }
-                                }
-                                if (res) {
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
-
-                                    return res
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-                            output = isPopulated(output) ? storeFn(output) : output
+                            output = isPopulated(output) ? documentServices.create({
+                                pageName,
+                                apiObject: output,
+                                dispatch
+                            }) : output
                             break
                         }
                         case ('cv'): {
-                            const storeFn = (output) => async (name, id = null) => {
-
-                                //TODO: update to new format
-                                const { dataKey, dataIn, dataOut, ...cloneOutput } = _.cloneDeep(output || {})
-                                const pathArr = dataIn ? dataIn.split('.') : dataKey.split('.')
-                                const currentVal = _.get(localRoot[pageName], pathArr)
-                                const mergedVal = mergeDeep(currentVal, cloneOutput)
-                                const mergedName = mergeDeep({ name: mergedVal }, name)
-                                const { api, store: storeProp, get, ...options } = mergedVal
-                                let res
-                                if (id) {
-                                    try {
-                                        const { data } = await store.level2SDK.vertexServices.updateVertex({ ...options, mergedName, id })
-                                        res = data
-                                    } catch (error) {
-                                        throw error
-                                    }
-                                } else {
-                                    //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
-                                    try {
-                                        const response = await store.level2SDK.vertexServices.createVertex({
-                                            ...options, name
-                                        })
-                                        res = response
-                                    } catch (error) {
-                                        throw error
-                                    }
-                                }
-                                if (res) {
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
-                                    return res
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-                            output = isPopulated(output) ? storeFn(output) : output
+                            output = isPopulated(output) ? vertexServices.create({
+                                pageName,
+                                dispatch,
+                                apiObject: output
+                            }) : output
                             break
                         }
                         case ('rv'): {
-                            const getFn = (output) => async () => {
-                                const { api, dataKey, dataIn, dataOut, ...options } = _.cloneDeep(output || {})
-
-                                let res: any[] = []
-                                try {
-                                    if (store.env === 'test') {
-                                        console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', { options: { ...options } });
-                                    }
-                                    const { data } = await store.level2SDK.vertexServices.retrieveVertex({
-                                        idList: [], options
-                                    })
-                                    res = data
-                                } catch (error) {
-                                    throw error
-                                }
-                                if (res.length > 0) {
-                                    if (store.env === 'test') {
-                                        console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
-                                    }
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey: dataOut ? dataOut : dataKey } })
-
-                                    return res
-                                }
-                                if (store.env === 'test') {
-                                    console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-                            output = isPopulated(output) ? getFn(output) : output
+                            output = isPopulated(output) ? vertexServices.get({
+                                pageName,
+                                dispatch,
+                                apiObject: output
+                            }) : output
                             break
                         }
                         case ('builtIn'): {
-                            const pathArr = api.split('.').slice(1)
-                            const builtInFnsObj = builtInFns()
-                            const builtInFn = _.get(builtInFnsObj, pathArr)
-                            const fn = (output) => async (input?: any) => {
-                                //@ts-ignore
-                                const { api, dataKey, dataIn, dataOut } = _.cloneDeep(output || {})
-                                const pathArr = dataIn ? dataIn.split('.') : dataKey.split('.')
-                                const currentVal = _.get(Object.values(localRoot)[0], pathArr)
-                                let res: any
-                                try {
-                                    //TODO: make signature more generic
-                                    const data = await builtInFn({ ...input, name: { ...currentVal.name, ...input } })
-                                    res = data
-                                } catch (error) {
-                                    throw error
-                                }
-                                if (Array.isArray(res) && res.length > 0 || isObject(res)) {
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey: dataOut ? dataOut : dataKey, data: res }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, dataKey: dataOut ? dataOut : dataKey, newVal: res } })
-
-                                    return res
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-                            output = isPopulated(output) ? fn(output) : output
+                            output = isPopulated(output) ? builtInServices.builtIn({
+                                pageName,
+                                dispatch,
+                                apiObject: output
+                            }) : output
                             break
                         }
                         case ('localSearch'): {
-
                             const fn = (output) => async () => {
                                 //@ts-ignore
-                                const { api, dataKey, filter, source: sourcePath } = _.cloneDeep(output || {})
+                                const {
+                                    dataKey,
+                                    filter,
+                                    source: sourcePath
+                                } = _.cloneDeep(output || {})
                                 let res: any
                                 try {
-                                    const source = dispatch({ type: 'get-data', payload: { pageName, dataKey: sourcePath } })
+                                    const source = dispatch({
+                                        type: 'get-data',
+                                        payload: {
+                                            pageName,
+                                            dataKey: sourcePath
+                                        }
+                                    })
                                     //TODO: make signature more generic
                                     const data = source.filter((elem) => {
                                         //TODO: make filter more universal

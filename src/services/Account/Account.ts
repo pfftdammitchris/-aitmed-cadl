@@ -19,7 +19,7 @@ export const requestVerificationCode: AccountTypes.RequestVerificationCode = asy
   })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
-  return response && response.data && response.data.verification_code
+  return response && response.data && response.data?.verification_code
 }
 
 /**
