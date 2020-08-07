@@ -78,7 +78,7 @@ function builtIn({ pageName, apiObject, dispatch }) {
  */
 //TODO: allow argument Fn name
 //TODO: consider returning an interface instead
-function builtInFns(dispatch?: Function) {
+export default function builtInFns(dispatch?: Function) {
     return {
         async createNewAccount({
             phoneNumber,

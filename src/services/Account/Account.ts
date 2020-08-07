@@ -83,6 +83,10 @@ export const login: AccountTypes.Login = async (
   //TODO: edit when user profile is more standardized
   if (user.id) {
     const userVertex = await retrieveVertex(user.id)
+    if (userVertex && userVertex.name && userVertex.name.username) {
+      userVertex.name.userName = userVertex.name.username
+      delete userVertex.name.username
+    }
     return userVertex
   } else {
     return user
@@ -103,6 +107,10 @@ export const loginByPassword: AccountTypes.LoginByPassword = async (
   const user = await retrieve()
   if (user.id) {
     const userVertex = await retrieveVertex(user.id)
+    if (userVertex && userVertex.name && userVertex.name.username) {
+      userVertex.name.userName = userVertex.name.username
+      delete userVertex.name.username
+    }
     return userVertex
   } else {
     return user
