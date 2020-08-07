@@ -60469,6 +60469,14 @@
 
 	      return createUser;
 	    }()
+	    /**
+	     *
+	     * @param {CreateInvitedUserArgs} args
+	     *
+	     * used to register invited user and store the user credentials such jwt, publicKey, secretKey in
+	     * localStorage
+	     */
+
 	  }, {
 	    key: "createInvitedUser",
 	    value: function () {
