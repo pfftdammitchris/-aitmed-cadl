@@ -1,16 +1,9 @@
 import _ from 'lodash'
 import dot from 'dot-object'
-import moment from 'moment'
-import humanizeDuration from 'humanize-duration'
-
 import store from '../../common/store'
-import { Account } from '../../services'
 import { mergeDeep, isObject } from '../../utils'
 import { UnableToLocateValue } from '../errors'
-import * as edgeServices from '../services/edges'
-import * as vertexServices from '../services/vertexes'
-import * as documentServices from '../services/documents'
-import * as builtInServices from '../services/builtIn'
+import services from '../services'
 
 export {
     isPopulated,
@@ -21,7 +14,6 @@ export {
     populateString,
     populateArray,
     populateObject,
-    builtInFns,
     populateVals,
     replaceUint8ArrayWithBase64,
     replaceEvalObject,
@@ -187,8 +179,6 @@ function attachFns({
     cadlObject: Record<string, any>,
     dispatch: Function
 }): Record<string, any> {
-    //the localRoot object is the page object
-
     //we need the pageName to use as a key to store the data
     //when using the dataKey
     let pageName
@@ -234,120 +224,19 @@ function attachFns({
                     const apiSplit = api.split('.')
                     const apiType = apiSplit[0]
                     switch (apiType) {
-                        case ('re'): {
-                            output = isPopulated(output) ?
-                                edgeServices.get({
-                                    pageName,
-                                    apiObject: output,
-                                    dispatch
-                                }) :
-                                output
-                            break
-                        }
                         case ('ce'): {
                             output = isPopulated(output) ? [
                                 `${output.dataOut ?
                                     output.dataOut :
                                     output.dataKey}.name`,
-                                edgeServices.create({
-                                    pageName,
-                                    apiObject: output,
-                                    dispatch
-                                })
+                                services('ce')({ pageName, apiObject: output, dispatch })
                             ] :
                                 output
                             break
                         }
-                        case ('rd'): {
-                            output = isPopulated(output) ? documentServices.get({
-                                pageName,
-                                apiObject: output,
-                                dispatch
-                            }) : output
-                            break
-                        }
-                        case ('cd'): {
-                            output = isPopulated(output) ? documentServices.create({
-                                pageName,
-                                apiObject: output,
-                                dispatch
-                            }) : output
-                            break
-                        }
-                        case ('cv'): {
-                            output = isPopulated(output) ? vertexServices.create({
-                                pageName,
-                                dispatch,
-                                apiObject: output
-                            }) : output
-                            break
-                        }
-                        case ('rv'): {
-                            output = isPopulated(output) ? vertexServices.get({
-                                pageName,
-                                dispatch,
-                                apiObject: output
-                            }) : output
-                            break
-                        }
-                        case ('builtIn'): {
-                            output = isPopulated(output) ? builtInServices.builtIn({
-                                pageName,
-                                dispatch,
-                                apiObject: output
-                            }) : output
-                            break
-                        }
-                        case ('localSearch'): {
-                            const fn = (output) => async () => {
-                                //@ts-ignore
-                                const {
-                                    dataKey,
-                                    filter,
-                                    source: sourcePath
-                                } = _.cloneDeep(output || {})
-                                let res: any
-                                try {
-                                    const source = dispatch({
-                                        type: 'get-data',
-                                        payload: {
-                                            pageName,
-                                            dataKey: sourcePath
-                                        }
-                                    })
-                                    //TODO: make signature more generic
-                                    const data = source.filter((elem) => {
-                                        //TODO: make filter more universal
-                                        for (let [key, val] of Object.entries(filter)) {
-                                            //@ts-ignore
-                                            if (elem.type[key] !== parseInt(val)) {
-                                                return false
-                                            }
-                                        }
-                                        return true
-                                    })
-                                    res = data
-                                } catch (error) {
-                                    throw error
-                                }
-                                if (Array.isArray(res) && res.length > 0) {
-                                    dispatch({
-                                        type: 'update-data',
-                                        //TODO: handle case for data is an array or an object
-                                        payload: { pageName, dataKey, data: res[0] }
-                                    })
-                                    dispatch({ type: 'emit-update', payload: { pageName, newVal: res, dataKey } })
-
-                                    return res
-                                }
-                                //TODO:handle else case
-                                return null
-                            }
-                            output = isPopulated(output) ? fn(output) : output
-                            break
-                        }
                         default: {
-                            return
+                            output = isPopulated(output) ? services(apiType)({ pageName, apiObject: output, dispatch }) : output
+                            break
                         }
                     }
                 }
@@ -356,8 +245,6 @@ function attachFns({
         return output
     }
 }
-
-
 
 /**
  * Returns a function that is used to evalutate actionType evalObject.
@@ -614,77 +501,6 @@ function populateObject({
     })
 
     return sourceCopy
-}
-
-/**
- * @param dispatch Function to change the state.
- * @returns Object of builtIn functions.
- */
-function builtInFns(dispatch?: Function) {
-    return {
-        async createNewAccount({
-            phoneNumber,
-            password,
-            verificationCode,
-            name,
-        }) {
-            const { password: passPlaceHolder, verificationCode: vcPlaceHolder, confirmPassword, countryCode, avatar, ...restOfName } = name
-            const data = await Account.create(
-                phoneNumber,
-                password,
-                verificationCode,
-                { ...restOfName }
-            )
-            return data
-        },
-        async signIn({
-            phoneNumber,
-            password,
-            verificationCode,
-        }) {
-            const data = await Account.login(
-                phoneNumber,
-                password,
-                verificationCode,
-            )
-            if (dispatch) {
-                dispatch({
-                    type: 'update-data',
-                    //TODO: handle case for data is an array or an object
-                    payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
-                })
-
-            }
-            return data
-        },
-        async loginByPassword(password) {
-            const data = await Account.loginByPassword(password)
-            if (dispatch) {
-                dispatch({
-                    type: 'update-data',
-                    //TODO: handle case for data is an array or an object
-                    payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
-                })
-
-            }
-        },
-        currentDateTime: (() => Date.now())(),
-        string: {
-            formatUnixtime_en(unixTime: number) {
-                return moment(unixTime * 1000).format('lll')
-            },
-            formatDurationInSecond(unixTime: number) {
-                return humanizeDuration(unixTime * 1000)
-            }
-        },
-        async SignInOk(): Promise<boolean> {
-            const status = await Account.getStatus()
-            if (status.code !== 0) {
-                return false
-            }
-            return true
-        }
-    }
 }
 
 /**

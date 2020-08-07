@@ -19,12 +19,12 @@ import {
     populateObject,
     attachFns,
     populateKeys,
-    builtInFns,
     populateVals,
     replaceUint8ArrayWithBase64,
     replaceEvalObject,
 } from './utils'
 import { mergeDeep, isObject } from '../utils'
+import builtInFns from './services/builtIn'
 
 export default class CADL extends EventEmitter {
 
