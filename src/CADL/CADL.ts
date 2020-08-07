@@ -574,7 +574,6 @@ export default class CADL extends EventEmitter {
             case ('update-data'): {
                 const { pageName, dataKey, data: rawData } = action.payload
                 let data = replaceUint8ArrayWithBase64(rawData)
-                debugger
                 const firstCharacter = dataKey[0]
                 const pathArr = dataKey.split('.')
                 if (pageName === 'builtIn') {
