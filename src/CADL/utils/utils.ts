@@ -552,7 +552,7 @@ function populateVals({
  * @param source Object that needs values replaced.
  * @returns Object that has had Uint8Array values mapped to base64.
  */
-function replaceUint8ArrayWithBase64(source: Record<string, any>): Record<string, any> {
+function replaceUint8ArrayWithBase64(source: Record<string, any> | any[]): Record<string, any> {
     let sourceCopy = _.cloneDeep(source || {})
     if (isObject(source)) {
         Object.keys(sourceCopy).forEach((key) => {
@@ -564,6 +564,8 @@ function replaceUint8ArrayWithBase64(source: Record<string, any>): Record<string
                 sourceCopy[key] = sourceCopy[key].map((elem) => replaceUint8ArrayWithBase64(elem))
             }
         })
+    } else if (Array.isArray(source)) {
+        sourceCopy = source.map((elem) => replaceUint8ArrayWithBase64(elem))
     }
     return sourceCopy
 }
