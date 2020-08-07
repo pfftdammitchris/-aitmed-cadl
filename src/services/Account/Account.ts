@@ -1,4 +1,4 @@
-import store from '../../common/store'
+import store, { Status } from '../../common/store'
 
 import Note from '../Note'
 
@@ -33,19 +33,34 @@ export const create: AccountTypes.Create = async (
   verification_code,
   name,
 ) => {
-  // Create User
-  const { data } = await store.level2SDK.Account.createUser({
-    phone_number,
-    password,
-    verification_code,
-    userInfo: name,
-  })
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
+  const { code: statusCode, userId } = await getStatus()
+  let userVertex
+  if (statusCode === 3) {
+    const { data } = await store.level2SDK.Account.createInvitedUser({
+      id: userId,
+      phone_number,
+      password,
+      userInfo: name,
+    })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+    userVertex = data
+  } else {
+    // Create User
+    const { data } = await store.level2SDK.Account.createUser({
+      phone_number,
+      password,
+      verification_code,
+      userInfo: name,
+    })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+    userVertex = data
+  }
 
   // Create Root Edge
   await accountUtils.createRootEdge()
-  return data
+  return userVertex
 }
 
 /**
@@ -59,7 +74,11 @@ export const login: AccountTypes.Login = async (
   password,
   verification_code,
 ) => {
-  await loginByVerificationCode(phone_number, verification_code)
+  const res = await loginByVerificationCode(phone_number, verification_code)
+  if (res instanceof Status) {
+    await store.level2SDK.Account.login()
+    return res
+  }
   const user = await loginByPassword(password)
   //TODO: edit when user profile is more standardized
   if (user.id) {
@@ -98,7 +117,7 @@ export const loginByVerificationCode: AccountTypes.LoginByVerificationCode = asy
   phone_number,
   verification_code,
 ) => {
-  await store.level2SDK.Account.loginNewDevice({
+  return await store.level2SDK.Account.loginNewDevice({
     phone_number,
     verification_code,
   })
@@ -259,6 +278,7 @@ export const remove: AccountTypes.Remove = async () => {
  *  0 - LOGGED_IN
  *  1 - LOGGED_OUT
  *  2 - NEW_DEVICE
+ *  3 = TEMP_ACCOUNT
  * Status.userId: string
  * Status.code: string
  */
@@ -271,6 +291,7 @@ export const getStatus: AccountTypes.GetStatus = async () => {
     const { userId, phone_number } = accountUtils.decodeUID(utf8Uid)
     return { ...status, userId, phone_number }
   } catch (error) {
+    console.log(error)
     return { ...status, userId: '', phone_number: '' }
   }
 }

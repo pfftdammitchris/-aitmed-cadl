@@ -1,4 +1,4 @@
-import { Status } from '../../common/types'
+import { Status, Response } from '../../common/types'
 /**
  * Account Types
  */
@@ -55,7 +55,7 @@ export interface LoginByPassword {
 }
 // LoginByVerificationCode
 export interface LoginByVerificationCode {
-  (phone_number: string, verification_code: string): Promise<void>
+  (phone_number: string, verification_code: string): Promise<Status | Response>
 }
 
 // Logout
