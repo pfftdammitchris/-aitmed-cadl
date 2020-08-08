@@ -137,7 +137,6 @@ function create({ pageName, apiObject, dispatch }) {
                         { ...mergedVal, id }
                     );
                 }
-
                 const { data } = await store.level2SDK.edgeServices.updateEdge({ ...mergedVal, id })
                 res = data
 
