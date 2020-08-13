@@ -7,6 +7,7 @@ import UnableToRetrieveYAML from './UnableToRetrieveYAML'
 import UnableToLocateValue from './UnableToLocateValue'
 import InvalidDestination from './InvalidDestination'
 import UnableToLoadConfig from './UnableToLoadConfig'
+import UnableToMakeAnotherRequest from './UnableToMakeAnotherRequest'
 
 export {
     NoDataModelsFound,
@@ -17,5 +18,6 @@ export {
     UnableToRetrieveYAML,
     UnableToLocateValue,
     InvalidDestination,
-    UnableToLoadConfig
+    UnableToLoadConfig,
+    UnableToMakeAnotherRequest
 }

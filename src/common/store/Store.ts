@@ -36,6 +36,7 @@ export default class Store {
 
   public responseCatcher: ResponseCatcher = defaultResponseCatcher
   public errorCatcher: ErrorCatcher = defaultErrorCatcher
+  public noodlInstance: any
 
 
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {

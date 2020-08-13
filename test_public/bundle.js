@@ -68424,6 +68424,35 @@
 	  return UnableToLoadConfig;
 	}( /*#__PURE__*/wrapNativeSuper(Error));
 
+	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$u() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToMakeAnotherRequest = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToMakeAnotherRequest, _Error);
+
+	  var _super = _createSuper$t(UnableToMakeAnotherRequest);
+
+	  function UnableToMakeAnotherRequest(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToMakeAnotherRequest);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToMakeAnotherRequest';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToMakeAnotherRequest.prototype);
+	    return _this;
+	  }
+
+	  return UnableToMakeAnotherRequest;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
 	var compareUint8Arrays = function compareUint8Arrays(u8a1, u8a2) {
 	  if (u8a1.length !== u8a2.length) return false;
 
@@ -68548,6 +68577,8 @@
 	    defineProperty(this, "responseCatcher", defaultResponseCatcher);
 
 	    defineProperty(this, "errorCatcher", defaultErrorCatcher);
+
+	    defineProperty(this, "noodlInstance", void 0);
 
 	    this._env = env;
 	    var sdkEnv = env === 'test' ? 'development' : 'production';
@@ -79848,6 +79879,7 @@
 	function _arrayLikeToArray$g(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 	/**
 	 * @param phone_number: string
+	 * @throws {UnableToMakeAnotherRequest} When the same request is made within 60secs
 	 * @returns Promise<string>
 	 */
 
@@ -79855,21 +79887,51 @@
 	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(phone_number) {
 	    var _response$data;
 
-	    var response;
+	    var interval, response;
 	    return regenerator.wrap(function _callee$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
 	          case 0:
-	            _context.next = 2;
+	            if (!store$3.noodlInstance) {
+	              _context.next = 11;
+	              break;
+	            }
+
+	            debugger;
+
+	            if (!(store$3.noodlInstance.verificationRequest.timer > 0 && store$3.noodlInstance.verificationRequest.phoneNumber === phone_number)) {
+	              _context.next = 7;
+	              break;
+	            }
+
+	            debugger;
+	            throw new UnableToMakeAnotherRequest('User must wait 60 sec to make another verification code request.');
+
+	          case 7:
+	            debugger;
+	            store$3.noodlInstance.verificationRequest.timer = 60;
+	            store$3.noodlInstance.verificationRequest.phoneNumber = phone_number;
+	            interval = setInterval(function () {
+	              if (store$3.noodlInstance.verificationRequest.timer === 0) {
+	                clearInterval(interval);
+	              } else {
+	                store$3.noodlInstance.verificationRequest.timer--;
+	                console.log(store$3.noodlInstance.verificationRequest.timer);
+	              }
+	            }, 1000);
+
+	          case 11:
+	            debugger;
+	            _context.next = 14;
 	            return store$3.level2SDK.Account.requestVerificationCode({
 	              phone_number: phone_number
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
-	          case 2:
+	          case 14:
 	            response = _context.sent;
 	            return _context.abrupt("return", response && response.data && ((_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.verification_code));
 
-	          case 4:
+	          case 16:
 	          case "end":
 	            return _context.stop();
 	        }
@@ -81677,14 +81739,14 @@
 
 	function _arrayLikeToArray$i(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function _createSuper$u(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$v(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
 
-	function _isNativeReflectConstruct$u() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+	function _isNativeReflectConstruct$v() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
 
 	var CADL = /*#__PURE__*/function (_EventEmitter) {
 	  inherits(CADL, _EventEmitter);
 
-	  var _super = _createSuper$t(CADL);
+	  var _super = _createSuper$u(CADL);
 
 	  /**
 	   * 
@@ -81716,8 +81778,14 @@
 
 	    defineProperty(assertThisInitialized(_this), "_initCallQueue", void 0);
 
+	    defineProperty(assertThisInitialized(_this), "verificationRequest", {
+	      timer: 0,
+	      phoneNumber: ''
+	    });
+
 	    store$3.env = cadlVersion;
 	    store$3.configUrl = configUrl;
+	    store$3.noodlInstance = assertThisInitialized(_this);
 	    _this._cadlVersion = cadlVersion;
 	    return _this;
 	  }
@@ -83583,11 +83651,11 @@
 	function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$h(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	  var cadl, vc, ed;
-	  return regenerator.wrap(function _callee$(_context) {
+	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
+	  var cadl, vc, vc3, vc4;
+	  return regenerator.wrap(function _callee2$(_context2) {
 	    while (1) {
-	      switch (_context.prev = _context.next) {
+	      switch (_context2.prev = _context2.next) {
 	        case 0:
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
@@ -83595,12 +83663,12 @@
 	            configUrl: 'https://public.aitmed.com/config/meetdev.yml'
 	          }));
 	          debugger;
-	          _context.next = 4;
+	          _context2.next = 4;
 	          return cadl.init();
 
 	        case 4:
 	          debugger;
-	          _context.next = 7;
+	          _context2.next = 7;
 	          return cadl.initPage('SignIn', [], {
 	            builtIn: {
 	              "goto": function _goto() {
@@ -83614,11 +83682,45 @@
 	          debugger; // await cadl.initPage('CreateNewAccount')
 
 	          debugger;
-	          _context.next = 11;
+	          _context2.next = 11;
 	          return Account$1.requestVerificationCode('+1 3238677306');
 
 	        case 11:
-	          vc = _context.sent;
+	          vc = _context2.sent;
+	          setTimeout( /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
+	            var vc2;
+	            return regenerator.wrap(function _callee$(_context) {
+	              while (1) {
+	                switch (_context.prev = _context.next) {
+	                  case 0:
+	                    debugger;
+	                    _context.next = 3;
+	                    return Account$1.requestVerificationCode('+1 3238677306');
+
+	                  case 3:
+	                    vc2 = _context.sent;
+
+	                  case 4:
+	                  case "end":
+	                    return _context.stop();
+	                }
+	              }
+	            }, _callee);
+	          })), 75000);
+	          _context2.next = 15;
+	          return Account$1.requestVerificationCode('+1 3438677306')["catch"](function (err) {
+	            return console.log(err);
+	          });
+
+	        case 15:
+	          vc3 = _context2.sent;
+	          _context2.next = 18;
+	          return Account$1.requestVerificationCode('+1 3238677306')["catch"](function (err) {
+	            return console.log(err);
+	          });
+
+	        case 18:
+	          vc4 = _context2.sent;
 	          debugger; // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
 	          //     confirmPassword: "letmein123",
 	          //     countryCode: "+1",
@@ -83628,141 +83730,65 @@
 	          //     verificationCode: vc
 	          // })
 	          // debugger
-
-	          _context.next = 15;
-	          return cadl.root.builtIn['signIn']({
-	            password: "demo5555",
-	            phoneNumber: "+1 3238677306",
-	            verificationCode: vc
-	          });
-
-	        case 15:
-	          debugger;
-	          cadl.root.actions['SignIn'].update(); // cadl.root['CreateNewAccount'].update()
-
-	          debugger; // await cadl.initPage('MeetingRoomInvited')
+	          // await cadl.root.builtIn['signIn']({
+	          //     password: "demo5555",
+	          //     phoneNumber: "+1 3238677306",
+	          //     verificationCode: vc
+	          // })
 	          // debugger
-	          // await cadl.runInit('MeetingRoomInvited')
+	          // cadl.root.actions['SignIn'].update()
+	          // // cadl.root['CreateNewAccount'].update()
 	          // debugger
-
-	          _context.next = 20;
-	          return cadl.initPage('MeetingRoomCreate', [], {
-	            builtIn: {
-	              "goto": function _goto2(destination) {
-	                console.log(destination);
-	              }
-	            }
-	          });
-
-	        case 20:
-	          debugger;
-	          _context.next = 23;
-	          return cadl.root['MeetingRoomCreate'].save[0][1]();
-
-	        case 23:
-	          debugger;
-	          _context.next = 26;
-	          return cadl.initPage('MeetingLobbyStart');
-
-	        case 26:
-	          debugger; // await cadl.runInit('MeetingRoomCreate')
+	          // // await cadl.initPage('MeetingRoomInvited')
+	          // // debugger
+	          // // await cadl.runInit('MeetingRoomInvited')
+	          // // debugger
+	          // await cadl.initPage('MeetingRoomCreate', [], { builtIn: { goto(destination) { console.log(destination) } } })
 	          // debugger
-	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // await cadl.root['MeetingRoomCreate'].save[0][1]()
 	          // debugger
+	          // await cadl.initPage('MeetingLobbyStart')
 	          // debugger
-	          // cadl.setFromLocalStorage('user')
+	          // // await cadl.runInit('MeetingRoomCreate')
+	          // // debugger
+	          // // cadl.updateObject({dataKey:'.Global.meetroom.edge.refid', dataObject:{id:'123'}, dataObjectKey:'id'})
+	          // // debugger
+	          // // debugger
+	          // // cadl.setFromLocalStorage('user')
+	          // // debugger
+	          // // cadl.setFromLocalStorage('meetroom')
+	          // // debugger
+	          // // await cadl.initPage('CreateMeeting')
+	          // // debugger
+	          // // await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
+	          // // debugger
+	          // // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
+	          // // debugger
+	          // // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
+	          // const ed = await cadl.root['MeetingLobbyStart'].save[0][1]()
 	          // debugger
-	          // cadl.setFromLocalStorage('meetroom')
+	          // cadl.root.VideoChatObjStore.reference = ed
 	          // debugger
-	          // await cadl.initPage('CreateMeeting')
+	          // await cadl.initPage('InviteeInfo01')
 	          // debugger
-	          // await cadl.root['CreateMeeting'].components[1].children[2].onClick[0].object()
+	          // await cadl.root['InviteeInfo01'].save[0][1]({ firstName: "Stan", lastName: "koko" })
 	          // debugger
-	          // cadl.updateObject({dataKey:'.Global.meetroom.edge.name.roomName', dataObject:'hello tom'})
+	          // await cadl.initPage('VideoChat', [], { builtIn: { videoChat: ({ roomId, accessToken }) => { console.log(roomId); console.log(accessToken) } } })
 	          // debugger
-	          // await cadl.root['MeetingLobbyStart'].components[1].children[3].onClick[0].object()
-
-	          _context.next = 29;
-	          return cadl.root['MeetingLobbyStart'].save[0][1]();
-
-	        case 29:
-	          ed = _context.sent;
-	          debugger;
-	          cadl.root.VideoChatObjStore.reference = ed;
-	          debugger;
-	          _context.next = 35;
-	          return cadl.initPage('InviteeInfo01');
-
-	        case 35:
-	          debugger;
-	          _context.next = 38;
-	          return cadl.root['InviteeInfo01'].save[0][1]({
-	            firstName: "Stan",
-	            lastName: "koko"
-	          });
-
-	        case 38:
-	          debugger;
-	          _context.next = 41;
-	          return cadl.initPage('VideoChat', [], {
-	            builtIn: {
-	              videoChat: function videoChat(_ref2) {
-	                var roomId = _ref2.roomId,
-	                    accessToken = _ref2.accessToken;
-	                console.log(roomId);
-	                console.log(accessToken);
-	              }
-	            }
-	          });
-
-	        case 41:
-	          debugger;
-	          _context.next = 44;
-	          return cadl.initPage('MeetingLobbyClose');
-
-	        case 44:
-	          debugger;
-	          cadl.setValue({
-	            path: 'VideoChat.listData.participants',
-	            value: [{
-	              id: 1
-	            }, {
-	              id: 2
-	            }, {
-	              id: 3
-	            }, {
-	              id: 4
-	            }]
-	          });
-	          debugger;
-	          cadl.addValue({
-	            path: 'VideoChat.listData.participants',
-	            value: {
-	              id: 5
-	            }
-	          });
-	          debugger;
-	          cadl.replaceValue({
-	            path: 'VideoChat.listData.participants',
-	            predicate: {
-	              id: 5
-	            },
-	            value: {
-	              id: 6,
-	              name: 'tom'
-	            }
-	          });
-	          debugger;
-	          cadl.removeValue({
-	            path: 'VideoChat.listData.participants',
-	            predicate: {
-	              id: 1
-	            }
-	          });
-	          debugger;
-	          console.log(cadl);
-	          cadl.initPage('MeetingLobbyStart', []);
-	          console.log(cadl); // await cadl.initPage('InviteeInfo')
+	          // await cadl.initPage('MeetingLobbyClose')
+	          // debugger
+	          // cadl.setValue({ path: 'VideoChat.listData.participants', value: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] })
+	          // debugger
+	          // cadl.addValue({ path: 'VideoChat.listData.participants', value: { id: 5 } })
+	          // debugger
+	          // cadl.replaceValue({ path: 'VideoChat.listData.participants', predicate: { id: 5 }, value: { id: 6, name: 'tom' } })
+	          // debugger
+	          // cadl.removeValue({ path: 'VideoChat.listData.participants', predicate: { id: 1 } })
+	          // debugger
+	          // console.log(cadl)
+	          // cadl.initPage('MeetingLobbyStart', [])
+	          // console.log(cadl)
+	          // // await cadl.initPage('InviteeInfo')
 	          // debugger
 	          // await cadl.root['InviteeInfo'].save[0][1]({ firstName: "Stan", lastName: "koko" })
 	          // debugger
@@ -83821,12 +83847,12 @@
 	          //     }
 	          // }
 
-	        case 56:
+	        case 20:
 	        case "end":
-	          return _context.stop();
+	          return _context2.stop();
 	      }
 	    }
-	  }, _callee);
+	  }, _callee2);
 	}))();
 
 	return testingPlayground;

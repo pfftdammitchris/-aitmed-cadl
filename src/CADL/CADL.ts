@@ -35,6 +35,10 @@ export default class CADL extends EventEmitter {
     private _assetsUrl: string
     private _root: Record<string, any> = this.initRoot({})
     private _initCallQueue: any[]
+    public verificationRequest = {
+        timer: 0,
+        phoneNumber: ''
+    }
 
     /**
      * 
@@ -47,6 +51,7 @@ export default class CADL extends EventEmitter {
         //replace default arguments
         store.env = cadlVersion
         store.configUrl = configUrl
+        store.noodlInstance = this
         this._cadlVersion = cadlVersion
     }
 
