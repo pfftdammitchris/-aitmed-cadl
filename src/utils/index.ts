@@ -186,3 +186,9 @@ export function valPageJump(cadlObject: Record<string, any>, validPages: string[
 
     return errors
 }
+
+export async function asyncForEach(array, callback) {
+    for (let index = 0; index < array.length; index++) {
+        await callback(array[index], index, array);
+    }
+}

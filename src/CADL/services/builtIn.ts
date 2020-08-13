@@ -80,19 +80,26 @@ function builtIn({ pageName, apiObject, dispatch }) {
 //TODO: consider returning an interface instead
 export default function builtInFns(dispatch?: Function) {
     return {
-        async createNewAccount({
+        async createNewAccount(
             phoneNumber,
             password,
             verificationCode,
-            name,
-        }) {
-            const { password: passPlaceHolder, verificationCode: vcPlaceHolder, confirmPassword, countryCode, avatar, ...restOfName } = name
+            userName
+        ) {
+
             const data = await Account.create(
                 phoneNumber,
                 password,
                 verificationCode,
-                { ...restOfName }
+                userName
             )
+            if (dispatch) {
+                dispatch({
+                    type: 'update-data',
+                    //TODO: handle case for data is an array or an object
+                    payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data }
+                })
+            }
             return data
         },
         async signIn({

@@ -118,7 +118,6 @@ function create({ pageName, apiObject, dispatch }) {
             type: 'get-data',
             payload: { pageName, dataKey: dataIn ? dataIn : dataKey }
         })
-
         //merging existing name field and incoming name field
         const parsedType = parseInt(currentVal.type)
         let mergedVal = { ...currentVal, type: parsedType }

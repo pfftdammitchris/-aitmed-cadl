@@ -23,7 +23,7 @@ import {
     replaceUint8ArrayWithBase64,
     replaceEvalObject,
 } from './utils'
-import { mergeDeep, isObject } from '../utils'
+import { mergeDeep, isObject, asyncForEach } from '../utils'
 import builtInFns from './services/builtIn'
 
 export default class CADL extends EventEmitter {
@@ -307,7 +307,7 @@ export default class CADL extends EventEmitter {
                         throw new UnableToExecuteFn(`An error occured while executing ${pageName}.init`, error)
                     }
                 } else if (isObject(command) && 'actionType' in command) {
-                    const { actionType, dataKey, dataObject, funcName }: any = command
+                    const { actionType, dataKey, dataObject, object, funcName }: any = command
                     switch (actionType) {
                         case ('updateObject'): {
                             this.updateObject({ dataKey, dataObject })
@@ -319,6 +319,10 @@ export default class CADL extends EventEmitter {
                                     await this.root.builtIn[funcName](command)
                                 }
                             }
+                            break
+                        }
+                        case ('evalObject'): {
+                            this.dispatch({ type: 'eval-object', payload: { pageName, updateObject: object } })
                             break
                         }
                         default: {
@@ -621,7 +625,7 @@ export default class CADL extends EventEmitter {
 
                 this.dispatch({ type: 'update-localStorage' })
 
-                return
+                break
             }
             case ('get-data'): {
                 const { pageName, dataKey } = action.payload
@@ -634,7 +638,8 @@ export default class CADL extends EventEmitter {
                 const populateWithRoot = populateObject({ source: updateObject, lookFor: '.', locations: [this.root, this.root[pageName]] })
                 const populateWithSelf = populateObject({ source: populateWithRoot, lookFor: '..', locations: [this.root, this.root[pageName]] })
                 const populateAfterInheriting = populateObject({ source: populateWithSelf, lookFor: '=', locations: [this, this.root, this.root[pageName]] })
-                Object.keys(populateAfterInheriting).forEach(async (key) => {
+                const objectKeys = Object.keys(populateAfterInheriting)
+                asyncForEach(objectKeys, async (key) => {
                     //TODO: add case for key that starts with =
                     if (!key.startsWith('=')) {
                         let trimPath, val
@@ -796,6 +801,7 @@ export default class CADL extends EventEmitter {
         this.dispatch({
             type: 'update-localStorage'
         })
+
         this.emit('stateChanged', {
             name: 'update',
             path: dataKey,

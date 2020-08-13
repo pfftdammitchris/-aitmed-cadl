@@ -31,7 +31,7 @@ export const create: AccountTypes.Create = async (
   phone_number,
   password,
   verification_code,
-  name,
+  userName,
 ) => {
   const { code: statusCode, userId } = await getStatus()
   let userVertex
@@ -40,7 +40,7 @@ export const create: AccountTypes.Create = async (
       id: userId,
       phone_number,
       password,
-      userInfo: name,
+      userInfo: { userName, phoneNumber: phone_number },
     })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
@@ -51,15 +51,13 @@ export const create: AccountTypes.Create = async (
       phone_number,
       password,
       verification_code,
-      userInfo: name,
+      userInfo: { userName, phoneNumber: phone_number },
     })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
     userVertex = data
   }
 
-  // Create Root Edge
-  await accountUtils.createRootEdge()
   return userVertex
 }
 
@@ -104,17 +102,17 @@ export const loginByPassword: AccountTypes.LoginByPassword = async (
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
 
-  const user = await retrieve()
-  if (user.id) {
-    const userVertex = await retrieveVertex(user.id)
+  const { data: { user_id } } = await getStatus()
+  let user
+  if (user_id) {
+    const userVertex = await retrieveVertex(user_id)
     if (userVertex && userVertex.name && userVertex.name.username) {
       userVertex.name.userName = userVertex.name.username
       delete userVertex.name.username
     }
-    return userVertex
-  } else {
-    return user
+    user = userVertex
   }
+  return user
 }
 
 /**
@@ -142,10 +140,12 @@ export const loginByVerificationCode: AccountTypes.LoginByVerificationCode = asy
 export const logout: AccountTypes.Logout = async (clean = false) => {
   if (clean) {
     store.level2SDK.Account.logoutClean()
+    localStorage.removeItem('Global')
   } else {
     const status = await getStatus()
     if (status.code === 1) return status
     store.level2SDK.Account.logout()
+    localStorage.removeItem('Global')
   }
   const latestStatus = await getStatus()
   return latestStatus

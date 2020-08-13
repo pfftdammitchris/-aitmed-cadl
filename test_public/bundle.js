@@ -68474,6 +68474,42 @@
 
 	  return output;
 	} //TODO: write unit tests
+	function asyncForEach(_x3, _x4) {
+	  return _asyncForEach.apply(this, arguments);
+	}
+
+	function _asyncForEach() {
+	  _asyncForEach = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(array, callback) {
+	    var index;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            index = 0;
+
+	          case 1:
+	            if (!(index < array.length)) {
+	              _context3.next = 7;
+	              break;
+	            }
+
+	            _context3.next = 4;
+	            return callback(array[index], index, array);
+
+	          case 4:
+	            index++;
+	            _context3.next = 1;
+	            break;
+
+	          case 7:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+	  return _asyncForEach.apply(this, arguments);
+	}
 
 	var defaultResponseCatcher = function defaultResponseCatcher(response) {
 	  return response;
@@ -79433,90 +79469,6 @@
 	    typeList = _Object$keys$reduce2[2],
 	    codeList = _Object$keys$reduce2[3];
 
-	/**
-	 * Convert edge object to notebook object
-	 * @param edge: Edge
-	 * @returns NotebookType
-	 */
-	var edgeToNotebook = function edgeToNotebook(edge) {
-	  if (edge.type !== eTypes.NOTEBOOK && edge.type !== eTypes.ROOT) {
-	    throw new AiTmedError({
-	      name: 'NOT_A_NOTEBOOk'
-	    });
-	  }
-
-	  var info;
-
-	  if (_typeof_1(edge.name) === 'object') {
-	    info = edge.name;
-	  } else if (edge.name && typeof edge.name === 'string') {
-	    try {
-	      info = JSON.parse(edge.name);
-	    } catch (error) {
-	      throw new AiTmedError({
-	        name: 'UNKNOW_ERROR',
-	        message: 'Notebook -> edgeToNotebook -> JSON.parse edge.name failed'
-	      });
-	    }
-	  } else {
-	    info = {};
-	  }
-
-	  var notebook = {
-	    id: store$3.utils.idToBase64(edge.eid),
-	    owner_id: store$3.utils.idToBase64(edge.bvid),
-	    info: info,
-	    refid: store$3.utils.idToBase64(edge.refid),
-	    created_at: edge.ctime * 1000,
-	    modified_at: edge.mtime * 1000,
-	    isEncrypt: edge.besak.length > 0 || edge.eesak.length > 0,
-	    type: edge.type
-	  };
-	  return notebook;
-	};
-	/**
-	 *
-	 * @param id: Uint8Array | string
-	 * @returns Promise<NotebookType>
-	 */
-
-	var retrieveNotebook = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(id) {
-	    var edge;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            _context.next = 2;
-	            return retrieveEdge(id);
-
-	          case 2:
-	            edge = _context.sent;
-
-	            if (edge) {
-	              _context.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            return _context.abrupt("return", edgeToNotebook(edge));
-
-	          case 6:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function retrieveNotebook(_x) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
 	var listEdges = /*#__PURE__*/function () {
 	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
 	    var params,
@@ -79612,468 +79564,6 @@
 	function ownKeys$c(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$c(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	/**
-	 * @param params string
-	 * @param params.title: string
-	 * @param params.description?: string
-	 * @param params.isEncrypt: boolean
-	 *
-	 * @returns Promise<Notebook>
-	 */
-	var create$5 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var title, _ref$description, description, _ref$type, type, _ref$isEncrypt, isEncrypt, edges, response;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            title = _ref.title, _ref$description = _ref.description, description = _ref$description === void 0 ? '' : _ref$description, _ref$type = _ref.type, type = _ref$type === void 0 ? eTypes.NOTEBOOK : _ref$type, _ref$isEncrypt = _ref.isEncrypt, isEncrypt = _ref$isEncrypt === void 0 ? false : _ref$isEncrypt;
-
-	            if (codeList.includes(type)) {
-	              _context.next = 3;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_TYPE_INVALID'
-	            });
-
-	          case 3:
-	            if (!(type === eTypes.ROOT)) {
-	              _context.next = 9;
-	              break;
-	            }
-
-	            _context.next = 6;
-	            return listEdges({
-	              type: eTypes.ROOT
-	            });
-
-	          case 6:
-	            edges = _context.sent;
-
-	            if (!(edges.length > 0)) {
-	              _context.next = 9;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'ROOT_NOTEBOOK_EXIST'
-	            });
-
-	          case 9:
-	            _context.next = 11;
-	            return store$3.level2SDK.edgeServices.createEdge({
-	              type: type,
-	              name: {
-	                title: title,
-	                description: description,
-	                edit_mode: 7
-	              },
-	              isEncrypt: isEncrypt
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 11:
-	            response = _context.sent;
-
-	            if (response) {
-	              _context.next = 14;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Notebook -> create -> createEdge -> no response'
-	            });
-
-	          case 14:
-	            return _context.abrupt("return", edgeToNotebook(response.data));
-
-	          case 15:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function create(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @returns Promise<Notebook>
-	 */
-
-
-	var remove$1 = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id) {
-	    var notebook;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return retrieveNotebook(id);
-
-	          case 2:
-	            notebook = _context2.sent;
-
-	            if (!(notebook.type === eTypes.ROOT)) {
-	              _context2.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'ROOT_NOTEBOOK_CANNOT_BE_REMOVED'
-	            });
-
-	          case 5:
-	            _context2.next = 7;
-	            return store$3.level2SDK.edgeServices.deleteEdge([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 7:
-	            return _context2.abrupt("return", notebook);
-
-	          case 8:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function remove(_x2) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @param fields
-	 * @param fields.title?: string
-	 * @param fields.description?: string
-	 * @returns Promise<Notebook>
-	 */
-
-
-	var update$1 = /*#__PURE__*/function () {
-	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(id, fields) {
-	    var edge, response, notebook;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return retrieveEdge(id);
-
-	          case 2:
-	            edge = _context3.sent;
-
-	            if (edge) {
-	              _context3.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            _context3.next = 7;
-	            return store$3.level2SDK.edgeServices.updateEdge({
-	              id: edge.eid,
-	              bvid: edge.bvid,
-	              type: edge.type,
-	              besak: edge.besak,
-	              name: _objectSpread$c(_objectSpread$c({}, edge.name), fields)
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 7:
-	            response = _context3.sent;
-
-	            if (!(!response || !response.data)) {
-	              _context3.next = 10;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Notebook -> update -> updateEdge -> no response'
-	            });
-
-	          case 10:
-	            _context3.next = 12;
-	            return retrieveNotebook(edge.eid);
-
-	          case 12:
-	            notebook = _context3.sent;
-	            return _context3.abrupt("return", notebook);
-
-	          case 14:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function update(_x3, _x4) {
-	    return _ref4.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param id: string
-	 * @returns Promise<Notebook>
-	 */
-
-
-	var retrieve$2 = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(id) {
-	    var notebook;
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            _context4.next = 2;
-	            return retrieveNotebook(id);
-
-	          case 2:
-	            notebook = _context4.sent;
-	            return _context4.abrupt("return", notebook);
-
-	          case 4:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function retrieve(_x5) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param param
-	 * @param param.shared?: Boolean
-	 * @param param.count?: number
-	 * @param param.edit_mode?: number
-	 * @param param.sort_by?: 0 | 1 | 2
-	 * @returns response
-	 * @returns response.ids: string[]
-	 * @returns response.mapper: Record<string, Notebook>
-	 */
-
-
-	var list$1 = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
-	    var params,
-	        edges,
-	        result,
-	        _args5 = arguments;
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            params = _args5.length > 0 && _args5[0] !== undefined ? _args5[0] : {};
-	            _context5.next = 3;
-	            return listEdges(params);
-
-	          case 3:
-	            edges = _context5.sent;
-	            result = edges.reduce(function (acc, edge) {
-	              var notebook = edgeToNotebook(edge);
-	              acc.ids.push(notebook.id);
-	              acc.mapper[notebook.id] = notebook;
-	              return acc;
-	            }, {
-	              ids: [],
-	              mapper: {}
-	            });
-	            return _context5.abrupt("return", result);
-
-	          case 6:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function list() {
-	    return _ref6.apply(this, arguments);
-	  };
-	}(); // /**
-	//  * @param param
-	//  * @param param.: number
-	//  * @param param.count?: number
-	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
-	//  * @param param.sort_by?: 0 | 1 | 2
-	//  * @returns response
-	//  * @returns response.ids: string[]
-	//  * @returns response.mapper: Record<string, Notebook>
-	//  * 
-	//  * -list of notebooks shared with user
-	//  */
-	// const listSharedNotebooks: NotebookTypes.ListSharedNotebooks = async (params = {}) => {
-	//   const edges = await listEdges({ type: 10001, xfname: 'evid', ...params })
-	//   let result
-	//   result = edges.reduce<NotebookTypes.ListReturn>(
-	//     (acc, edge) => {
-	//       const notebook = edgeToNotebook(edge)
-	//       acc.ids.push(notebook.id)
-	//       acc.mapper[notebook.id] = notebook
-	//       return acc
-	//     },
-	//     { ids: [], mapper: {} },
-	//   )
-	//   return result
-	// }
-	// /**
-	//  * @param param
-	//  * @param param.count?: number 
-	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
-	//  * @param param.fromMe? boolean -if true xfname = bvid (i.e query all invites created by user) 
-	//  * @param param.sort_by?:  0 | 1 | 2
-	//  * @returns response
-	//  * @returns response.ids: string[]
-	//  * @returns response.mapper: Record<string, Invite>
-	//  */
-	// const listInvites: NotebookTypes.ListInvites = async (params) => {
-	//   let xfname = 'evid'
-	//   if (params && params.fromMe) {
-	//     xfname = 'bvid'
-	//   }
-	//   const edges = await listEdges({ type: 1050, xfname, ...params })
-	//   let result
-	//   result = edges.reduce<NotebookTypes.ListInvitesReturn>(
-	//     (acc, edge) => {
-	//       const invite = edgeToInvite(edge)
-	//       acc.ids.push(invite.id)
-	//       acc.mapper[invite.id] = invite
-	//       return acc
-	//     },
-	//     { ids: [], mapper: {} },
-	//   )
-	//   return result
-	// }
-	// /**
-	//  * @param param
-	//  * @param param.count?: number
-	//  * @param param.obfname?: string -field name to order by (e.g ctime, mtime)
-	//  * @param param.fromMe? boolean -if true xfname = bvid (i.e query all accedtedInvites created by user) 
-	//  * @param param.sort_by?:  0 | 1 | 2
-	//  * @returns response
-	//  * @returns response.ids: string[]
-	//  * @returns response.mapper: Record<string, Invite>
-	//  */
-	// const listAcceptedInvites: NotebookTypes.ListAcceptedInvites = async (params) => {
-	//   let xfname = 'evid'
-	//   if (params && params.fromMe) {
-	//     xfname = 'bvid'
-	//   }
-	//   const edges = await listEdges({ type: 10060, xfname, ...params })
-	//   let result
-	//   result = edges.reduce<NotebookTypes.ListAcceptedInvitesReturn>(
-	//     (acc, edge) => {
-	//       const acceptedInvite = edgeToAcceptedInvite(edge)
-	//       acc.ids.push(acceptedInvite.id)
-	//       acc.mapper[acceptedInvite.id] = acceptedInvite
-	//       return acc
-	//     },
-	//     { ids: [], mapper: {} },
-	//   )
-	//   return result
-	// }
-	// /**
-	//  * 
-	//  * @param params
-	//  * @param params.info Record<string, any> -notebook/invitation details
-	//  * @param params.notebookId string | Uint8Array -the id of the notebook being shared
-	//  * @param params.directedToId string | Uint8Array -the vid of the receiver of the invitation
-	//  * 
-	//  * @returns Promise<Notebook>
-	//  */
-	// const createInvite: NotebookTypes.CreateInvite = async ({ info, notebookId, directedToId }) => {
-	//   const invite = await Invite.create({ info, refid: notebookId, directedToId })
-	//   return invite
-	// }
-	// /**
-	//  * 
-	//  * @param param
-	//  * @param params.info Record<string, any> -invitation/notebook details
-	//  * @param params.inviteId string | Uint8Array -edge id of the invitation being responded to
-	//  * @param params.directedToId string | Uint8Array -vid of the sender of the invitation(receiver of the acceptance)
-	//  * 
-	//  * @returns Promise<Notebook>
-	//  */
-	// const acceptInvite: NotebookTypes.AcceptInvite = async ({ info, inviteId, directedToId }) => {
-	//   const acceptedInvite = await Invite.accept({ info, inviteId, directedToId })
-	//   return acceptedInvite
-	// }
-	// /**
-	//  * 
-	//  * @param param
-	//  * @param params.notebookInfo Record<string, any> -invitation/notebook details
-	//  * @param params.acceptanceId string | Uint8Array -edge id of the acceptedInvitation edge
-	//  * @param params.directedToId string | Uint8Array -evid of the receive of the invitation(user that accepted invitation)
-	//  * 
-	//  * @returns Promise<Notebook>
-	//  */
-	// const authorizeEvent: NotebookTypes.AuthorizeEvent = async ({
-	//   info,
-	//   acceptanceId,
-	//   directedToId
-	// }) => {
-	//   const authorizedEdge = await Invite.authorize({ info, acceptanceId, directedToId })
-	//   return edgeToNotebook(authorizedEdge)
-	// }
-
-	/**
-	 * Todo:
-	 * 1. retrieveEdge - check the id is exist or not
-	 * 2.
-	 * @param id: string
-	 * @param invite_phone_number: string
-	 * @param edit_mode: number
-	 */
-	//  export const share = (
-	//   id: string,
-	//   invite_phone_number: string,
-	//   edit_mode: number,
-	// ): Promise<void> => {
-	//   console.log('Notebook->share', id, invite_phone_number, edit_mode)
-	// }
-
-	/**
-	 * Todo:
-	 * 1. retrieveEdge - check the id is exist or not
-	 * 2.
-	 * @param id: string
-	 * @param invited_phone_number: string
-	 */
-	// export const unshare = (
-	//   id: string,
-	//   invited_phone_number: string,
-	// ): Promise<void> => {
-	//   console.log('Notebook->unshare', id, invited_phone_number)
-	// }
-
-	var Notebook = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		create: create$5,
-		remove: remove$1,
-		update: update$1,
-		retrieve: retrieve$2,
-		list: list$1
-	});
-
-	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var decodeUID = function decodeUID(uid) {
 	  var lastIOfPlus = uid.lastIndexOf('+');
 
@@ -80139,36 +79629,6 @@
 
 	  return function generateUser(_x, _x2) {
 	    return _ref.apply(this, arguments);
-	  };
-	}();
-	var createRootEdge = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var notebook;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return Notebook.create({
-	              title: 'root',
-	              isEncrypt: true,
-	              type: eTypes.ROOT
-	            });
-
-	          case 2:
-	            notebook = _context2.sent;
-	            return _context2.abrupt("return", notebook);
-
-	          case 4:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function createRootEdge() {
-	    return _ref2.apply(this, arguments);
 	  };
 	}();
 	var retrieveRootEdge = /*#__PURE__*/function () {
@@ -80340,7 +79800,7 @@
 
 	          case 9:
 	            profile_photo = profileInDoc.profile_photo, restProfile = objectWithoutProperties(profileInDoc, ["profile_photo"]);
-	            profile = _objectSpread$d({}, restProfile); // Retrieve Profile Photo
+	            profile = _objectSpread$c({}, restProfile); // Retrieve Profile Photo
 
 	            if (!profile_photo) {
 	              _context6.next = 17;
@@ -80377,9 +79837,9 @@
 	  };
 	}();
 
-	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -80427,8 +79887,8 @@
 	 * @param verification_code: string
 	 */
 
-	var create$6 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, name) {
+	var create$5 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, userName) {
 	    var _yield$getStatus, statusCode, userId, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
@@ -80453,7 +79913,10 @@
 	              id: userId,
 	              phone_number: phone_number,
 	              password: password,
-	              userInfo: name
+	              userInfo: {
+	                userName: userName,
+	                phoneNumber: phone_number
+	              }
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
 	          case 8:
@@ -80469,7 +79932,10 @@
 	              phone_number: phone_number,
 	              password: password,
 	              verification_code: verification_code,
-	              userInfo: name
+	              userInfo: {
+	                userName: userName,
+	                phoneNumber: phone_number
+	              }
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
 	          case 15:
@@ -80478,13 +79944,9 @@
 	            userVertex = _data;
 
 	          case 18:
-	            _context2.next = 20;
-	            return createRootEdge();
-
-	          case 20:
 	            return _context2.abrupt("return", userVertex);
 
-	          case 21:
+	          case 19:
 	          case "end":
 	            return _context2.stop();
 	        }
@@ -80574,7 +80036,8 @@
 
 	var loginByPassword = /*#__PURE__*/function () {
 	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(password) {
-	    var user, userVertex;
+	    var _yield$getStatus2, user_id, user, userVertex;
+
 	    return regenerator.wrap(function _callee4$(_context4) {
 	      while (1) {
 	        switch (_context4.prev = _context4.next) {
@@ -80586,20 +80049,21 @@
 
 	          case 2:
 	            _context4.next = 4;
-	            return retrieve$3();
+	            return getStatus();
 
 	          case 4:
-	            user = _context4.sent;
+	            _yield$getStatus2 = _context4.sent;
+	            user_id = _yield$getStatus2.data.user_id;
 
-	            if (!user.id) {
-	              _context4.next = 13;
+	            if (!user_id) {
+	              _context4.next = 12;
 	              break;
 	            }
 
-	            _context4.next = 8;
-	            return retrieveVertex(user.id);
+	            _context4.next = 9;
+	            return retrieveVertex(user_id);
 
-	          case 8:
+	          case 9:
 	            userVertex = _context4.sent;
 
 	            if (userVertex && userVertex.name && userVertex.name.username) {
@@ -80607,12 +80071,12 @@
 	              delete userVertex.name.username;
 	            }
 
-	            return _context4.abrupt("return", userVertex);
+	            user = userVertex;
 
-	          case 13:
+	          case 12:
 	            return _context4.abrupt("return", user);
 
-	          case 14:
+	          case 13:
 	          case "end":
 	            return _context4.stop();
 	        }
@@ -80676,40 +80140,42 @@
 	            clean = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : false;
 
 	            if (!clean) {
-	              _context6.next = 5;
+	              _context6.next = 6;
 	              break;
 	            }
 
 	            store$3.level2SDK.Account.logoutClean();
-	            _context6.next = 11;
+	            localStorage.removeItem('Global');
+	            _context6.next = 13;
 	            break;
 
-	          case 5:
-	            _context6.next = 7;
+	          case 6:
+	            _context6.next = 8;
 	            return getStatus();
 
-	          case 7:
+	          case 8:
 	            status = _context6.sent;
 
 	            if (!(status.code === 1)) {
-	              _context6.next = 10;
+	              _context6.next = 11;
 	              break;
 	            }
 
 	            return _context6.abrupt("return", status);
 
-	          case 10:
-	            store$3.level2SDK.Account.logout();
-
 	          case 11:
-	            _context6.next = 13;
-	            return getStatus();
+	            store$3.level2SDK.Account.logout();
+	            localStorage.removeItem('Global');
 
 	          case 13:
+	            _context6.next = 15;
+	            return getStatus();
+
+	          case 15:
 	            latestStatus = _context6.sent;
 	            return _context6.abrupt("return", latestStatus);
 
-	          case 15:
+	          case 17:
 	          case "end":
 	            return _context6.stop();
 	        }
@@ -80889,7 +80355,7 @@
 
 	          case 25:
 	            _context9.next = 27;
-	            return retrieve$3();
+	            return retrieve$2();
 
 	          case 27:
 	            user = _context9.sent;
@@ -80911,7 +80377,7 @@
 	 * @returns Promise<User>
 	 */
 
-	var retrieve$3 = /*#__PURE__*/function () {
+	var retrieve$2 = /*#__PURE__*/function () {
 	  var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10() {
 	    var root, profile, user;
 	    return regenerator.wrap(function _callee10$(_context10) {
@@ -80951,7 +80417,7 @@
 	 * @returns Promise<User>
 	 */
 
-	var remove$2 = /*#__PURE__*/function () {
+	var remove$1 = /*#__PURE__*/function () {
 	  var _ref12 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
 	    var user, edge, notes, _iterator2, _step2, noteId;
 
@@ -80960,7 +80426,7 @@
 	        switch (_context11.prev = _context11.next) {
 	          case 0:
 	            _context11.next = 2;
-	            return retrieve$3();
+	            return retrieve$2();
 
 	          case 2:
 	            user = _context11.sent;
@@ -81075,7 +80541,7 @@
 	          case 7:
 	            utf8Uid = store$3.level2SDK.utilServices.base64ToUTF8(uid);
 	            _accountUtils$decodeU = decodeUID(utf8Uid), userId = _accountUtils$decodeU.userId, phone_number = _accountUtils$decodeU.phone_number;
-	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
+	            return _context12.abrupt("return", _objectSpread$d(_objectSpread$d({}, status), {}, {
 	              userId: userId,
 	              phone_number: phone_number
 	            }));
@@ -81084,7 +80550,7 @@
 	            _context12.prev = 12;
 	            _context12.t0 = _context12["catch"](3);
 	            console.log(_context12.t0);
-	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
+	            return _context12.abrupt("return", _objectSpread$d(_objectSpread$d({}, status), {}, {
 	              userId: '',
 	              phone_number: ''
 	            }));
@@ -81128,7 +80594,7 @@
 	var Account$1 = /*#__PURE__*/Object.freeze({
 		__proto__: null,
 		requestVerificationCode: requestVerificationCode,
-		create: create$6,
+		create: create$5,
 		login: login,
 		loginByPassword: loginByPassword,
 		loginByVerificationCode: loginByVerificationCode,
@@ -81136,15 +80602,15 @@
 		updatePassword: updatePassword$1,
 		updatePasswordByVerificationCode: updatePasswordByVerificationCode,
 		updateProfile: updateProfile,
-		retrieve: retrieve$3,
-		remove: remove$2,
+		retrieve: retrieve$2,
+		remove: remove$1,
 		getStatus: getStatus,
 		verifyUserPassword: verifyUserPassword
 	});
 
-	function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$f(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function builtIn(_ref) {
 	  var pageName = _ref.pageName,
@@ -81181,8 +80647,8 @@
 
 
 	              _context.next = 6;
-	              return builtInFn(_objectSpread$f(_objectSpread$f({}, input), {}, {
-	                name: _objectSpread$f(_objectSpread$f({}, currentVal.name), input)
+	              return builtInFn(_objectSpread$e(_objectSpread$e({}, input), {}, {
+	                name: _objectSpread$e(_objectSpread$e({}, currentVal.name), input)
 	              }));
 
 	            case 6:
@@ -81247,23 +80713,34 @@
 
 	function builtInFns(dispatch) {
 	  return {
-	    createNewAccount: function createNewAccount(_ref3) {
+	    createNewAccount: function createNewAccount(phoneNumber, password, verificationCode, userName) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	        var phoneNumber, password, verificationCode, name, passPlaceHolder, vcPlaceHolder, confirmPassword, countryCode, avatar, restOfName, data;
+	        var data;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
-	                phoneNumber = _ref3.phoneNumber, password = _ref3.password, verificationCode = _ref3.verificationCode, name = _ref3.name;
-	                passPlaceHolder = name.password, vcPlaceHolder = name.verificationCode, confirmPassword = name.confirmPassword, countryCode = name.countryCode, avatar = name.avatar, restOfName = objectWithoutProperties(name, ["password", "verificationCode", "confirmPassword", "countryCode", "avatar"]);
-	                _context2.next = 4;
-	                return Account$1.create(phoneNumber, password, verificationCode, _objectSpread$f({}, restOfName));
+	                _context2.next = 2;
+	                return Account$1.create(phoneNumber, password, verificationCode, userName);
 
-	              case 4:
+	              case 2:
 	                data = _context2.sent;
+
+	                if (dispatch) {
+	                  dispatch({
+	                    type: 'update-data',
+	                    //TODO: handle case for data is an array or an object
+	                    payload: {
+	                      pageName: 'builtIn',
+	                      dataKey: 'builtIn.UserVertex',
+	                      data: data
+	                    }
+	                  });
+	                }
+
 	                return _context2.abrupt("return", data);
 
-	              case 6:
+	              case 5:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -81271,14 +80748,14 @@
 	        }, _callee2);
 	      }))();
 	    },
-	    signIn: function signIn(_ref4) {
+	    signIn: function signIn(_ref3) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
 	        var phoneNumber, password, verificationCode, data;
 	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                phoneNumber = _ref4.phoneNumber, password = _ref4.password, verificationCode = _ref4.verificationCode;
+	                phoneNumber = _ref3.phoneNumber, password = _ref3.password, verificationCode = _ref3.verificationCode;
 	                _context3.next = 3;
 	                return Account$1.login(phoneNumber, password, verificationCode);
 
@@ -81482,9 +80959,9 @@
 
 	function _arrayLikeToArray$h(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-	function ownKeys$g(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$g(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$g(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$g(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$f(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 * Maps ecos.eid to id.
 	 * 
@@ -81499,7 +80976,7 @@
 
 	  if (eid) {
 	    var b64Id = store$3.utils.idToBase64(eid);
-	    output = _objectSpread$g(_objectSpread$g({}, output), {}, {
+	    output = _objectSpread$f(_objectSpread$f({}, output), {}, {
 	      id: b64Id
 	    });
 	    delete output.eid;
@@ -81572,7 +81049,7 @@
 	          lookFor: lookFor,
 	          locations: locations
 	        }));
-	        output = _objectSpread$g(_objectSpread$g({}, output), mergedObjects);
+	        output = _objectSpread$f(_objectSpread$f({}, output), mergedObjects);
 	        delete output[key];
 	      } else if (Object.keys(parent).length) {
 	        //TODO: test why it is undefined when .Edge:""
@@ -82190,9 +81667,9 @@
 	  return sourceCopy;
 	}
 
-	function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$g(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$h(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$g(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$g(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$g(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function _createForOfIteratorHelper$h(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$i(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -82595,6 +82072,7 @@
 	            actionType,
 	            dataKey,
 	            dataObject,
+	            object,
 	            funcName,
 	            _command$if,
 	            condExpression,
@@ -82629,7 +82107,7 @@
 	                  this.newDispatch({
 	                    type: 'ADD_BUILTIN_FNS',
 	                    payload: {
-	                      builtInFns: _objectSpread$h({}, builtIn)
+	                      builtInFns: _objectSpread$g({}, builtIn)
 	                    }
 	                  });
 	                }
@@ -82680,7 +82158,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 80;
+	                  _context2.next = 82;
 	                  break;
 	                }
 
@@ -82690,7 +82168,7 @@
 
 	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 80;
+	                  _context2.next = 82;
 	                  break;
 	                }
 
@@ -82716,18 +82194,18 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 32:
-	                _context2.next = 72;
+	                _context2.next = 74;
 	                break;
 
 	              case 34:
 	                if (!(isObject$4(command) && 'actionType' in command)) {
-	                  _context2.next = 49;
+	                  _context2.next = 51;
 	                  break;
 	                }
 
-	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
+	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, object = command.object, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 41 : 46;
+	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 41 : _context2.t1 === 'evalObject' ? 46 : 48;
 	                break;
 
 	              case 39:
@@ -82735,7 +82213,7 @@
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 47);
+	                return _context2.abrupt("break", 49);
 
 	              case 41:
 	                if (!(funcName === 'videoChat')) {
@@ -82752,18 +82230,28 @@
 	                return this.root.builtIn[funcName](command);
 
 	              case 45:
-	                return _context2.abrupt("break", 47);
+	                return _context2.abrupt("break", 49);
 
 	              case 46:
+	                this.dispatch({
+	                  type: 'eval-object',
+	                  payload: {
+	                    pageName: pageName,
+	                    updateObject: object
+	                  }
+	                });
+	                return _context2.abrupt("break", 49);
+
+	              case 48:
 	                return _context2.abrupt("return");
 
-	              case 47:
-	                _context2.next = 72;
+	              case 49:
+	                _context2.next = 74;
 	                break;
 
-	              case 49:
+	              case 51:
 	                if (!(isObject$4(command) && 'if' in command)) {
-	                  _context2.next = 62;
+	                  _context2.next = 64;
 	                  break;
 	                }
 
@@ -82771,61 +82259,61 @@
 	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
 
 	                if (!(typeof condExpression === 'function')) {
-	                  _context2.next = 60;
+	                  _context2.next = 62;
 	                  break;
 	                }
 
-	                _context2.next = 54;
+	                _context2.next = 56;
 	                return condExpression();
 
-	              case 54:
+	              case 56:
 	                condResult = _context2.sent;
 
 	                if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                  _context2.next = 60;
+	                  _context2.next = 62;
 	                  break;
 	                }
 
 	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context2.next = 60;
+	                  _context2.next = 62;
 	                  break;
 	                }
 
-	                _context2.next = 59;
+	                _context2.next = 61;
 	                return this.root.builtIn['goto'](elseEffect['goto']);
 
-	              case 59:
+	              case 61:
 	                return _context2.abrupt("return");
 
-	              case 60:
-	                _context2.next = 72;
+	              case 62:
+	                _context2.next = 74;
 	                break;
 
-	              case 62:
+	              case 64:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 72;
+	                  _context2.next = 74;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 72;
+	                  _context2.next = 74;
 	                  break;
 	                }
 
-	                _context2.prev = 64;
-	                _context2.next = 67;
+	                _context2.prev = 66;
+	                _context2.next = 69;
 	                return command[0][1]();
 
-	              case 67:
-	                _context2.next = 72;
+	              case 69:
+	                _context2.next = 74;
 	                break;
 
-	              case 69:
-	                _context2.prev = 69;
-	                _context2.t2 = _context2["catch"](64);
+	              case 71:
+	                _context2.prev = 71;
+	                _context2.t2 = _context2["catch"](66);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 72:
+	              case 74:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -82851,7 +82339,7 @@
 	                _context2.next = 20;
 	                break;
 
-	              case 80:
+	              case 82:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -82879,12 +82367,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 84:
+	              case 86:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[24, 29], [64, 69]]);
+	        }, _callee2, this, [[24, 29], [66, 71]]);
 	      }));
 
 	      function initPage(_x) {
@@ -83198,7 +82686,7 @@
 	            this.dispatch({
 	              type: 'update-localStorage'
 	            });
-	            return;
+	            break;
 	          }
 
 	        case 'get-data':
@@ -83238,7 +82726,8 @@
 	              locations: [this, this.root, this.root[_pageName3]]
 	            });
 
-	            Object.keys(_populateAfterInheriting).forEach( /*#__PURE__*/function () {
+	            var objectKeys = Object.keys(_populateAfterInheriting);
+	            asyncForEach(objectKeys, /*#__PURE__*/function () {
 	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
 	                var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch, withFn;
 
@@ -84091,9 +83580,9 @@
 	  configUrl: 'https://public.aitmed.com/config'
 	};
 
-	function ownKeys$i(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$i(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$i(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$i(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$h(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
 	  var cadl, vc, ed;
 	  return regenerator.wrap(function _callee$(_context) {
@@ -84102,7 +83591,7 @@
 	        case 0:
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
-	          cadl = new CADL(_objectSpread$i(_objectSpread$i({}, defaultConfig$1), {}, {
+	          cadl = new CADL(_objectSpread$h(_objectSpread$h({}, defaultConfig$1), {}, {
 	            configUrl: 'https://public.aitmed.com/config/meetdev.yml'
 	          }));
 	          debugger;
