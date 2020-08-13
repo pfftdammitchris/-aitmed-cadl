@@ -1,6 +1,11 @@
 {
   "include": ["./src/**/*"],
-  "exclude": ["node_modules", "dist", "src/**/__tests__/**"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/**/__tests__/**",
+    "src/testingPlayground"
+  ],
   "compileOnSave": true,
   "compilerOptions": {
     /* Basic Options */
@@ -73,7 +78,6 @@
     "resolveJsonModule": true /* Include modules imported with '.json' extension */,
     "paths": {
       "*": ["node_modules/*"]
-    },
-    
+    }
   }
 }
