@@ -79893,22 +79893,18 @@
 	        switch (_context.prev = _context.next) {
 	          case 0:
 	            if (!store$3.noodlInstance) {
-	              _context.next = 11;
+	              _context.next = 8;
 	              break;
 	            }
-
-	            debugger;
 
 	            if (!(store$3.noodlInstance.verificationRequest.timer > 0 && store$3.noodlInstance.verificationRequest.phoneNumber === phone_number)) {
-	              _context.next = 7;
+	              _context.next = 5;
 	              break;
 	            }
 
-	            debugger;
 	            throw new UnableToMakeAnotherRequest('User must wait 60 sec to make another verification code request.');
 
-	          case 7:
-	            debugger;
+	          case 5:
 	            store$3.noodlInstance.verificationRequest.timer = 60;
 	            store$3.noodlInstance.verificationRequest.phoneNumber = phone_number;
 	            interval = setInterval(function () {
@@ -79916,22 +79912,20 @@
 	                clearInterval(interval);
 	              } else {
 	                store$3.noodlInstance.verificationRequest.timer--;
-	                console.log(store$3.noodlInstance.verificationRequest.timer);
 	              }
 	            }, 1000);
 
-	          case 11:
-	            debugger;
-	            _context.next = 14;
+	          case 8:
+	            _context.next = 10;
 	            return store$3.level2SDK.Account.requestVerificationCode({
 	              phone_number: phone_number
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
-	          case 14:
+	          case 10:
 	            response = _context.sent;
 	            return _context.abrupt("return", response && response.data && ((_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.verification_code));
 
-	          case 16:
+	          case 12:
 	          case "end":
 	            return _context.stop();
 	        }
