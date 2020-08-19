@@ -82138,7 +82138,8 @@
 	            funcName,
 	            _command$if,
 	            condExpression,
-	            elseEffect,
+	            ifTrueEffect,
+	            ifFalseEffect,
 	            condResult,
 	            updatedPage,
 	            populatedUpdatedPage,
@@ -82220,7 +82221,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 82;
+	                  _context2.next = 90;
 	                  break;
 	                }
 
@@ -82230,7 +82231,7 @@
 
 	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 82;
+	                  _context2.next = 90;
 	                  break;
 	                }
 
@@ -82256,7 +82257,7 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 32:
-	                _context2.next = 74;
+	                _context2.next = 82;
 	                break;
 
 	              case 34:
@@ -82308,20 +82309,20 @@
 	                return _context2.abrupt("return");
 
 	              case 49:
-	                _context2.next = 74;
+	                _context2.next = 82;
 	                break;
 
 	              case 51:
 	                if (!(isObject$4(command) && 'if' in command)) {
-	                  _context2.next = 64;
+	                  _context2.next = 72;
 	                  break;
 	                }
 
 	                //TODO: add the then condition
-	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
+	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], ifTrueEffect = _command$if[1], ifFalseEffect = _command$if[2];
 
 	                if (!(typeof condExpression === 'function')) {
-	                  _context2.next = 62;
+	                  _context2.next = 70;
 	                  break;
 	                }
 
@@ -82331,51 +82332,77 @@
 	              case 56:
 	                condResult = _context2.sent;
 
-	                if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                  _context2.next = 62;
+	                if (!(condResult === true)) {
+	                  _context2.next = 64;
 	                  break;
 	                }
 
-	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
+	                if (!(isObject$4(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
 	                  _context2.next = 62;
 	                  break;
 	                }
 
 	                _context2.next = 61;
-	                return this.root.builtIn['goto'](elseEffect['goto']);
+	                return this.root.builtIn['goto'](ifTrueEffect['goto']);
 
 	              case 61:
 	                return _context2.abrupt("return");
 
 	              case 62:
-	                _context2.next = 74;
+	                _context2.next = 70;
 	                break;
 
 	              case 64:
+	                if (!(condResult === false)) {
+	                  _context2.next = 70;
+	                  break;
+	                }
+
+	                if (!(isObject$4(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
+	                  _context2.next = 70;
+	                  break;
+	                }
+
+	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
+	                  _context2.next = 70;
+	                  break;
+	                }
+
+	                _context2.next = 69;
+	                return this.root.builtIn['goto'](ifFalseEffect['goto']);
+
+	              case 69:
+	                return _context2.abrupt("return");
+
+	              case 70:
+	                _context2.next = 82;
+	                break;
+
+	              case 72:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 74;
+	                  _context2.next = 82;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 74;
+	                  _context2.next = 82;
 	                  break;
 	                }
 
-	                _context2.prev = 66;
-	                _context2.next = 69;
+	                _context2.prev = 74;
+	                _context2.next = 77;
 	                return command[0][1]();
 
-	              case 69:
-	                _context2.next = 74;
+	              case 77:
+	                _context2.next = 82;
 	                break;
 
-	              case 71:
-	                _context2.prev = 71;
-	                _context2.t2 = _context2["catch"](66);
+	              case 79:
+	                _context2.prev = 79;
+	                _context2.t2 = _context2["catch"](74);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 74:
+	              case 82:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -82401,7 +82428,7 @@
 	                _context2.next = 20;
 	                break;
 
-	              case 82:
+	              case 90:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -82429,12 +82456,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 86:
+	              case 94:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[24, 29], [66, 71]]);
+	        }, _callee2, this, [[24, 29], [74, 79]]);
 	      }));
 
 	      function initPage(_x) {

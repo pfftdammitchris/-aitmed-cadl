@@ -336,13 +336,20 @@ export default class CADL extends EventEmitter {
                     }
                 } else if (isObject(command) && 'if' in command) {
                     //TODO: add the then condition
-                    const [condExpression, , elseEffect] = command['if']
+                    const [condExpression, ifTrueEffect, ifFalseEffect] = command['if']
                     if (typeof condExpression === 'function') {
                         const condResult = await condExpression()
-                        if (!condResult && isObject(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string') {
-                            if ('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function') {
-                                await this.root.builtIn['goto'](elseEffect['goto'])
+                        if (condResult === true) {
+                            if (isObject(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string') {
+                                await this.root.builtIn['goto'](ifTrueEffect['goto'])
                                 return
+                            }
+                        } else if (condResult === false) {
+                            if (isObject(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string') {
+                                if ('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function') {
+                                    await this.root.builtIn['goto'](ifFalseEffect['goto'])
+                                    return
+                                }
                             }
                         }
                     }
