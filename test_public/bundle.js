@@ -83645,24 +83645,23 @@
 	function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$h(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	  var cadl, vc, vc3, vc4;
-	  return regenerator.wrap(function _callee2$(_context2) {
+	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
+	  var cadl, vc, _yield$store$level2SD, eid, testDoc;
+
+	  return regenerator.wrap(function _callee$(_context) {
 	    while (1) {
-	      switch (_context2.prev = _context2.next) {
+	      switch (_context.prev = _context.next) {
 	        case 0:
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$h(_objectSpread$h({}, defaultConfig$1), {}, {
 	            configUrl: 'https://public.aitmed.com/config/meetdev.yml'
 	          }));
-	          debugger;
-	          _context2.next = 4;
+	          _context.next = 3;
 	          return cadl.init();
 
-	        case 4:
-	          debugger;
-	          _context2.next = 7;
+	        case 3:
+	          _context.next = 5;
 	          return cadl.initPage('SignIn', [], {
 	            builtIn: {
 	              "goto": function _goto() {
@@ -83671,67 +83670,42 @@
 	            }
 	          });
 
+	        case 5:
+	          _context.next = 7;
+	          return Account$1.requestVerificationCode('+1 8887654321');
+
 	        case 7:
-	          // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
-	          debugger; // await cadl.initPage('CreateNewAccount')
-
-	          debugger;
-	          _context2.next = 11;
-	          return Account$1.requestVerificationCode('+1 3238677306');
-
-	        case 11:
-	          vc = _context2.sent;
-	          setTimeout( /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	            var vc2;
-	            return regenerator.wrap(function _callee$(_context) {
-	              while (1) {
-	                switch (_context.prev = _context.next) {
-	                  case 0:
-	                    debugger;
-	                    _context.next = 3;
-	                    return Account$1.requestVerificationCode('+1 3238677306');
-
-	                  case 3:
-	                    vc2 = _context.sent;
-
-	                  case 4:
-	                  case "end":
-	                    return _context.stop();
-	                }
-	              }
-	            }, _callee);
-	          })), 75000);
-	          _context2.next = 15;
-	          return Account$1.requestVerificationCode('+1 3438677306')["catch"](function (err) {
-	            return console.log(err);
+	          vc = _context.sent;
+	          _context.next = 10;
+	          return cadl.root.builtIn['signIn']({
+	            password: "letmein123",
+	            phoneNumber: "+1 8887654321",
+	            verificationCode: vc
 	          });
 
-	        case 15:
-	          vc3 = _context2.sent;
-	          _context2.next = 18;
-	          return Account$1.requestVerificationCode('+1 3238677306')["catch"](function (err) {
-	            return console.log(err);
+	        case 10:
+	          cadl.root.actions['SignIn'].update();
+	          _context.next = 13;
+	          return store$3.level2SDK.edgeServices.createEdge({
+	            type: 10000
+	          });
+
+	        case 13:
+	          _yield$store$level2SD = _context.sent;
+	          eid = _yield$store$level2SD.data.eid;
+	          debugger;
+	          _context.next = 18;
+	          return Document$3.create({
+	            edge_id: eid,
+	            dataType: 0,
+	            content: 'hello this is a test',
+	            type: 'text/plain',
+	            title: 'test document'
 	          });
 
 	        case 18:
-	          vc4 = _context2.sent;
-	          debugger; // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
-	          //     confirmPassword: "letmein123",
-	          //     countryCode: "+1",
-	          //     password: "letmein123",
-	          //     phoneNumber: "+1 7015168317",
-	          //     username: "sammy",
-	          //     verificationCode: vc
-	          // })
-	          // debugger
-	          // await cadl.root.builtIn['signIn']({
-	          //     password: "demo5555",
-	          //     phoneNumber: "+1 3238677306",
-	          //     verificationCode: vc
-	          // })
-	          // debugger
-	          // cadl.root.actions['SignIn'].update()
-	          // // cadl.root['CreateNewAccount'].update()
+	          testDoc = _context.sent;
+	          debugger; // // cadl.root['CreateNewAccount'].update()
 	          // debugger
 	          // // await cadl.initPage('MeetingRoomInvited')
 	          // // debugger
@@ -83843,10 +83817,10 @@
 
 	        case 20:
 	        case "end":
-	          return _context2.stop();
+	          return _context.stop();
 	      }
 	    }
-	  }, _callee2);
+	  }, _callee);
 	}))();
 
 	return testingPlayground;

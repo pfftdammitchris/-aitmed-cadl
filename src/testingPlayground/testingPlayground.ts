@@ -7,6 +7,9 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import { Account } from '../'
+import services from '../CADL/services'
+import Document from '../services/document'
+import store from '../common/store'
 
 
 export default (async function () {
@@ -17,43 +20,43 @@ export default (async function () {
     const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/meetdev.yml' })
 
 
-    debugger
     await cadl.init()
-    debugger
 
     await cadl.initPage('SignIn', [], { builtIn: { goto: () => console.log('lolo') } })
 
     // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
 
-    debugger
     // await cadl.initPage('CreateNewAccount')
-    debugger
-    const vc = await Account.requestVerificationCode('+1 3238677306')
-    setTimeout(async () => {
-        debugger
-        const vc2 = await Account.requestVerificationCode('+1 3238677306')
-    }, 75000)
-    const vc3 = await Account.requestVerificationCode('+1 3438677306').catch((err) => console.log(err))
-    const vc4 = await Account.requestVerificationCode('+1 3238677306').catch((err) => console.log(err))
-    debugger
+    const vc = await Account.requestVerificationCode('+1 8887654321')
+
 
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
     //     confirmPassword: "letmein123",
     //     countryCode: "+1",
     //     password: "letmein123",
-    //     phoneNumber: "+1 7015168317",
+    //     phoneNumber: "+1 88887654321",
     //     username: "sammy",
     //     verificationCode: vc
     // })
     // debugger
 
-    // await cadl.root.builtIn['signIn']({
-    //     password: "demo5555",
-    //     phoneNumber: "+1 3238677306",
-    //     verificationCode: vc
-    // })
-    // debugger
-    // cadl.root.actions['SignIn'].update()
+    await cadl.root.builtIn['signIn']({
+        password: "letmein123",
+        phoneNumber: "+1 8887654321",
+        verificationCode: vc
+    })
+    cadl.root.actions['SignIn'].update()
+
+    const { data: { eid } } = await store.level2SDK.edgeServices.createEdge({ type: 10000 })
+    debugger
+    const testDoc = await Document.create({
+        edge_id: eid,
+        dataType:0,
+        content: 'hello this is a test',
+        type: 'text/plain',
+        title: 'test document'
+    })
+    debugger
     // // cadl.root['CreateNewAccount'].update()
     // debugger
     // // await cadl.initPage('MeetingRoomInvited')
