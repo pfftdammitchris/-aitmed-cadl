@@ -35,6 +35,8 @@ export default class CADL extends EventEmitter {
     private _assetsUrl: string
     private _root: Record<string, any> = this.initRoot({})
     private _initCallQueue: any[]
+    private _designSuffix: Record<string, any>
+    private _aspectRatio: number
     public verificationRequest = {
         timer: 0,
         phoneNumber: ''
@@ -46,13 +48,16 @@ export default class CADL extends EventEmitter {
      * @param CADLARGS.configUrl  
      * @param CADLARGS.cadlVersion 'test' | 'stable' 
      */
-    constructor({ configUrl, cadlVersion }: CADLARGS) {
+    constructor({ configUrl, cadlVersion, aspectRatio }: CADLARGS) {
         super()
         //replace default arguments
         store.env = cadlVersion
         store.configUrl = configUrl
         store.noodlInstance = this
-        this._cadlVersion = cadlVersion
+        this.cadlVersion = cadlVersion
+        if (aspectRatio) {
+            this.aspectRatio = aspectRatio
+        }
     }
 
     /**
@@ -85,10 +90,10 @@ export default class CADL extends EventEmitter {
             throw new UnableToLoadConfig('An error occured while trying to load the config', error)
         }
 
-        const { web, cadlBaseUrl, cadlMain } = config
-
+        const { web, cadlBaseUrl, cadlMain, designSuffix } = config
         //set cadlVersion
         this.cadlVersion = web.cadlVersion[this.cadlVersion]
+        this.designSuffix = designSuffix
         this.cadlBaseUrl = cadlBaseUrl
 
         //set cadlEndpoint
@@ -1187,11 +1192,18 @@ export default class CADL extends EventEmitter {
     }
 
     public get cadlBaseUrl() {
-        return this._cadlBaseUrl
+        let baseUrlWithVersion = this._cadlBaseUrl
+        if (baseUrlWithVersion.includes('cadlVersion')) {
+            baseUrlWithVersion = baseUrlWithVersion.replace('${cadlVersion}', this.cadlVersion)
+        }
+        if (baseUrlWithVersion.includes('designSuffix')) {
+            baseUrlWithVersion = baseUrlWithVersion.replace('${designSuffix}', this.designSuffix)
+        }
+        return baseUrlWithVersion
     }
 
     public set cadlBaseUrl(cadlBaseUrl) {
-        this._cadlBaseUrl = cadlBaseUrl.replace('${cadlVersion}', this.cadlVersion)
+        this._cadlBaseUrl = cadlBaseUrl
     }
 
     public get assetsUrl() {
@@ -1202,6 +1214,19 @@ export default class CADL extends EventEmitter {
         this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
     }
 
+    public get designSuffix() {
+        const { greaterEqual, less, widthHeightRatioThreshold } = this._designSuffix
+        return this.aspectRatio >= widthHeightRatioThreshold ? greaterEqual : less
+    }
+    public set designSuffix(designSuffix) {
+        this._designSuffix = designSuffix
+    }
+    public get aspectRatio() {
+        return this._aspectRatio
+    }
+    public set aspectRatio(aspectRatio) {
+        this._aspectRatio = aspectRatio
+    }
 
     public get root() {
         return this._root

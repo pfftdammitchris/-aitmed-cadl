@@ -81752,7 +81752,8 @@
 	    var _this;
 
 	    var configUrl = _ref.configUrl,
-	        cadlVersion = _ref.cadlVersion;
+	        cadlVersion = _ref.cadlVersion,
+	        aspectRatio = _ref.aspectRatio;
 
 	    classCallCheck(this, CADL);
 
@@ -81772,6 +81773,10 @@
 
 	    defineProperty(assertThisInitialized(_this), "_initCallQueue", void 0);
 
+	    defineProperty(assertThisInitialized(_this), "_designSuffix", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "_aspectRatio", void 0);
+
 	    defineProperty(assertThisInitialized(_this), "verificationRequest", {
 	      timer: 0,
 	      phoneNumber: ''
@@ -81780,7 +81785,12 @@
 	    store$3.env = cadlVersion;
 	    store$3.configUrl = configUrl;
 	    store$3.noodlInstance = assertThisInitialized(_this);
-	    _this._cadlVersion = cadlVersion;
+	    _this.cadlVersion = cadlVersion;
+
+	    if (aspectRatio) {
+	      _this.aspectRatio = aspectRatio;
+	    }
+
 	    return _this;
 	  }
 	  /**
@@ -81810,6 +81820,7 @@
 	            web,
 	            cadlBaseUrl,
 	            cadlMain,
+	            designSuffix,
 	            cadlEndpointUrl,
 	            cadlEndpoint,
 	            _this$cadlEndpoint,
@@ -81854,16 +81865,17 @@
 	                throw new UnableToLoadConfig('An error occured while trying to load the config', _context.t0);
 
 	              case 10:
-	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain; //set cadlVersion
+	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain, designSuffix = _config.designSuffix; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
+	                this.designSuffix = designSuffix;
 	                this.cadlBaseUrl = cadlBaseUrl; //set cadlEndpoint
 
 	                cadlEndpointUrl = "".concat(this.cadlBaseUrl).concat(cadlMain);
-	                _context.next = 16;
+	                _context.next = 17;
 	                return this.defaultObject(cadlEndpointUrl);
 
-	              case 16:
+	              case 17:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
 	                _this$cadlEndpoint = this.cadlEndpoint, baseUrl = _this$cadlEndpoint.baseUrl, assetsUrl = _this$cadlEndpoint.assetsUrl, preload = _this$cadlEndpoint.preload; //set baseUrl and assets Url
@@ -81911,39 +81923,39 @@
 	                }
 
 	                if (!(preload && preload.length)) {
-	                  _context.next = 73;
+	                  _context.next = 74;
 	                  break;
 	                }
 
 	                _iterator = _createForOfIteratorHelper$h(preload);
-	                _context.prev = 26;
+	                _context.prev = 27;
 
 	                _iterator.s();
 
-	              case 28:
+	              case 29:
 	                if ((_step = _iterator.n()).done) {
-	                  _context.next = 65;
+	                  _context.next = 66;
 	                  break;
 	                }
 
 	                pageName = _step.value;
 	                _context.t1 = pageName;
-	                _context.next = _context.t1 === 'BaseDataModel' ? 33 : _context.t1 === 'BaseCSS' ? 41 : _context.t1 === 'BasePage' ? 49 : 57;
+	                _context.next = _context.t1 === 'BaseDataModel' ? 34 : _context.t1 === 'BaseCSS' ? 42 : _context.t1 === 'BasePage' ? 50 : 58;
 	                break;
 
-	              case 33:
+	              case 34:
 	                if (!BaseDataModel) {
-	                  _context.next = 35;
+	                  _context.next = 36;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 35:
-	                _context.next = 37;
+	              case 36:
+	                _context.next = 38;
 	                return this.getPage('BaseDataModel');
 
-	              case 37:
+	              case 38:
 	                rawBaseDataModel = _context.sent;
 	                _processedBaseDataModel = this.processPopulate({
 	                  source: rawBaseDataModel,
@@ -81955,21 +81967,21 @@
 	                    properties: _processedBaseDataModel
 	                  }
 	                });
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 41:
+	              case 42:
 	                if (!BaseCSS) {
-	                  _context.next = 43;
+	                  _context.next = 44;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 43:
-	                _context.next = 45;
+	              case 44:
+	                _context.next = 46;
 	                return this.getPage('BaseCSS');
 
-	              case 45:
+	              case 46:
 	                rawBaseCSS = _context.sent;
 	                _processedBaseCSS = this.processPopulate({
 	                  source: rawBaseCSS,
@@ -81981,21 +81993,21 @@
 	                    properties: _processedBaseCSS
 	                  }
 	                });
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 49:
+	              case 50:
 	                if (!BasePage) {
-	                  _context.next = 51;
+	                  _context.next = 52;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 51:
-	                _context.next = 53;
+	              case 52:
+	                _context.next = 54;
 	                return this.getPage('BasePage');
 
-	              case 53:
+	              case 54:
 	                rawBasePage = _context.sent;
 	                _processedBasePage = this.processPopulate({
 	                  source: rawBasePage,
@@ -82007,13 +82019,13 @@
 	                    properties: _processedBasePage
 	                  }
 	                });
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 57:
-	                _context.next = 59;
+	              case 58:
+	                _context.next = 60;
 	                return this.getPage(pageName);
 
-	              case 59:
+	              case 60:
 	                rawPage = _context.sent;
 	                processedRawPage = this.processPopulate({
 	                  source: rawPage,
@@ -82025,30 +82037,30 @@
 	                    properties: processedRawPage
 	                  }
 	                });
-	                return _context.abrupt("break", 63);
+	                return _context.abrupt("break", 64);
 
-	              case 63:
-	                _context.next = 28;
+	              case 64:
+	                _context.next = 29;
 	                break;
 
-	              case 65:
-	                _context.next = 70;
+	              case 66:
+	                _context.next = 71;
 	                break;
 
-	              case 67:
-	                _context.prev = 67;
-	                _context.t2 = _context["catch"](26);
+	              case 68:
+	                _context.prev = 68;
+	                _context.t2 = _context["catch"](27);
 
 	                _iterator.e(_context.t2);
 
-	              case 70:
-	                _context.prev = 70;
+	              case 71:
+	                _context.prev = 71;
 
 	                _iterator.f();
 
-	                return _context.finish(70);
+	                return _context.finish(71);
 
-	              case 73:
+	              case 74:
 	                localStorageGlobal = localStorage.getItem('Global');
 	                localStorageGlobalParsed = null;
 
@@ -82087,12 +82099,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 77:
+	              case 78:
 	              case "end":
 	                return _context.stop();
 	            }
 	          }
-	        }, _callee, this, [[1, 7], [26, 67, 70, 73]]);
+	        }, _callee, this, [[1, 7], [27, 68, 71, 74]]);
 	      }));
 
 	      function init() {
@@ -83616,10 +83628,20 @@
 	  }, {
 	    key: "cadlBaseUrl",
 	    get: function get() {
-	      return this._cadlBaseUrl;
+	      var baseUrlWithVersion = this._cadlBaseUrl;
+
+	      if (baseUrlWithVersion.includes('cadlVersion')) {
+	        baseUrlWithVersion = baseUrlWithVersion.replace('${cadlVersion}', this.cadlVersion);
+	      }
+
+	      if (baseUrlWithVersion.includes('designSuffix')) {
+	        baseUrlWithVersion = baseUrlWithVersion.replace('${designSuffix}', this.designSuffix);
+	      }
+
+	      return baseUrlWithVersion;
 	    },
 	    set: function set(cadlBaseUrl) {
-	      this._cadlBaseUrl = cadlBaseUrl.replace('${cadlVersion}', this.cadlVersion);
+	      this._cadlBaseUrl = cadlBaseUrl;
 	    }
 	  }, {
 	    key: "assetsUrl",
@@ -83628,6 +83650,26 @@
 	    },
 	    set: function set(assetsUrl) {
 	      this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl);
+	    }
+	  }, {
+	    key: "designSuffix",
+	    get: function get() {
+	      var _this$_designSuffix = this._designSuffix,
+	          greaterEqual = _this$_designSuffix.greaterEqual,
+	          less = _this$_designSuffix.less,
+	          widthHeightRatioThreshold = _this$_designSuffix.widthHeightRatioThreshold;
+	      return this.aspectRatio >= widthHeightRatioThreshold ? greaterEqual : less;
+	    },
+	    set: function set(designSuffix) {
+	      this._designSuffix = designSuffix;
+	    }
+	  }, {
+	    key: "aspectRatio",
+	    get: function get() {
+	      return this._aspectRatio;
+	    },
+	    set: function set(aspectRatio) {
+	      this._aspectRatio = aspectRatio;
 	    }
 	  }, {
 	    key: "root",
@@ -83682,14 +83724,15 @@
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$h(_objectSpread$h({}, defaultConfig$1), {}, {
-	            configUrl: 'https://public.aitmed.com/config/meetdev.yml'
+	            configUrl: 'https://public.aitmed.com/config/www2.yml',
+	            aspectRatio: .3
 	          }));
 	          _context.next = 3;
 	          return cadl.init();
 
 	        case 3:
 	          _context.next = 5;
-	          return cadl.initPage('SignIn', [], {
+	          return cadl.initPage('Home', [], {
 	            builtIn: {
 	              "goto": function _goto() {
 	                return console.log('lolo');
@@ -83698,30 +83741,34 @@
 	          });
 
 	        case 5:
-	          _context.next = 7;
+	          debugger; // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
+	          // await cadl.initPage('CreateNewAccount')
+
+	          _context.next = 8;
 	          return Account$1.requestVerificationCode('+1 8887654321');
 
-	        case 7:
+	        case 8:
 	          vc = _context.sent;
-	          _context.next = 10;
+	          _context.next = 11;
 	          return cadl.root.builtIn['signIn']({
 	            password: "letmein123",
 	            phoneNumber: "+1 8887654321",
 	            verificationCode: vc
 	          });
 
-	        case 10:
+	        case 11:
+	          debugger;
 	          cadl.root.actions['SignIn'].update();
-	          _context.next = 13;
+	          _context.next = 15;
 	          return store$3.level2SDK.edgeServices.createEdge({
 	            type: 10000
 	          });
 
-	        case 13:
+	        case 15:
 	          _yield$store$level2SD = _context.sent;
 	          eid = _yield$store$level2SD.data.eid;
 	          debugger;
-	          _context.next = 18;
+	          _context.next = 20;
 	          return Document$3.create({
 	            edge_id: eid,
 	            dataType: 0,
@@ -83730,7 +83777,7 @@
 	            title: 'test document'
 	          });
 
-	        case 18:
+	        case 20:
 	          testDoc = _context.sent;
 	          debugger; // // cadl.root['CreateNewAccount'].update()
 	          // debugger
@@ -83842,7 +83889,7 @@
 	          //     }
 	          // }
 
-	        case 20:
+	        case 22:
 	        case "end":
 	          return _context.stop();
 	      }

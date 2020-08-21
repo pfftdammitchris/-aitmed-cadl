@@ -16,4 +16,5 @@ export interface DataModel {
 export interface CADLARGS {
     configUrl: string
     cadlVersion: 'test' | 'stable'
+    aspectRatio?: number
 } 

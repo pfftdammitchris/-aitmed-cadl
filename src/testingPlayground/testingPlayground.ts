@@ -17,13 +17,14 @@ export default (async function () {
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
-    const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/meetdev.yml' })
+    const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/www2.yml', aspectRatio:.3})
 
 
     await cadl.init()
 
-    await cadl.initPage('SignIn', [], { builtIn: { goto: () => console.log('lolo') } })
+    await cadl.initPage('Home', [], { builtIn: { goto: () => console.log('lolo') } })
 
+    debugger
     // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
 
     // await cadl.initPage('CreateNewAccount')
@@ -45,6 +46,7 @@ export default (async function () {
         phoneNumber: "+1 8887654321",
         verificationCode: vc
     })
+    debugger
     cadl.root.actions['SignIn'].update()
 
     const { data: { eid } } = await store.level2SDK.edgeServices.createEdge({ type: 10000 })
