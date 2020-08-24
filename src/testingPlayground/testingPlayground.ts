@@ -17,7 +17,7 @@ export default (async function () {
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
-    const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/www2.yml', aspectRatio:.3})
+    const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/meetdev.yml', aspectRatio:3})
 
 
     await cadl.init()

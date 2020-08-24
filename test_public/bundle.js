@@ -82157,6 +82157,7 @@
 	            populatedUpdatedPage,
 	            populatedUpdatedPageWithFns,
 	            processedComponents,
+	            processedComponentsAgain,
 	            replaceUpdateJob2,
 	            _args2 = arguments;
 
@@ -82449,10 +82450,18 @@
 	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
+	                }); //process components again to fill in new values 
+
+	                processedComponentsAgain = this.processPopulate({
+	                  source: processedComponents,
+	                  lookFor: ['.', '..', '=', '_'],
+	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
+	                  withFns: true,
+	                  pageName: pageName
 	                });
 	                replaceUpdateJob2 = replaceEvalObject({
 	                  pageName: pageName,
-	                  cadlObject: processedComponents,
+	                  cadlObject: processedComponentsAgain,
 	                  dispatch: boundDispatch
 	                });
 	                this.newDispatch({
@@ -82468,7 +82477,7 @@
 	                  newVal: this.root
 	                });
 
-	              case 94:
+	              case 95:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -83724,8 +83733,8 @@
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$h(_objectSpread$h({}, defaultConfig$1), {}, {
-	            configUrl: 'https://public.aitmed.com/config/www2.yml',
-	            aspectRatio: .3
+	            configUrl: 'https://public.aitmed.com/config/meetdev.yml',
+	            aspectRatio: 3
 	          }));
 	          _context.next = 3;
 	          return cadl.init();

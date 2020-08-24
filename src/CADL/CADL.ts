@@ -405,9 +405,18 @@ export default class CADL extends EventEmitter {
             withFns: true,
             pageName
         })
+        //process components again to fill in new values 
+        const processedComponentsAgain = this.processPopulate({
+            source: processedComponents,
+            lookFor: ['.', '..', '=', '_'],
+            skip: ['update', 'formData', ...skip],
+            withFns: true,
+            pageName
+        })
+
         let replaceUpdateJob2 = replaceEvalObject({
             pageName,
-            cadlObject: processedComponents,
+            cadlObject: processedComponentsAgain,
             dispatch: boundDispatch
         })
 
