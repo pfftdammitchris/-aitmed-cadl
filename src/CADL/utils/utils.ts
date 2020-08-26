@@ -406,7 +406,7 @@ function populateString({
             }
         }
     }
-    if (replacement && replacement !== source) {
+    if (replacement !== undefined && replacement !== source) {
         return replacement
     }
     return source

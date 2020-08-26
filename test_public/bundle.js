@@ -81512,7 +81512,7 @@
 	    _iterator2.f();
 	  }
 
-	  if (replacement && replacement !== source) {
+	  if (replacement !== undefined && replacement !== source) {
 	    return replacement;
 	  }
 
