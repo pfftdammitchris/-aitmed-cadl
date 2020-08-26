@@ -79951,20 +79951,21 @@
 	      while (1) {
 	        switch (_context2.prev = _context2.next) {
 	          case 0:
-	            _context2.next = 2;
+	            debugger;
+	            _context2.next = 3;
 	            return getStatus();
 
-	          case 2:
+	          case 3:
 	            _yield$getStatus = _context2.sent;
 	            statusCode = _yield$getStatus.code;
 	            userId = _yield$getStatus.userId;
 
 	            if (!(statusCode === 3)) {
-	              _context2.next = 13;
+	              _context2.next = 14;
 	              break;
 	            }
 
-	            _context2.next = 8;
+	            _context2.next = 9;
 	            return store$3.level2SDK.Account.createInvitedUser({
 	              id: userId,
 	              phone_number: phone_number,
@@ -79975,15 +79976,15 @@
 	              }
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
-	          case 8:
+	          case 9:
 	            _yield$store$level2SD = _context2.sent;
 	            data = _yield$store$level2SD.data;
 	            userVertex = data;
-	            _context2.next = 18;
+	            _context2.next = 19;
 	            break;
 
-	          case 13:
-	            _context2.next = 15;
+	          case 14:
+	            _context2.next = 16;
 	            return store$3.level2SDK.Account.createUser({
 	              phone_number: phone_number,
 	              password: password,
@@ -79994,15 +79995,15 @@
 	              }
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
-	          case 15:
+	          case 16:
 	            _yield$store$level2SD2 = _context2.sent;
 	            _data = _yield$store$level2SD2.data;
 	            userVertex = _data;
 
-	          case 18:
+	          case 19:
 	            return _context2.abrupt("return", userVertex);
 
-	          case 19:
+	          case 20:
 	          case "end":
 	            return _context2.stop();
 	        }
@@ -80028,39 +80029,40 @@
 	      while (1) {
 	        switch (_context3.prev = _context3.next) {
 	          case 0:
-	            _context3.next = 2;
+	            debugger;
+	            _context3.next = 3;
 	            return loginByVerificationCode(phone_number, verification_code);
 
-	          case 2:
+	          case 3:
 	            res = _context3.sent;
 
 	            if (!(res instanceof Status)) {
-	              _context3.next = 7;
+	              _context3.next = 8;
 	              break;
 	            }
 
-	            _context3.next = 6;
+	            _context3.next = 7;
 	            return store$3.level2SDK.Account.login();
 
-	          case 6:
+	          case 7:
 	            return _context3.abrupt("return", res);
 
-	          case 7:
-	            _context3.next = 9;
+	          case 8:
+	            _context3.next = 10;
 	            return loginByPassword(password);
 
-	          case 9:
+	          case 10:
 	            user = _context3.sent;
 
 	            if (!user.id) {
-	              _context3.next = 18;
+	              _context3.next = 19;
 	              break;
 	            }
 
-	            _context3.next = 13;
+	            _context3.next = 14;
 	            return retrieveVertex(user.id);
 
-	          case 13:
+	          case 14:
 	            userVertex = _context3.sent;
 
 	            if (userVertex && userVertex.name && userVertex.name.username) {
@@ -80070,10 +80072,10 @@
 
 	            return _context3.abrupt("return", userVertex);
 
-	          case 18:
+	          case 19:
 	            return _context3.abrupt("return", user);
 
-	          case 19:
+	          case 20:
 	          case "end":
 	            return _context3.stop();
 	        }
@@ -80769,17 +80771,18 @@
 
 	function builtInFns(dispatch) {
 	  return {
-	    createNewAccount: function createNewAccount(phoneNumber, password, verificationCode, userName) {
+	    createNewAccount: function createNewAccount(_ref3) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	        var data;
+	        var phoneNumber, password, verificationCode, userName, data;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
-	                _context2.next = 2;
+	                phoneNumber = _ref3.phoneNumber, password = _ref3.password, verificationCode = _ref3.verificationCode, userName = _ref3.userName;
+	                _context2.next = 3;
 	                return Account$1.create(phoneNumber, password, verificationCode, userName);
 
-	              case 2:
+	              case 3:
 	                data = _context2.sent;
 
 	                if (dispatch) {
@@ -80796,7 +80799,7 @@
 
 	                return _context2.abrupt("return", data);
 
-	              case 5:
+	              case 6:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -80804,14 +80807,14 @@
 	        }, _callee2);
 	      }))();
 	    },
-	    signIn: function signIn(_ref3) {
+	    signIn: function signIn(_ref4) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
 	        var phoneNumber, password, verificationCode, data;
 	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                phoneNumber = _ref3.phoneNumber, password = _ref3.password, verificationCode = _ref3.verificationCode;
+	                phoneNumber = _ref4.phoneNumber, password = _ref4.password, verificationCode = _ref4.verificationCode;
 	                _context3.next = 3;
 	                return Account$1.login(phoneNumber, password, verificationCode);
 
@@ -81268,7 +81271,8 @@
 	           * store:output
 	           */
 	          var _output2 = output,
-	              api = _output2.api;
+	              api = _output2.api; //have this because api can be of shape 'builtIn.***'
+
 	          var apiSplit = api.split('.');
 	          var apiType = apiSplit[0];
 
@@ -81276,6 +81280,16 @@
 	            case 'ce':
 	              {
 	                output = isPopulated(output) ? ["".concat(output.dataOut ? output.dataOut : output.dataKey, ".name"), services('ce')({
+	                  pageName: pageName,
+	                  apiObject: output,
+	                  dispatch: dispatch
+	                })] : output;
+	                break;
+	              }
+
+	            case 'builtIn':
+	              {
+	                output = isPopulated(output) ? ["".concat(output.dataOut ? output.dataOut : output.dataKey, ".name"), services('builtIn')({
 	                  pageName: pageName,
 	                  apiObject: output,
 	                  dispatch: dispatch
