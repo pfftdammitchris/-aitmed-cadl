@@ -79951,21 +79951,20 @@
 	      while (1) {
 	        switch (_context2.prev = _context2.next) {
 	          case 0:
-	            debugger;
-	            _context2.next = 3;
+	            _context2.next = 2;
 	            return getStatus();
 
-	          case 3:
+	          case 2:
 	            _yield$getStatus = _context2.sent;
 	            statusCode = _yield$getStatus.code;
 	            userId = _yield$getStatus.userId;
 
 	            if (!(statusCode === 3)) {
-	              _context2.next = 14;
+	              _context2.next = 13;
 	              break;
 	            }
 
-	            _context2.next = 9;
+	            _context2.next = 8;
 	            return store$3.level2SDK.Account.createInvitedUser({
 	              id: userId,
 	              phone_number: phone_number,
@@ -79976,15 +79975,15 @@
 	              }
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
-	          case 9:
+	          case 8:
 	            _yield$store$level2SD = _context2.sent;
 	            data = _yield$store$level2SD.data;
 	            userVertex = data;
-	            _context2.next = 19;
+	            _context2.next = 18;
 	            break;
 
-	          case 14:
-	            _context2.next = 16;
+	          case 13:
+	            _context2.next = 15;
 	            return store$3.level2SDK.Account.createUser({
 	              phone_number: phone_number,
 	              password: password,
@@ -79995,15 +79994,15 @@
 	              }
 	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
-	          case 16:
+	          case 15:
 	            _yield$store$level2SD2 = _context2.sent;
 	            _data = _yield$store$level2SD2.data;
 	            userVertex = _data;
 
-	          case 19:
+	          case 18:
 	            return _context2.abrupt("return", userVertex);
 
-	          case 20:
+	          case 19:
 	          case "end":
 	            return _context2.stop();
 	        }
@@ -80029,40 +80028,39 @@
 	      while (1) {
 	        switch (_context3.prev = _context3.next) {
 	          case 0:
-	            debugger;
-	            _context3.next = 3;
+	            _context3.next = 2;
 	            return loginByVerificationCode(phone_number, verification_code);
 
-	          case 3:
+	          case 2:
 	            res = _context3.sent;
 
 	            if (!(res instanceof Status)) {
-	              _context3.next = 8;
+	              _context3.next = 7;
 	              break;
 	            }
 
-	            _context3.next = 7;
+	            _context3.next = 6;
 	            return store$3.level2SDK.Account.login();
 
-	          case 7:
+	          case 6:
 	            return _context3.abrupt("return", res);
 
-	          case 8:
-	            _context3.next = 10;
+	          case 7:
+	            _context3.next = 9;
 	            return loginByPassword(password);
 
-	          case 10:
+	          case 9:
 	            user = _context3.sent;
 
 	            if (!user.id) {
-	              _context3.next = 19;
+	              _context3.next = 18;
 	              break;
 	            }
 
-	            _context3.next = 14;
+	            _context3.next = 13;
 	            return retrieveVertex(user.id);
 
-	          case 14:
+	          case 13:
 	            userVertex = _context3.sent;
 
 	            if (userVertex && userVertex.name && userVertex.name.username) {
@@ -80072,10 +80070,10 @@
 
 	            return _context3.abrupt("return", userVertex);
 
-	          case 19:
+	          case 18:
 	            return _context3.abrupt("return", user);
 
-	          case 20:
+	          case 19:
 	          case "end":
 	            return _context3.stop();
 	        }
