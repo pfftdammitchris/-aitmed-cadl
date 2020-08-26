@@ -81,12 +81,11 @@ function builtIn({ pageName, apiObject, dispatch }) {
 export default function builtInFns(dispatch?: Function) {
     return {
         async createNewAccount(
-            phoneNumber,
-            password,
-            verificationCode,
-            userName
+            { phoneNumber,
+                password,
+                verificationCode,
+                userName }
         ) {
-
             const data = await Account.create(
                 phoneNumber,
                 password,

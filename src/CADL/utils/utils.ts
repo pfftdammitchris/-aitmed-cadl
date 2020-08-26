@@ -221,6 +221,7 @@ function attachFns({
                      * store:output
                      */
                     const { api } = output
+                    //have this because api can be of shape 'builtIn.***'
                     const apiSplit = api.split('.')
                     const apiType = apiSplit[0]
                     switch (apiType) {
@@ -230,6 +231,16 @@ function attachFns({
                                     output.dataOut :
                                     output.dataKey}.name`,
                                 services('ce')({ pageName, apiObject: output, dispatch })
+                            ] :
+                                output
+                            break
+                        }
+                        case ('builtIn'): {
+                            output = isPopulated(output) ? [
+                                `${output.dataOut ?
+                                    output.dataOut :
+                                    output.dataKey}.name`,
+                                services('builtIn')({ pageName, apiObject: output, dispatch })
                             ] :
                                 output
                             break
@@ -395,7 +406,7 @@ function populateString({
             }
         }
     }
-    if (replacement && replacement !== source) {
+    if (replacement !== undefined && replacement !== source) {
         return replacement
     }
     return source
