@@ -17,18 +17,18 @@ export default (async function () {
     // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
     // await test_login({ password: 'letmein12' })
 
-    const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/meetdev.yml', aspectRatio:3})
+    const cadl = new CADL({ ...defaultConfig, configUrl: 'https://public.aitmed.com/config/meet2.yml', aspectRatio: 3 })
 
 
     await cadl.init()
 
-    await cadl.initPage('Home', [], { builtIn: { goto: () => console.log('lolo') } })
+    await cadl.initPage('SignIn', [], { builtIn: { goto: () => console.log('lolo') } })
 
     debugger
     // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
 
     // await cadl.initPage('CreateNewAccount')
-    const vc = await Account.requestVerificationCode('+1 8887654321')
+    const vc = await Account.requestVerificationCode('+1 8889997654')
 
 
     // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
@@ -43,22 +43,24 @@ export default (async function () {
 
     await cadl.root.builtIn['signIn']({
         password: "letmein123",
-        phoneNumber: "+1 8887654321",
+        phoneNumber: "+1 8889997654",
         verificationCode: vc
     })
     debugger
-    cadl.root.actions['SignIn'].update()
+    await cadl.root.actions['SignIn'].update()
 
-    const { data: { eid } } = await store.level2SDK.edgeServices.createEdge({ type: 10000 })
-    debugger
-    const testDoc = await Document.create({
-        edge_id: eid,
-        dataType:0,
-        content: 'hello this is a test',
-        type: 'text/plain',
-        title: 'test document'
-    })
-    debugger
+    setTimeout(async () => {
+
+        debugger
+        const testDoc = await cadl.root.builtIn.uploadDocument({
+            dataType: 0,
+            content: 'hello this is a test',
+            type: 'text/plain',
+            title: 'test document'
+        })
+        debugger
+    }, 5000)
+    // const { data: { eid } } = await store.level2SDK.edgeServices.createEdge({ type: 10000 })
     // // cadl.root['CreateNewAccount'].update()
     // debugger
     // // await cadl.initPage('MeetingRoomInvited')

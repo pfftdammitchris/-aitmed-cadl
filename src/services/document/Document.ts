@@ -47,7 +47,8 @@ export const create: NoteTypes.Create = async ({
     // Gzip
     const { data: gzipData, isGzip } = await produceGzipData(blob)
     dType.isGzip = isGzip
-    dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
+    dType.isOnServer = false
+    // dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
 
     // Encryption
     let esak: Uint8Array | string = ''

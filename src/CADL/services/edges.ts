@@ -58,14 +58,14 @@ function get({ pageName, apiObject, dispatch }) {
         } catch (error) {
             throw error
         }
-
+        
         //Doesn't update the state. Shows mock data instead.
         if (!res.length && store.env === 'test') {
             console.log(
                 '%cGet Edge Response', 'background: purple; color: white; display: block;',
                 res
-            );
-        } else {
+                );
+            } else {
             //maps edge.eid to edge.id
             res = res.map((edge) => {
                 return replaceEidWithId(edge)

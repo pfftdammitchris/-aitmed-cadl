@@ -616,8 +616,20 @@ export default class CADL extends EventEmitter {
                     })
                 } else if (firstCharacter === firstCharacter.toUpperCase()) {
                     const currentVal = _.get(this.root, pathArr)
-                    const mergedVal = mergeDeep(currentVal, data)
-
+                    let mergedVal
+                    if (Array.isArray(currentVal)) {
+                        if (Array.isArray(data)) {
+                            mergedVal = data
+                        } else {
+                            mergedVal = [data]
+                        }
+                    } else {
+                        if (Array.isArray(data)) {
+                            mergedVal = data[0]
+                        } else {
+                            mergedVal = data
+                        }
+                    }
                     this.newDispatch({
                         type: 'SET_VALUE',
                         payload: {
@@ -707,33 +719,34 @@ export default class CADL extends EventEmitter {
                     } else if (key.startsWith('=')) {
                         const trimPath = key.substring(2, key.length)
                         const pathArr = trimPath.split('.')
-                        const val = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
+                        let val = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
 
-                        const populateWithRoot = populateObject({
-                            source: val,
-                            lookFor: '.',
-                            locations: [this.root, this.root[pageName]]
-                        })
+                        if (isObject(val)) {
+                            const populateWithRoot = populateObject({
+                                source: val,
+                                lookFor: '.',
+                                locations: [this.root, this.root[pageName]]
+                            })
 
-                        const populateWithSelf = populateObject({
-                            source: populateWithRoot,
-                            lookFor: '..',
-                            locations: [this.root, this.root[pageName]]
-                        })
+                            const populateWithSelf = populateObject({
+                                source: populateWithRoot,
+                                lookFor: '..',
+                                locations: [this.root, this.root[pageName]]
+                            })
 
-                        const populateAfterInheriting = populateObject({
-                            source: populateWithSelf,
-                            lookFor: '=',
-                            locations: [this.root, this.root[pageName]]
-                        })
+                            const populateAfterInheriting = populateObject({
+                                source: populateWithSelf,
+                                lookFor: '=',
+                                locations: [this.root, this.root[pageName]]
+                            })
 
-                        const boundDispatch = this.dispatch.bind(this)
-                        const withFn = attachFns({
-                            cadlObject: populateAfterInheriting,
-                            dispatch: boundDispatch
-                        })
-                        if (typeof withFn === 'function') {
-                            await withFn()
+                            const boundDispatch = this.dispatch.bind(this)
+                            val = attachFns({
+                                cadlObject: populateAfterInheriting,
+                                dispatch: boundDispatch
+                            })
+                        } else if (typeof val === 'function') {
+                            await val()
                         }
                     }
                 })
