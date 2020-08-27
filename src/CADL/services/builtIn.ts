@@ -4,6 +4,7 @@ import humanizeDuration from 'humanize-duration'
 import { Account } from '../../services'
 import { isObject } from '../../utils'
 import store from '../../common/store'
+import Document from '../../services/Document'
 
 
 export {
@@ -147,6 +148,34 @@ export default function builtInFns(dispatch?: Function) {
                 return false
             }
             return true
+        },
+        async uploadDocument({
+            title,
+            tags = [],
+            content,
+            type,
+            dataType = 0,
+        }): Promise<Record<string, any>> {
+            const globalStr = localStorage.getItem('Global')
+            const globalParse = globalStr !== null ? JSON.parse(globalStr) : null
+
+            if (!globalParse) {
+                throw new Error('There was no rootNotebook found.Please sign in.')
+            }
+            const edge_id = globalParse.rootNotebook.edge.id
+
+            const res = await Document.create({
+                edge_id,
+                title,
+                tags,
+                content,
+                type,
+                dataType,
+            })
+            if (res) {
+                return { docName: res?.name?.title, url: res?.deat?.url }
+            }
+            return res
         }
     }
 }
