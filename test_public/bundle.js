@@ -72053,8 +72053,7 @@
 	            gzipData = _yield$produceGzipDat.data;
 	            isGzip = _yield$produceGzipDat.isGzip;
 	            dType.isGzip = isGzip;
-	            dType.isOnServer = false; // dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
-	            // Encryption
+	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
 
 	            esak = '';
 	            publicKeyOfReceiver = '';
@@ -81048,8 +81047,7 @@
 	            gzipData = _yield$produceGzipDat.data;
 	            isGzip = _yield$produceGzipDat.isGzip;
 	            dType.isGzip = isGzip;
-	            dType.isOnServer = false; // dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
-	            // Encryption
+	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
 
 	            esak = '';
 	            publicKeyOfReceiver = '';
