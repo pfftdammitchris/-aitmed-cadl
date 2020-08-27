@@ -23,7 +23,7 @@ import {
     replaceUint8ArrayWithBase64,
     replaceEvalObject,
 } from './utils'
-import { mergeDeep, isObject, asyncForEach } from '../utils'
+import { isObject, asyncForEach } from '../utils'
 import builtInFns from './services/builtIn'
 
 export default class CADL extends EventEmitter {
