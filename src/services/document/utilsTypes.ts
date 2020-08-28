@@ -1,5 +1,5 @@
 import { DATA_TYPE_LIST, MEDIA_TYPE_LIST } from '../../common/DType'
-import { CommonTypes,XOR } from '../../common/types'
+import { CommonTypes, XOR } from '../../common/types'
 
 import * as NoteTypes from '../Note/types'
 
@@ -15,7 +15,7 @@ export type ContentParams = XOR<
 export interface ContentToBlob {
   (
     content: string | Blob | Record<any, any>,
-    type?: 'text/plain' | 'text/html' | 'text/markdown',
+    type?: 'text/plain' | 'text/html' | 'text/markdown'
   ): Blob
 }
 
@@ -25,9 +25,11 @@ export interface ProduceEncryptDataReturn {
   isEncrypt: boolean
 }
 export interface ProduceEncryptData {
-  (data: Uint8Array | Blob, esak?: string | Uint8Array, publicKeyOfReceiver?: string): Promise<
-    ProduceEncryptDataReturn
-  >
+  (
+    data: Uint8Array | Blob,
+    esak?: string | Uint8Array,
+    publicKeyOfReceiver?: string
+  ): Promise<ProduceEncryptDataReturn>
 }
 
 // ProduceGzipData
@@ -87,5 +89,7 @@ export interface ListDocsOptions {
   // tags?: string[]
 }
 export interface ListDocs {
-  (edge: CommonTypes.Edge, options?: ListDocsOptions): Promise<CommonTypes.Doc[]>
+  (edge: CommonTypes.Edge, options?: ListDocsOptions): Promise<
+    CommonTypes.Doc[]
+  >
 }

@@ -38,7 +38,6 @@ export enum ErrorCodes {
   DOWNLOAD_FROM_S3_FAIL,
   DECRYPTING_NOTES_FAIL,
 
-
   /* UIDL */
 
   YAML_PARSE_FAILED = 4000,
@@ -47,14 +46,14 @@ export enum ErrorCodes {
   ERROR_RETRIEVING_UIDL_DATA,
   INVALID_ROOT_TYPE,
 
-    /* Link */
-    INVALID_LINK = 5000,
-    LINK_DOES_NOT_EXIST,
-   
-    /* Inbox */
-    NOT_AN_INBOX = 6000,
-    ROOT_INBOX_EXISTS,
-    ROOT_INBOX_DOES_NOT_EXIST,
+  /* Link */
+  INVALID_LINK = 5000,
+  LINK_DOES_NOT_EXIST,
+
+  /* Inbox */
+  NOT_AN_INBOX = 6000,
+  ROOT_INBOX_EXISTS,
+  ROOT_INBOX_DOES_NOT_EXIST,
 }
 
 export const defaultErrorMessages: Record<string, string> = {
@@ -97,22 +96,22 @@ export const defaultErrorMessages: Record<string, string> = {
   DOWNLOAD_FROM_S3_FAIL: 'download document from s3 fail',
   DECRYPTING_NOTES_FAIL: 'an error occurred while decrypting the shared notes',
 
-   /* Link */
-   INVALID_LINK: 'this is not a valid Link type',
-   LINK_DOES_NOT_EXIST: 'Link does not exist',
-  
-   /* INBOX */
-   NOT_AN_INBOX: 'This is not a valid inbox/relation.',
-   ROOT_INBOX_EXISTS: 'Root inbox already exists.',
-   ROOT_INBOX_DOES_NOT_EXIST:'There is no root inbox for the user.',
- 
-   /* UIDL */
+  /* Link */
+  INVALID_LINK: 'this is not a valid Link type',
+  LINK_DOES_NOT_EXIST: 'Link does not exist',
+
+  /* INBOX */
+  NOT_AN_INBOX: 'This is not a valid inbox/relation.',
+  ROOT_INBOX_EXISTS: 'Root inbox already exists.',
+  ROOT_INBOX_DOES_NOT_EXIST: 'There is no root inbox for the user.',
+
+  /* UIDL */
 
   YAML_PARSE_FAILED: 'failed to parse yaml data',
   NO_DATA_MODELS_AVAILABLE: 'There are no dataModels for this uidl',
   INVALID_DATAMODEL_KEY: 'Please provide a valid dataModel key',
-  ERROR_RETRIEVING_UIDL_DATA:'Could not retrieve data for UIDL dataModel.',
-  INVALID_ROOT_TYPE:'The root type provided is invalid'
+  ERROR_RETRIEVING_UIDL_DATA: 'Could not retrieve data for UIDL dataModel.',
+  INVALID_ROOT_TYPE: 'The root type provided is invalid',
 }
 
 export interface ConfigArgs {

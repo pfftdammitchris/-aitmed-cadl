@@ -11,7 +11,9 @@ export interface DecodeUID {
   (uid: string): { userId: string; phone_number: string }
 }
 export interface GenerateUser {
-  (edge: CommonTypes.Edge, profile: AccountTypes.Profile | null): Promise<AccountTypes.User>
+  (edge: CommonTypes.Edge, profile: AccountTypes.Profile | null): Promise<
+    AccountTypes.User
+  >
 }
 
 export interface CreateRootEdge {

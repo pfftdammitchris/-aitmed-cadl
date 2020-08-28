@@ -14,8 +14,8 @@ enum eTypes {
   REJECT_INVITE = 1052,
   ACCEPT_INVITE = 1060,
   AUTHORIZE_INVITE = 1070,
-  AUTHORIZE_INVITE_INDEPENDENT=1071,
-  INBOX = 10002
+  AUTHORIZE_INVITE_INDEPENDENT = 1071,
+  INBOX = 10002,
 }
 
 const [typeMapper, codeMapper, typeList, codeList] = Object.keys(eTypes).reduce<
@@ -31,7 +31,7 @@ const [typeMapper, codeMapper, typeList, codeList] = Object.keys(eTypes).reduce<
     }
     return acc
   },
-  [{}, {}, [], []],
+  [{}, {}, [], []]
 )
 
 export { eTypes, typeMapper, codeMapper, typeList, codeList }

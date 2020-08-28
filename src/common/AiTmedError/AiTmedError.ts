@@ -1,7 +1,7 @@
 import { ErrorCodes, defaultErrorMessages, ConfigArgs } from './types'
 
 const names = Object.keys(ErrorCodes).filter(
-  (name) => typeof ErrorCodes[name as any] === 'number',
+  (name) => typeof ErrorCodes[name as any] === 'number'
 )
 const codes = names.map((name) => parseInt(ErrorCodes[name as any]))
 

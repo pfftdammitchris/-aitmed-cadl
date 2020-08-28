@@ -23,7 +23,7 @@ export const decodeUID: AccountUtilsTypes.DecodeUID = (uid) => {
 
 export const generateUser: AccountUtilsTypes.GenerateUser = async (
   edge,
-  profile,
+  profile
 ) => {
   const id = store.utils.idToBase64(edge.bvid)
   const response = await store.level2SDK.vertexServices
@@ -76,7 +76,7 @@ export const retrieveRootEdge: AccountUtilsTypes.RetrieveRootEdge = async () => 
 
 export const createProfile: AccountUtilsTypes.CreateProfile = async (
   rootId,
-  { profile_photo, ..._profile },
+  { profile_photo, ..._profile }
 ) => {
   const profile: AccountTypes.ProfileInDocument = _profile
 
@@ -106,7 +106,7 @@ export const createProfile: AccountUtilsTypes.CreateProfile = async (
 
 export const removeProfile: AccountUtilsTypes.RemoveProfile = async (
   id,
-  note,
+  note
 ) => {
   const profile = note.info.content as AccountTypes.ProfileInDocument
   // Remove Profile Photo
@@ -124,7 +124,7 @@ export const removeProfile: AccountUtilsTypes.RemoveProfile = async (
 }
 
 export const retrieveProfile: AccountUtilsTypes.RetrieveProfile = async (
-  rootId,
+  rootId
 ) => {
   const notes = await Note.list(rootId, { dataType: 'profile' })
   if (notes.ids.length <= 0) return null

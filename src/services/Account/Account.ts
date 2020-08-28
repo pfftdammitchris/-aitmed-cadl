@@ -14,11 +14,16 @@ import { retrieveVertex } from '../../common/retrieve'
  * @returns Promise<string>
  */
 export const requestVerificationCode: AccountTypes.RequestVerificationCode = async (
-  phone_number,
+  phone_number
 ) => {
   if (store.noodlInstance) {
-    if (store.noodlInstance.verificationRequest.timer > 0 && store.noodlInstance.verificationRequest.phoneNumber === phone_number) {
-      throw new UnableToMakeAnotherRequest('User must wait 60 sec to make another verification code request.')
+    if (
+      store.noodlInstance.verificationRequest.timer > 0 &&
+      store.noodlInstance.verificationRequest.phoneNumber === phone_number
+    ) {
+      throw new UnableToMakeAnotherRequest(
+        'User must wait 60 sec to make another verification code request.'
+      )
     } else {
       store.noodlInstance.verificationRequest.timer = 60
       store.noodlInstance.verificationRequest.phoneNumber = phone_number
@@ -48,7 +53,7 @@ export const create: AccountTypes.Create = async (
   phone_number,
   password,
   verification_code,
-  userName,
+  userName
 ) => {
   const { code: statusCode, userId } = await getStatus()
   let userVertex
@@ -87,7 +92,7 @@ export const create: AccountTypes.Create = async (
 export const login: AccountTypes.Login = async (
   phone_number,
   password,
-  verification_code,
+  verification_code
 ) => {
   const res = await loginByVerificationCode(phone_number, verification_code)
   if (res instanceof Status) {
@@ -113,13 +118,15 @@ export const login: AccountTypes.Login = async (
  * @param password: string
  */
 export const loginByPassword: AccountTypes.LoginByPassword = async (
-  password,
+  password
 ) => {
   await store.level2SDK.Account.login({ password })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
 
-  const { data: { user_id } } = await getStatus()
+  const {
+    data: { user_id },
+  } = await getStatus()
   let user
   if (user_id) {
     const userVertex = await retrieveVertex(user_id)
@@ -138,7 +145,7 @@ export const loginByPassword: AccountTypes.LoginByPassword = async (
  */
 export const loginByVerificationCode: AccountTypes.LoginByVerificationCode = async (
   phone_number,
-  verification_code,
+  verification_code
 ) => {
   return await store.level2SDK.Account.loginNewDevice({
     phone_number,
@@ -200,7 +207,7 @@ export const updatePhoneNumber = async (
  */
 export const updatePassword: AccountTypes.UpdatePassword = async (
   old_password,
-  new_password,
+  new_password
 ) => {
   await store.level2SDK.Account.changePasswordWithOldPassword({
     oldPassword: old_password,
@@ -266,7 +273,7 @@ export const retrieve: AccountTypes.Retrieve = async () => {
   const profile = await accountUtils.retrieveProfile(root.eid)
   const user = await accountUtils.generateUser(
     root,
-    profile ? profile.profile : null,
+    profile ? profile.profile : null
   )
   return user
 }
@@ -322,16 +329,18 @@ export const getStatus: AccountTypes.GetStatus = async () => {
 }
 
 /**
- * 
+ *
  * @param password string
  * @returns boolean
  */
 export const verifyUserPassword = (password: string): boolean => {
   try {
-    const [isPasswordValid,] = store.level2SDK.Account.verifyUserPassword({ password })
+    const [isPasswordValid] = store.level2SDK.Account.verifyUserPassword({
+      password,
+    })
     if (isPasswordValid) return true
   } catch (error) {
-    if (error.name = 'PASSWORD_INVALID') {
+    if ((error.name = 'PASSWORD_INVALID')) {
       return false
     }
   }

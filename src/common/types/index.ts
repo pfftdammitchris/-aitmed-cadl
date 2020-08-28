@@ -1,5 +1,10 @@
-import { CommonTypes, Level2Response as Response, Level2Error, DocumentTypes, Status } from '@aitmed/ecos-lvl2-sdk'
-
+import {
+  CommonTypes,
+  Level2Response as Response,
+  Level2Error,
+  DocumentTypes,
+  Status,
+} from '@aitmed/ecos-lvl2-sdk'
 
 export { CommonTypes, Response, Level2Error, DocumentTypes, Status }
 
@@ -13,6 +18,6 @@ export interface ConfigProps {
 }
 
 export type Without<T, U> = { [P in Exclude<keyof T, keyof U>]?: never }
-export type XOR<T, U> = (T | U) extends object
+export type XOR<T, U> = T | U extends object
   ? (Without<T, U> & U) | (Without<U, T> & T)
   : T | U

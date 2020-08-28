@@ -38,7 +38,7 @@ export interface Create {
     phone_number: string,
     password: string,
     verification_code: number,
-    name: string,
+    name: string
   ): Promise<void>
 }
 

@@ -11,10 +11,8 @@ import {
   Utils,
   ConfigParams,
   APIVersion,
-  ENV
+  ENV,
 } from './types'
-
-
 
 const defaultResponseCatcher: ResponseCatcher = (response) => {
   return response
@@ -38,11 +36,15 @@ export default class Store {
   public errorCatcher: ErrorCatcher = defaultErrorCatcher
   public noodlInstance: any
 
-
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {
     this._env = env
     const sdkEnv = env === 'test' ? 'development' : 'production'
-    this.level2SDK = new lvl2SDK({ apiVersion, apiHost, env: sdkEnv, configUrl })
+    this.level2SDK = new lvl2SDK({
+      apiVersion,
+      apiHost,
+      env: sdkEnv,
+      configUrl,
+    })
 
     const idToBase64 = (id: Uint8Array | string): string => {
       if (typeof id === 'string') {
@@ -66,7 +68,6 @@ export default class Store {
       compareUint8Arrays,
     }
   }
-
 
   set apiVersion(value: APIVersion) {
     this.level2SDK.apiVersion = value
@@ -99,10 +100,7 @@ export default class Store {
     this.level2SDK.configUrl = value
   }
 
-
-
   public getConfig() {
     return this.level2SDK.getConfigData()
   }
-
 }

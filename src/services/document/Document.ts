@@ -8,10 +8,10 @@ import { CommonTypes } from '../../common/types'
 import * as NoteTypes from './types'
 
 import {
-    contentToBlob,
-    produceEncryptData,
-    produceGzipData,
-    CONTENT_SIZE_LIMIT,
+  contentToBlob,
+  produceEncryptData,
+  produceGzipData,
+  CONTENT_SIZE_LIMIT,
 } from '../Note'
 import { documentToNote } from './utils'
 
@@ -26,93 +26,100 @@ import { documentToNote } from './utils'
  * @returns Promise<Note>
  */
 export const create: NoteTypes.Create = async ({
-    edge_id,
-    title,
-    tags = [],
-    content,
-    type,
-    dataType = 0,
+  edge_id,
+  title,
+  tags = [],
+  content,
+  type,
+  dataType = 0,
 }) => {
-    const edge = await retrieveEdge(edge_id)
-    if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
-    const dType = new DType()
-    dType.dataType = dataType
-    // Permission
-    dType.isEditable = true
+  const edge = await retrieveEdge(edge_id)
+  if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+  const dType = new DType()
+  dType.dataType = dataType
+  // Permission
+  dType.isEditable = true
 
-    // Content to Blob
-    const blob = await contentToBlob(content, type)
-    dType.setMediaType(blob.type)
+  // Content to Blob
+  const blob = await contentToBlob(content, type)
+  dType.setMediaType(blob.type)
 
-    // Gzip
-    const { data: gzipData, isGzip } = await produceGzipData(blob)
-    dType.isGzip = isGzip
-    dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
+  // Gzip
+  const { data: gzipData, isGzip } = await produceGzipData(blob)
+  dType.isGzip = isGzip
+  dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
 
-    // Encryption
-    let esak: Uint8Array | string = ''
-    let publicKeyOfReceiver: string = ''
-    if (edge.besak && edge.sig) {
-        esak = edge.besak
-        if (edge.sig instanceof Uint8Array) {
-            publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
-        } else {
-            publicKeyOfReceiver = edge.sig
-        }
-    } else if (edge.eesak && edge.sig) {
-        esak = edge.eesak
-        if (edge.sig instanceof Uint8Array) {
-            publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
-        } else {
-            publicKeyOfReceiver = edge.sig
-        }
+  // Encryption
+  let esak: Uint8Array | string = ''
+  let publicKeyOfReceiver: string = ''
+  if (edge.besak && edge.sig) {
+    esak = edge.besak
+    if (edge.sig instanceof Uint8Array) {
+      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
+        edge.sig
+      )
+    } else {
+      publicKeyOfReceiver = edge.sig
     }
-
-    const { data, isEncrypt } = await produceEncryptData(gzipData, esak, publicKeyOfReceiver)
-    dType.isEncrypted = isEncrypt
-
-    const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(data)
-    dType.isBinary = false
-
-    const name: NoteTypes.NoteDocumentName = {
-        title,
-        tags,
-        type: blob.type,
+  } else if (edge.eesak && edge.sig) {
+    esak = edge.eesak
+    if (edge.sig instanceof Uint8Array) {
+      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
+        edge.sig
+      )
+    } else {
+      publicKeyOfReceiver = edge.sig
     }
+  }
 
-    // data must be base64 in name field
-    if (dType.isOnServer) name.data = bs64Data
-    const response = await store.level2SDK.documentServices
-        .createDocument({
-            eid: edge.eid,
-            type: dType.value,
-            name,
-            size: blob.size,
-        })
-        .then(store.responseCatcher)
-        .catch(store.errorCatcher)
-    if (!response || !response.data) {
-        throw new AiTmedError({
-            name: 'UNKNOW_ERROR',
-            message: 'Note -> create -> createDocument -> no response',
-        })
-    }
+  const { data, isEncrypt } = await produceEncryptData(
+    gzipData,
+    esak,
+    publicKeyOfReceiver
+  )
+  dType.isEncrypted = isEncrypt
 
-    const document: CommonTypes.Doc = response.data
-    const { deat } = document
+  const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(data)
+  dType.isBinary = false
 
-    if (!dType.isOnServer && deat !== null && deat && deat.url && deat.sig) {
-        await store.level2SDK.documentServices
-            .uploadDocumentToS3({ url: deat.url, sig: deat.sig, data: bs64Data })
-            .then(store.responseCatcher)
-            .catch(store.errorCatcher)
-    }
+  const name: NoteTypes.NoteDocumentName = {
+    title,
+    tags,
+    type: blob.type,
+  }
 
-    //TODO: convert document type to be read like documentToNote
-    //type has to be converted in order to use filter
-    const note = await documentToNote({ document })
-    return note
+  // data must be base64 in name field
+  if (dType.isOnServer) name.data = bs64Data
+  const response = await store.level2SDK.documentServices
+    .createDocument({
+      eid: edge.eid,
+      type: dType.value,
+      name,
+      size: blob.size,
+    })
+    .then(store.responseCatcher)
+    .catch(store.errorCatcher)
+  if (!response || !response.data) {
+    throw new AiTmedError({
+      name: 'UNKNOW_ERROR',
+      message: 'Note -> create -> createDocument -> no response',
+    })
+  }
 
+  const document: CommonTypes.Doc = response.data
+  const { deat } = document
+
+  if (!dType.isOnServer && deat !== null && deat && deat.url && deat.sig) {
+    await store.level2SDK.documentServices
+      .uploadDocumentToS3({ url: deat.url, sig: deat.sig, data: bs64Data })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+  }
+
+  //TODO: convert document type to be read like documentToNote
+  //type has to be converted in order to use filter
+  const note = await documentToNote({ document })
+  return note
 }
 
 /**
@@ -123,11 +130,10 @@ export const create: NoteTypes.Create = async ({
  */
 //TODO: refactor to account for retrieving using edge and xfname:eid
 export const retrieve = async (id, _edge) => {
-    const document = await retrieveDocument(id)
-    if (!document) {
-        throw new AiTmedError({ name: 'NOT_A_NOTE' })
-    }
-    const note = await documentToNote({ document, _edge })
-    return note
+  const document = await retrieveDocument(id)
+  if (!document) {
+    throw new AiTmedError({ name: 'NOT_A_NOTE' })
+  }
+  const note = await documentToNote({ document, _edge })
+  return note
 }
-
