@@ -68471,7 +68471,7 @@
 	  return pako_1.ungzip(data);
 	};
 	/**
-	 * 
+	 *
 	 * @param item any
 	 * @returns    boolean
 	 * - checks if given value is a valid object {}
@@ -69320,7 +69320,7 @@
 
 	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
-	 * 
+	 *
 	 * @param output Api object
 	 */
 
@@ -69426,10 +69426,10 @@
 	  }));
 	}
 	/**
-	 * Creates an edge or updates an edge if there is an id 
+	 * Creates an edge or updates an edge if there is an id
 	 * in the apiObject
-	 *  
-	 * @param param0 
+	 *
+	 * @param param0
 	 */
 
 
@@ -80624,7 +80624,7 @@
 	  };
 	}();
 	/**
-	 * 
+	 *
 	 * @param password string
 	 * @returns boolean
 	 */
@@ -81351,7 +81351,7 @@
 	  return {
 	    createNewAccount: function createNewAccount(_ref3) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	        var phoneNumber, password, verificationCode, userName, data;
+	        var phoneNumber, password, verificationCode, userName, data, sk;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -81362,6 +81362,7 @@
 
 	              case 3:
 	                data = _context2.sent;
+	                sk = localStorage.getItem('sk');
 
 	                if (dispatch) {
 	                  dispatch({
@@ -81370,14 +81371,16 @@
 	                    payload: {
 	                      pageName: 'builtIn',
 	                      dataKey: 'builtIn.UserVertex',
-	                      data: data
+	                      data: _objectSpread$f(_objectSpread$f({}, data), {}, {
+	                        sk: sk
+	                      })
 	                    }
 	                  });
 	                }
 
 	                return _context2.abrupt("return", data);
 
-	              case 6:
+	              case 7:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -81387,7 +81390,7 @@
 	    },
 	    signIn: function signIn(_ref4) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-	        var phoneNumber, password, verificationCode, data;
+	        var phoneNumber, password, verificationCode, data, sk;
 	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
@@ -81398,6 +81401,7 @@
 
 	              case 3:
 	                data = _context3.sent;
+	                sk = localStorage.getItem('sk');
 
 	                if (dispatch) {
 	                  dispatch({
@@ -81406,14 +81410,16 @@
 	                    payload: {
 	                      pageName: 'builtIn',
 	                      dataKey: 'builtIn.UserVertex',
-	                      data: data
+	                      data: _objectSpread$f(_objectSpread$f({}, data), {}, {
+	                        sk: sk
+	                      })
 	                    }
 	                  });
 	                }
 
 	                return _context3.abrupt("return", data);
 
-	              case 6:
+	              case 7:
 	              case "end":
 	                return _context3.stop();
 	            }
@@ -81423,7 +81429,7 @@
 	    },
 	    loginByPassword: function loginByPassword(password) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4() {
-	        var data;
+	        var data, sk;
 	        return regenerator.wrap(function _callee4$(_context4) {
 	          while (1) {
 	            switch (_context4.prev = _context4.next) {
@@ -81433,6 +81439,7 @@
 
 	              case 2:
 	                data = _context4.sent;
+	                sk = localStorage.getItem('sk');
 
 	                if (dispatch) {
 	                  dispatch({
@@ -81441,12 +81448,14 @@
 	                    payload: {
 	                      pageName: 'builtIn',
 	                      dataKey: 'builtIn.UserVertex',
-	                      data: data
+	                      data: _objectSpread$f(_objectSpread$f({}, data), {}, {
+	                        sk: sk
+	                      })
 	                    }
 	                  });
 	                }
 
-	              case 4:
+	              case 5:
 	              case "end":
 	                return _context4.stop();
 	            }
@@ -81633,14 +81642,14 @@
 
 	function services (key) {
 	  var fns = {
-	    'ce': create,
-	    're': get$6,
-	    'cv': create$1,
-	    'rv': get$7,
-	    'cd': create$4,
-	    'rd': get$8,
-	    'builtIn': builtIn,
-	    'localSearch': localSearch
+	    ce: create,
+	    re: get$6,
+	    cv: create$1,
+	    rv: get$7,
+	    cd: create$4,
+	    rd: get$8,
+	    builtIn: builtIn,
+	    localSearch: localSearch
 	  };
 	  return fns[key];
 	}
@@ -81656,8 +81665,8 @@
 	function _objectSpread$g(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$g(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$g(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 * Maps ecos.eid to id.
-	 * 
-	 * @param edge 
+	 *
+	 * @param edge
 	 * @returns edge
 	 */
 
@@ -81679,11 +81688,11 @@
 	}
 	/**
 	 * Merges keys in source object with objects in locations where keys match lookFor.
-	 * 
-	 * @param PopulateKeysArgs 
+	 *
+	 * @param PopulateKeysArgs
 	 * @param PopulateKeysArgs.source Object to populate.
 	 * @param PopulateKeysArgs.lookFor Symbols to lookFor in properties e.g ['..,.']
-	 * @param PopulateKeysArgs.locations 
+	 * @param PopulateKeysArgs.locations
 	 * @returns Populated object.
 	 */
 
@@ -81780,7 +81789,7 @@
 	}
 	/**
 	 * Used to look up value of a key given the path and source locations to for the value in.
-	 * 
+	 *
 	 * @param directions  Path leading to the location of value
 	 * @param location Sources to look for value in.
 	 * @returns Whatever value that was attached to the property at the given directions.
@@ -81802,10 +81811,10 @@
 	}
 	/**
 	 * Checks whether or not an object has been de-referenced.
-	 * 
-	 * @param item 
+	 *
+	 * @param item
 	 * @returns true if the object has already been dereferenced and false otherwise.
-	 * 
+	 *
 	 */
 
 
@@ -81845,9 +81854,9 @@
 	}
 	/**
 	 * Attaches ecos functions to the object.
-	 * 
-	 * @param cadlObject 
-	 * @param dispatch 
+	 *
+	 * @param cadlObject
+	 * @param dispatch
 	 * @returns The object with functions attached to it.
 	 */
 
@@ -81897,7 +81906,7 @@
 	            return elem;
 	          });
 	        } else if (typeof output[key] === 'string' && key === 'api') {
-	          //when api keyword is found we attach the corresponding ecos function to the current output which should be the value of get or store 
+	          //when api keyword is found we attach the corresponding ecos function to the current output which should be the value of get or store
 
 	          /**
 	           * get:output
@@ -81949,11 +81958,11 @@
 	}
 	/**
 	 * Returns a function that is used to evalutate actionType evalObject.
-	 * 
+	 *
 	 * @param EvalStateArgs
-	 * @param EvalStateArgs.pageName 
-	 * @param EvalStateArgs.updateObject 
-	 * @param EvalStateArgs.dispatch 
+	 * @param EvalStateArgs.pageName
+	 * @param EvalStateArgs.updateObject
+	 * @param EvalStateArgs.dispatch
 	 * @returns Function that runs the series of operations detailed in the updateObject.
 	 *
 	 */
@@ -81989,13 +81998,13 @@
 	  }));
 	}
 	/**
-	 * Replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject 
-	 * 
+	 * Replaces the eval object, if any, with a function that performs the the actions detailed in the actionType evalObject
+	 *
 	 * @param ReplaceEvalObjectArgs
-	 * @param ReplaceEvalObjectArgs.cadlObject 
-	 * @param ReplaceEvalObjectArgs.dispatch 
+	 * @param ReplaceEvalObjectArgs.cadlObject
+	 * @param ReplaceEvalObjectArgs.dispatch
 	 * @returns Object with evalObject replaced by a function.
-	 * 
+	 *
 	 */
 
 
@@ -82007,7 +82016,7 @@
 	  var cadlCopy = cloneDeep_1(cadlObject || {});
 
 	  Object.keys(cadlCopy).forEach(function (key) {
-	    if (key === 'object' && isObject$4(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
+	    if (key === 'object' && Array.isArray(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
 	      var updateObject = cloneDeep_1(cadlCopy[key]);
 
 	      cadlCopy[key] = evalState({
@@ -82052,17 +82061,17 @@
 	  return cadlCopy;
 	}
 	/**
-	 * Used to de-reference a string by looking for value in locations. 
-	 * 
+	 * Used to de-reference a string by looking for value in locations.
+	 *
 	 * @param PopulateStringArgs
 	 * @param PopulateStringArgs.source Object that has values that need to be replaced
 	 * @param PopulateStringArgs.lookFor Item to look for in object
 	 * @param PopulateStringArgs.locations Array of objects that may contain the values for the source object
 	 * @param PopulateStringArgs.path The path to the value that will be changed.
 	 * @param PopulateStringArgs.dispatch Function to change the state.
-	 * @param PopulateStringArgs.pageName 
-	 * 
-	 * @returns De-referenced object. 
+	 * @param PopulateStringArgs.pageName
+	 *
+	 * @returns De-referenced object.
 	 */
 
 
@@ -82155,15 +82164,15 @@
 	}
 	/**
 	 * Dereference values in an array data structure.
-	 * 
+	 *
 	 * @param PopulateArrayArgs
 	 * @param PopulateArrayArgs.source Object that has values that need to be replaced.
 	 * @param PopulateArrayArgs.lookFor Item to look for in object
 	 * @param PopulateArrayArgs.locations Array of objects that may contain the values for the source object
-	 * @param PopulateArrayArgs.path 
+	 * @param PopulateArrayArgs.path
 	 * @param PopulateArrayArgs.dispatch Function to change the state.
-	 * @param PopulateArrayArgs.pageName 
-	 * 
+	 * @param PopulateArrayArgs.pageName
+	 *
 	 * @returns Dereferenced array.
 	 */
 
@@ -82223,16 +82232,16 @@
 	}
 	/**
 	 * De-references source object by looking for items in the given locations.
-	 * 
+	 *
 	 * @param PopulateObjectArgs
 	 * @param PopulateObjectArgs.source Object that has values that need to be replaced
 	 * @param PopulateObjectArgs.lookFor Item to look for in object
 	 * @param PopulateObjectArgs.locations Array of objects that may contain the values for the source object
-	 * @param PopulateObjectArgs.skip 
-	 * @param PopulateObjectArgs.path 
-	 * @param PopulateObjectArgs.dispatch 
-	 * @param PopulateObjectArgs.pageName 
-	 * 
+	 * @param PopulateObjectArgs.skip
+	 * @param PopulateObjectArgs.path
+	 * @param PopulateObjectArgs.dispatch
+	 * @param PopulateObjectArgs.pageName
+	 *
 	 * @returns Dereferenced object
 	 */
 
@@ -82253,7 +82262,7 @@
 	  Object.keys(sourceCopy).forEach(function (key) {
 	    var index = key;
 
-	    if (!skip.includes(key) && key !== 'dataKey') {
+	    if (!skip.includes(key) && key !== 'dataKey' && key !== 'if') {
 	      if (isObject$4(sourceCopy[key])) {
 	        if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject$4(sourceCopy[key].object))) {
 	          sourceCopy[key] = populateObject({
@@ -82293,15 +82302,15 @@
 	}
 	/**
 	 * De-reference source object by looking for multiple items in multiple locations.
-	 * 
-	 * @param PopulateValsArgs 
+	 *
+	 * @param PopulateValsArgs
 	 * @param PopulateValsArgs.source Object that needs de-referencing.
 	 * @param PopulateValsArgs.lookFor An array of items to look for e.g ['.','..']
 	 * @param PopulateValsArgs.locations Locations to look for values.
 	 * @param PopulateValsArgs.skip Keys to skip in the de-referencing process.
-	 * @param PopulateValsArgs.pageName 
+	 * @param PopulateValsArgs.pageName
 	 * @param PopulateValsArgs.dispatch Function to alter the state.
-	 * @returns 
+	 * @returns
 	 */
 
 
@@ -82340,7 +82349,7 @@
 	}
 	/**
 	 * Replaces Uint8Array values with base64 values
-	 * 
+	 *
 	 * @param source Object that needs values replaced.
 	 * @returns Object that has had Uint8Array values mapped to base64.
 	 */
@@ -82390,10 +82399,10 @@
 	  var _super = _createSuper$u(CADL);
 
 	  /**
-	   * 
+	   *
 	   * @param CADLARGS
-	   * @param CADLARGS.configUrl  
-	   * @param CADLARGS.cadlVersion 'test' | 'stable' 
+	   * @param CADLARGS.configUrl
+	   * @param CADLARGS.cadlVersion 'test' | 'stable'
 	   */
 	  function CADL(_ref) {
 	    var _this;
@@ -82441,14 +82450,14 @@
 	    return _this;
 	  }
 	  /**
-	   * @param InitArgs 
-	   * @param InitArgs.BaseDataModel 
-	   * @param InitArgs.BaseCSS 
-	   * @param InitArgs.BasePage 
+	   * @param InitArgs
+	   * @param InitArgs.BaseDataModel
+	   * @param InitArgs.BaseCSS
+	   * @param InitArgs.BasePage
 	   * @throws {UnableToRetrieveYAML} -if unable to retrieve noodlYAML
 	   * @throws {UnableToParseYAML} -if unable to parse yaml file
 	   * @throws {UnableToLoadConfig} -if unable to load config data
-	   * 
+	   *
 	   * -loads config if not already loaded
 	   * -sets CADL version, baseUrl, assetsUrl, and root
 	   */
@@ -82761,15 +82770,15 @@
 	      return init;
 	    }()
 	    /**
-	     * 
+	     *
 	     * @param pageName
-	     * @param skip Denotes the keys to skip in the population process 
+	     * @param skip Denotes the keys to skip in the population process
 	     * @param options Object that takes in set of options for the page
-	     * 
+	     *
 	     * @throws {UnableToRetrieveYAML} -When unable to retrieve noodlYAML
 	     * @throws {UnableToParseYAML} -When unable to parse yaml file
 	     * @throws {UnableToExecuteFn} -When something goes wrong while executing any init function
-	     * 
+	     *
 	     * - initiates cadlObject for page specified
 	     */
 	    //TODO: extract init functionality to use only runInit()
@@ -82795,11 +82804,6 @@
 	            dataObject,
 	            object,
 	            funcName,
-	            _command$if,
-	            condExpression,
-	            ifTrueEffect,
-	            ifFalseEffect,
-	            condResult,
 	            updatedPage,
 	            populatedUpdatedPage,
 	            populatedUpdatedPageWithFns,
@@ -82807,7 +82811,6 @@
 	            processedComponentsAgain,
 	            replaceUpdateJob2,
 	            _args2 = arguments;
-
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
@@ -82881,7 +82884,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 90;
+	                  _context2.next = 74;
 	                  break;
 	                }
 
@@ -82891,7 +82894,7 @@
 
 	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 90;
+	                  _context2.next = 74;
 	                  break;
 	                }
 
@@ -82917,7 +82920,7 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 32:
-	                _context2.next = 82;
+	                _context2.next = 66;
 	                break;
 
 	              case 34:
@@ -82969,100 +82972,50 @@
 	                return _context2.abrupt("return");
 
 	              case 49:
-	                _context2.next = 82;
+	                _context2.next = 66;
 	                break;
 
 	              case 51:
 	                if (!(isObject$4(command) && 'if' in command)) {
-	                  _context2.next = 72;
+	                  _context2.next = 56;
 	                  break;
 	                }
 
-	                //TODO: add the then condition
-	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], ifTrueEffect = _command$if[1], ifFalseEffect = _command$if[2];
+	                _context2.next = 54;
+	                return this.handleIfCommand({
+	                  pageName: pageName,
+	                  ifCommand: command
+	                });
 
-	                if (!(typeof condExpression === 'function')) {
-	                  _context2.next = 70;
-	                  break;
-	                }
-
-	                _context2.next = 56;
-	                return condExpression();
+	              case 54:
+	                _context2.next = 66;
+	                break;
 
 	              case 56:
-	                condResult = _context2.sent;
-
-	                if (!(condResult === true)) {
-	                  _context2.next = 64;
-	                  break;
-	                }
-
-	                if (!(isObject$4(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
-	                  _context2.next = 62;
-	                  break;
-	                }
-
-	                _context2.next = 61;
-	                return this.root.builtIn['goto'](ifTrueEffect['goto']);
-
-	              case 61:
-	                return _context2.abrupt("return");
-
-	              case 62:
-	                _context2.next = 70;
-	                break;
-
-	              case 64:
-	                if (!(condResult === false)) {
-	                  _context2.next = 70;
-	                  break;
-	                }
-
-	                if (!(isObject$4(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
-	                  _context2.next = 70;
-	                  break;
-	                }
-
-	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context2.next = 70;
-	                  break;
-	                }
-
-	                _context2.next = 69;
-	                return this.root.builtIn['goto'](ifFalseEffect['goto']);
-
-	              case 69:
-	                return _context2.abrupt("return");
-
-	              case 70:
-	                _context2.next = 82;
-	                break;
-
-	              case 72:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 82;
+	                  _context2.next = 66;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 82;
+	                  _context2.next = 66;
 	                  break;
 	                }
 
-	                _context2.prev = 74;
-	                _context2.next = 77;
+	                _context2.prev = 58;
+	                _context2.next = 61;
 	                return command[0][1]();
 
-	              case 77:
-	                _context2.next = 82;
+	              case 61:
+	                _context2.next = 66;
 	                break;
 
-	              case 79:
-	                _context2.prev = 79;
-	                _context2.t2 = _context2["catch"](74);
+	              case 63:
+	                _context2.prev = 63;
+	                _context2.t2 = _context2["catch"](58);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 82:
+	              case 66:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -83088,7 +83041,7 @@
 	                _context2.next = 20;
 	                break;
 
-	              case 90:
+	              case 74:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
@@ -83097,7 +83050,7 @@
 	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
-	                }); //process components again to fill in new values 
+	                }); //process components again to fill in new values
 
 	                processedComponentsAgain = this.processPopulate({
 	                  source: processedComponents,
@@ -83124,12 +83077,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 95:
+	              case 79:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[24, 29], [74, 79]]);
+	        }, _callee2, this, [[24, 29], [58, 63]]);
 	      }));
 
 	      function initPage(_x) {
@@ -83139,7 +83092,7 @@
 	      return initPage;
 	    }()
 	    /**
-	     * @param pageName 
+	     * @param pageName
 	     * @returns CADL_OBJECT
 	     * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
 	     * @throws {UnableToParseYAML} -When unable to parse yaml file
@@ -83188,12 +83141,12 @@
 	    }()
 	    /**
 	     * Retrieves and parses cadl yaml file.
-	     * 
-	     * @param url 
+	     *
+	     * @param url
 	     * @returns The raw object version of the noodl file
 	     * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
 	     * @throws {UnableToParseYAML} -When unable to parse yaml file
-	     * 
+	     *
 	     */
 
 	  }, {
@@ -83251,13 +83204,13 @@
 	      return defaultObject;
 	    }()
 	    /**
-	     * 
+	     *
 	     * Returns data associated with given pageName and dataKey.
-	     * 
-	     * @param pageName 
-	     * @param dataKey 
+	     *
+	     * @param pageName
+	     * @param dataKey
 	     * @returns The data that is assigned to the given path.
-	     * 
+	     *
 	     */
 
 	  }, {
@@ -83277,17 +83230,17 @@
 	      return dataKey;
 	    }
 	    /**
-	     * Used to populate the references of the noodl files. 
-	     * 
-	     * @param ProcessPopulateArgs 
+	     * Used to populate the references of the noodl files.
+	     *
+	     * @param ProcessPopulateArgs
 	     * @param ProcessPopulateArgs.source  The item being de-referenced.
 	     * @param ProcessPopulateArgs.lookFor  Reference tokens to look for e.g ['.','..'].
-	     * @param ProcessPopulateArgs.pageName 
+	     * @param ProcessPopulateArgs.pageName
 	     * @param ProcessPopulateArgs.skip Keys that should not be de-referenced e.g ['name','country'].
 	     * @param ProcessPopulateArgs.withFns Choose to attach ecos functions to the source
-	     * 
+	     *
 	     * @returns The processed/de-referenced object.
-	     * 
+	     *
 	     */
 
 	  }, {
@@ -83337,8 +83290,8 @@
 	      return populatedResponse;
 	    }
 	    /**
-	     * 
-	     * @param action 
+	     *
+	     * @param action
 	     */
 
 	  }, {
@@ -83498,123 +83451,146 @@
 	              locations: [this, this.root, this.root[_pageName3]]
 	            });
 
-	            var objectKeys = Object.keys(_populateAfterInheriting);
-	            asyncForEach(objectKeys, /*#__PURE__*/function () {
-	              var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch;
+	            _populateAfterInheriting.map(function (command) {
+	              var objectKeys = Object.keys(command);
+	              asyncForEach(objectKeys, /*#__PURE__*/function () {
+	                var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
+	                  var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch;
 
-	                return regenerator.wrap(function _callee5$(_context5) {
-	                  while (1) {
-	                    switch (_context5.prev = _context5.next) {
-	                      case 0:
-	                        if (key.startsWith('=')) {
-	                          _context5.next = 5;
-	                          break;
-	                        }
+	                  return regenerator.wrap(function _callee5$(_context5) {
+	                    while (1) {
+	                      switch (_context5.prev = _context5.next) {
+	                        case 0:
+	                          if (!(key === 'if')) {
+	                            _context5.next = 5;
+	                            break;
+	                          }
 
-	                        val = _populateAfterInheriting[key];
-
-	                        if (key.startsWith('..')) {
-	                          trimPath = key.substring(2, key.length - 1);
-	                          _pathArr2 = trimPath.split('.');
-
-	                          _this2.newDispatch({
-	                            type: 'SET_VALUE',
-	                            payload: {
-	                              pageName: _pageName3,
-	                              dataKey: _pathArr2,
-	                              value: val
-	                            }
+	                          _context5.next = 3;
+	                          return _this2.handleIfCommand({
+	                            pageName: _pageName3,
+	                            ifCommand: command
 	                          });
 
-	                          _this2.emit('stateChanged', {
-	                            name: 'update',
-	                            path: "".concat(_pageName3, ".").concat(trimPath),
-	                            newVal: val
-	                          });
-	                        } else if (key.startsWith('.')) {
-	                          trimPath = key.substring(1, key.length - 1);
-	                          _pathArr3 = trimPath.split('.');
-
-	                          _this2.newDispatch({
-	                            type: 'SET_VALUE',
-	                            payload: {
-	                              dataKey: _pathArr3,
-	                              value: val
-	                            }
-	                          });
-
-	                          _this2.emit('stateChanged', {
-	                            name: 'update',
-	                            path: "".concat(trimPath),
-	                            newVal: val
-	                          });
-	                        }
-
-	                        _context5.next = 20;
-	                        break;
-
-	                      case 5:
-	                        if (!key.startsWith('=')) {
-	                          _context5.next = 20;
+	                        case 3:
+	                          _context5.next = 27;
 	                          break;
-	                        }
 
-	                        _trimPath = key.substring(2, key.length);
-	                        _pathArr4 = _trimPath.split('.');
-	                        _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
+	                        case 5:
+	                          if (key.startsWith('=')) {
+	                            _context5.next = 10;
+	                            break;
+	                          }
 
-	                        if (!isObject$4(_val)) {
-	                          _context5.next = 17;
+	                          val = command[key];
+
+	                          if (key.startsWith('..')) {
+	                            trimPath = key.substring(2, key.length - 1);
+	                            _pathArr2 = trimPath.split('.');
+
+	                            _this2.newDispatch({
+	                              type: 'SET_VALUE',
+	                              payload: {
+	                                pageName: _pageName3,
+	                                dataKey: _pathArr2,
+	                                value: val
+	                              }
+	                            });
+
+	                            _this2.emit('stateChanged', {
+	                              name: 'update',
+	                              path: "".concat(_pageName3, ".").concat(trimPath),
+	                              newVal: val
+	                            });
+	                          } else if (key.startsWith('.')) {
+	                            trimPath = key.substring(1, key.length - 1);
+	                            _pathArr3 = trimPath.split('.');
+
+	                            _this2.newDispatch({
+	                              type: 'SET_VALUE',
+	                              payload: {
+	                                dataKey: _pathArr3,
+	                                value: val
+	                              }
+	                            });
+
+	                            _this2.emit('stateChanged', {
+	                              name: 'update',
+	                              path: "".concat(trimPath),
+	                              newVal: val
+	                            });
+	                          }
+
+	                          _context5.next = 27;
 	                          break;
-	                        }
 
-	                        _populateWithRoot2 = populateObject({
-	                          source: _val,
-	                          lookFor: '.',
-	                          locations: [_this2.root, _this2.root[_pageName3]]
-	                        });
-	                        _populateWithSelf2 = populateObject({
-	                          source: _populateWithRoot2,
-	                          lookFor: '..',
-	                          locations: [_this2.root, _this2.root[_pageName3]]
-	                        });
-	                        _populateAfterInheriting2 = populateObject({
-	                          source: _populateWithSelf2,
-	                          lookFor: '=',
-	                          locations: [_this2.root, _this2.root[_pageName3]]
-	                        });
-	                        _boundDispatch = _this2.dispatch.bind(_this2);
-	                        _val = attachFns({
-	                          cadlObject: _populateAfterInheriting2,
-	                          dispatch: _boundDispatch
-	                        });
-	                        _context5.next = 20;
-	                        break;
+	                        case 10:
+	                          if (!key.startsWith('=')) {
+	                            _context5.next = 27;
+	                            break;
+	                          }
 
-	                      case 17:
-	                        if (!(typeof _val === 'function')) {
-	                          _context5.next = 20;
+	                          _trimPath = key.substring(2, key.length);
+	                          _pathArr4 = _trimPath.split('.');
+	                          _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
+
+	                          if (!isObject$4(_val)) {
+	                            _context5.next = 24;
+	                            break;
+	                          }
+
+	                          _populateWithRoot2 = populateObject({
+	                            source: _val,
+	                            lookFor: '.',
+	                            locations: [_this2.root, _this2.root[_pageName3]]
+	                          });
+	                          _populateWithSelf2 = populateObject({
+	                            source: _populateWithRoot2,
+	                            lookFor: '..',
+	                            locations: [_this2.root, _this2.root[_pageName3]]
+	                          });
+	                          _populateAfterInheriting2 = populateObject({
+	                            source: _populateWithSelf2,
+	                            lookFor: '=',
+	                            locations: [_this2.root, _this2.root[_pageName3]]
+	                          });
+	                          _boundDispatch = _this2.dispatch.bind(_this2);
+	                          _val = attachFns({
+	                            cadlObject: _populateAfterInheriting2,
+	                            dispatch: _boundDispatch
+	                          });
+	                          _context5.next = 22;
+	                          return _val();
+
+	                        case 22:
+	                          _context5.next = 27;
 	                          break;
-	                        }
 
-	                        _context5.next = 20;
-	                        return _val();
+	                        case 24:
+	                          if (!(typeof _val === 'function')) {
+	                            _context5.next = 27;
+	                            break;
+	                          }
 
-	                      case 20:
-	                      case "end":
-	                        return _context5.stop();
+	                          _context5.next = 27;
+	                          return _val();
+
+	                        case 27:
+	                        case "end":
+	                          return _context5.stop();
+	                      }
 	                    }
-	                  }
-	                }, _callee5);
-	              }));
+	                  }, _callee5);
+	                }));
 
-	              return function (_x4) {
-	                return _ref4.apply(this, arguments);
-	              };
-	            }()); //populates Global because this object is instantiated once 
-	            //unlike pages that are instantiated multiple times and can be repopulated 
+	                return function (_x4) {
+	                  return _ref4.apply(this, arguments);
+	                };
+	              }());
+	            }); //populates Global because this object is instantiated once
+	            //unlike pages that are instantiated multiple times and can be repopulated
 	            //when they are loaded again
+
 
 	            this.dispatch({
 	              type: 'populate',
@@ -83639,7 +83615,7 @@
 
 	        case 'add-fn':
 	          {
-	            //actions for page currently used for signIn 
+	            //actions for page currently used for signIn
 	            var _action$payload4 = action.payload,
 	                _pageName4 = _action$payload4.pageName,
 	                fn = _action$payload4.fn;
@@ -83686,23 +83662,146 @@
 	          }
 	      }
 	    }
+	  }, {
+	    key: "handleIfCommand",
+	    value: function () {
+	      var _handleIfCommand = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(_ref5) {
+	        var pageName, ifCommand, _ifCommand$if, condExpression, ifTrueEffect, ifFalseEffect, condResult, lookFor, res;
+
+	        return regenerator.wrap(function _callee6$(_context6) {
+	          while (1) {
+	            switch (_context6.prev = _context6.next) {
+	              case 0:
+	                pageName = _ref5.pageName, ifCommand = _ref5.ifCommand;
+	                _ifCommand$if = slicedToArray(ifCommand['if'], 3), condExpression = _ifCommand$if[0], ifTrueEffect = _ifCommand$if[1], ifFalseEffect = _ifCommand$if[2];
+
+	                if (!(typeof condExpression === 'function')) {
+	                  _context6.next = 8;
+	                  break;
+	                }
+
+	                _context6.next = 5;
+	                return condExpression();
+
+	              case 5:
+	                condResult = _context6.sent;
+	                _context6.next = 18;
+	                break;
+
+	              case 8:
+	                if (!(condExpression.startsWith('.') || condExpression.startsWith('=') || condExpression.startsWith('..'))) {
+	                  _context6.next = 18;
+	                  break;
+	                }
+
+	                if (condExpression.startsWith('..')) {
+	                  lookFor = '..';
+	                } else if (condExpression.startsWith('.')) {
+	                  lookFor = '.';
+	                } else if (condExpression.startsWith('=')) {
+	                  lookFor = '=';
+	                }
+
+	                res = populateString({
+	                  source: condExpression,
+	                  locations: [this.root, this.root[pageName]],
+	                  lookFor: lookFor
+	                });
+
+	                if (!(typeof res === 'function')) {
+	                  _context6.next = 17;
+	                  break;
+	                }
+
+	                _context6.next = 14;
+	                return res();
+
+	              case 14:
+	                condResult = _context6.sent;
+	                _context6.next = 18;
+	                break;
+
+	              case 17:
+	                if (res && res !== condExpression) {
+	                  condResult = true;
+	                } else {
+	                  condResult = false;
+	                }
+
+	              case 18:
+	                if (!(condResult === true)) {
+	                  _context6.next = 25;
+	                  break;
+	                }
+
+	                if (!(isObject$4(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
+	                  _context6.next = 23;
+	                  break;
+	                }
+
+	                _context6.next = 22;
+	                return this.root.builtIn['goto'](ifTrueEffect['goto']);
+
+	              case 22:
+	                return _context6.abrupt("return");
+
+	              case 23:
+	                _context6.next = 31;
+	                break;
+
+	              case 25:
+	                if (!(condResult === false)) {
+	                  _context6.next = 31;
+	                  break;
+	                }
+
+	                if (!(isObject$4(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
+	                  _context6.next = 31;
+	                  break;
+	                }
+
+	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
+	                  _context6.next = 31;
+	                  break;
+	                }
+
+	                _context6.next = 30;
+	                return this.root.builtIn['goto'](ifFalseEffect['goto']);
+
+	              case 30:
+	                return _context6.abrupt("return");
+
+	              case 31:
+	              case "end":
+	                return _context6.stop();
+	            }
+	          }
+	        }, _callee6, this);
+	      }));
+
+	      function handleIfCommand(_x5) {
+	        return _handleIfCommand.apply(this, arguments);
+	      }
+
+	      return handleIfCommand;
+	    }()
 	    /**
 	     * Used for the actionType 'updateObject'. It updates the value of an object at the given path.
-	     * 
+	     *
 	     * @param UpdateObjectArgs
 	     * @param UpdateObjectArgs.dataKey The path to the property being changed.
 	     * @param UpdateObjectArgs.dataObject The object that will be updated.
-	     * @param UpdateObjectArgs.dataObjectKey The specific key of the dataObject to be used as the new value. 
+	     * @param UpdateObjectArgs.dataObjectKey The specific key of the dataObject to be used as the new value.
 	     * @emits CADL#stateChanged
-	     * 
+	     *
 	     */
 
 	  }, {
 	    key: "updateObject",
-	    value: function updateObject(_ref5) {
-	      var dataKey = _ref5.dataKey,
-	          dataObject = _ref5.dataObject,
-	          dataObjectKey = _ref5.dataObjectKey;
+	    value: function updateObject(_ref6) {
+	      var dataKey = _ref6.dataKey,
+	          dataObject = _ref6.dataObject,
+	          dataObjectKey = _ref6.dataObjectKey;
 	      var path;
 
 	      if (dataKey.startsWith('.')) {
@@ -83731,19 +83830,19 @@
 	    }
 	    /**
 	     * Runs the init functions of the page matching the pageName.
-	     * 
-	     * @param pageName 
+	     *
+	     * @param pageName
 	     */
 
 	  }, {
 	    key: "runInit",
 	    value: function () {
-	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(pageName) {
-	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, funcName, _command$if2, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
+	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(pageName) {
+	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, funcName, _command$if, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	        return regenerator.wrap(function _callee6$(_context6) {
+	        return regenerator.wrap(function _callee7$(_context7) {
 	          while (1) {
-	            switch (_context6.prev = _context6.next) {
+	            switch (_context7.prev = _context7.next) {
 	              case 0:
 	                boundDispatch = this.dispatch.bind(this); //run init commands if any
 
@@ -83751,7 +83850,7 @@
 	                init = page.init;
 
 	                if (!init) {
-	                  _context6.next = 65;
+	                  _context7.next = 65;
 	                  break;
 	                }
 
@@ -83761,7 +83860,7 @@
 
 	              case 5:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context6.next = 65;
+	                  _context7.next = 65;
 	                  break;
 	                }
 
@@ -83769,36 +83868,36 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context6.next = 19;
+	                  _context7.next = 19;
 	                  break;
 	                }
 
-	                _context6.prev = 9;
-	                _context6.next = 12;
+	                _context7.prev = 9;
+	                _context7.next = 12;
 	                return command();
 
 	              case 12:
-	                _context6.next = 17;
+	                _context7.next = 17;
 	                break;
 
 	              case 14:
-	                _context6.prev = 14;
-	                _context6.t0 = _context6["catch"](9);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t0);
+	                _context7.prev = 14;
+	                _context7.t0 = _context7["catch"](9);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t0);
 
 	              case 17:
-	                _context6.next = 57;
+	                _context7.next = 57;
 	                break;
 
 	              case 19:
 	                if (!(isObject$4(command) && 'actionType' in command)) {
-	                  _context6.next = 34;
+	                  _context7.next = 34;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
-	                _context6.t1 = actionType;
-	                _context6.next = _context6.t1 === 'updateObject' ? 24 : _context6.t1 === 'builtIn' ? 26 : 31;
+	                _context7.t1 = actionType;
+	                _context7.next = _context7.t1 === 'updateObject' ? 24 : _context7.t1 === 'builtIn' ? 26 : 31;
 	                break;
 
 	              case 24:
@@ -83806,95 +83905,95 @@
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context6.abrupt("break", 32);
+	                return _context7.abrupt("break", 32);
 
 	              case 26:
 	                if (!(funcName === 'videoChat')) {
-	                  _context6.next = 30;
+	                  _context7.next = 30;
 	                  break;
 	                }
 
 	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
-	                  _context6.next = 30;
+	                  _context7.next = 30;
 	                  break;
 	                }
 
-	                _context6.next = 30;
+	                _context7.next = 30;
 	                return this.root.builtIn[funcName](command);
 
 	              case 30:
-	                return _context6.abrupt("break", 32);
+	                return _context7.abrupt("break", 32);
 
 	              case 31:
-	                return _context6.abrupt("return");
+	                return _context7.abrupt("return");
 
 	              case 32:
-	                _context6.next = 57;
+	                _context7.next = 57;
 	                break;
 
 	              case 34:
 	                if (!(isObject$4(command) && 'if' in command)) {
-	                  _context6.next = 47;
+	                  _context7.next = 47;
 	                  break;
 	                }
 
 	                //TODO: add the then condition
-	                _command$if2 = slicedToArray(command['if'], 3), condExpression = _command$if2[0], elseEffect = _command$if2[2];
+	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
 
 	                if (!(typeof condExpression === 'function')) {
-	                  _context6.next = 45;
+	                  _context7.next = 45;
 	                  break;
 	                }
 
-	                _context6.next = 39;
+	                _context7.next = 39;
 	                return condExpression();
 
 	              case 39:
-	                condResult = _context6.sent;
+	                condResult = _context7.sent;
 
 	                if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                  _context6.next = 45;
+	                  _context7.next = 45;
 	                  break;
 	                }
 
 	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context6.next = 45;
+	                  _context7.next = 45;
 	                  break;
 	                }
 
-	                _context6.next = 44;
+	                _context7.next = 44;
 	                return this.root.builtIn['goto'](elseEffect['goto']);
 
 	              case 44:
-	                return _context6.abrupt("return");
+	                return _context7.abrupt("return");
 
 	              case 45:
-	                _context6.next = 57;
+	                _context7.next = 57;
 	                break;
 
 	              case 47:
 	                if (!Array.isArray(command)) {
-	                  _context6.next = 57;
+	                  _context7.next = 57;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context6.next = 57;
+	                  _context7.next = 57;
 	                  break;
 	                }
 
-	                _context6.prev = 49;
-	                _context6.next = 52;
+	                _context7.prev = 49;
+	                _context7.next = 52;
 	                return command[0][1]();
 
 	              case 52:
-	                _context6.next = 57;
+	                _context7.next = 57;
 	                break;
 
 	              case 54:
-	                _context6.prev = 54;
-	                _context6.t2 = _context6["catch"](49);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context6.t2);
+	                _context7.prev = 54;
+	                _context7.t2 = _context7["catch"](49);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t2);
 
 	              case 57:
 	                //updating page after command has been called
@@ -83919,18 +84018,18 @@
 	                    pageName: pageName
 	                  }
 	                });
-	                _context6.next = 5;
+	                _context7.next = 5;
 	                break;
 
 	              case 65:
 	              case "end":
-	                return _context6.stop();
+	                return _context7.stop();
 	            }
 	          }
-	        }, _callee6, this, [[9, 14], [49, 54]]);
+	        }, _callee7, this, [[9, 14], [49, 54]]);
 	      }));
 
-	      function runInit(_x5) {
+	      function runInit(_x6) {
 	        return _runInit.apply(this, arguments);
 	      }
 
@@ -83938,9 +84037,9 @@
 	    }()
 	    /**
 	     * Sets either the user or meetroom value from localStorage to the corresponding root value in memory
-	     * 
+	     *
 	     * @param key "user" | "meetroom"
-	     * 
+	     *
 	     */
 	    //TODO: ask Chris if he uses this
 
@@ -83961,7 +84060,7 @@
 
 	      if (localStorageGlobal) {
 	        switch (key) {
-	          case "user":
+	          case 'user':
 	            {
 	              var user = localStorageGlobal.currentUser.vertex;
 	              this.newDispatch({
@@ -83974,7 +84073,7 @@
 	              break;
 	            }
 
-	          case "meetroom":
+	          case 'meetroom':
 	            {
 	              var currMeetroom = localStorageGlobal.meetroom.edge;
 	              this.newDispatch({
@@ -83996,18 +84095,18 @@
 	    }
 	    /**
 	     * Set a new value at a given path. Assume the path begins at the root.
-	     * 
+	     *
 	     * @param SetValueArgs
 	     * @param SetValueArgs.path The path to the property being changed.
 	     * @param SetValueArgs.value The new value being set at the given path
-	     * 
+	     *
 	     */
 
 	  }, {
 	    key: "setValue",
-	    value: function setValue(_ref6) {
-	      var path = _ref6.path,
-	          value = _ref6.value;
+	    value: function setValue(_ref7) {
+	      var path = _ref7.path,
+	          value = _ref7.value;
 	      var pathArr = path.split('.');
 	      this.newDispatch({
 	        type: 'SET_VALUE',
@@ -84020,18 +84119,18 @@
 	    }
 	    /**
 	     * Add a value to an array at a given path. Assume the path begins at root.
-	     * 
-	     * @param AddValueArgs 
+	     *
+	     * @param AddValueArgs
 	     * @param AddValueArgs.path Path to an array from the root.
 	     * @param AddValueArgs.value Value that will be added to the array at the given path.
-	     * 
+	     *
 	     */
 
 	  }, {
 	    key: "addValue",
-	    value: function addValue(_ref7) {
-	      var path = _ref7.path,
-	          value = _ref7.value;
+	    value: function addValue(_ref8) {
+	      var path = _ref8.path,
+	          value = _ref8.value;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -84053,18 +84152,18 @@
 	    }
 	    /**
 	     * Remove a value from an array at a given path. Assume the path begins at the root.
-	     * 
-	     * @param RemoveValue 
+	     *
+	     * @param RemoveValue
 	     * @param RemoveValue.path Path to the array being altered.
 	     * @param RemoveValue.Predicate The condition to be met for items being deleted from the array e.g {id:'123'}
-	     * 
+	     *
 	     */
 
 	  }, {
 	    key: "removeValue",
-	    value: function removeValue(_ref8) {
-	      var path = _ref8.path,
-	          predicate = _ref8.predicate;
+	    value: function removeValue(_ref9) {
+	      var path = _ref9.path,
+	          predicate = _ref9.predicate;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -84096,20 +84195,20 @@
 	    }
 	    /**
 	     * Replace value at a given path. Assume the path begins at the root.
-	     * 
-	     * @param ReplaceValueArgs 
+	     *
+	     * @param ReplaceValueArgs
 	     * @param ReplaceValueArgs.path Path to an array beginning from the root level.
 	     * @param ReplaceValueArgs.predicate Condition to be met for value being replaced.
 	     * @param ReplaceValueArgs.value Value that will replace the value in question.
-	     * 
+	     *
 	     */
 
 	  }, {
 	    key: "replaceValue",
-	    value: function replaceValue(_ref9) {
-	      var path = _ref9.path,
-	          predicate = _ref9.predicate,
-	          value = _ref9.value;
+	    value: function replaceValue(_ref10) {
+	      var path = _ref10.path,
+	          predicate = _ref10.predicate,
+	          value = _ref10.value;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -84148,7 +84247,7 @@
 	    }
 	    /**
 	     * Used to mutate the draft state.
-	     * 
+	     *
 	     * @param callback Function used to update the state
 	     */
 

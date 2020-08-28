@@ -354,58 +354,7 @@ export default class CADL extends EventEmitter {
           }
         } else if (isObject(command) && 'if' in command) {
           //TODO: add the then condition
-          const [condExpression, ifTrueEffect, ifFalseEffect] = command['if']
-          let condResult
-          if (typeof condExpression === 'function') {
-            condResult = await condExpression()
-          } else if (
-            condExpression.startsWith('.') ||
-            condExpression.startsWith('=') ||
-            condExpression.startsWith('..')
-          ) {
-            let lookFor
-            if (condExpression.startsWith('..')) {
-              lookFor = '..'
-            } else if (condExpression.startsWith('.')) {
-              lookFor = '.'
-            } else if (condExpression.startsWith('=')) {
-              lookFor = '='
-            }
-            let res = populateString({
-              source: condExpression,
-              locations: [this.root, this.root[pageName]],
-              lookFor,
-            })
-            if (res && res !== condExpression) {
-              condResult = true
-            } else {
-              condResult = false
-            }
-          }
-          if (condResult === true) {
-            if (
-              isObject(ifTrueEffect) &&
-              'goto' in ifTrueEffect &&
-              typeof ifTrueEffect['goto'] === 'string'
-            ) {
-              await this.root.builtIn['goto'](ifTrueEffect['goto'])
-              return
-            }
-          } else if (condResult === false) {
-            if (
-              isObject(ifFalseEffect) &&
-              'goto' in ifFalseEffect &&
-              typeof ifFalseEffect['goto'] === 'string'
-            ) {
-              if (
-                'goto' in this.root.builtIn &&
-                typeof this.root.builtIn['goto'] === 'function'
-              ) {
-                await this.root.builtIn['goto'](ifFalseEffect['goto'])
-                return
-              }
-            }
-          }
+          await this.handleIfCommand({ pageName, ifCommand: command })
         } else if (Array.isArray(command)) {
           if (typeof command[0][1] === 'function') {
             try {
@@ -746,80 +695,85 @@ export default class CADL extends EventEmitter {
           lookFor: '=',
           locations: [this, this.root, this.root[pageName]],
         })
-        const objectKeys = Object.keys(populateAfterInheriting)
-        asyncForEach(objectKeys, async (key) => {
-          //TODO: add case for key that starts with =
-          if (!key.startsWith('=')) {
-            let trimPath, val
-            val = populateAfterInheriting[key]
-            if (key.startsWith('..')) {
-              trimPath = key.substring(2, key.length - 1)
+
+        populateAfterInheriting.map((command) => {
+          const objectKeys = Object.keys(command)
+          asyncForEach(objectKeys, async (key) => {
+            if (key === 'if') {
+              await this.handleIfCommand({ pageName, ifCommand: command })
+            } else if (!key.startsWith('=')) {
+              let trimPath, val
+              val = command[key]
+              if (key.startsWith('..')) {
+                trimPath = key.substring(2, key.length - 1)
+                const pathArr = trimPath.split('.')
+
+                this.newDispatch({
+                  type: 'SET_VALUE',
+                  payload: {
+                    pageName,
+                    dataKey: pathArr,
+                    value: val,
+                  },
+                })
+                this.emit('stateChanged', {
+                  name: 'update',
+                  path: `${pageName}.${trimPath}`,
+                  newVal: val,
+                })
+              } else if (key.startsWith('.')) {
+                trimPath = key.substring(1, key.length - 1)
+                const pathArr = trimPath.split('.')
+
+                this.newDispatch({
+                  type: 'SET_VALUE',
+                  payload: {
+                    dataKey: pathArr,
+                    value: val,
+                  },
+                })
+                this.emit('stateChanged', {
+                  name: 'update',
+                  path: `${trimPath}`,
+                  newVal: val,
+                })
+              }
+            } else if (key.startsWith('=')) {
+              const trimPath = key.substring(2, key.length)
               const pathArr = trimPath.split('.')
+              let val =
+                _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
 
-              this.newDispatch({
-                type: 'SET_VALUE',
-                payload: {
-                  pageName,
-                  dataKey: pathArr,
-                  value: val,
-                },
-              })
-              this.emit('stateChanged', {
-                name: 'update',
-                path: `${pageName}.${trimPath}`,
-                newVal: val,
-              })
-            } else if (key.startsWith('.')) {
-              trimPath = key.substring(1, key.length - 1)
-              const pathArr = trimPath.split('.')
+              if (isObject(val)) {
+                const populateWithRoot = populateObject({
+                  source: val,
+                  lookFor: '.',
+                  locations: [this.root, this.root[pageName]],
+                })
 
-              this.newDispatch({
-                type: 'SET_VALUE',
-                payload: {
-                  dataKey: pathArr,
-                  value: val,
-                },
-              })
-              this.emit('stateChanged', {
-                name: 'update',
-                path: `${trimPath}`,
-                newVal: val,
-              })
+                const populateWithSelf = populateObject({
+                  source: populateWithRoot,
+                  lookFor: '..',
+                  locations: [this.root, this.root[pageName]],
+                })
+
+                const populateAfterInheriting = populateObject({
+                  source: populateWithSelf,
+                  lookFor: '=',
+                  locations: [this.root, this.root[pageName]],
+                })
+
+                const boundDispatch = this.dispatch.bind(this)
+                val = attachFns({
+                  cadlObject: populateAfterInheriting,
+                  dispatch: boundDispatch,
+                })
+                await val()
+              } else if (typeof val === 'function') {
+                await val()
+              }
             }
-          } else if (key.startsWith('=')) {
-            const trimPath = key.substring(2, key.length)
-            const pathArr = trimPath.split('.')
-            let val =
-              _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
-
-            if (isObject(val)) {
-              const populateWithRoot = populateObject({
-                source: val,
-                lookFor: '.',
-                locations: [this.root, this.root[pageName]],
-              })
-
-              const populateWithSelf = populateObject({
-                source: populateWithRoot,
-                lookFor: '..',
-                locations: [this.root, this.root[pageName]],
-              })
-
-              const populateAfterInheriting = populateObject({
-                source: populateWithSelf,
-                lookFor: '=',
-                locations: [this.root, this.root[pageName]],
-              })
-
-              const boundDispatch = this.dispatch.bind(this)
-              val = attachFns({
-                cadlObject: populateAfterInheriting,
-                dispatch: boundDispatch,
-              })
-            } else if (typeof val === 'function') {
-              await val()
-            }
-          }
+          })
         })
         //populates Global because this object is instantiated once
         //unlike pages that are instantiated multiple times and can be repopulated
@@ -876,6 +830,62 @@ export default class CADL extends EventEmitter {
     }
   }
 
+  private async handleIfCommand({ pageName, ifCommand }) {
+    const [condExpression, ifTrueEffect, ifFalseEffect] = ifCommand['if']
+    let condResult
+    if (typeof condExpression === 'function') {
+      condResult = await condExpression()
+    } else if (
+      condExpression.startsWith('.') ||
+      condExpression.startsWith('=') ||
+      condExpression.startsWith('..')
+    ) {
+      let lookFor
+      if (condExpression.startsWith('..')) {
+        lookFor = '..'
+      } else if (condExpression.startsWith('.')) {
+        lookFor = '.'
+      } else if (condExpression.startsWith('=')) {
+        lookFor = '='
+      }
+      let res = populateString({
+        source: condExpression,
+        locations: [this.root, this.root[pageName]],
+        lookFor,
+      })
+      if (typeof res === 'function') {
+        condResult = await res()
+      } else if (res && res !== condExpression) {
+        condResult = true
+      } else {
+        condResult = false
+      }
+    }
+    if (condResult === true) {
+      if (
+        isObject(ifTrueEffect) &&
+        'goto' in ifTrueEffect &&
+        typeof ifTrueEffect['goto'] === 'string'
+      ) {
+        await this.root.builtIn['goto'](ifTrueEffect['goto'])
+        return
+      }
+    } else if (condResult === false) {
+      if (
+        isObject(ifFalseEffect) &&
+        'goto' in ifFalseEffect &&
+        typeof ifFalseEffect['goto'] === 'string'
+      ) {
+        if (
+          'goto' in this.root.builtIn &&
+          typeof this.root.builtIn['goto'] === 'function'
+        ) {
+          await this.root.builtIn['goto'](ifFalseEffect['goto'])
+          return
+        }
+      }
+    }
+  }
   /**
    * Used for the actionType 'updateObject'. It updates the value of an object at the given path.
    *

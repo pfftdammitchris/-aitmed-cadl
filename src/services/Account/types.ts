@@ -39,7 +39,7 @@ export interface Create {
     password: string,
     verification_code: number,
     name: string
-  ): Promise<void>
+  ): Promise<Record<string, any>>
 }
 
 // Login

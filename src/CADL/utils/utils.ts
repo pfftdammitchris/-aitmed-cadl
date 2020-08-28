@@ -318,7 +318,7 @@ function replaceEvalObject({
   Object.keys(cadlCopy).forEach((key) => {
     if (
       key === 'object' &&
-      isObject(cadlCopy[key]) &&
+      Array.isArray(cadlCopy[key]) &&
       cadlCopy.actionType === 'evalObject'
     ) {
       const updateObject = _.cloneDeep(cadlCopy[key])
@@ -564,7 +564,7 @@ function populateObject({
   let sourceCopy = _.cloneDeep(source || {})
   Object.keys(sourceCopy).forEach((key) => {
     let index = key
-    if (!skip.includes(key) && key !== 'dataKey') {
+    if (!skip.includes(key) && key !== 'dataKey' && key !== 'if') {
       if (isObject(sourceCopy[key])) {
         if (
           !(

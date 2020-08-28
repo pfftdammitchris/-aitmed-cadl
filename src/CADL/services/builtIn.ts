@@ -88,33 +88,48 @@ export default function builtInFns(dispatch?: Function) {
         verificationCode,
         userName
       )
+      let sk = localStorage.getItem('sk')
       if (dispatch) {
         dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
-          payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data },
+          payload: {
+            pageName: 'builtIn',
+            dataKey: 'builtIn.UserVertex',
+            data: { ...data, sk },
+          },
         })
       }
       return data
     },
     async signIn({ phoneNumber, password, verificationCode }) {
       const data = await Account.login(phoneNumber, password, verificationCode)
+      let sk = localStorage.getItem('sk')
       if (dispatch) {
         dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
-          payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data },
+          payload: {
+            pageName: 'builtIn',
+            dataKey: 'builtIn.UserVertex',
+            data: { ...data, sk },
+          },
         })
       }
       return data
     },
     async loginByPassword(password) {
       const data = await Account.loginByPassword(password)
+      let sk = localStorage.getItem('sk')
       if (dispatch) {
         dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
-          payload: { pageName: 'builtIn', dataKey: 'builtIn.UserVertex', data },
+          payload: {
+            pageName: 'builtIn',
+            dataKey: 'builtIn.UserVertex',
+            data: { ...data, sk },
+          },
         })
       }
     },
