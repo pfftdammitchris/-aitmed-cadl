@@ -83345,7 +83345,6 @@
 	                dataKey = _action$payload.dataKey,
 	                rawData = _action$payload.data;
 	            var data = replaceUint8ArrayWithBase64(rawData);
-	            debugger;
 	            var firstCharacter = dataKey ? dataKey[0] : '';
 	            var pathArr = dataKey ? dataKey.split('.') : '';
 
