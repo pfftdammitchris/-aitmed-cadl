@@ -610,8 +610,8 @@ export default class CADL extends EventEmitter {
       case 'update-data': {
         const { pageName, dataKey, data: rawData } = action.payload
         let data = replaceUint8ArrayWithBase64(rawData)
-        const firstCharacter = dataKey[0]
-        const pathArr = dataKey.split('.')
+        const firstCharacter = dataKey ? dataKey[0] : ''
+        const pathArr = dataKey ? dataKey.split('.') : ''
         if (pageName === 'builtIn') {
           this.newDispatch({
             type: 'SET_VALUE',
@@ -620,6 +620,8 @@ export default class CADL extends EventEmitter {
               value: data,
             },
           })
+        } else if (!dataKey) {
+          return
         } else if (firstCharacter === firstCharacter.toUpperCase()) {
           const currentVal = _.get(this.root, pathArr)
           let mergedVal
@@ -871,6 +873,7 @@ export default class CADL extends EventEmitter {
         return
       }
     } else if (condResult === false) {
+      let lookFor
       if (
         isObject(ifFalseEffect) &&
         'goto' in ifFalseEffect &&
@@ -882,6 +885,39 @@ export default class CADL extends EventEmitter {
         ) {
           await this.root.builtIn['goto'](ifFalseEffect['goto'])
           return
+        }
+      } else if (typeof ifFalseEffect === 'function') {
+        await ifFalseEffect()
+        return
+      } else if (ifFalseEffect.startsWith('..')) {
+        lookFor = '..'
+      } else if (ifFalseEffect.startsWith('.')) {
+        lookFor = '.'
+      } else if (ifFalseEffect.startsWith('=')) {
+        lookFor = '='
+      }
+      if (lookFor) {
+        let res = populateString({
+          source: ifFalseEffect,
+          locations: [this.root, this.root[pageName]],
+          lookFor,
+        })
+        if (typeof res === 'function') {
+          await res()
+        } else if (isObject(res)) {
+          const boundDispatch = this.dispatch.bind(this)
+          const withFns = attachFns({
+            cadlObject: res,
+            dispatch: boundDispatch,
+          })
+          if (typeof withFns === 'function') {
+            await withFns()
+          } else if (
+            Array.isArray(withFns) &&
+            typeof withFns[1] === 'function'
+          ) {
+            await withFns[1]()
+          }
         }
       }
     }

@@ -83345,8 +83345,9 @@
 	                dataKey = _action$payload.dataKey,
 	                rawData = _action$payload.data;
 	            var data = replaceUint8ArrayWithBase64(rawData);
-	            var firstCharacter = dataKey[0];
-	            var pathArr = dataKey.split('.');
+	            debugger;
+	            var firstCharacter = dataKey ? dataKey[0] : '';
+	            var pathArr = dataKey ? dataKey.split('.') : '';
 
 	            if (_pageName === 'builtIn') {
 	              this.newDispatch({
@@ -83356,6 +83357,8 @@
 	                  value: data
 	                }
 	              });
+	            } else if (!dataKey) {
+	              return;
 	            } else if (firstCharacter === firstCharacter.toUpperCase()) {
 	              var currentVal = get_1(this.root, pathArr);
 
@@ -83666,7 +83669,7 @@
 	    key: "handleIfCommand",
 	    value: function () {
 	      var _handleIfCommand = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(_ref5) {
-	        var pageName, ifCommand, _ifCommand$if, condExpression, ifTrueEffect, ifFalseEffect, condResult, lookFor, res;
+	        var pageName, ifCommand, _ifCommand$if, condExpression, ifTrueEffect, ifFalseEffect, condResult, lookFor, res, _lookFor, _res, boundDispatch, withFns;
 
 	        return regenerator.wrap(function _callee6$(_context6) {
 	          while (1) {
@@ -83746,17 +83749,17 @@
 	                return _context6.abrupt("return");
 
 	              case 23:
-	                _context6.next = 31;
+	                _context6.next = 58;
 	                break;
 
 	              case 25:
 	                if (!(condResult === false)) {
-	                  _context6.next = 31;
+	                  _context6.next = 58;
 	                  break;
 	                }
 
 	                if (!(isObject$4(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
-	                  _context6.next = 31;
+	                  _context6.next = 33;
 	                  break;
 	                }
 
@@ -83772,6 +83775,88 @@
 	                return _context6.abrupt("return");
 
 	              case 31:
+	                _context6.next = 40;
+	                break;
+
+	              case 33:
+	                if (!(typeof ifFalseEffect === 'function')) {
+	                  _context6.next = 39;
+	                  break;
+	                }
+
+	                _context6.next = 36;
+	                return ifFalseEffect();
+
+	              case 36:
+	                return _context6.abrupt("return");
+
+	              case 39:
+	                if (ifFalseEffect.startsWith('..')) {
+	                  _lookFor = '..';
+	                } else if (ifFalseEffect.startsWith('.')) {
+	                  _lookFor = '.';
+	                } else if (ifFalseEffect.startsWith('=')) {
+	                  _lookFor = '=';
+	                }
+
+	              case 40:
+	                if (!_lookFor) {
+	                  _context6.next = 58;
+	                  break;
+	                }
+
+	                _res = populateString({
+	                  source: ifFalseEffect,
+	                  locations: [this.root, this.root[pageName]],
+	                  lookFor: _lookFor
+	                });
+
+	                if (!(typeof _res === 'function')) {
+	                  _context6.next = 47;
+	                  break;
+	                }
+
+	                _context6.next = 45;
+	                return _res();
+
+	              case 45:
+	                _context6.next = 58;
+	                break;
+
+	              case 47:
+	                if (!isObject$4(_res)) {
+	                  _context6.next = 58;
+	                  break;
+	                }
+
+	                boundDispatch = this.dispatch.bind(this);
+	                withFns = attachFns({
+	                  cadlObject: _res,
+	                  dispatch: boundDispatch
+	                });
+
+	                if (!(typeof withFns === 'function')) {
+	                  _context6.next = 55;
+	                  break;
+	                }
+
+	                _context6.next = 53;
+	                return withFns();
+
+	              case 53:
+	                _context6.next = 58;
+	                break;
+
+	              case 55:
+	                if (!(Array.isArray(withFns) && typeof withFns[1] === 'function')) {
+	                  _context6.next = 58;
+	                  break;
+	                }
+
+	                _context6.next = 58;
+	                return withFns[1]();
+
+	              case 58:
 	              case "end":
 	                return _context6.stop();
 	            }
