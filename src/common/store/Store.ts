@@ -3,7 +3,7 @@ import 'regenerator-runtime'
 import lvl2SDK from '@aitmed/ecos-lvl2-sdk'
 
 import AiTmedError, { getErrorCode } from '../AiTmedError'
-import { compareUint8Arrays } from '../../utils'
+import { compareUint8Arrays } from './utils'
 
 import {
   ResponseCatcher,

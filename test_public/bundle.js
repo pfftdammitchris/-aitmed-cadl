@@ -4403,13 +4403,9 @@
 	  return !!(value && value.__CANCEL__);
 	};
 
-	var global$1 = (typeof global$2 !== "undefined" ? global$2 :
+	var global$1 = (typeof global !== "undefined" ? global :
 	  typeof self !== "undefined" ? self :
 	  typeof window !== "undefined" ? window : {});
-
-	var global$2 = (typeof global$1 !== "undefined" ? global$1 :
-	            typeof self !== "undefined" ? self :
-	            typeof window !== "undefined" ? window : {});
 
 	// shim for using process in browser
 	// based off https://github.com/defunctzombie/node-process/blob/master/browser.js
@@ -4422,10 +4418,10 @@
 	}
 	var cachedSetTimeout = defaultSetTimout;
 	var cachedClearTimeout = defaultClearTimeout;
-	if (typeof global$2.setTimeout === 'function') {
+	if (typeof global$1.setTimeout === 'function') {
 	    cachedSetTimeout = setTimeout;
 	}
-	if (typeof global$2.clearTimeout === 'function') {
+	if (typeof global$1.clearTimeout === 'function') {
 	    cachedClearTimeout = clearTimeout;
 	}
 
@@ -4574,7 +4570,7 @@
 	}function umask() { return 0; }
 
 	// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
-	var performance = global$2.performance || {};
+	var performance = global$1.performance || {};
 	var performanceNow =
 	  performance.now        ||
 	  performance.mozNow     ||
@@ -4607,7 +4603,7 @@
 	  return dif / 1000;
 	}
 
-	var process = {
+	var browser$1 = {
 	  nextTick: nextTick,
 	  title: title,
 	  browser: browser,
@@ -5113,7 +5109,7 @@
 	  if (typeof XMLHttpRequest !== 'undefined') {
 	    // For browsers use XHR adapter
 	    adapter = xhr;
-	  } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
+	  } else if (typeof browser$1 !== 'undefined' && Object.prototype.toString.call(browser$1) === '[object process]') {
 	    // For node use HTTP adapter
 	    adapter = xhr;
 	  }
@@ -9651,7 +9647,7 @@
 
 	/* global console, process, YAML_SILENCE_DEPRECATION_WARNINGS, YAML_SILENCE_WARNINGS */
 	function shouldWarn(deprecation) {
-	  var env = typeof process !== 'undefined' && process.env || {};
+	  var env = typeof browser$1 !== 'undefined' && browser$1.env || {};
 
 	  if (deprecation) {
 	    if (typeof YAML_SILENCE_DEPRECATION_WARNINGS !== 'undefined') return !YAML_SILENCE_DEPRECATION_WARNINGS;
@@ -9664,7 +9660,7 @@
 
 	function warn(warning, type) {
 	  if (shouldWarn(false)) {
-	    var emit = typeof process !== 'undefined' && process.emitWarning; // This will throw in Jest if `warning` is an Error instance due to
+	    var emit = typeof browser$1 !== 'undefined' && browser$1.emitWarning; // This will throw in Jest if `warning` is an Error instance due to
 	    // https://github.com/facebook/jest/issues/2549
 
 	    if (emit) emit(warning, type);else {
@@ -11273,6 +11269,13 @@
 	  return toString$2.call(arr) == '[object Array]';
 	};
 
+	/*!
+	 * The buffer module from node.js, for the browser.
+	 *
+	 * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+	 * @license  MIT
+	 */
+
 	var INSPECT_MAX_BYTES = 50;
 
 	/**
@@ -11299,8 +11302,8 @@
 	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
 	 * get the Object implementation, which is slower but behaves correctly.
 	 */
-	Buffer.TYPED_ARRAY_SUPPORT = global$2.TYPED_ARRAY_SUPPORT !== undefined
-	  ? global$2.TYPED_ARRAY_SUPPORT
+	Buffer.TYPED_ARRAY_SUPPORT = global$1.TYPED_ARRAY_SUPPORT !== undefined
+	  ? global$1.TYPED_ARRAY_SUPPORT
 	  : true;
 
 	function kMaxLength () {
@@ -15501,7 +15504,7 @@
 	  return ret;
 	}
 
-	function n(n){for(var t=arguments.length,r=Array(t>1?t-1:0),e=1;e<t;e++)r[e-1]=arguments[e];if("production"!==process.env.NODE_ENV){var i=Y[n],o=i?"function"==typeof i?i.apply(null,r):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}throw Error("[Immer] minified error nr: "+n+(r.length?" "+r.join(","):"")+". Find the full error at: https://bit.ly/3cXEKWf")}function t(n){return !!n&&!!n[Q]}function r(n){return !!n&&(function(n){if(!n||"object"!=typeof n)return !1;var t=Object.getPrototypeOf(n);return !t||t===Object.prototype}(n)||Array.isArray(n)||!!n[L]||!!n.constructor[L]||s(n)||v(n))}function i(n,t,r){void 0===r&&(r=!1),0===o(n)?(r?Object.keys:Z)(n).forEach((function(e){r&&"symbol"==typeof e||t(e,n[e],n);})):n.forEach((function(r,e){return t(e,r,n)}));}function o(n){var t=n[Q];return t?t.i>3?t.i-4:t.i:Array.isArray(n)?1:s(n)?2:v(n)?3:0}function u(n,t){return 2===o(n)?n.has(t):Object.prototype.hasOwnProperty.call(n,t)}function a(n,t){return 2===o(n)?n.get(t):n[t]}function f(n,t,r){var e=o(n);2===e?n.set(t,r):3===e?(n.delete(t),n.add(r)):n[t]=r;}function c(n,t){return n===t?0!==n||1/n==1/t:n!=n&&t!=t}function s(n){return X&&n instanceof Map}function v(n){return q&&n instanceof Set}function p(n){return n.o||n.t}function l(n){if(Array.isArray(n))return n.slice();var t=nn(n);delete t[Q];for(var r=Z(t),e=0;e<r.length;e++){var i=r[e],o=t[i];!1===o.writable&&(o.writable=!0,o.configurable=!0),(o.get||o.set)&&(t[i]={configurable:!0,writable:!0,enumerable:o.enumerable,value:n[i]});}return Object.create(Object.getPrototypeOf(n),t)}function d(n,e){b(n)||t(n)||!r(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=h),Object.freeze(n),e&&i(n,(function(n,t){return d(t,!0)}),!0));}function h(){n(2);}function b(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function y(t){var r=tn[t];return r||n("production"!==process.env.NODE_ENV?18:19,t),r}function _(){return "production"===process.env.NODE_ENV||U||n(0),U}function j(n,t){t&&(y("Patches"),n.u=[],n.s=[],n.v=t);}function g(n){O(n),n.p.forEach(S),n.p=null;}function O(n){n===U&&(U=n.l);}function w(n){return U={p:[],l:U,h:n,m:!0,_:0}}function S(n){var t=n[Q];0===t.i||1===t.i?t.j():t.g=!0;}function P(t,e){e._=e.p.length;var i=e.p[0],o=void 0!==t&&t!==i;return e.h.O||y("ES5").S(e,t,o),o?(i[Q].P&&(g(e),n(4)),r(t)&&(t=M(e,t),e.l||x(e,t)),e.u&&y("Patches").M(i[Q],t,e.u,e.s)):t=M(e,i,[]),g(e),e.u&&e.v(e.u,e.s),t!==H?t:void 0}function M(n,t,r){if(b(t))return t;var e=t[Q];if(!e)return i(t,(function(i,o){return A(n,e,t,i,o,r)}),!0),t;if(e.A!==n)return t;if(!e.P)return x(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=l(e.k):e.o;i(3===e.i?new Set(o):o,(function(t,i){return A(n,e,o,t,i,r)})),x(n,o,!1),r&&n.u&&y("Patches").R(e,r,n.u,n.s);}return e.o}function A(e,i,o,a,c,s){if("production"!==process.env.NODE_ENV&&c===o&&n(5),t(c)){var v=M(e,c,s&&i&&3!==i.i&&!u(i.D,a)?s.concat(a):void 0);if(f(o,a,v),!t(v))return;e.m=!1;}if(r(c)&&!b(c)){if(!e.h.N&&e._<1)return;M(e,c),i&&i.A.l||x(e,c);}}function x(n,t,r){void 0===r&&(r=!1),n.h.N&&n.m&&d(t,r);}function z(n,t){var r=n[Q];return (r?p(r):n)[t]}function I(n,t){if(t in n)for(var r=Object.getPrototypeOf(n);r;){var e=Object.getOwnPropertyDescriptor(r,t);if(e)return e;r=Object.getPrototypeOf(r);}}function E(n){n.P||(n.P=!0,n.l&&E(n.l));}function k(n){n.o||(n.o=l(n.t));}function R(n,t,r){var e=s(t)?y("MapSet").T(t,r):v(t)?y("MapSet").F(t,r):n.O?function(n,t){var r=Array.isArray(n),e={i:r?1:0,A:t?t.A:_(),P:!1,I:!1,D:{},l:t,t:n,k:null,o:null,j:null,C:!1},i=e,o=rn;r&&(i=[e],o=en);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(t,r):y("ES5").J(t,r);return (r?r.A:_()).p.push(e),e}function D(e){return t(e)||n(22,e),function n(t){if(!r(t))return t;var e,u=t[Q],c=o(t);if(u){if(!u.P&&(u.i<4||!y("ES5").K(u)))return u.t;u.I=!0,e=N(t,c),u.I=!1;}else e=N(t,c);return i(e,(function(t,r){u&&a(u.t,t)===r||f(e,t,n(r));})),3===c?new Set(e):e}(e)}function N(n,t){switch(t){case 2:return new Map(n);case 3:return Array.from(n)}return l(n)}var G,U,W="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),X="undefined"!=typeof Map,q="undefined"!=typeof Set,B="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,H=W?Symbol.for("immer-nothing"):((G={})["immer-nothing"]=!0,G),L=W?Symbol.for("immer-draftable"):"__$immer_draftable",Q=W?Symbol.for("immer-state"):"__$immer_state",Y={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return "Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return "Unsupported patch operation: "+n},18:function(n){return "The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},19:"plugin not loaded",20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available",21:function(n){return "produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '"+n+"'"},22:function(n){return "'current' expects a draft, got: "+n},23:function(n){return "'original' expects a draft, got: "+n}},Z="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,nn=Object.getOwnPropertyDescriptors||function(n){var t={};return Z(n).forEach((function(r){t[r]=Object.getOwnPropertyDescriptor(n,r);})),t},tn={},rn={get:function(n,t){if(t===Q)return n;var e=p(n);if(!u(e,t))return function(n,t,r){var e,i=I(t,r);return i?"value"in i?i.value:null===(e=i.get)||void 0===e?void 0:e.call(n.k):void 0}(n,e,t);var i=e[t];return n.I||!r(i)?i:i===z(n.t,t)?(k(n),n.o[t]=R(n.A.h,i,n)):i},has:function(n,t){return t in p(n)},ownKeys:function(n){return Reflect.ownKeys(p(n))},set:function(n,t,r){var e=I(p(n),t);if(null==e?void 0:e.set)return e.set.call(n.k,r),!0;if(n.D[t]=!0,!n.P){if(c(r,z(p(n),t))&&(void 0!==r||u(n.t,t)))return !0;k(n),E(n);}return n.o[t]=r,!0},deleteProperty:function(n,t){return void 0!==z(n.t,t)||t in n.t?(n.D[t]=!1,k(n),E(n)):delete n.D[t],n.o&&delete n.o[t],!0},getOwnPropertyDescriptor:function(n,t){var r=p(n),e=Reflect.getOwnPropertyDescriptor(r,t);return e?{writable:!0,configurable:1!==n.i||"length"!==t,enumerable:e.enumerable,value:r[t]}:e},defineProperty:function(){n(11);},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12);}},en={};i(rn,(function(n,t){en[n]=function(){return arguments[0]=arguments[0][0],t.apply(this,arguments)};})),en.deleteProperty=function(t,r){return "production"!==process.env.NODE_ENV&&isNaN(parseInt(r))&&n(13),rn.deleteProperty.call(this,t[0],r)},en.set=function(t,r,e){return "production"!==process.env.NODE_ENV&&"length"!==r&&isNaN(parseInt(r))&&n(14),rn.set.call(this,t[0],r,e,t[0])};var on$1=function(){function e(n){this.O=B,this.N="production"!==process.env.NODE_ENV,"boolean"==typeof(null==n?void 0:n.useProxies)&&this.setUseProxies(n.useProxies),"boolean"==typeof(null==n?void 0:n.autoFreeze)&&this.setAutoFreeze(n.autoFreeze),this.produce=this.produce.bind(this),this.produceWithPatches=this.produceWithPatches.bind(this);}var i=e.prototype;return i.produce=function(t,e,i){if("function"==typeof t&&"function"!=typeof e){var o=e;e=t;var u=this;return function(n){var t=this;void 0===n&&(n=o);for(var r=arguments.length,i=Array(r>1?r-1:0),a=1;a<r;a++)i[a-1]=arguments[a];return u.produce(n,(function(n){var r;return (r=e).call.apply(r,[t,n].concat(i))}))}}var a;if("function"!=typeof e&&n(6),void 0!==i&&"function"!=typeof i&&n(7),r(t)){var f=w(this),c=R(this,t,void 0),s=!0;try{a=e(c),s=!1;}finally{s?g(f):O(f);}return "undefined"!=typeof Promise&&a instanceof Promise?a.then((function(n){return j(f,i),P(n,f)}),(function(n){throw g(f),n})):(j(f,i),P(a,f))}if(!t||"object"!=typeof t){if((a=e(t))===H)return;return void 0===a&&(a=t),this.N&&d(a,!0),a}n(21,t);},i.produceWithPatches=function(n,t){var r,e,i=this;return "function"==typeof n?function(t){for(var r=arguments.length,e=Array(r>1?r-1:0),o=1;o<r;o++)e[o-1]=arguments[o];return i.produceWithPatches(t,(function(t){return n.apply(void 0,[t].concat(e))}))}:[this.produce(n,t,(function(n,t){r=n,e=t;})),r,e]},i.createDraft=function(e){r(e)||n(8),t(e)&&(e=D(e));var i=w(this),o=R(this,e,void 0);return o[Q].C=!0,O(i),o},i.finishDraft=function(t,r){var e=t&&t[Q];"production"!==process.env.NODE_ENV&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return j(i,r),P(void 0,i)},i.setAutoFreeze=function(n){this.N=n;},i.setUseProxies=function(t){t&&!B&&n(20),this.O=t;},i.applyPatches=function(n,r){var e;for(e=r.length-1;e>=0;e--){var i=r[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}var o=y("Patches").$;return t(n)?o(n,r):this.produce(n,(function(n){return o(n,r.slice(e+1))}))},e}(),un=new on$1,an=un.produce,fn=un.produceWithPatches.bind(un),cn=un.setAutoFreeze.bind(un),sn=un.setUseProxies.bind(un),vn=un.applyPatches.bind(un),pn=un.createDraft.bind(un),ln=un.finishDraft.bind(un);//# sourceMappingURL=immer.esm.js.map
+	function n(n){for(var t=arguments.length,r=Array(t>1?t-1:0),e=1;e<t;e++)r[e-1]=arguments[e];if("production"!==browser$1.env.NODE_ENV){var i=Y[n],o=i?"function"==typeof i?i.apply(null,r):i:"unknown error nr: "+n;throw Error("[Immer] "+o)}throw Error("[Immer] minified error nr: "+n+(r.length?" "+r.join(","):"")+". Find the full error at: https://bit.ly/3cXEKWf")}function t(n){return !!n&&!!n[Q]}function r(n){return !!n&&(function(n){if(!n||"object"!=typeof n)return !1;var t=Object.getPrototypeOf(n);return !t||t===Object.prototype}(n)||Array.isArray(n)||!!n[L]||!!n.constructor[L]||s(n)||v(n))}function i(n,t,r){void 0===r&&(r=!1),0===o(n)?(r?Object.keys:Z)(n).forEach((function(e){r&&"symbol"==typeof e||t(e,n[e],n);})):n.forEach((function(r,e){return t(e,r,n)}));}function o(n){var t=n[Q];return t?t.i>3?t.i-4:t.i:Array.isArray(n)?1:s(n)?2:v(n)?3:0}function u(n,t){return 2===o(n)?n.has(t):Object.prototype.hasOwnProperty.call(n,t)}function a(n,t){return 2===o(n)?n.get(t):n[t]}function f(n,t,r){var e=o(n);2===e?n.set(t,r):3===e?(n.delete(t),n.add(r)):n[t]=r;}function c(n,t){return n===t?0!==n||1/n==1/t:n!=n&&t!=t}function s(n){return X&&n instanceof Map}function v(n){return q&&n instanceof Set}function p(n){return n.o||n.t}function l(n){if(Array.isArray(n))return n.slice();var t=nn(n);delete t[Q];for(var r=Z(t),e=0;e<r.length;e++){var i=r[e],o=t[i];!1===o.writable&&(o.writable=!0,o.configurable=!0),(o.get||o.set)&&(t[i]={configurable:!0,writable:!0,enumerable:o.enumerable,value:n[i]});}return Object.create(Object.getPrototypeOf(n),t)}function d(n,e){b(n)||t(n)||!r(n)||(o(n)>1&&(n.set=n.add=n.clear=n.delete=h),Object.freeze(n),e&&i(n,(function(n,t){return d(t,!0)}),!0));}function h(){n(2);}function b(n){return null==n||"object"!=typeof n||Object.isFrozen(n)}function y(t){var r=tn[t];return r||n("production"!==browser$1.env.NODE_ENV?18:19,t),r}function _(){return "production"===browser$1.env.NODE_ENV||U||n(0),U}function j(n,t){t&&(y("Patches"),n.u=[],n.s=[],n.v=t);}function g(n){O(n),n.p.forEach(S),n.p=null;}function O(n){n===U&&(U=n.l);}function w(n){return U={p:[],l:U,h:n,m:!0,_:0}}function S(n){var t=n[Q];0===t.i||1===t.i?t.j():t.g=!0;}function P(t,e){e._=e.p.length;var i=e.p[0],o=void 0!==t&&t!==i;return e.h.O||y("ES5").S(e,t,o),o?(i[Q].P&&(g(e),n(4)),r(t)&&(t=M(e,t),e.l||x(e,t)),e.u&&y("Patches").M(i[Q],t,e.u,e.s)):t=M(e,i,[]),g(e),e.u&&e.v(e.u,e.s),t!==H?t:void 0}function M(n,t,r){if(b(t))return t;var e=t[Q];if(!e)return i(t,(function(i,o){return A(n,e,t,i,o,r)}),!0),t;if(e.A!==n)return t;if(!e.P)return x(n,e.t,!0),e.t;if(!e.I){e.I=!0,e.A._--;var o=4===e.i||5===e.i?e.o=l(e.k):e.o;i(3===e.i?new Set(o):o,(function(t,i){return A(n,e,o,t,i,r)})),x(n,o,!1),r&&n.u&&y("Patches").R(e,r,n.u,n.s);}return e.o}function A(e,i,o,a,c,s){if("production"!==browser$1.env.NODE_ENV&&c===o&&n(5),t(c)){var v=M(e,c,s&&i&&3!==i.i&&!u(i.D,a)?s.concat(a):void 0);if(f(o,a,v),!t(v))return;e.m=!1;}if(r(c)&&!b(c)){if(!e.h.N&&e._<1)return;M(e,c),i&&i.A.l||x(e,c);}}function x(n,t,r){void 0===r&&(r=!1),n.h.N&&n.m&&d(t,r);}function z(n,t){var r=n[Q];return (r?p(r):n)[t]}function I(n,t){if(t in n)for(var r=Object.getPrototypeOf(n);r;){var e=Object.getOwnPropertyDescriptor(r,t);if(e)return e;r=Object.getPrototypeOf(r);}}function E(n){n.P||(n.P=!0,n.l&&E(n.l));}function k(n){n.o||(n.o=l(n.t));}function R(n,t,r){var e=s(t)?y("MapSet").T(t,r):v(t)?y("MapSet").F(t,r):n.O?function(n,t){var r=Array.isArray(n),e={i:r?1:0,A:t?t.A:_(),P:!1,I:!1,D:{},l:t,t:n,k:null,o:null,j:null,C:!1},i=e,o=rn;r&&(i=[e],o=en);var u=Proxy.revocable(i,o),a=u.revoke,f=u.proxy;return e.k=f,e.j=a,f}(t,r):y("ES5").J(t,r);return (r?r.A:_()).p.push(e),e}function D(e){return t(e)||n(22,e),function n(t){if(!r(t))return t;var e,u=t[Q],c=o(t);if(u){if(!u.P&&(u.i<4||!y("ES5").K(u)))return u.t;u.I=!0,e=N(t,c),u.I=!1;}else e=N(t,c);return i(e,(function(t,r){u&&a(u.t,t)===r||f(e,t,n(r));})),3===c?new Set(e):e}(e)}function N(n,t){switch(t){case 2:return new Map(n);case 3:return Array.from(n)}return l(n)}var G,U,W="undefined"!=typeof Symbol&&"symbol"==typeof Symbol("x"),X="undefined"!=typeof Map,q="undefined"!=typeof Set,B="undefined"!=typeof Proxy&&void 0!==Proxy.revocable&&"undefined"!=typeof Reflect,H=W?Symbol.for("immer-nothing"):((G={})["immer-nothing"]=!0,G),L=W?Symbol.for("immer-draftable"):"__$immer_draftable",Q=W?Symbol.for("immer-state"):"__$immer_state",Y={0:"Illegal state",1:"Immer drafts cannot have computed properties",2:"This object has been frozen and should not be mutated",3:function(n){return "Cannot use a proxy that has been revoked. Did you pass an object from inside an immer function to an async process? "+n},4:"An immer producer returned a new value *and* modified its draft. Either return a new value *or* modify the draft.",5:"Immer forbids circular references",6:"The first or second argument to `produce` must be a function",7:"The third argument to `produce` must be a function or undefined",8:"First argument to `createDraft` must be a plain object, an array, or an immerable object",9:"First argument to `finishDraft` must be a draft returned by `createDraft`",10:"The given draft is already finalized",11:"Object.defineProperty() cannot be used on an Immer draft",12:"Object.setPrototypeOf() cannot be used on an Immer draft",13:"Immer only supports deleting array indices",14:"Immer only supports setting array indices and the 'length' property",15:function(n){return "Cannot apply patch, path doesn't resolve: "+n},16:'Sets cannot have "replace" patches.',17:function(n){return "Unsupported patch operation: "+n},18:function(n){return "The plugin for '"+n+"' has not been loaded into Immer. To enable the plugin, import and call `enable"+n+"()` when initializing your application."},19:"plugin not loaded",20:"Cannot use proxies if Proxy, Proxy.revocable or Reflect are not available",21:function(n){return "produce can only be called on things that are draftable: plain objects, arrays, Map, Set or classes that are marked with '[immerable]: true'. Got '"+n+"'"},22:function(n){return "'current' expects a draft, got: "+n},23:function(n){return "'original' expects a draft, got: "+n}},Z="undefined"!=typeof Reflect&&Reflect.ownKeys?Reflect.ownKeys:void 0!==Object.getOwnPropertySymbols?function(n){return Object.getOwnPropertyNames(n).concat(Object.getOwnPropertySymbols(n))}:Object.getOwnPropertyNames,nn=Object.getOwnPropertyDescriptors||function(n){var t={};return Z(n).forEach((function(r){t[r]=Object.getOwnPropertyDescriptor(n,r);})),t},tn={},rn={get:function(n,t){if(t===Q)return n;var e=p(n);if(!u(e,t))return function(n,t,r){var e,i=I(t,r);return i?"value"in i?i.value:null===(e=i.get)||void 0===e?void 0:e.call(n.k):void 0}(n,e,t);var i=e[t];return n.I||!r(i)?i:i===z(n.t,t)?(k(n),n.o[t]=R(n.A.h,i,n)):i},has:function(n,t){return t in p(n)},ownKeys:function(n){return Reflect.ownKeys(p(n))},set:function(n,t,r){var e=I(p(n),t);if(null==e?void 0:e.set)return e.set.call(n.k,r),!0;if(n.D[t]=!0,!n.P){if(c(r,z(p(n),t))&&(void 0!==r||u(n.t,t)))return !0;k(n),E(n);}return n.o[t]=r,!0},deleteProperty:function(n,t){return void 0!==z(n.t,t)||t in n.t?(n.D[t]=!1,k(n),E(n)):delete n.D[t],n.o&&delete n.o[t],!0},getOwnPropertyDescriptor:function(n,t){var r=p(n),e=Reflect.getOwnPropertyDescriptor(r,t);return e?{writable:!0,configurable:1!==n.i||"length"!==t,enumerable:e.enumerable,value:r[t]}:e},defineProperty:function(){n(11);},getPrototypeOf:function(n){return Object.getPrototypeOf(n.t)},setPrototypeOf:function(){n(12);}},en={};i(rn,(function(n,t){en[n]=function(){return arguments[0]=arguments[0][0],t.apply(this,arguments)};})),en.deleteProperty=function(t,r){return "production"!==browser$1.env.NODE_ENV&&isNaN(parseInt(r))&&n(13),rn.deleteProperty.call(this,t[0],r)},en.set=function(t,r,e){return "production"!==browser$1.env.NODE_ENV&&"length"!==r&&isNaN(parseInt(r))&&n(14),rn.set.call(this,t[0],r,e,t[0])};var on$1=function(){function e(n){this.O=B,this.N="production"!==browser$1.env.NODE_ENV,"boolean"==typeof(null==n?void 0:n.useProxies)&&this.setUseProxies(n.useProxies),"boolean"==typeof(null==n?void 0:n.autoFreeze)&&this.setAutoFreeze(n.autoFreeze),this.produce=this.produce.bind(this),this.produceWithPatches=this.produceWithPatches.bind(this);}var i=e.prototype;return i.produce=function(t,e,i){if("function"==typeof t&&"function"!=typeof e){var o=e;e=t;var u=this;return function(n){var t=this;void 0===n&&(n=o);for(var r=arguments.length,i=Array(r>1?r-1:0),a=1;a<r;a++)i[a-1]=arguments[a];return u.produce(n,(function(n){var r;return (r=e).call.apply(r,[t,n].concat(i))}))}}var a;if("function"!=typeof e&&n(6),void 0!==i&&"function"!=typeof i&&n(7),r(t)){var f=w(this),c=R(this,t,void 0),s=!0;try{a=e(c),s=!1;}finally{s?g(f):O(f);}return "undefined"!=typeof Promise&&a instanceof Promise?a.then((function(n){return j(f,i),P(n,f)}),(function(n){throw g(f),n})):(j(f,i),P(a,f))}if(!t||"object"!=typeof t){if((a=e(t))===H)return;return void 0===a&&(a=t),this.N&&d(a,!0),a}n(21,t);},i.produceWithPatches=function(n,t){var r,e,i=this;return "function"==typeof n?function(t){for(var r=arguments.length,e=Array(r>1?r-1:0),o=1;o<r;o++)e[o-1]=arguments[o];return i.produceWithPatches(t,(function(t){return n.apply(void 0,[t].concat(e))}))}:[this.produce(n,t,(function(n,t){r=n,e=t;})),r,e]},i.createDraft=function(e){r(e)||n(8),t(e)&&(e=D(e));var i=w(this),o=R(this,e,void 0);return o[Q].C=!0,O(i),o},i.finishDraft=function(t,r){var e=t&&t[Q];"production"!==browser$1.env.NODE_ENV&&(e&&e.C||n(9),e.I&&n(10));var i=e.A;return j(i,r),P(void 0,i)},i.setAutoFreeze=function(n){this.N=n;},i.setUseProxies=function(t){t&&!B&&n(20),this.O=t;},i.applyPatches=function(n,r){var e;for(e=r.length-1;e>=0;e--){var i=r[e];if(0===i.path.length&&"replace"===i.op){n=i.value;break}}var o=y("Patches").$;return t(n)?o(n,r):this.produce(n,(function(n){return o(n,r.slice(e+1))}))},e}(),un=new on$1,an=un.produce,fn=un.produceWithPatches.bind(un),cn=un.setAutoFreeze.bind(un),sn=un.setUseProxies.bind(un),vn=un.applyPatches.bind(un),pn=un.createDraft.bind(un),ln=un.finishDraft.bind(un);
 
 	var check = function (it) {
 	  return it && it.Math == Math && it;
@@ -17437,8 +17440,8 @@
 
 	var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
 
-	var process$1 = global_1.process;
-	var versions$1 = process$1 && process$1.versions;
+	var process = global_1.process;
+	var versions$1 = process && process.versions;
 	var v8 = versions$1 && versions$1.v8;
 	var match, version$1;
 
@@ -20407,7 +20410,7 @@
 	var location = global_1.location;
 	var set$3 = global_1.setImmediate;
 	var clear = global_1.clearImmediate;
-	var process$2 = global_1.process;
+	var process$1 = global_1.process;
 	var MessageChannel = global_1.MessageChannel;
 	var Dispatch = global_1.Dispatch;
 	var counter = 0;
@@ -20456,9 +20459,9 @@
 	    delete queue$1[id];
 	  };
 	  // Node.js 0.8-
-	  if (classofRaw(process$2) == 'process') {
+	  if (classofRaw(process$1) == 'process') {
 	    defer = function (id) {
-	      process$2.nextTick(runner(id));
+	      process$1.nextTick(runner(id));
 	    };
 	  // Sphere (JS game engine) Dispatch API
 	  } else if (Dispatch && Dispatch.now) {
@@ -20510,9 +20513,9 @@
 
 
 	var MutationObserver = global_1.MutationObserver || global_1.WebKitMutationObserver;
-	var process$3 = global_1.process;
+	var process$2 = global_1.process;
 	var Promise$2 = global_1.Promise;
-	var IS_NODE = classofRaw(process$3) == 'process';
+	var IS_NODE = classofRaw(process$2) == 'process';
 	// Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
 	var queueMicrotaskDescriptor = getOwnPropertyDescriptor$7(global_1, 'queueMicrotask');
 	var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
@@ -20523,7 +20526,7 @@
 	if (!queueMicrotask) {
 	  flush = function () {
 	    var parent, fn;
-	    if (IS_NODE && (parent = process$3.domain)) parent.exit();
+	    if (IS_NODE && (parent = process$2.domain)) parent.exit();
 	    while (head) {
 	      fn = head.fn;
 	      head = head.next;
@@ -20541,7 +20544,7 @@
 	  // Node.js
 	  if (IS_NODE) {
 	    notify = function () {
-	      process$3.nextTick(flush);
+	      process$2.nextTick(flush);
 	    };
 	  // browsers with MutationObserver, except iOS - https://github.com/zloirock/core-js/issues/339
 	  } else if (MutationObserver && !engineIsIos) {
@@ -20645,11 +20648,11 @@
 	var PromiseConstructor = nativePromiseConstructor;
 	var TypeError$1 = global_1.TypeError;
 	var document$2 = global_1.document;
-	var process$4 = global_1.process;
+	var process$3 = global_1.process;
 	var $fetch = getBuiltIn('fetch');
 	var newPromiseCapability$1 = newPromiseCapability.f;
 	var newGenericPromiseCapability = newPromiseCapability$1;
-	var IS_NODE$1 = classofRaw(process$4) == 'process';
+	var IS_NODE$1 = classofRaw(process$3) == 'process';
 	var DISPATCH_EVENT = !!(document$2 && document$2.createEvent && global_1.dispatchEvent);
 	var UNHANDLED_REJECTION = 'unhandledrejection';
 	var REJECTION_HANDLED = 'rejectionhandled';
@@ -20763,7 +20766,7 @@
 	    if (IS_UNHANDLED) {
 	      result = perform(function () {
 	        if (IS_NODE$1) {
-	          process$4.emit('unhandledRejection', value, promise);
+	          process$3.emit('unhandledRejection', value, promise);
 	        } else dispatchEvent(UNHANDLED_REJECTION, promise, value);
 	      });
 	      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
@@ -20780,7 +20783,7 @@
 	var onHandleUnhandled = function (promise, state) {
 	  task$1.call(global_1, function () {
 	    if (IS_NODE$1) {
-	      process$4.emit('rejectionHandled', promise);
+	      process$3.emit('rejectionHandled', promise);
 	    } else dispatchEvent(REJECTION_HANDLED, promise, state.value);
 	  });
 	};
@@ -20864,7 +20867,7 @@
 	      var reaction = newPromiseCapability$1(speciesConstructor(this, PromiseConstructor));
 	      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
 	      reaction.fail = typeof onRejected == 'function' && onRejected;
-	      reaction.domain = IS_NODE$1 ? process$4.domain : undefined;
+	      reaction.domain = IS_NODE$1 ? process$3.domain : undefined;
 	      state.parent = true;
 	      state.reactions.push(reaction);
 	      if (state.state != PENDING) notify$1(this, state, false);
@@ -23078,14 +23081,14 @@
 	  clearImmediate: task.clear
 	});
 
-	var process$5 = global_1.process;
-	var isNode = classofRaw(process$5) == 'process';
+	var process$4 = global_1.process;
+	var isNode = classofRaw(process$4) == 'process';
 
 	// `queueMicrotask` method
 	// https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-queuemicrotask
 	_export({ global: true, enumerable: true, noTargetGet: true }, {
 	  queueMicrotask: function queueMicrotask(fn) {
-	    var domain = isNode && process$5.domain;
+	    var domain = isNode && process$4.domain;
 	    microtask(domain ? domain.bind(fn) : fn);
 	  }
 	});
@@ -24682,7 +24685,7 @@
 	  }
 	});
 
-	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$2 !== 'undefined' ? global$2 : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$1 !== 'undefined' ? global$1 : typeof self !== 'undefined' ? self : {};
 
 	function commonjsRequire$1 () {
 		throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
@@ -26001,11 +26004,11 @@
 	  return !!(value && value.__CANCEL__);
 	};
 
-	var global$1$1 = (typeof global$2$1 !== "undefined" ? global$2$1 :
+	var global$1$1 = (typeof global$2 !== "undefined" ? global$2 :
 	  typeof self !== "undefined" ? self :
 	  typeof window !== "undefined" ? window : {});
 
-	var global$2$1 = (typeof global$1$1 !== "undefined" ? global$1$1 :
+	var global$2 = (typeof global$1$1 !== "undefined" ? global$1$1 :
 	            typeof self !== "undefined" ? self :
 	            typeof window !== "undefined" ? window : {});
 
@@ -26020,10 +26023,10 @@
 	}
 	var cachedSetTimeout$1 = defaultSetTimout$1;
 	var cachedClearTimeout$1 = defaultClearTimeout$1;
-	if (typeof global$2$1.setTimeout === 'function') {
+	if (typeof global$2.setTimeout === 'function') {
 	    cachedSetTimeout$1 = setTimeout;
 	}
-	if (typeof global$2$1.clearTimeout === 'function') {
+	if (typeof global$2.clearTimeout === 'function') {
 	    cachedClearTimeout$1 = clearTimeout;
 	}
 
@@ -26144,7 +26147,7 @@
 	};
 	var title$1 = 'browser';
 	var platform$1 = 'browser';
-	var browser$1 = true;
+	var browser$2 = true;
 	var env$1 = {};
 	var argv$1 = [];
 	var version$2 = ''; // empty string to avoid regexp issues
@@ -26172,7 +26175,7 @@
 	}function umask$1() { return 0; }
 
 	// from https://github.com/kumavis/browser-process-hrtime/blob/master/index.js
-	var performance$1 = global$2$1.performance || {};
+	var performance$1 = global$2.performance || {};
 	var performanceNow$1 =
 	  performance$1.now        ||
 	  performance$1.mozNow     ||
@@ -26205,10 +26208,10 @@
 	  return dif / 1000;
 	}
 
-	var process$6 = {
+	var process$5 = {
 	  nextTick: nextTick$1,
 	  title: title$1,
-	  browser: browser$1,
+	  browser: browser$2,
 	  env: env$1,
 	  argv: argv$1,
 	  version: version$2,
@@ -26662,7 +26665,7 @@
 	function getDefaultAdapter$1() {
 	  var adapter;
 	  // Only Node.JS has a process variable that is of [[Class]] process
-	  if (typeof process$6 !== 'undefined' && Object.prototype.toString.call(process$6) === '[object process]') {
+	  if (typeof process$5 !== 'undefined' && Object.prototype.toString.call(process$5) === '[object process]') {
 	    // For node use HTTP adapter
 	    adapter = xhr$1;
 	  } else if (typeof XMLHttpRequest !== 'undefined') {
@@ -34210,8 +34213,8 @@
 	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
 	 * get the Object implementation, which is slower but behaves correctly.
 	 */
-	Buffer$1.TYPED_ARRAY_SUPPORT = global$2$1.TYPED_ARRAY_SUPPORT !== undefined
-	  ? global$2$1.TYPED_ARRAY_SUPPORT
+	Buffer$1.TYPED_ARRAY_SUPPORT = global$2.TYPED_ARRAY_SUPPORT !== undefined
+	  ? global$2.TYPED_ARRAY_SUPPORT
 	  : true;
 
 	function kMaxLength$1 () {
@@ -38244,7 +38247,7 @@
 	  return obj;
 	}
 
-	var commonjsGlobal$1$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$2$1 !== 'undefined' ? global$2$1 : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal$1$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$2 !== 'undefined' ? global$2 : typeof self !== 'undefined' ? self : {};
 
 	function createCommonjsModule$1$1(fn, module) {
 		return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -44888,7 +44891,7 @@
 
 	  return EcosAPIClient;
 	}();
-	//# sourceMappingURL=index.es.js.map
+
 
 	var getEcosAPIClient = function getEcosAPIClient(_ref) {
 	  var url = _ref.url,
@@ -55473,8 +55476,8 @@
 	 * We detect these buggy browsers and set `Buffer.TYPED_ARRAY_SUPPORT` to `false` so they
 	 * get the Object implementation, which is slower but behaves correctly.
 	 */
-	Buffer$1$1.TYPED_ARRAY_SUPPORT = global$2$1.TYPED_ARRAY_SUPPORT !== undefined
-	  ? global$2$1.TYPED_ARRAY_SUPPORT
+	Buffer$1$1.TYPED_ARRAY_SUPPORT = global$2.TYPED_ARRAY_SUPPORT !== undefined
+	  ? global$2.TYPED_ARRAY_SUPPORT
 	  : true;
 
 	function kMaxLength$1$1 () {
@@ -57980,13 +57983,6 @@
 	  defineProperty$e(this, "esig", void 0);
 	};
 
-	var index$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		Edge: Edge,
-		Vertex: Vertex,
-		Doc: Doc
-	});
-
 	function toSDKVertex(vertex) {
 	  var res = new Vertex();
 	  res.id = vertex.getId();
@@ -59139,12 +59135,6 @@
 	  return services;
 	}();
 
-
-
-	var types = /*#__PURE__*/Object.freeze({
-		__proto__: null
-	});
-
 	function getJWT(type) {
 	  switch (type) {
 	    case 1040:
@@ -59980,12 +59970,6 @@
 	  return services;
 	}();
 
-
-
-	var types$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null
-	});
-
 	function ownKeys$4(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$4(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$4(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$4(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -60182,12 +60166,6 @@
 
 	  return services;
 	}();
-
-
-
-	var types$2 = /*#__PURE__*/Object.freeze({
-		__proto__: null
-	});
 
 	var StatusCodes;
 
@@ -61189,12 +61167,6 @@
 	  return Account;
 	}();
 
-
-
-	var types$3 = /*#__PURE__*/Object.freeze({
-		__proto__: null
-	});
-
 	var SDK =
 	/*#__PURE__*/
 	function () {
@@ -61301,7 +61273,6 @@
 
 	  return SDK;
 	}();
-	//# sourceMappingURL=index.es.js.map
 
 	var ErrorCodes;
 
@@ -61471,6 +61442,930 @@
 	    return ErrorCodes.UNKNOW_ERROR.toString();
 	  }
 	}
+
+	var compareUint8Arrays = function compareUint8Arrays(u8a1, u8a2) {
+	  if (u8a1.length !== u8a2.length) return false;
+
+	  for (var i = 0; i < u8a1.length; i++) {
+	    if (u8a1[i] !== u8a2[i]) {
+	      return false;
+	    }
+	  }
+
+	  return true;
+	};
+
+	var defaultResponseCatcher = function defaultResponseCatcher(response) {
+	  return response;
+	};
+
+	var defaultErrorCatcher = function defaultErrorCatcher(error) {
+	  var code = getErrorCode(error.name);
+
+	  if (code === -1 && error.name !== 'UNKNOW_ERROR') {
+	    throw error;
+	  } else {
+	    throw new AiTmedError({
+	      code: code,
+	      message: error.message
+	    });
+	  }
+	};
+
+	var Store$1 = /*#__PURE__*/function () {
+	  function Store(_ref) {
+	    var _this = this;
+
+	    var apiVersion = _ref.apiVersion,
+	        apiHost = _ref.apiHost,
+	        env = _ref.env,
+	        configUrl = _ref.configUrl;
+
+	    classCallCheck(this, Store);
+
+	    defineProperty(this, "_env", void 0);
+
+	    defineProperty(this, "level2SDK", void 0);
+
+	    defineProperty(this, "utils", void 0);
+
+	    defineProperty(this, "responseCatcher", defaultResponseCatcher);
+
+	    defineProperty(this, "errorCatcher", defaultErrorCatcher);
+
+	    defineProperty(this, "noodlInstance", void 0);
+
+	    this._env = env;
+	    var sdkEnv = env === 'test' ? 'development' : 'production';
+	    this.level2SDK = new SDK({
+	      apiVersion: apiVersion,
+	      apiHost: apiHost,
+	      env: sdkEnv,
+	      configUrl: configUrl
+	    });
+
+	    var idToBase64 = function idToBase64(id) {
+	      if (typeof id === 'string') {
+	        return id;
+	      } else {
+	        return _this.level2SDK.utilServices.uint8ArrayToBase64(id);
+	      }
+	    };
+
+	    var idToUint8Array = function idToUint8Array(id) {
+	      if (typeof id === 'string') {
+	        return _this.level2SDK.utilServices.base64ToUint8Array(id);
+	      } else {
+	        return id;
+	      }
+	    };
+
+	    this.utils = {
+	      idToBase64: idToBase64,
+	      idToUint8Array: idToUint8Array,
+	      compareUint8Arrays: compareUint8Arrays
+	    };
+	  }
+
+	  createClass(Store, [{
+	    key: "getConfig",
+	    value: function getConfig() {
+	      return this.level2SDK.getConfigData();
+	    }
+	  }, {
+	    key: "apiVersion",
+	    set: function set(value) {
+	      this.level2SDK.apiVersion = value;
+	    },
+	    get: function get() {
+	      return this.level2SDK.apiVersion;
+	    }
+	  }, {
+	    key: "env",
+	    set: function set(value) {
+	      this._env = value;
+	    },
+	    get: function get() {
+	      return this._env;
+	    }
+	  }, {
+	    key: "apiHost",
+	    get: function get() {
+	      return this.level2SDK.apiHost;
+	    },
+	    set: function set(value) {
+	      this.level2SDK.apiHost = value;
+	    }
+	  }, {
+	    key: "configUrl",
+	    get: function get() {
+	      return this.level2SDK.configUrl;
+	    },
+	    set: function set(value) {
+	      this.level2SDK.configUrl = value;
+	    }
+	  }]);
+
+	  return Store;
+	}();
+
+	var store$3 = new Store$1({
+	  env: 'test',
+	  configUrl: 'https://public.aitmed.com/config'
+	});
+
+	function _createSuper$o(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$p(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$p() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToExecuteFn = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToExecuteFn, _Error);
+
+	  var _super = _createSuper$o(UnableToExecuteFn);
+
+	  function UnableToExecuteFn(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToExecuteFn);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToExecuteFn';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToExecuteFn.prototype);
+	    return _this;
+	  }
+
+	  return UnableToExecuteFn;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToParseYAML = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToParseYAML, _Error);
+
+	  var _super = _createSuper$p(UnableToParseYAML);
+
+	  function UnableToParseYAML(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToParseYAML);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToParseYAML';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToParseYAML.prototype);
+	    return _this;
+	  }
+
+	  return UnableToParseYAML;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToRetrieveYAML = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToRetrieveYAML, _Error);
+
+	  var _super = _createSuper$q(UnableToRetrieveYAML);
+
+	  function UnableToRetrieveYAML(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToRetrieveYAML);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToRetrieveYAML';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToRetrieveYAML.prototype);
+	    return _this;
+	  }
+
+	  return UnableToRetrieveYAML;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToLocateValue = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToLocateValue, _Error);
+
+	  var _super = _createSuper$r(UnableToLocateValue);
+
+	  function UnableToLocateValue(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToLocateValue);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToLocateValue';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLocateValue.prototype);
+	    return _this;
+	  }
+
+	  return UnableToLocateValue;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	function _createSuper$s(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$t(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$t() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToLoadConfig = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToLoadConfig, _Error);
+
+	  var _super = _createSuper$s(UnableToLoadConfig);
+
+	  function UnableToLoadConfig(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToLoadConfig);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToLoadConfig';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLoadConfig.prototype);
+	    return _this;
+	  }
+
+	  return UnableToLoadConfig;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+
+	function _isNativeReflectConstruct$u() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+
+	var UnableToMakeAnotherRequest = /*#__PURE__*/function (_Error) {
+	  inherits(UnableToMakeAnotherRequest, _Error);
+
+	  var _super = _createSuper$t(UnableToMakeAnotherRequest);
+
+	  function UnableToMakeAnotherRequest(message, error) {
+	    var _this;
+
+	    classCallCheck(this, UnableToMakeAnotherRequest);
+
+	    _this = _super.call(this, message);
+
+	    defineProperty(assertThisInitialized(_this), "error", void 0);
+
+	    defineProperty(assertThisInitialized(_this), "name", void 0);
+
+	    _this.error = error;
+	    _this.name = 'UnableToMakeAnotherRequest';
+	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToMakeAnotherRequest.prototype);
+	    return _this;
+	  }
+
+	  return UnableToMakeAnotherRequest;
+	}( /*#__PURE__*/wrapNativeSuper(Error));
+
+	/** Used to compose bitmasks for cloning. */
+	var CLONE_SYMBOLS_FLAG$2 = 4;
+
+	/**
+	 * Creates a shallow clone of `value`.
+	 *
+	 * **Note:** This method is loosely based on the
+	 * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
+	 * and supports cloning arrays, array buffers, booleans, date objects, maps,
+	 * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
+	 * arrays. The own enumerable properties of `arguments` objects are cloned
+	 * as plain objects. An empty object is returned for uncloneable values such
+	 * as error objects, functions, DOM nodes, and WeakMaps.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to clone.
+	 * @returns {*} Returns the cloned value.
+	 * @see _.cloneDeep
+	 * @example
+	 *
+	 * var objects = [{ 'a': 1 }, { 'b': 2 }];
+	 *
+	 * var shallow = _.clone(objects);
+	 * console.log(shallow[0] === objects[0]);
+	 * // => true
+	 */
+	function clone(value) {
+	  return _baseClone(value, CLONE_SYMBOLS_FLAG$2);
+	}
+
+	var clone_1 = clone;
+
+	function _process (v, mod) {
+	  var i;
+	  var r;
+
+	  if (typeof mod === 'function') {
+	    r = mod(v);
+	    if (r !== undefined) {
+	      v = r;
+	    }
+	  } else if (Array.isArray(mod)) {
+	    for (i = 0; i < mod.length; i++) {
+	      r = mod[i](v);
+	      if (r !== undefined) {
+	        v = r;
+	      }
+	    }
+	  }
+
+	  return v
+	}
+
+	function parseKey (key, val) {
+	  // detect negative index notation
+	  if (key[0] === '-' && Array.isArray(val) && /^-\d+$/.test(key)) {
+	    return val.length + parseInt(key, 10)
+	  }
+	  return key
+	}
+
+	function isIndex$1 (k) {
+	  return /^\d+$/.test(k)
+	}
+
+	function isObject$4 (val) {
+	  return Object.prototype.toString.call(val) === '[object Object]'
+	}
+
+	function isArrayOrObject (val) {
+	  return Object(val) === val
+	}
+
+	function isEmptyObject (val) {
+	  return Object.keys(val).length === 0
+	}
+
+	var blacklist = ['__proto__', 'prototype', 'constructor'];
+	var blacklistFilter = function (part) { return blacklist.indexOf(part) === -1 };
+
+	function parsePath (path, sep) {
+	  if (path.indexOf('[') >= 0) {
+	    path = path.replace(/\[/g, '.').replace(/]/g, '');
+	  }
+
+	  var parts = path.split(sep);
+
+	  var check = parts.filter(blacklistFilter);
+
+	  if (check.length !== parts.length) {
+	    throw Error('Refusing to update blacklisted property ' + path)
+	  }
+
+	  return parts
+	}
+
+	var hasOwnProperty$b = Object.prototype.hasOwnProperty;
+
+	function DotObject (separator, override, useArray, useBrackets) {
+	  if (!(this instanceof DotObject)) {
+	    return new DotObject(separator, override, useArray, useBrackets)
+	  }
+
+	  if (typeof override === 'undefined') override = false;
+	  if (typeof useArray === 'undefined') useArray = true;
+	  if (typeof useBrackets === 'undefined') useBrackets = true;
+	  this.separator = separator || '.';
+	  this.override = override;
+	  this.useArray = useArray;
+	  this.useBrackets = useBrackets;
+	  this.keepArray = false;
+
+	  // contains touched arrays
+	  this.cleanup = [];
+	}
+
+	var dotDefault = new DotObject('.', false, true, true);
+	function wrap$2 (method) {
+	  return function () {
+	    return dotDefault[method].apply(dotDefault, arguments)
+	  }
+	}
+
+	DotObject.prototype._fill = function (a, obj, v, mod) {
+	  var k = a.shift();
+
+	  if (a.length > 0) {
+	    obj[k] = obj[k] || (this.useArray && isIndex$1(a[0]) ? [] : {});
+
+	    if (!isArrayOrObject(obj[k])) {
+	      if (this.override) {
+	        obj[k] = {};
+	      } else {
+	        if (!(isArrayOrObject(v) && isEmptyObject(v))) {
+	          throw new Error(
+	            'Trying to redefine `' + k + '` which is a ' + typeof obj[k]
+	          )
+	        }
+
+	        return
+	      }
+	    }
+
+	    this._fill(a, obj[k], v, mod);
+	  } else {
+	    if (!this.override && isArrayOrObject(obj[k]) && !isEmptyObject(obj[k])) {
+	      if (!(isArrayOrObject(v) && isEmptyObject(v))) {
+	        throw new Error("Trying to redefine non-empty obj['" + k + "']")
+	      }
+
+	      return
+	    }
+
+	    obj[k] = _process(v, mod);
+	  }
+	};
+
+	/**
+	 *
+	 * Converts an object with dotted-key/value pairs to it's expanded version
+	 *
+	 * Optionally transformed by a set of modifiers.
+	 *
+	 * Usage:
+	 *
+	 *   var row = {
+	 *     'nr': 200,
+	 *     'doc.name': '  My Document  '
+	 *   }
+	 *
+	 *   var mods = {
+	 *     'doc.name': [_s.trim, _s.underscored]
+	 *   }
+	 *
+	 *   dot.object(row, mods)
+	 *
+	 * @param {Object} obj
+	 * @param {Object} mods
+	 */
+	DotObject.prototype.object = function (obj, mods) {
+	  var self = this;
+
+	  Object.keys(obj).forEach(function (k) {
+	    var mod = mods === undefined ? null : mods[k];
+	    // normalize array notation.
+	    var ok = parsePath(k, self.separator).join(self.separator);
+
+	    if (ok.indexOf(self.separator) !== -1) {
+	      self._fill(ok.split(self.separator), obj, obj[k], mod);
+	      delete obj[k];
+	    } else {
+	      obj[k] = _process(obj[k], mod);
+	    }
+	  });
+
+	  return obj
+	};
+
+	/**
+	 * @param {String} path dotted path
+	 * @param {String} v value to be set
+	 * @param {Object} obj object to be modified
+	 * @param {Function|Array} mod optional modifier
+	 */
+	DotObject.prototype.str = function (path, v, obj, mod) {
+	  var ok = parsePath(path, this.separator).join(this.separator);
+
+	  if (path.indexOf(this.separator) !== -1) {
+	    this._fill(ok.split(this.separator), obj, v, mod);
+	  } else {
+	    obj[path] = _process(v, mod);
+	  }
+
+	  return obj
+	};
+
+	/**
+	 *
+	 * Pick a value from an object using dot notation.
+	 *
+	 * Optionally remove the value
+	 *
+	 * @param {String} path
+	 * @param {Object} obj
+	 * @param {Boolean} remove
+	 */
+	DotObject.prototype.pick = function (path, obj, remove, reindexArray) {
+	  var i;
+	  var keys;
+	  var val;
+	  var key;
+	  var cp;
+
+	  keys = parsePath(path, this.separator);
+	  for (i = 0; i < keys.length; i++) {
+	    key = parseKey(keys[i], obj);
+	    if (obj && typeof obj === 'object' && key in obj) {
+	      if (i === keys.length - 1) {
+	        if (remove) {
+	          val = obj[key];
+	          if (reindexArray && Array.isArray(obj)) {
+	            obj.splice(key, 1);
+	          } else {
+	            delete obj[key];
+	          }
+	          if (Array.isArray(obj)) {
+	            cp = keys.slice(0, -1).join('.');
+	            if (this.cleanup.indexOf(cp) === -1) {
+	              this.cleanup.push(cp);
+	            }
+	          }
+	          return val
+	        } else {
+	          return obj[key]
+	        }
+	      } else {
+	        obj = obj[key];
+	      }
+	    } else {
+	      return undefined
+	    }
+	  }
+	  if (remove && Array.isArray(obj)) {
+	    obj = obj.filter(function (n) {
+	      return n !== undefined
+	    });
+	  }
+	  return obj
+	};
+	/**
+	 *
+	 * Delete value from an object using dot notation.
+	 *
+	 * @param {String} path
+	 * @param {Object} obj
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.delete = function (path, obj) {
+	  return this.remove(path, obj, true)
+	};
+
+	/**
+	 *
+	 * Remove value from an object using dot notation.
+	 *
+	 * Will remove multiple items if path is an array.
+	 * In this case array indexes will be retained until all
+	 * removals have been processed.
+	 *
+	 * Use dot.delete() to automatically  re-index arrays.
+	 *
+	 * @param {String|Array<String>} path
+	 * @param {Object} obj
+	 * @param {Boolean} reindexArray
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.remove = function (path, obj, reindexArray) {
+	  var i;
+
+	  this.cleanup = [];
+	  if (Array.isArray(path)) {
+	    for (i = 0; i < path.length; i++) {
+	      this.pick(path[i], obj, true, reindexArray);
+	    }
+	    if (!reindexArray) {
+	      this._cleanup(obj);
+	    }
+	    return obj
+	  } else {
+	    return this.pick(path, obj, true, reindexArray)
+	  }
+	};
+
+	DotObject.prototype._cleanup = function (obj) {
+	  var ret;
+	  var i;
+	  var keys;
+	  var root;
+	  if (this.cleanup.length) {
+	    for (i = 0; i < this.cleanup.length; i++) {
+	      keys = this.cleanup[i].split('.');
+	      root = keys.splice(0, -1).join('.');
+	      ret = root ? this.pick(root, obj) : obj;
+	      ret = ret[keys[0]].filter(function (v) {
+	        return v !== undefined
+	      });
+	      this.set(this.cleanup[i], ret, obj);
+	    }
+	    this.cleanup = [];
+	  }
+	};
+
+	/**
+	 * Alias method  for `dot.remove`
+	 *
+	 * Note: this is not an alias for dot.delete()
+	 *
+	 * @param {String|Array<String>} path
+	 * @param {Object} obj
+	 * @param {Boolean} reindexArray
+	 * @return {any} The removed value
+	 */
+	DotObject.prototype.del = DotObject.prototype.remove;
+
+	/**
+	 *
+	 * Move a property from one place to the other.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the target property will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.move = function (source, target, obj, mods, merge) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(target, _process(this.pick(source, obj, true), mods), obj, merge);
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj, true), obj, merge);
+	  }
+
+	  return obj
+	};
+
+	/**
+	 *
+	 * Transfer a property from one object to another object.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the property on the other object will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj1
+	 * @param {Object} obj2
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.transfer = function (
+	  source,
+	  target,
+	  obj1,
+	  obj2,
+	  mods,
+	  merge
+	) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(
+	      target,
+	      _process(this.pick(source, obj1, true), mods),
+	      obj2,
+	      merge
+	    );
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj1, true), obj2, merge);
+	  }
+
+	  return obj2
+	};
+
+	/**
+	 *
+	 * Copy a property from one object to another object.
+	 *
+	 * If the source path does not exist (undefined)
+	 * the property on the other object will not be set.
+	 *
+	 * @param {String} source
+	 * @param {String} target
+	 * @param {Object} obj1
+	 * @param {Object} obj2
+	 * @param {Function|Array} mods
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.copy = function (source, target, obj1, obj2, mods, merge) {
+	  if (typeof mods === 'function' || Array.isArray(mods)) {
+	    this.set(
+	      target,
+	      _process(
+	        // clone what is picked
+	        JSON.parse(JSON.stringify(this.pick(source, obj1, false))),
+	        mods
+	      ),
+	      obj2,
+	      merge
+	    );
+	  } else {
+	    merge = mods;
+	    this.set(target, this.pick(source, obj1, false), obj2, merge);
+	  }
+
+	  return obj2
+	};
+
+	/**
+	 *
+	 * Set a property on an object using dot notation.
+	 *
+	 * @param {String} path
+	 * @param {any} val
+	 * @param {Object} obj
+	 * @param {Boolean} merge
+	 */
+	DotObject.prototype.set = function (path, val, obj, merge) {
+	  var i;
+	  var k;
+	  var keys;
+	  var key;
+
+	  // Do not operate if the value is undefined.
+	  if (typeof val === 'undefined') {
+	    return obj
+	  }
+	  keys = parsePath(path, this.separator);
+
+	  for (i = 0; i < keys.length; i++) {
+	    key = keys[i];
+	    if (i === keys.length - 1) {
+	      if (merge && isObject$4(val) && isObject$4(obj[key])) {
+	        for (k in val) {
+	          if (hasOwnProperty$b.call(val, k)) {
+	            obj[key][k] = val[k];
+	          }
+	        }
+	      } else if (merge && Array.isArray(obj[key]) && Array.isArray(val)) {
+	        for (var j = 0; j < val.length; j++) {
+	          obj[keys[i]].push(val[j]);
+	        }
+	      } else {
+	        obj[key] = val;
+	      }
+	    } else if (
+	      // force the value to be an object
+	      !hasOwnProperty$b.call(obj, key) ||
+	      (!isObject$4(obj[key]) && !Array.isArray(obj[key]))
+	    ) {
+	      // initialize as array if next key is numeric
+	      if (/^\d+$/.test(keys[i + 1])) {
+	        obj[key] = [];
+	      } else {
+	        obj[key] = {};
+	      }
+	    }
+	    obj = obj[key];
+	  }
+	  return obj
+	};
+
+	/**
+	 *
+	 * Transform an object
+	 *
+	 * Usage:
+	 *
+	 *   var obj = {
+	 *     "id": 1,
+	 *    "some": {
+	 *      "thing": "else"
+	 *    }
+	 *   }
+	 *
+	 *   var transform = {
+	 *     "id": "nr",
+	 *    "some.thing": "name"
+	 *   }
+	 *
+	 *   var tgt = dot.transform(transform, obj)
+	 *
+	 * @param {Object} recipe Transform recipe
+	 * @param {Object} obj Object to be transformed
+	 * @param {Array} mods modifiers for the target
+	 */
+	DotObject.prototype.transform = function (recipe, obj, tgt) {
+	  obj = obj || {};
+	  tgt = tgt || {};
+	  Object.keys(recipe).forEach(
+	    function (key) {
+	      this.set(recipe[key], this.pick(key, obj), tgt);
+	    }.bind(this)
+	  );
+	  return tgt
+	};
+
+	/**
+	 *
+	 * Convert object to dotted-key/value pair
+	 *
+	 * Usage:
+	 *
+	 *   var tgt = dot.dot(obj)
+	 *
+	 *   or
+	 *
+	 *   var tgt = {}
+	 *   dot.dot(obj, tgt)
+	 *
+	 * @param {Object} obj source object
+	 * @param {Object} tgt target object
+	 * @param {Array} path path array (internal)
+	 */
+	DotObject.prototype.dot = function (obj, tgt, path) {
+	  tgt = tgt || {};
+	  path = path || [];
+	  var isArray = Array.isArray(obj);
+
+	  Object.keys(obj).forEach(
+	    function (key) {
+	      var index = isArray && this.useBrackets ? '[' + key + ']' : key;
+	      if (
+	        isArrayOrObject(obj[key]) &&
+	        ((isObject$4(obj[key]) && !isEmptyObject(obj[key])) ||
+	          (Array.isArray(obj[key]) && !this.keepArray && obj[key].length !== 0))
+	      ) {
+	        if (isArray && this.useBrackets) {
+	          var previousKey = path[path.length - 1] || '';
+	          return this.dot(
+	            obj[key],
+	            tgt,
+	            path.slice(0, -1).concat(previousKey + index)
+	          )
+	        } else {
+	          return this.dot(obj[key], tgt, path.concat(index))
+	        }
+	      } else {
+	        if (isArray && this.useBrackets) {
+	          tgt[path.join(this.separator).concat('[' + key + ']')] = obj[key];
+	        } else {
+	          tgt[path.concat(index).join(this.separator)] = obj[key];
+	        }
+	      }
+	    }.bind(this)
+	  );
+	  return tgt
+	};
+
+	DotObject.pick = wrap$2('pick');
+	DotObject.move = wrap$2('move');
+	DotObject.transfer = wrap$2('transfer');
+	DotObject.transform = wrap$2('transform');
+	DotObject.copy = wrap$2('copy');
+	DotObject.object = wrap$2('object');
+	DotObject.str = wrap$2('str');
+	DotObject.set = wrap$2('set');
+	DotObject.delete = wrap$2('delete');
+	DotObject.del = DotObject.remove = wrap$2('remove');
+	DotObject.dot = wrap$2('dot');
+	['override', 'overwrite'].forEach(function (prop) {
+	  Object.defineProperty(DotObject, prop, {
+	    get: function () {
+	      return dotDefault.override
+	    },
+	    set: function (val) {
+	      dotDefault.override = !!val;
+	    }
+	  });
+	});
+	['useArray', 'keepArray', 'useBrackets'].forEach(function (prop) {
+	  Object.defineProperty(DotObject, prop, {
+	    get: function () {
+	      return dotDefault[prop]
+	    },
+	    set: function (val) {
+	      dotDefault[prop] = val;
+	    }
+	  });
+	});
+
+	DotObject._process = _process;
+
+	var dotObject = DotObject;
 
 	var common$2 = createCommonjsModule(function (module, exports) {
 
@@ -68279,191 +69174,9 @@
 
 	var pako_1 = pako;
 
-	function _createSuper$o(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$p(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
+	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _isNativeReflectConstruct$p() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToExecuteFn = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToExecuteFn, _Error);
-
-	  var _super = _createSuper$o(UnableToExecuteFn);
-
-	  function UnableToExecuteFn(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToExecuteFn);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToExecuteFn';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToExecuteFn.prototype);
-	    return _this;
-	  }
-
-	  return UnableToExecuteFn;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$p(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$q(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$q() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToParseYAML = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToParseYAML, _Error);
-
-	  var _super = _createSuper$p(UnableToParseYAML);
-
-	  function UnableToParseYAML(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToParseYAML);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToParseYAML';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToParseYAML.prototype);
-	    return _this;
-	  }
-
-	  return UnableToParseYAML;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$q(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$r(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$r() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToRetrieveYAML = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToRetrieveYAML, _Error);
-
-	  var _super = _createSuper$q(UnableToRetrieveYAML);
-
-	  function UnableToRetrieveYAML(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToRetrieveYAML);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToRetrieveYAML';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToRetrieveYAML.prototype);
-	    return _this;
-	  }
-
-	  return UnableToRetrieveYAML;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$r(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$s(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$s() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToLocateValue = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToLocateValue, _Error);
-
-	  var _super = _createSuper$r(UnableToLocateValue);
-
-	  function UnableToLocateValue(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToLocateValue);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToLocateValue';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLocateValue.prototype);
-	    return _this;
-	  }
-
-	  return UnableToLocateValue;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$s(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$t(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$t() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToLoadConfig = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToLoadConfig, _Error);
-
-	  var _super = _createSuper$s(UnableToLoadConfig);
-
-	  function UnableToLoadConfig(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToLoadConfig);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToLoadConfig';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToLoadConfig.prototype);
-	    return _this;
-	  }
-
-	  return UnableToLoadConfig;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	function _createSuper$t(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$u(); return function () { var Super = getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return possibleConstructorReturn(this, result); }; }
-
-	function _isNativeReflectConstruct$u() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
-
-	var UnableToMakeAnotherRequest = /*#__PURE__*/function (_Error) {
-	  inherits(UnableToMakeAnotherRequest, _Error);
-
-	  var _super = _createSuper$t(UnableToMakeAnotherRequest);
-
-	  function UnableToMakeAnotherRequest(message, error) {
-	    var _this;
-
-	    classCallCheck(this, UnableToMakeAnotherRequest);
-
-	    _this = _super.call(this, message);
-
-	    defineProperty(assertThisInitialized(_this), "error", void 0);
-
-	    defineProperty(assertThisInitialized(_this), "name", void 0);
-
-	    _this.error = error;
-	    _this.name = 'UnableToMakeAnotherRequest';
-	    Object.setPrototypeOf(assertThisInitialized(_this), UnableToMakeAnotherRequest.prototype);
-	    return _this;
-	  }
-
-	  return UnableToMakeAnotherRequest;
-	}( /*#__PURE__*/wrapNativeSuper(Error));
-
-	var compareUint8Arrays = function compareUint8Arrays(u8a1, u8a2) {
-	  if (u8a1.length !== u8a2.length) return false;
-
-	  for (var i = 0; i < u8a1.length; i++) {
-	    if (u8a1[i] !== u8a2[i]) {
-	      return false;
-	    }
-	  }
-
-	  return true;
-	};
+	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var gzip$1 = function gzip(data) {
 	  return pako_1.gzip(data);
 	};
@@ -68477,7 +69190,7 @@
 	 * - checks if given value is a valid object {}
 	 */
 
-	function isObject$4(item) {
+	function isObject$5(item) {
 	  if (item === null) return false;
 	  if (item === undefined) return false;
 	  return item && _typeof_1(item) === 'object' && !Array.isArray(item);
@@ -68485,12 +69198,12 @@
 	function mergeDeep(target, source) {
 	  var output = Object.assign({}, target);
 
-	  if (isObject$4(target) && isObject$4(source)) {
+	  if (isObject$5(target) && isObject$5(source)) {
 	    Object.keys(source).forEach(function (key) {
-	      if (isObject$4(source[key])) {
+	      if (isObject$5(source[key])) {
 	        if (!(key in target)) {
 	          Object.assign(output, defineProperty({}, key, source[key]));
-	        } else if (isObject$4(target[key])) {
+	        } else if (isObject$5(target[key])) {
 	          output[key] = mergeDeep(target[key], source[key]);
 	        } else {
 	          output[key] = source[key];
@@ -68506,6 +69219,12 @@
 	function asyncForEach(_x3, _x4) {
 	  return _asyncForEach.apply(this, arguments);
 	}
+	/**
+	 * Maps ecos.eid to id.
+	 *
+	 * @param edge
+	 * @returns edge
+	 */
 
 	function _asyncForEach() {
 	  _asyncForEach = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(array, callback) {
@@ -68540,743 +69259,22 @@
 	  return _asyncForEach.apply(this, arguments);
 	}
 
-	var defaultResponseCatcher = function defaultResponseCatcher(response) {
-	  return response;
-	};
+	function replaceEidWithId(edge) {
+	  var output = Object.assign({}, edge);
+	  var _output = output,
+	      eid = _output.eid;
 
-	var defaultErrorCatcher = function defaultErrorCatcher(error) {
-	  var code = getErrorCode(error.name);
-
-	  if (code === -1 && error.name !== 'UNKNOW_ERROR') {
-	    throw error;
-	  } else {
-	    throw new AiTmedError({
-	      code: code,
-	      message: error.message
+	  if (eid) {
+	    var b64Id = store$3.utils.idToBase64(eid);
+	    output = _objectSpread$5(_objectSpread$5({}, output), {}, {
+	      id: b64Id
 	    });
-	  }
-	};
-
-	var Store$1 = /*#__PURE__*/function () {
-	  function Store(_ref) {
-	    var _this = this;
-
-	    var apiVersion = _ref.apiVersion,
-	        apiHost = _ref.apiHost,
-	        env = _ref.env,
-	        configUrl = _ref.configUrl;
-
-	    classCallCheck(this, Store);
-
-	    defineProperty(this, "_env", void 0);
-
-	    defineProperty(this, "level2SDK", void 0);
-
-	    defineProperty(this, "utils", void 0);
-
-	    defineProperty(this, "responseCatcher", defaultResponseCatcher);
-
-	    defineProperty(this, "errorCatcher", defaultErrorCatcher);
-
-	    defineProperty(this, "noodlInstance", void 0);
-
-	    this._env = env;
-	    var sdkEnv = env === 'test' ? 'development' : 'production';
-	    this.level2SDK = new SDK({
-	      apiVersion: apiVersion,
-	      apiHost: apiHost,
-	      env: sdkEnv,
-	      configUrl: configUrl
-	    });
-
-	    var idToBase64 = function idToBase64(id) {
-	      if (typeof id === 'string') {
-	        return id;
-	      } else {
-	        return _this.level2SDK.utilServices.uint8ArrayToBase64(id);
-	      }
-	    };
-
-	    var idToUint8Array = function idToUint8Array(id) {
-	      if (typeof id === 'string') {
-	        return _this.level2SDK.utilServices.base64ToUint8Array(id);
-	      } else {
-	        return id;
-	      }
-	    };
-
-	    this.utils = {
-	      idToBase64: idToBase64,
-	      idToUint8Array: idToUint8Array,
-	      compareUint8Arrays: compareUint8Arrays
-	    };
-	  }
-
-	  createClass(Store, [{
-	    key: "getConfig",
-	    value: function getConfig() {
-	      return this.level2SDK.getConfigData();
-	    }
-	  }, {
-	    key: "apiVersion",
-	    set: function set(value) {
-	      this.level2SDK.apiVersion = value;
-	    },
-	    get: function get() {
-	      return this.level2SDK.apiVersion;
-	    }
-	  }, {
-	    key: "env",
-	    set: function set(value) {
-	      this._env = value;
-	    },
-	    get: function get() {
-	      return this._env;
-	    }
-	  }, {
-	    key: "apiHost",
-	    get: function get() {
-	      return this.level2SDK.apiHost;
-	    },
-	    set: function set(value) {
-	      this.level2SDK.apiHost = value;
-	    }
-	  }, {
-	    key: "configUrl",
-	    get: function get() {
-	      return this.level2SDK.configUrl;
-	    },
-	    set: function set(value) {
-	      this.level2SDK.configUrl = value;
-	    }
-	  }]);
-
-	  return Store;
-	}();
-
-	var store$3 = new Store$1({
-	  env: 'test',
-	  configUrl: 'https://public.aitmed.com/config'
-	});
-
-	/** Used to compose bitmasks for cloning. */
-	var CLONE_SYMBOLS_FLAG$2 = 4;
-
-	/**
-	 * Creates a shallow clone of `value`.
-	 *
-	 * **Note:** This method is loosely based on the
-	 * [structured clone algorithm](https://mdn.io/Structured_clone_algorithm)
-	 * and supports cloning arrays, array buffers, booleans, date objects, maps,
-	 * numbers, `Object` objects, regexes, sets, strings, symbols, and typed
-	 * arrays. The own enumerable properties of `arguments` objects are cloned
-	 * as plain objects. An empty object is returned for uncloneable values such
-	 * as error objects, functions, DOM nodes, and WeakMaps.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @since 0.1.0
-	 * @category Lang
-	 * @param {*} value The value to clone.
-	 * @returns {*} Returns the cloned value.
-	 * @see _.cloneDeep
-	 * @example
-	 *
-	 * var objects = [{ 'a': 1 }, { 'b': 2 }];
-	 *
-	 * var shallow = _.clone(objects);
-	 * console.log(shallow[0] === objects[0]);
-	 * // => true
-	 */
-	function clone(value) {
-	  return _baseClone(value, CLONE_SYMBOLS_FLAG$2);
-	}
-
-	var clone_1 = clone;
-
-	function _process (v, mod) {
-	  var i;
-	  var r;
-
-	  if (typeof mod === 'function') {
-	    r = mod(v);
-	    if (r !== undefined) {
-	      v = r;
-	    }
-	  } else if (Array.isArray(mod)) {
-	    for (i = 0; i < mod.length; i++) {
-	      r = mod[i](v);
-	      if (r !== undefined) {
-	        v = r;
-	      }
-	    }
-	  }
-
-	  return v
-	}
-
-	function parseKey (key, val) {
-	  // detect negative index notation
-	  if (key[0] === '-' && Array.isArray(val) && /^-\d+$/.test(key)) {
-	    return val.length + parseInt(key, 10)
-	  }
-	  return key
-	}
-
-	function isIndex$1 (k) {
-	  return /^\d+$/.test(k)
-	}
-
-	function isObject$5 (val) {
-	  return Object.prototype.toString.call(val) === '[object Object]'
-	}
-
-	function isArrayOrObject (val) {
-	  return Object(val) === val
-	}
-
-	function isEmptyObject (val) {
-	  return Object.keys(val).length === 0
-	}
-
-	var blacklist = ['__proto__', 'prototype', 'constructor'];
-	var blacklistFilter = function (part) { return blacklist.indexOf(part) === -1 };
-
-	function parsePath (path, sep) {
-	  if (path.indexOf('[') >= 0) {
-	    path = path.replace(/\[/g, '.').replace(/]/g, '');
-	  }
-
-	  var parts = path.split(sep);
-
-	  var check = parts.filter(blacklistFilter);
-
-	  if (check.length !== parts.length) {
-	    throw Error('Refusing to update blacklisted property ' + path)
-	  }
-
-	  return parts
-	}
-
-	var hasOwnProperty$b = Object.prototype.hasOwnProperty;
-
-	function DotObject (separator, override, useArray, useBrackets) {
-	  if (!(this instanceof DotObject)) {
-	    return new DotObject(separator, override, useArray, useBrackets)
-	  }
-
-	  if (typeof override === 'undefined') override = false;
-	  if (typeof useArray === 'undefined') useArray = true;
-	  if (typeof useBrackets === 'undefined') useBrackets = true;
-	  this.separator = separator || '.';
-	  this.override = override;
-	  this.useArray = useArray;
-	  this.useBrackets = useBrackets;
-	  this.keepArray = false;
-
-	  // contains touched arrays
-	  this.cleanup = [];
-	}
-
-	var dotDefault = new DotObject('.', false, true, true);
-	function wrap$2 (method) {
-	  return function () {
-	    return dotDefault[method].apply(dotDefault, arguments)
-	  }
-	}
-
-	DotObject.prototype._fill = function (a, obj, v, mod) {
-	  var k = a.shift();
-
-	  if (a.length > 0) {
-	    obj[k] = obj[k] || (this.useArray && isIndex$1(a[0]) ? [] : {});
-
-	    if (!isArrayOrObject(obj[k])) {
-	      if (this.override) {
-	        obj[k] = {};
-	      } else {
-	        if (!(isArrayOrObject(v) && isEmptyObject(v))) {
-	          throw new Error(
-	            'Trying to redefine `' + k + '` which is a ' + typeof obj[k]
-	          )
-	        }
-
-	        return
-	      }
-	    }
-
-	    this._fill(a, obj[k], v, mod);
+	    delete output.eid;
+	    return output;
 	  } else {
-	    if (!this.override && isArrayOrObject(obj[k]) && !isEmptyObject(obj[k])) {
-	      if (!(isArrayOrObject(v) && isEmptyObject(v))) {
-	        throw new Error("Trying to redefine non-empty obj['" + k + "']")
-	      }
-
-	      return
-	    }
-
-	    obj[k] = _process(v, mod);
+	    return edge;
 	  }
-	};
-
-	/**
-	 *
-	 * Converts an object with dotted-key/value pairs to it's expanded version
-	 *
-	 * Optionally transformed by a set of modifiers.
-	 *
-	 * Usage:
-	 *
-	 *   var row = {
-	 *     'nr': 200,
-	 *     'doc.name': '  My Document  '
-	 *   }
-	 *
-	 *   var mods = {
-	 *     'doc.name': [_s.trim, _s.underscored]
-	 *   }
-	 *
-	 *   dot.object(row, mods)
-	 *
-	 * @param {Object} obj
-	 * @param {Object} mods
-	 */
-	DotObject.prototype.object = function (obj, mods) {
-	  var self = this;
-
-	  Object.keys(obj).forEach(function (k) {
-	    var mod = mods === undefined ? null : mods[k];
-	    // normalize array notation.
-	    var ok = parsePath(k, self.separator).join(self.separator);
-
-	    if (ok.indexOf(self.separator) !== -1) {
-	      self._fill(ok.split(self.separator), obj, obj[k], mod);
-	      delete obj[k];
-	    } else {
-	      obj[k] = _process(obj[k], mod);
-	    }
-	  });
-
-	  return obj
-	};
-
-	/**
-	 * @param {String} path dotted path
-	 * @param {String} v value to be set
-	 * @param {Object} obj object to be modified
-	 * @param {Function|Array} mod optional modifier
-	 */
-	DotObject.prototype.str = function (path, v, obj, mod) {
-	  var ok = parsePath(path, this.separator).join(this.separator);
-
-	  if (path.indexOf(this.separator) !== -1) {
-	    this._fill(ok.split(this.separator), obj, v, mod);
-	  } else {
-	    obj[path] = _process(v, mod);
-	  }
-
-	  return obj
-	};
-
-	/**
-	 *
-	 * Pick a value from an object using dot notation.
-	 *
-	 * Optionally remove the value
-	 *
-	 * @param {String} path
-	 * @param {Object} obj
-	 * @param {Boolean} remove
-	 */
-	DotObject.prototype.pick = function (path, obj, remove, reindexArray) {
-	  var i;
-	  var keys;
-	  var val;
-	  var key;
-	  var cp;
-
-	  keys = parsePath(path, this.separator);
-	  for (i = 0; i < keys.length; i++) {
-	    key = parseKey(keys[i], obj);
-	    if (obj && typeof obj === 'object' && key in obj) {
-	      if (i === keys.length - 1) {
-	        if (remove) {
-	          val = obj[key];
-	          if (reindexArray && Array.isArray(obj)) {
-	            obj.splice(key, 1);
-	          } else {
-	            delete obj[key];
-	          }
-	          if (Array.isArray(obj)) {
-	            cp = keys.slice(0, -1).join('.');
-	            if (this.cleanup.indexOf(cp) === -1) {
-	              this.cleanup.push(cp);
-	            }
-	          }
-	          return val
-	        } else {
-	          return obj[key]
-	        }
-	      } else {
-	        obj = obj[key];
-	      }
-	    } else {
-	      return undefined
-	    }
-	  }
-	  if (remove && Array.isArray(obj)) {
-	    obj = obj.filter(function (n) {
-	      return n !== undefined
-	    });
-	  }
-	  return obj
-	};
-	/**
-	 *
-	 * Delete value from an object using dot notation.
-	 *
-	 * @param {String} path
-	 * @param {Object} obj
-	 * @return {any} The removed value
-	 */
-	DotObject.prototype.delete = function (path, obj) {
-	  return this.remove(path, obj, true)
-	};
-
-	/**
-	 *
-	 * Remove value from an object using dot notation.
-	 *
-	 * Will remove multiple items if path is an array.
-	 * In this case array indexes will be retained until all
-	 * removals have been processed.
-	 *
-	 * Use dot.delete() to automatically  re-index arrays.
-	 *
-	 * @param {String|Array<String>} path
-	 * @param {Object} obj
-	 * @param {Boolean} reindexArray
-	 * @return {any} The removed value
-	 */
-	DotObject.prototype.remove = function (path, obj, reindexArray) {
-	  var i;
-
-	  this.cleanup = [];
-	  if (Array.isArray(path)) {
-	    for (i = 0; i < path.length; i++) {
-	      this.pick(path[i], obj, true, reindexArray);
-	    }
-	    if (!reindexArray) {
-	      this._cleanup(obj);
-	    }
-	    return obj
-	  } else {
-	    return this.pick(path, obj, true, reindexArray)
-	  }
-	};
-
-	DotObject.prototype._cleanup = function (obj) {
-	  var ret;
-	  var i;
-	  var keys;
-	  var root;
-	  if (this.cleanup.length) {
-	    for (i = 0; i < this.cleanup.length; i++) {
-	      keys = this.cleanup[i].split('.');
-	      root = keys.splice(0, -1).join('.');
-	      ret = root ? this.pick(root, obj) : obj;
-	      ret = ret[keys[0]].filter(function (v) {
-	        return v !== undefined
-	      });
-	      this.set(this.cleanup[i], ret, obj);
-	    }
-	    this.cleanup = [];
-	  }
-	};
-
-	/**
-	 * Alias method  for `dot.remove`
-	 *
-	 * Note: this is not an alias for dot.delete()
-	 *
-	 * @param {String|Array<String>} path
-	 * @param {Object} obj
-	 * @param {Boolean} reindexArray
-	 * @return {any} The removed value
-	 */
-	DotObject.prototype.del = DotObject.prototype.remove;
-
-	/**
-	 *
-	 * Move a property from one place to the other.
-	 *
-	 * If the source path does not exist (undefined)
-	 * the target property will not be set.
-	 *
-	 * @param {String} source
-	 * @param {String} target
-	 * @param {Object} obj
-	 * @param {Function|Array} mods
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.move = function (source, target, obj, mods, merge) {
-	  if (typeof mods === 'function' || Array.isArray(mods)) {
-	    this.set(target, _process(this.pick(source, obj, true), mods), obj, merge);
-	  } else {
-	    merge = mods;
-	    this.set(target, this.pick(source, obj, true), obj, merge);
-	  }
-
-	  return obj
-	};
-
-	/**
-	 *
-	 * Transfer a property from one object to another object.
-	 *
-	 * If the source path does not exist (undefined)
-	 * the property on the other object will not be set.
-	 *
-	 * @param {String} source
-	 * @param {String} target
-	 * @param {Object} obj1
-	 * @param {Object} obj2
-	 * @param {Function|Array} mods
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.transfer = function (
-	  source,
-	  target,
-	  obj1,
-	  obj2,
-	  mods,
-	  merge
-	) {
-	  if (typeof mods === 'function' || Array.isArray(mods)) {
-	    this.set(
-	      target,
-	      _process(this.pick(source, obj1, true), mods),
-	      obj2,
-	      merge
-	    );
-	  } else {
-	    merge = mods;
-	    this.set(target, this.pick(source, obj1, true), obj2, merge);
-	  }
-
-	  return obj2
-	};
-
-	/**
-	 *
-	 * Copy a property from one object to another object.
-	 *
-	 * If the source path does not exist (undefined)
-	 * the property on the other object will not be set.
-	 *
-	 * @param {String} source
-	 * @param {String} target
-	 * @param {Object} obj1
-	 * @param {Object} obj2
-	 * @param {Function|Array} mods
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.copy = function (source, target, obj1, obj2, mods, merge) {
-	  if (typeof mods === 'function' || Array.isArray(mods)) {
-	    this.set(
-	      target,
-	      _process(
-	        // clone what is picked
-	        JSON.parse(JSON.stringify(this.pick(source, obj1, false))),
-	        mods
-	      ),
-	      obj2,
-	      merge
-	    );
-	  } else {
-	    merge = mods;
-	    this.set(target, this.pick(source, obj1, false), obj2, merge);
-	  }
-
-	  return obj2
-	};
-
-	/**
-	 *
-	 * Set a property on an object using dot notation.
-	 *
-	 * @param {String} path
-	 * @param {any} val
-	 * @param {Object} obj
-	 * @param {Boolean} merge
-	 */
-	DotObject.prototype.set = function (path, val, obj, merge) {
-	  var i;
-	  var k;
-	  var keys;
-	  var key;
-
-	  // Do not operate if the value is undefined.
-	  if (typeof val === 'undefined') {
-	    return obj
-	  }
-	  keys = parsePath(path, this.separator);
-
-	  for (i = 0; i < keys.length; i++) {
-	    key = keys[i];
-	    if (i === keys.length - 1) {
-	      if (merge && isObject$5(val) && isObject$5(obj[key])) {
-	        for (k in val) {
-	          if (hasOwnProperty$b.call(val, k)) {
-	            obj[key][k] = val[k];
-	          }
-	        }
-	      } else if (merge && Array.isArray(obj[key]) && Array.isArray(val)) {
-	        for (var j = 0; j < val.length; j++) {
-	          obj[keys[i]].push(val[j]);
-	        }
-	      } else {
-	        obj[key] = val;
-	      }
-	    } else if (
-	      // force the value to be an object
-	      !hasOwnProperty$b.call(obj, key) ||
-	      (!isObject$5(obj[key]) && !Array.isArray(obj[key]))
-	    ) {
-	      // initialize as array if next key is numeric
-	      if (/^\d+$/.test(keys[i + 1])) {
-	        obj[key] = [];
-	      } else {
-	        obj[key] = {};
-	      }
-	    }
-	    obj = obj[key];
-	  }
-	  return obj
-	};
-
-	/**
-	 *
-	 * Transform an object
-	 *
-	 * Usage:
-	 *
-	 *   var obj = {
-	 *     "id": 1,
-	 *    "some": {
-	 *      "thing": "else"
-	 *    }
-	 *   }
-	 *
-	 *   var transform = {
-	 *     "id": "nr",
-	 *    "some.thing": "name"
-	 *   }
-	 *
-	 *   var tgt = dot.transform(transform, obj)
-	 *
-	 * @param {Object} recipe Transform recipe
-	 * @param {Object} obj Object to be transformed
-	 * @param {Array} mods modifiers for the target
-	 */
-	DotObject.prototype.transform = function (recipe, obj, tgt) {
-	  obj = obj || {};
-	  tgt = tgt || {};
-	  Object.keys(recipe).forEach(
-	    function (key) {
-	      this.set(recipe[key], this.pick(key, obj), tgt);
-	    }.bind(this)
-	  );
-	  return tgt
-	};
-
-	/**
-	 *
-	 * Convert object to dotted-key/value pair
-	 *
-	 * Usage:
-	 *
-	 *   var tgt = dot.dot(obj)
-	 *
-	 *   or
-	 *
-	 *   var tgt = {}
-	 *   dot.dot(obj, tgt)
-	 *
-	 * @param {Object} obj source object
-	 * @param {Object} tgt target object
-	 * @param {Array} path path array (internal)
-	 */
-	DotObject.prototype.dot = function (obj, tgt, path) {
-	  tgt = tgt || {};
-	  path = path || [];
-	  var isArray = Array.isArray(obj);
-
-	  Object.keys(obj).forEach(
-	    function (key) {
-	      var index = isArray && this.useBrackets ? '[' + key + ']' : key;
-	      if (
-	        isArrayOrObject(obj[key]) &&
-	        ((isObject$5(obj[key]) && !isEmptyObject(obj[key])) ||
-	          (Array.isArray(obj[key]) && !this.keepArray && obj[key].length !== 0))
-	      ) {
-	        if (isArray && this.useBrackets) {
-	          var previousKey = path[path.length - 1] || '';
-	          return this.dot(
-	            obj[key],
-	            tgt,
-	            path.slice(0, -1).concat(previousKey + index)
-	          )
-	        } else {
-	          return this.dot(obj[key], tgt, path.concat(index))
-	        }
-	      } else {
-	        if (isArray && this.useBrackets) {
-	          tgt[path.join(this.separator).concat('[' + key + ']')] = obj[key];
-	        } else {
-	          tgt[path.concat(index).join(this.separator)] = obj[key];
-	        }
-	      }
-	    }.bind(this)
-	  );
-	  return tgt
-	};
-
-	DotObject.pick = wrap$2('pick');
-	DotObject.move = wrap$2('move');
-	DotObject.transfer = wrap$2('transfer');
-	DotObject.transform = wrap$2('transform');
-	DotObject.copy = wrap$2('copy');
-	DotObject.object = wrap$2('object');
-	DotObject.str = wrap$2('str');
-	DotObject.set = wrap$2('set');
-	DotObject.delete = wrap$2('delete');
-	DotObject.del = DotObject.remove = wrap$2('remove');
-	DotObject.dot = wrap$2('dot');
-	['override', 'overwrite'].forEach(function (prop) {
-	  Object.defineProperty(DotObject, prop, {
-	    get: function () {
-	      return dotDefault.override
-	    },
-	    set: function (val) {
-	      dotDefault.override = !!val;
-	    }
-	  });
-	});
-	['useArray', 'keepArray', 'useBrackets'].forEach(function (prop) {
-	  Object.defineProperty(DotObject, prop, {
-	    get: function () {
-	      return dotDefault[prop]
-	    },
-	    set: function (val) {
-	      dotDefault[prop] = val;
-	    }
-	  });
-	});
-
-	DotObject._process = _process;
-
-	var dotObject = DotObject;
+	}
 
 	function _objectWithoutPropertiesLoose(source, excluded) {
 	  if (source == null) return {};
@@ -69316,9 +69314,9 @@
 
 	var objectWithoutProperties = _objectWithoutProperties;
 
-	function ownKeys$5(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$5(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$5(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$5(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$6(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 *
 	 * @param output Api object
@@ -69360,14 +69358,14 @@
 	            if (store$3.env === 'test') {
 	              console.log('%cGet Edge Request', 'background: purple; color: white; display: block;', {
 	                idList: idList,
-	                options: _objectSpread$5({}, options)
+	                options: _objectSpread$6({}, options)
 	              });
 	            }
 
 	            _context.next = 11;
 	            return store$3.level2SDK.edgeServices.retrieveEdge({
 	              idList: idList,
-	              options: _objectSpread$5({}, options)
+	              options: _objectSpread$6({}, options)
 	            });
 
 	          case 11:
@@ -69456,7 +69454,7 @@
 	              }), deat = _dispatch.deat, id = _dispatch.id, currentVal = objectWithoutProperties(_dispatch, ["deat", "id"]); //merging existing name field and incoming name field
 
 	              parsedType = parseInt(currentVal.type);
-	              mergedVal = _objectSpread$5(_objectSpread$5({}, currentVal), {}, {
+	              mergedVal = _objectSpread$6(_objectSpread$6({}, currentVal), {}, {
 	                type: parsedType
 	              });
 
@@ -69474,13 +69472,13 @@
 	              _context2.prev = 6;
 
 	              if (store$3.env === 'test') {
-	                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$5(_objectSpread$5({}, mergedVal), {}, {
+	                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
 	                  id: id
 	                }));
 	              }
 
 	              _context2.next = 10;
-	              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$5(_objectSpread$5({}, mergedVal), {}, {
+	              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
 	                id: id
 	              }));
 
@@ -69509,13 +69507,13 @@
 	              _context2.prev = 21;
 
 	              if (store$3.env === 'test') {
-	                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$5(_objectSpread$5({}, mergedVal), {}, {
+	                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
 	                  id: id
 	                }));
 	              }
 
 	              _context2.next = 25;
-	              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$5({}, mergedVal));
+	              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$6({}, mergedVal));
 
 	            case 25:
 	              _yield$store$level2SD3 = _context2.sent;
@@ -69580,9 +69578,9 @@
 	  }();
 	}
 
-	function ownKeys$6(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$6(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$6(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$6(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function get$7(_ref) {
 	  var pageName = _ref.pageName,
@@ -69601,7 +69599,7 @@
 
 	            if (store$3.env === 'test') {
 	              console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
-	                options: _objectSpread$6({}, options)
+	                options: _objectSpread$7({}, options)
 	              });
 	            }
 
@@ -69694,14 +69692,14 @@
 	              _context2.prev = 6;
 
 	              if (store$3.env === 'test') {
-	                console.log('%cUpdate Vertex Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, options), {}, {
+	                console.log('%cUpdate Vertex Request', 'background: purple; color: white; display: block;', _objectSpread$7(_objectSpread$7({}, options), {}, {
 	                  mergedName: mergedName,
 	                  id: id
 	                }));
 	              }
 
 	              _context2.next = 10;
-	              return store$3.level2SDK.vertexServices.updateVertex(_objectSpread$6(_objectSpread$6({}, options), {}, {
+	              return store$3.level2SDK.vertexServices.updateVertex(_objectSpread$7(_objectSpread$7({}, options), {}, {
 	                mergedName: mergedName,
 	                id: id
 	              }));
@@ -69731,13 +69729,13 @@
 	              _context2.prev = 21;
 
 	              if (store$3.env === 'test') {
-	                console.log('%cCreate Vertex Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, options), {}, {
+	                console.log('%cCreate Vertex Request', 'background: purple; color: white; display: block;', _objectSpread$7(_objectSpread$7({}, options), {}, {
 	                  name: name
 	                }));
 	              }
 
 	              _context2.next = 25;
-	              return store$3.level2SDK.vertexServices.createVertex(_objectSpread$6(_objectSpread$6({}, options), {}, {
+	              return store$3.level2SDK.vertexServices.createVertex(_objectSpread$7(_objectSpread$7({}, options), {}, {
 	                name: name
 	              }));
 
@@ -70061,9 +70059,9 @@
 	  return DType;
 	}();
 
-	function ownKeys$7(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$8(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$7(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$7(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$7(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$8(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 *
 	 * @param document: Doc
@@ -70354,7 +70352,7 @@
 	            content = null;
 
 	          case 102:
-	            return _context.abrupt("return", _objectSpread$7(_objectSpread$7({}, document), {}, {
+	            return _context.abrupt("return", _objectSpread$8(_objectSpread$8({}, document), {}, {
 	              name: {
 	                title: name.title,
 	                type: contentType,
@@ -70388,9 +70386,9 @@
 	  };
 	}();
 
-	function ownKeys$8(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$9(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$8(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$8(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$8(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$9(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$9(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$9(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var CONTENT_SIZE_LIMIT = 32768;
 	/**
 	 * @param content: string | Blob
@@ -71089,7 +71087,7 @@
 	            // Does not need to update content
 	            params.name = name;
 	            _context5.next = 32;
-	            return store$3.level2SDK.documentServices.updateDocument(_objectSpread$8(_objectSpread$8({}, params), {}, {
+	            return store$3.level2SDK.documentServices.updateDocument(_objectSpread$9(_objectSpread$9({}, params), {}, {
 	              type: dType.value
 	            })).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
 
@@ -71349,9 +71347,9 @@
 	  };
 	}();
 
-	function ownKeys$9(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$a(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$9(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$9(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$9(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$a(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$a(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$a(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function _createForOfIteratorHelper$e(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$f(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -71810,7 +71808,7 @@
 	            _context8.next = 2;
 	            return store$3.level2SDK.edgeServices.retrieveEdge({
 	              idList: [rootNotebookId],
-	              options: _objectSpread$9(_objectSpread$9({}, options), {}, {
+	              options: _objectSpread$a(_objectSpread$a({}, options), {}, {
 	                type: 10001,
 	                xfname: 'refid'
 	              })
@@ -72250,9 +72248,9 @@
 		retrieve: retrieve$1
 	});
 
-	function ownKeys$a(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$b(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$a(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$a(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$a(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$b(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$b(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$b(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function get$8(_ref) {
 	  var pageName = _ref.pageName,
@@ -72271,14 +72269,14 @@
 	            if (store$3.env === 'test') {
 	              console.log('%cGet Document Request', 'background: purple; color: white; display: block;', {
 	                idList: [ids],
-	                options: _objectSpread$a({}, rest)
+	                options: _objectSpread$b({}, rest)
 	              });
 	            }
 
 	            _context2.next = 5;
 	            return store$3.level2SDK.documentServices.retrieveDocument({
 	              idList: [ids],
-	              options: _objectSpread$a({}, rest)
+	              options: _objectSpread$b({}, rest)
 	            }).then(function (_ref3) {
 	              var data = _ref3.data;
 	              return Promise.all(data.map( /*#__PURE__*/function () {
@@ -72401,13 +72399,13 @@
 	              _context3.prev = 6;
 
 	              if (store$3.env === 'test') {
-	                console.log('%cUpdate Document Request', 'background: purple; color: white; display: block;', _objectSpread$a(_objectSpread$a({}, options), {}, {
+	                console.log('%cUpdate Document Request', 'background: purple; color: white; display: block;', _objectSpread$b(_objectSpread$b({}, options), {}, {
 	                  id: id
 	                }));
 	              }
 
 	              _context3.next = 10;
-	              return store$3.level2SDK.documentServices.updateDocument(_objectSpread$a(_objectSpread$a({}, options), {}, {
+	              return store$3.level2SDK.documentServices.updateDocument(_objectSpread$b(_objectSpread$b({}, options), {}, {
 	                id: id
 	              }));
 
@@ -79466,9 +79464,9 @@
 	})(); // eslint-disable-line semi
 	});
 
-	function ownKeys$b(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$c(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$b(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$b(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$b(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$c(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	var eTypes;
 
@@ -79485,10 +79483,10 @@
 
 	var _Object$keys$reduce = Object.keys(eTypes).reduce(function (acc, cur) {
 	  if (typeof eTypes[cur] === 'number') {
-	    acc[0] = _objectSpread$b(_objectSpread$b({}, acc[0]), {}, defineProperty({}, cur, parseInt(eTypes[cur])));
+	    acc[0] = _objectSpread$c(_objectSpread$c({}, acc[0]), {}, defineProperty({}, cur, parseInt(eTypes[cur])));
 	    acc[2].push(cur);
 	  } else {
-	    acc[1] = _objectSpread$b(_objectSpread$b({}, acc[1]), {}, defineProperty({}, cur, eTypes[cur]));
+	    acc[1] = _objectSpread$c(_objectSpread$c({}, acc[1]), {}, defineProperty({}, cur, eTypes[cur]));
 	    acc[3].push(parseInt(cur));
 	  }
 
@@ -79592,9 +79590,9 @@
 	  };
 	}();
 
-	function ownKeys$c(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$c(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var decodeUID = function decodeUID(uid) {
 	  var lastIOfPlus = uid.lastIndexOf('+');
 
@@ -79831,7 +79829,7 @@
 
 	          case 9:
 	            profile_photo = profileInDoc.profile_photo, restProfile = objectWithoutProperties(profileInDoc, ["profile_photo"]);
-	            profile = _objectSpread$c({}, restProfile); // Retrieve Profile Photo
+	            profile = _objectSpread$d({}, restProfile); // Retrieve Profile Photo
 
 	            if (!profile_photo) {
 	              _context6.next = 17;
@@ -79868,9 +79866,9 @@
 	  };
 	}();
 
-	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -80597,7 +80595,7 @@
 	          case 7:
 	            utf8Uid = store$3.level2SDK.utilServices.base64ToUTF8(uid);
 	            _accountUtils$decodeU = decodeUID(utf8Uid), userId = _accountUtils$decodeU.userId, phone_number = _accountUtils$decodeU.phone_number;
-	            return _context12.abrupt("return", _objectSpread$d(_objectSpread$d({}, status), {}, {
+	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
 	              userId: userId,
 	              phone_number: phone_number
 	            }));
@@ -80606,7 +80604,7 @@
 	            _context12.prev = 12;
 	            _context12.t0 = _context12["catch"](3);
 	            console.log(_context12.t0);
-	            return _context12.abrupt("return", _objectSpread$d(_objectSpread$d({}, status), {}, {
+	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
 	              userId: '',
 	              phone_number: ''
 	            }));
@@ -80664,9 +80662,9 @@
 		verifyUserPassword: verifyUserPassword
 	});
 
-	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$f(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 *
 	 * @param document: Doc
@@ -80957,7 +80955,7 @@
 	            content = null;
 
 	          case 102:
-	            return _context.abrupt("return", _objectSpread$e(_objectSpread$e({}, document), {}, {
+	            return _context.abrupt("return", _objectSpread$f(_objectSpread$f({}, document), {}, {
 	              name: {
 	                title: name.title,
 	                type: contentType,
@@ -81244,9 +81242,9 @@
 		retrieve: retrieve$3
 	});
 
-	function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$g(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$f(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$g(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$g(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$g(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function builtIn(_ref) {
 	  var pageName = _ref.pageName,
@@ -81283,8 +81281,8 @@
 
 
 	              _context.next = 6;
-	              return builtInFn(_objectSpread$f(_objectSpread$f({}, input), {}, {
-	                name: _objectSpread$f(_objectSpread$f({}, currentVal.name), input)
+	              return builtInFn(_objectSpread$g(_objectSpread$g({}, input), {}, {
+	                name: _objectSpread$g(_objectSpread$g({}, currentVal.name), input)
 	              }));
 
 	            case 6:
@@ -81304,7 +81302,7 @@
 	              throw _context.t0;
 
 	            case 14:
-	              if (Array.isArray(res) && res.length > 0 || isObject$4(res)) {
+	              if (Array.isArray(res) && res.length > 0 || isObject$5(res)) {
 	                dispatch({
 	                  type: 'update-data',
 	                  //TODO: handle case for data is an array or an object
@@ -81371,7 +81369,7 @@
 	                    payload: {
 	                      pageName: 'builtIn',
 	                      dataKey: 'builtIn.UserVertex',
-	                      data: _objectSpread$f(_objectSpread$f({}, data), {}, {
+	                      data: _objectSpread$g(_objectSpread$g({}, data), {}, {
 	                        sk: sk
 	                      })
 	                    }
@@ -81410,7 +81408,7 @@
 	                    payload: {
 	                      pageName: 'builtIn',
 	                      dataKey: 'builtIn.UserVertex',
-	                      data: _objectSpread$f(_objectSpread$f({}, data), {}, {
+	                      data: _objectSpread$g(_objectSpread$g({}, data), {}, {
 	                        sk: sk
 	                      })
 	                    }
@@ -81448,7 +81446,7 @@
 	                    payload: {
 	                      pageName: 'builtIn',
 	                      dataKey: 'builtIn.UserVertex',
-	                      data: _objectSpread$f(_objectSpread$f({}, data), {}, {
+	                      data: _objectSpread$g(_objectSpread$g({}, data), {}, {
 	                        sk: sk
 	                      })
 	                    }
@@ -81660,32 +81658,9 @@
 
 	function _arrayLikeToArray$h(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-	function ownKeys$g(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$g(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$g(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$g(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	/**
-	 * Maps ecos.eid to id.
-	 *
-	 * @param edge
-	 * @returns edge
-	 */
-
-	function replaceEidWithId(edge) {
-	  var output = Object.assign({}, edge);
-	  var _output = output,
-	      eid = _output.eid;
-
-	  if (eid) {
-	    var b64Id = store$3.utils.idToBase64(eid);
-	    output = _objectSpread$g(_objectSpread$g({}, output), {}, {
-	      id: b64Id
-	    });
-	    delete output.eid;
-	    return output;
-	  } else {
-	    return edge;
-	  }
-	}
+	function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$h(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
 	 * Merges keys in source object with objects in locations where keys match lookFor.
 	 *
@@ -81750,7 +81725,7 @@
 	          lookFor: lookFor,
 	          locations: locations
 	        }));
-	        output = _objectSpread$g(_objectSpread$g({}, output), mergedObjects);
+	        output = _objectSpread$h(_objectSpread$h({}, output), mergedObjects);
 	        delete output[key];
 	      } else if (Object.keys(parent).length) {
 	        //TODO: test why it is undefined when .Edge:""
@@ -81765,7 +81740,7 @@
 	        output = mergeDeep(_mergedObjects, output);
 	        delete output[key];
 	      }
-	    } else if (isObject$4(output[key])) {
+	    } else if (isObject$5(output[key])) {
 	      output[key] = populateKeys({
 	        source: output[key],
 	        lookFor: lookFor,
@@ -81773,7 +81748,7 @@
 	      });
 	    } else if (Array.isArray(output[key])) {
 	      output[key] = output[key].map(function (elem) {
-	        if (isObject$4(elem)) {
+	        if (isObject$5(elem)) {
 	          return populateKeys({
 	            source: elem,
 	            lookFor: lookFor,
@@ -81823,16 +81798,16 @@
 
 	  var isPop = true;
 
-	  if (isObject$4(itemCopy)) {
+	  if (isObject$5(itemCopy)) {
 	    for (var _i = 0, _Object$keys = Object.keys(itemCopy); _i < _Object$keys.length; _i++) {
 	      var key = _Object$keys[_i];
 	      if (!isPop) return isPop;
 
-	      if (isObject$4(itemCopy[key])) {
+	      if (isObject$5(itemCopy[key])) {
 	        isPop = isPopulated(itemCopy[key]);
 	      } else if (Array.isArray(itemCopy[key])) {
 	        isPop = itemCopy[key].forEach(function (elem) {
-	          if (isObject$4(elem)) {
+	          if (isObject$5(elem)) {
 	            isPop = isPopulated(elem);
 	          } else if (typeof elem === 'string') {
 	            if (elem.startsWith('.') || elem.startsWith('..')) {
@@ -81888,9 +81863,9 @@
 	    //traverse through the page object and look for the api keyword
 	    var output = cloneDeep_1(cadlObject || {});
 
-	    if (isObject$4(output)) {
+	    if (isObject$5(output)) {
 	      Object.keys(output).forEach(function (key) {
-	        if (isObject$4(output[key])) {
+	        if (isObject$5(output[key])) {
 	          output[key] = attachFnsHelper({
 	            pageName: pageName,
 	            cadlObject: output[key],
@@ -81898,7 +81873,7 @@
 	          });
 	        } else if (Array.isArray(output[key])) {
 	          output[key] = output[key].map(function (elem) {
-	            if (isObject$4(elem)) return attachFnsHelper({
+	            if (isObject$5(elem)) return attachFnsHelper({
 	              pageName: pageName,
 	              cadlObject: elem,
 	              dispatch: dispatch
@@ -82058,7 +82033,7 @@
 	          }
 	        });
 	      }
-	    } else if (isObject$4(cadlCopy[key])) {
+	    } else if (isObject$5(cadlCopy[key])) {
 	      cadlCopy[key] = replaceEvalObject({
 	        pageName: pageName,
 	        cadlObject: cadlCopy[key],
@@ -82066,7 +82041,7 @@
 	      });
 	    } else if (Array.isArray(cadlCopy[key])) {
 	      cadlCopy[key] = cadlCopy[key].map(function (elem) {
-	        if (isObject$4(elem)) {
+	        if (isObject$5(elem)) {
 	          return replaceEvalObject({
 	            pageName: pageName,
 	            cadlObject: elem,
@@ -82222,8 +82197,8 @@
 	        dispatch: dispatch,
 	        pageName: pageName
 	      });
-	    } else if (isObject$4(elem)) {
-	      if (!('actionType' in elem && elem.actionType === 'evalObject' && elem.object && isObject$4(elem.object))) {
+	    } else if (isObject$5(elem)) {
+	      if (!('actionType' in elem && elem.actionType === 'evalObject' && elem.object && isObject$5(elem.object))) {
 	        return populateObject({
 	          source: elem,
 	          skip: skip,
@@ -82283,8 +82258,8 @@
 	    var index = key;
 
 	    if (!skip.includes(key) && key !== 'dataKey' && key !== 'if') {
-	      if (isObject$4(sourceCopy[key])) {
-	        if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject$4(sourceCopy[key].object))) {
+	      if (isObject$5(sourceCopy[key])) {
+	        if (!('actionType' in sourceCopy[key] && sourceCopy[key].actionType === 'evalObject' && sourceCopy[key].object && isObject$5(sourceCopy[key].object))) {
 	          sourceCopy[key] = populateObject({
 	            source: sourceCopy[key],
 	            lookFor: lookFor,
@@ -82378,11 +82353,11 @@
 	function replaceUint8ArrayWithBase64(source) {
 	  var sourceCopy = cloneDeep_1(source || {});
 
-	  if (isObject$4(source)) {
+	  if (isObject$5(source)) {
 	    Object.keys(sourceCopy).forEach(function (key) {
 	      if (sourceCopy[key] instanceof Uint8Array) {
 	        sourceCopy[key] = store$3.level2SDK.utilServices.uint8ArrayToBase64(sourceCopy[key]);
-	      } else if (isObject$4(sourceCopy[key])) {
+	      } else if (isObject$5(sourceCopy[key])) {
 	        sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key]);
 	      } else if (Array.isArray(sourceCopy[key]) && !(sourceCopy[key] instanceof Uint8Array)) {
 	        sourceCopy[key] = sourceCopy[key].map(function (elem) {
@@ -82399,9 +82374,9 @@
 	  return sourceCopy;
 	}
 
-	function ownKeys$h(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$i(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$h(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$h(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$h(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$i(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$i(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$i(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	function _createForOfIteratorHelper$h(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$i(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -82849,11 +82824,11 @@
 	              case 5:
 	                builtIn = options.builtIn;
 
-	                if (builtIn && isObject$4(builtIn)) {
+	                if (builtIn && isObject$5(builtIn)) {
 	                  this.newDispatch({
 	                    type: 'ADD_BUILTIN_FNS',
 	                    payload: {
-	                      builtInFns: _objectSpread$h({}, builtIn)
+	                      builtInFns: _objectSpread$i({}, builtIn)
 	                    }
 	                  });
 	                }
@@ -82944,7 +82919,7 @@
 	                break;
 
 	              case 34:
-	                if (!(isObject$4(command) && 'actionType' in command)) {
+	                if (!(isObject$5(command) && 'actionType' in command)) {
 	                  _context2.next = 51;
 	                  break;
 	                }
@@ -82996,7 +82971,7 @@
 	                break;
 
 	              case 51:
-	                if (!(isObject$4(command) && 'if' in command)) {
+	                if (!(isObject$5(command) && 'if' in command)) {
 	                  _context2.next = 56;
 	                  break;
 	                }
@@ -83556,7 +83531,7 @@
 	                          _pathArr4 = _trimPath.split('.');
 	                          _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
 
-	                          if (!isObject$4(_val)) {
+	                          if (!isObject$5(_val)) {
 	                            _context5.next = 24;
 	                            break;
 	                          }
@@ -83756,7 +83731,7 @@
 	                  break;
 	                }
 
-	                if (!(isObject$4(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
+	                if (!(isObject$5(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
 	                  _context6.next = 23;
 	                  break;
 	                }
@@ -83777,7 +83752,7 @@
 	                  break;
 	                }
 
-	                if (!(isObject$4(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
+	                if (!(isObject$5(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
 	                  _context6.next = 33;
 	                  break;
 	                }
@@ -83843,7 +83818,7 @@
 	                break;
 
 	              case 47:
-	                if (!isObject$4(_res)) {
+	                if (!isObject$5(_res)) {
 	                  _context6.next = 58;
 	                  break;
 	                }
@@ -83994,7 +83969,7 @@
 	                break;
 
 	              case 19:
-	                if (!(isObject$4(command) && 'actionType' in command)) {
+	                if (!(isObject$5(command) && 'actionType' in command)) {
 	                  _context7.next = 34;
 	                  break;
 	                }
@@ -84036,7 +84011,7 @@
 	                break;
 
 	              case 34:
-	                if (!(isObject$4(command) && 'if' in command)) {
+	                if (!(isObject$5(command) && 'if' in command)) {
 	                  _context7.next = 47;
 	                  break;
 	                }
@@ -84055,7 +84030,7 @@
 	              case 39:
 	                condResult = _context7.sent;
 
-	                if (!(!condResult && isObject$4(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
+	                if (!(!condResult && isObject$5(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
 	                  _context7.next = 45;
 	                  break;
 	                }
@@ -84382,7 +84357,7 @@
 	  }, {
 	    key: "newDispatch",
 	    value: function newDispatch(action) {
-	      if (!isObject$4(action)) {
+	      if (!isObject$5(action)) {
 	        throw new Error('Actions must be plain objects');
 	      }
 
@@ -84594,9 +84569,9 @@
 	  configUrl: 'https://public.aitmed.com/config'
 	};
 
-	function ownKeys$i(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$j(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$i(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$i(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$i(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$j(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$j(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$j(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
 	  var cadl, vc;
 	  return regenerator.wrap(function _callee2$(_context2) {
@@ -84605,7 +84580,7 @@
 	        case 0:
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
-	          cadl = new CADL(_objectSpread$i(_objectSpread$i({}, defaultConfig$1), {}, {
+	          cadl = new CADL(_objectSpread$j(_objectSpread$j({}, defaultConfig$1), {}, {
 	            configUrl: 'https://public.aitmed.com/config/meet2.yml',
 	            aspectRatio: 3
 	          }));

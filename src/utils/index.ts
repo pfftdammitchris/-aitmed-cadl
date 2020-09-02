@@ -1,6 +1,8 @@
 import pako from 'pako'
 import YAML from 'yaml'
 import axios from 'axios'
+import store from '../common/store'
+
 import {
   UnableToParseYAML,
   UnableToRetrieveYAML,
@@ -208,5 +210,24 @@ export function valPageJump(
 export async function asyncForEach(array, callback) {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array)
+  }
+}
+
+/**
+ * Maps ecos.eid to id.
+ *
+ * @param edge
+ * @returns edge
+ */
+export function replaceEidWithId(edge: Record<string, any>) {
+  let output = Object.assign({}, edge)
+  const { eid } = output
+  if (eid) {
+    const b64Id = store.utils.idToBase64(eid)
+    output = { ...output, id: b64Id }
+    delete output.eid
+    return output
+  } else {
+    return edge
   }
 }

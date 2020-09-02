@@ -1,7 +1,6 @@
 import _ from 'lodash'
 import store from '../../common/store'
-import { replaceEidWithId } from '../utils'
-import { mergeDeep } from '../../utils'
+import { mergeDeep, replaceEidWithId } from '../../utils'
 
 export { get, create }
 
