@@ -19,13 +19,12 @@ export default [
 	{
 		input: 'src/index.ts',
 		output: [
-			{
-				dir: 'dist',
-				format: 'umd',
-				sourcemap: true,
-				globals: {},
-				name: 'aitmedCadl',
-			},
+			// {
+			// 	dir: 'dist',
+			// 	format: 'umd',
+			// 	sourcemap: true,
+			// 	name: 'aitmedCadl',
+			// },
 			{
 				file: pkg.main,
 				format: 'cjs', // CommonJS output
