@@ -241,6 +241,24 @@ function attachFns({
                 : output
               break
             }
+            case 'cd': {
+              output = isPopulated(output)
+                ? [
+                    `${output.dataOut ? output.dataOut : output.dataKey}.name`,
+                    services('cd')({ pageName, apiObject: output, dispatch }),
+                  ]
+                : output
+              break
+            }
+            case 'cv': {
+              output = isPopulated(output)
+                ? [
+                    `${output.dataOut ? output.dataOut : output.dataKey}.name`,
+                    services('cv')({ pageName, apiObject: output, dispatch }),
+                  ]
+                : output
+              break
+            }
             case 'builtIn': {
               output = isPopulated(output)
                 ? [

@@ -81929,6 +81929,26 @@
 	                break;
 	              }
 
+	            case 'cd':
+	              {
+	                output = isPopulated(output) ? ["".concat(output.dataOut ? output.dataOut : output.dataKey, ".name"), services('cd')({
+	                  pageName: pageName,
+	                  apiObject: output,
+	                  dispatch: dispatch
+	                })] : output;
+	                break;
+	              }
+
+	            case 'cv':
+	              {
+	                output = isPopulated(output) ? ["".concat(output.dataOut ? output.dataOut : output.dataKey, ".name"), services('cv')({
+	                  pageName: pageName,
+	                  apiObject: output,
+	                  dispatch: dispatch
+	                })] : output;
+	                break;
+	              }
+
 	            case 'builtIn':
 	              {
 	                output = isPopulated(output) ? ["".concat(output.dataOut ? output.dataOut : output.dataKey, ".name"), services('builtIn')({
