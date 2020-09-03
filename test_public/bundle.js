@@ -72257,25 +72257,26 @@
 	      apiObject = _ref.apiObject,
 	      dispatch = _ref.dispatch;
 	  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var res, _cloneDeep2, api, dataKey, dataIn, dataOut, ids, rest, data;
+	    var res, _cloneDeep2, api, dataKey, dataIn, dataOut, id, ids, rest, idList, data;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
 	        switch (_context2.prev = _context2.next) {
 	          case 0:
-	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, ids = _cloneDeep2.ids, rest = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut", "ids"]);
-	            _context2.prev = 1;
+	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, id = _cloneDeep2.id, ids = _cloneDeep2.ids, rest = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut", "id", "ids"]);
+	            idList = [ids ? ids : id ? id : ''];
+	            _context2.prev = 2;
 
 	            if (store$3.env === 'test') {
 	              console.log('%cGet Document Request', 'background: purple; color: white; display: block;', {
-	                idList: [ids],
+	                idList: idList,
 	                options: _objectSpread$b({}, rest)
 	              });
 	            }
 
-	            _context2.next = 5;
+	            _context2.next = 6;
 	            return store$3.level2SDK.documentServices.retrieveDocument({
-	              idList: [ids],
+	              idList: idList,
 	              options: _objectSpread$b({}, rest)
 	            }).then(function (_ref3) {
 	              var data = _ref3.data;
@@ -72313,7 +72314,7 @@
 	              console.log(err);
 	            });
 
-	          case 5:
+	          case 6:
 	            data = _context2.sent;
 	            res = data;
 
@@ -72321,15 +72322,15 @@
 	              console.log('%cGet Document Response', 'background: purple; color: white; display: block;', res);
 	            }
 
-	            _context2.next = 13;
+	            _context2.next = 14;
 	            break;
 
-	          case 10:
-	            _context2.prev = 10;
-	            _context2.t0 = _context2["catch"](1);
+	          case 11:
+	            _context2.prev = 11;
+	            _context2.t0 = _context2["catch"](2);
 	            throw _context2.t0;
 
-	          case 13:
+	          case 14:
 	            if (res) {
 	              dispatch({
 	                type: 'update-data',
@@ -72352,12 +72353,12 @@
 
 	            return _context2.abrupt("return", res);
 
-	          case 15:
+	          case 16:
 	          case "end":
 	            return _context2.stop();
 	        }
 	      }
-	    }, _callee2, null, [[1, 10]]);
+	    }, _callee2, null, [[2, 11]]);
 	  }));
 	}
 
@@ -72367,15 +72368,15 @@
 	      dispatch = _ref5.dispatch;
 	  return /*#__PURE__*/function () {
 	    var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref6) {
-	      var data, type, _cloneDeep3, dataKey, dataIn, dataOut, id, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
+	      var data, typeForBinary, _cloneDeep3, dataKey, dataIn, dataOut, id, type, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
 
 	      return regenerator.wrap(function _callee3$(_context3) {
 	        while (1) {
 	          switch (_context3.prev = _context3.next) {
 	            case 0:
-	              data = _ref6.data, type = _ref6.type;
+	              data = _ref6.data, typeForBinary = _ref6.typeForBinary;
 	              //@ts-ignore
-	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id;
+	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id, type = _cloneDeep3.type;
 	              currentVal = dispatch({
 	                type: 'get-data',
 	                payload: {

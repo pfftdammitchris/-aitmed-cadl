@@ -9,20 +9,21 @@ export { get, create }
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
     let res
-    const { api, dataKey, dataIn, dataOut, ids, ...rest } = _.cloneDeep(
+    const { api, dataKey, dataIn, dataOut, id, ids, ...rest } = _.cloneDeep(
       apiObject || {}
     )
+    let idList = [ids ? ids : id ? id : '']
     try {
       if (store.env === 'test') {
         console.log(
           '%cGet Document Request',
           'background: purple; color: white; display: block;',
-          { idList: [ids], options: { ...rest } }
+          { idList, options: { ...rest } }
         )
       }
       const data = await store.level2SDK.documentServices
         .retrieveDocument({
-          idList: [ids],
+          idList,
           options: { ...rest },
         })
         .then(({ data }) => {
@@ -75,9 +76,9 @@ function get({ pageName, apiObject, dispatch }) {
 }
 
 function create({ pageName, apiObject, dispatch }) {
-  return async ({ data, type }) => {
+  return async ({ data, typeForBinary }) => {
     //@ts-ignore
-    const { dataKey, dataIn, dataOut, id } = _.cloneDeep(apiObject || {})
+    const { dataKey, dataIn, dataOut, id, type } = _.cloneDeep(apiObject || {})
 
     const currentVal = dispatch({
       type: 'get-data',
