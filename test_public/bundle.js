@@ -82012,7 +82012,7 @@
 	  var cadlCopy = cloneDeep_1(cadlObject || {});
 
 	  Object.keys(cadlCopy).forEach(function (key) {
-	    if (key === 'object' && Array.isArray(cadlCopy[key]) && cadlCopy.actionType === 'evalObject') {
+	    if (key === 'object' && cadlCopy.actionType === 'evalObject' && (Array.isArray(cadlCopy[key]) || isObject$5(cadlCopy[key]))) {
 	      var updateObject = cloneDeep_1(cadlCopy[key]);
 
 	      cadlCopy[key] = evalState({
@@ -83449,7 +83449,8 @@
 	              locations: [this, this.root, this.root[_pageName3]]
 	            });
 
-	            _populateAfterInheriting.map(function (command) {
+	            if (isObject$5(_populateAfterInheriting)) {
+	              var command = _populateAfterInheriting;
 	              var objectKeys = Object.keys(command);
 	              asyncForEach(objectKeys, /*#__PURE__*/function () {
 	                var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
@@ -83467,7 +83468,7 @@
 	                          _context5.next = 3;
 	                          return _this2.handleIfCommand({
 	                            pageName: _pageName3,
-	                            ifCommand: command
+	                            ifCommand: command[key]
 	                          });
 
 	                        case 3:
@@ -83585,7 +83586,145 @@
 	                  return _ref4.apply(this, arguments);
 	                };
 	              }());
-	            }); //populates Global because this object is instantiated once
+	            } else if (Array.isArray(_populateAfterInheriting)) {
+	              _populateAfterInheriting.map(function (command) {
+	                var objectKeys = Object.keys(command);
+	                asyncForEach(objectKeys, /*#__PURE__*/function () {
+	                  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(key) {
+	                    var trimPath, val, _pathArr5, _pathArr6, _trimPath2, _pathArr7, _val2, _populateWithRoot3, _populateWithSelf3, _populateAfterInheriting3, _boundDispatch2;
+
+	                    return regenerator.wrap(function _callee6$(_context6) {
+	                      while (1) {
+	                        switch (_context6.prev = _context6.next) {
+	                          case 0:
+	                            if (!(key === 'if')) {
+	                              _context6.next = 5;
+	                              break;
+	                            }
+
+	                            _context6.next = 3;
+	                            return _this2.handleIfCommand({
+	                              pageName: _pageName3,
+	                              ifCommand: command
+	                            });
+
+	                          case 3:
+	                            _context6.next = 27;
+	                            break;
+
+	                          case 5:
+	                            if (key.startsWith('=')) {
+	                              _context6.next = 10;
+	                              break;
+	                            }
+
+	                            val = command[key];
+
+	                            if (key.startsWith('..')) {
+	                              trimPath = key.substring(2, key.length - 1);
+	                              _pathArr5 = trimPath.split('.');
+
+	                              _this2.newDispatch({
+	                                type: 'SET_VALUE',
+	                                payload: {
+	                                  pageName: _pageName3,
+	                                  dataKey: _pathArr5,
+	                                  value: val
+	                                }
+	                              });
+
+	                              _this2.emit('stateChanged', {
+	                                name: 'update',
+	                                path: "".concat(_pageName3, ".").concat(trimPath),
+	                                newVal: val
+	                              });
+	                            } else if (key.startsWith('.')) {
+	                              trimPath = key.substring(1, key.length - 1);
+	                              _pathArr6 = trimPath.split('.');
+
+	                              _this2.newDispatch({
+	                                type: 'SET_VALUE',
+	                                payload: {
+	                                  dataKey: _pathArr6,
+	                                  value: val
+	                                }
+	                              });
+
+	                              _this2.emit('stateChanged', {
+	                                name: 'update',
+	                                path: "".concat(trimPath),
+	                                newVal: val
+	                              });
+	                            }
+
+	                            _context6.next = 27;
+	                            break;
+
+	                          case 10:
+	                            if (!key.startsWith('=')) {
+	                              _context6.next = 27;
+	                              break;
+	                            }
+
+	                            _trimPath2 = key.substring(2, key.length);
+	                            _pathArr7 = _trimPath2.split('.');
+	                            _val2 = get_1(_this2.root, _pathArr7) || get_1(_this2.root[_pageName3], _pathArr7);
+
+	                            if (!isObject$5(_val2)) {
+	                              _context6.next = 24;
+	                              break;
+	                            }
+
+	                            _populateWithRoot3 = populateObject({
+	                              source: _val2,
+	                              lookFor: '.',
+	                              locations: [_this2.root, _this2.root[_pageName3]]
+	                            });
+	                            _populateWithSelf3 = populateObject({
+	                              source: _populateWithRoot3,
+	                              lookFor: '..',
+	                              locations: [_this2.root, _this2.root[_pageName3]]
+	                            });
+	                            _populateAfterInheriting3 = populateObject({
+	                              source: _populateWithSelf3,
+	                              lookFor: '=',
+	                              locations: [_this2.root, _this2.root[_pageName3]]
+	                            });
+	                            _boundDispatch2 = _this2.dispatch.bind(_this2);
+	                            _val2 = attachFns({
+	                              cadlObject: _populateAfterInheriting3,
+	                              dispatch: _boundDispatch2
+	                            });
+	                            _context6.next = 22;
+	                            return _val2();
+
+	                          case 22:
+	                            _context6.next = 27;
+	                            break;
+
+	                          case 24:
+	                            if (!(typeof _val2 === 'function')) {
+	                              _context6.next = 27;
+	                              break;
+	                            }
+
+	                            _context6.next = 27;
+	                            return _val2();
+
+	                          case 27:
+	                          case "end":
+	                            return _context6.stop();
+	                        }
+	                      }
+	                    }, _callee6);
+	                  }));
+
+	                  return function (_x5) {
+	                    return _ref5.apply(this, arguments);
+	                  };
+	                }());
+	              });
+	            } //populates Global because this object is instantiated once
 	            //unlike pages that are instantiated multiple times and can be repopulated
 	            //when they are loaded again
 
@@ -83663,32 +83802,32 @@
 	  }, {
 	    key: "handleIfCommand",
 	    value: function () {
-	      var _handleIfCommand = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(_ref5) {
+	      var _handleIfCommand = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(_ref6) {
 	        var pageName, ifCommand, _ifCommand$if, condExpression, ifTrueEffect, ifFalseEffect, condResult, lookFor, res, _lookFor, _res, boundDispatch, withFns;
 
-	        return regenerator.wrap(function _callee6$(_context6) {
+	        return regenerator.wrap(function _callee7$(_context7) {
 	          while (1) {
-	            switch (_context6.prev = _context6.next) {
+	            switch (_context7.prev = _context7.next) {
 	              case 0:
-	                pageName = _ref5.pageName, ifCommand = _ref5.ifCommand;
+	                pageName = _ref6.pageName, ifCommand = _ref6.ifCommand;
 	                _ifCommand$if = slicedToArray(ifCommand['if'], 3), condExpression = _ifCommand$if[0], ifTrueEffect = _ifCommand$if[1], ifFalseEffect = _ifCommand$if[2];
 
 	                if (!(typeof condExpression === 'function')) {
-	                  _context6.next = 8;
+	                  _context7.next = 8;
 	                  break;
 	                }
 
-	                _context6.next = 5;
+	                _context7.next = 5;
 	                return condExpression();
 
 	              case 5:
-	                condResult = _context6.sent;
-	                _context6.next = 18;
+	                condResult = _context7.sent;
+	                _context7.next = 18;
 	                break;
 
 	              case 8:
 	                if (!(condExpression.startsWith('.') || condExpression.startsWith('=') || condExpression.startsWith('..'))) {
-	                  _context6.next = 18;
+	                  _context7.next = 18;
 	                  break;
 	                }
 
@@ -83707,16 +83846,16 @@
 	                });
 
 	                if (!(typeof res === 'function')) {
-	                  _context6.next = 17;
+	                  _context7.next = 17;
 	                  break;
 	                }
 
-	                _context6.next = 14;
+	                _context7.next = 14;
 	                return res();
 
 	              case 14:
-	                condResult = _context6.sent;
-	                _context6.next = 18;
+	                condResult = _context7.sent;
+	                _context7.next = 18;
 	                break;
 
 	              case 17:
@@ -83728,62 +83867,62 @@
 
 	              case 18:
 	                if (!(condResult === true)) {
-	                  _context6.next = 25;
+	                  _context7.next = 25;
 	                  break;
 	                }
 
 	                if (!(isObject$5(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
-	                  _context6.next = 23;
+	                  _context7.next = 23;
 	                  break;
 	                }
 
-	                _context6.next = 22;
+	                _context7.next = 22;
 	                return this.root.builtIn['goto'](ifTrueEffect['goto']);
 
 	              case 22:
-	                return _context6.abrupt("return");
+	                return _context7.abrupt("return");
 
 	              case 23:
-	                _context6.next = 58;
+	                _context7.next = 58;
 	                break;
 
 	              case 25:
 	                if (!(condResult === false)) {
-	                  _context6.next = 58;
+	                  _context7.next = 58;
 	                  break;
 	                }
 
 	                if (!(isObject$5(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
-	                  _context6.next = 33;
+	                  _context7.next = 33;
 	                  break;
 	                }
 
 	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context6.next = 31;
+	                  _context7.next = 31;
 	                  break;
 	                }
 
-	                _context6.next = 30;
+	                _context7.next = 30;
 	                return this.root.builtIn['goto'](ifFalseEffect['goto']);
 
 	              case 30:
-	                return _context6.abrupt("return");
+	                return _context7.abrupt("return");
 
 	              case 31:
-	                _context6.next = 40;
+	                _context7.next = 40;
 	                break;
 
 	              case 33:
 	                if (!(typeof ifFalseEffect === 'function')) {
-	                  _context6.next = 39;
+	                  _context7.next = 39;
 	                  break;
 	                }
 
-	                _context6.next = 36;
+	                _context7.next = 36;
 	                return ifFalseEffect();
 
 	              case 36:
-	                return _context6.abrupt("return");
+	                return _context7.abrupt("return");
 
 	              case 39:
 	                if (ifFalseEffect.startsWith('..')) {
@@ -83796,7 +83935,7 @@
 
 	              case 40:
 	                if (!_lookFor) {
-	                  _context6.next = 58;
+	                  _context7.next = 58;
 	                  break;
 	                }
 
@@ -83807,20 +83946,20 @@
 	                });
 
 	                if (!(typeof _res === 'function')) {
-	                  _context6.next = 47;
+	                  _context7.next = 47;
 	                  break;
 	                }
 
-	                _context6.next = 45;
+	                _context7.next = 45;
 	                return _res();
 
 	              case 45:
-	                _context6.next = 58;
+	                _context7.next = 58;
 	                break;
 
 	              case 47:
 	                if (!isObject$5(_res)) {
-	                  _context6.next = 58;
+	                  _context7.next = 58;
 	                  break;
 	                }
 
@@ -83831,35 +83970,35 @@
 	                });
 
 	                if (!(typeof withFns === 'function')) {
-	                  _context6.next = 55;
+	                  _context7.next = 55;
 	                  break;
 	                }
 
-	                _context6.next = 53;
+	                _context7.next = 53;
 	                return withFns();
 
 	              case 53:
-	                _context6.next = 58;
+	                _context7.next = 58;
 	                break;
 
 	              case 55:
 	                if (!(Array.isArray(withFns) && typeof withFns[1] === 'function')) {
-	                  _context6.next = 58;
+	                  _context7.next = 58;
 	                  break;
 	                }
 
-	                _context6.next = 58;
+	                _context7.next = 58;
 	                return withFns[1]();
 
 	              case 58:
 	              case "end":
-	                return _context6.stop();
+	                return _context7.stop();
 	            }
 	          }
-	        }, _callee6, this);
+	        }, _callee7, this);
 	      }));
 
-	      function handleIfCommand(_x5) {
+	      function handleIfCommand(_x6) {
 	        return _handleIfCommand.apply(this, arguments);
 	      }
 
@@ -83878,10 +84017,10 @@
 
 	  }, {
 	    key: "updateObject",
-	    value: function updateObject(_ref6) {
-	      var dataKey = _ref6.dataKey,
-	          dataObject = _ref6.dataObject,
-	          dataObjectKey = _ref6.dataObjectKey;
+	    value: function updateObject(_ref7) {
+	      var dataKey = _ref7.dataKey,
+	          dataObject = _ref7.dataObject,
+	          dataObjectKey = _ref7.dataObjectKey;
 	      var path;
 
 	      if (dataKey.startsWith('.')) {
@@ -83917,12 +84056,12 @@
 	  }, {
 	    key: "runInit",
 	    value: function () {
-	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(pageName) {
+	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(pageName) {
 	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, funcName, _command$if, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	        return regenerator.wrap(function _callee7$(_context7) {
+	        return regenerator.wrap(function _callee8$(_context8) {
 	          while (1) {
-	            switch (_context7.prev = _context7.next) {
+	            switch (_context8.prev = _context8.next) {
 	              case 0:
 	                boundDispatch = this.dispatch.bind(this); //run init commands if any
 
@@ -83930,7 +84069,7 @@
 	                init = page.init;
 
 	                if (!init) {
-	                  _context7.next = 65;
+	                  _context8.next = 65;
 	                  break;
 	                }
 
@@ -83940,7 +84079,7 @@
 
 	              case 5:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context7.next = 65;
+	                  _context8.next = 65;
 	                  break;
 	                }
 
@@ -83948,36 +84087,36 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context7.next = 19;
+	                  _context8.next = 19;
 	                  break;
 	                }
 
-	                _context7.prev = 9;
-	                _context7.next = 12;
+	                _context8.prev = 9;
+	                _context8.next = 12;
 	                return command();
 
 	              case 12:
-	                _context7.next = 17;
+	                _context8.next = 17;
 	                break;
 
 	              case 14:
-	                _context7.prev = 14;
-	                _context7.t0 = _context7["catch"](9);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t0);
+	                _context8.prev = 14;
+	                _context8.t0 = _context8["catch"](9);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context8.t0);
 
 	              case 17:
-	                _context7.next = 57;
+	                _context8.next = 57;
 	                break;
 
 	              case 19:
 	                if (!(isObject$5(command) && 'actionType' in command)) {
-	                  _context7.next = 34;
+	                  _context8.next = 34;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
-	                _context7.t1 = actionType;
-	                _context7.next = _context7.t1 === 'updateObject' ? 24 : _context7.t1 === 'builtIn' ? 26 : 31;
+	                _context8.t1 = actionType;
+	                _context8.next = _context8.t1 === 'updateObject' ? 24 : _context8.t1 === 'builtIn' ? 26 : 31;
 	                break;
 
 	              case 24:
@@ -83985,35 +84124,35 @@
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context7.abrupt("break", 32);
+	                return _context8.abrupt("break", 32);
 
 	              case 26:
 	                if (!(funcName === 'videoChat')) {
-	                  _context7.next = 30;
+	                  _context8.next = 30;
 	                  break;
 	                }
 
 	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
-	                  _context7.next = 30;
+	                  _context8.next = 30;
 	                  break;
 	                }
 
-	                _context7.next = 30;
+	                _context8.next = 30;
 	                return this.root.builtIn[funcName](command);
 
 	              case 30:
-	                return _context7.abrupt("break", 32);
+	                return _context8.abrupt("break", 32);
 
 	              case 31:
-	                return _context7.abrupt("return");
+	                return _context8.abrupt("return");
 
 	              case 32:
-	                _context7.next = 57;
+	                _context8.next = 57;
 	                break;
 
 	              case 34:
 	                if (!(isObject$5(command) && 'if' in command)) {
-	                  _context7.next = 47;
+	                  _context8.next = 47;
 	                  break;
 	                }
 
@@ -84021,59 +84160,59 @@
 	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
 
 	                if (!(typeof condExpression === 'function')) {
-	                  _context7.next = 45;
+	                  _context8.next = 45;
 	                  break;
 	                }
 
-	                _context7.next = 39;
+	                _context8.next = 39;
 	                return condExpression();
 
 	              case 39:
-	                condResult = _context7.sent;
+	                condResult = _context8.sent;
 
 	                if (!(!condResult && isObject$5(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                  _context7.next = 45;
+	                  _context8.next = 45;
 	                  break;
 	                }
 
 	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context7.next = 45;
+	                  _context8.next = 45;
 	                  break;
 	                }
 
-	                _context7.next = 44;
+	                _context8.next = 44;
 	                return this.root.builtIn['goto'](elseEffect['goto']);
 
 	              case 44:
-	                return _context7.abrupt("return");
+	                return _context8.abrupt("return");
 
 	              case 45:
-	                _context7.next = 57;
+	                _context8.next = 57;
 	                break;
 
 	              case 47:
 	                if (!Array.isArray(command)) {
-	                  _context7.next = 57;
+	                  _context8.next = 57;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context7.next = 57;
+	                  _context8.next = 57;
 	                  break;
 	                }
 
-	                _context7.prev = 49;
-	                _context7.next = 52;
+	                _context8.prev = 49;
+	                _context8.next = 52;
 	                return command[0][1]();
 
 	              case 52:
-	                _context7.next = 57;
+	                _context8.next = 57;
 	                break;
 
 	              case 54:
-	                _context7.prev = 54;
-	                _context7.t2 = _context7["catch"](49);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context7.t2);
+	                _context8.prev = 54;
+	                _context8.t2 = _context8["catch"](49);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context8.t2);
 
 	              case 57:
 	                //updating page after command has been called
@@ -84098,18 +84237,18 @@
 	                    pageName: pageName
 	                  }
 	                });
-	                _context7.next = 5;
+	                _context8.next = 5;
 	                break;
 
 	              case 65:
 	              case "end":
-	                return _context7.stop();
+	                return _context8.stop();
 	            }
 	          }
-	        }, _callee7, this, [[9, 14], [49, 54]]);
+	        }, _callee8, this, [[9, 14], [49, 54]]);
 	      }));
 
-	      function runInit(_x6) {
+	      function runInit(_x7) {
 	        return _runInit.apply(this, arguments);
 	      }
 
@@ -84184,9 +84323,9 @@
 
 	  }, {
 	    key: "setValue",
-	    value: function setValue(_ref7) {
-	      var path = _ref7.path,
-	          value = _ref7.value;
+	    value: function setValue(_ref8) {
+	      var path = _ref8.path,
+	          value = _ref8.value;
 	      var pathArr = path.split('.');
 	      this.newDispatch({
 	        type: 'SET_VALUE',
@@ -84208,9 +84347,9 @@
 
 	  }, {
 	    key: "addValue",
-	    value: function addValue(_ref8) {
-	      var path = _ref8.path,
-	          value = _ref8.value;
+	    value: function addValue(_ref9) {
+	      var path = _ref9.path,
+	          value = _ref9.value;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -84241,9 +84380,9 @@
 
 	  }, {
 	    key: "removeValue",
-	    value: function removeValue(_ref9) {
-	      var path = _ref9.path,
-	          predicate = _ref9.predicate;
+	    value: function removeValue(_ref10) {
+	      var path = _ref10.path,
+	          predicate = _ref10.predicate;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -84285,10 +84424,10 @@
 
 	  }, {
 	    key: "replaceValue",
-	    value: function replaceValue(_ref10) {
-	      var path = _ref10.path,
-	          predicate = _ref10.predicate,
-	          value = _ref10.value;
+	    value: function replaceValue(_ref11) {
+	      var path = _ref11.path,
+	          predicate = _ref11.predicate,
+	          value = _ref11.value;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -84417,9 +84556,9 @@
 	              for (var _i4 = 0, _Object$entries4 = Object.entries(_properties2); _i4 < _Object$entries4.length; _i4++) {
 	                var _Object$entries4$_i = slicedToArray(_Object$entries4[_i4], 2),
 	                    _key = _Object$entries4$_i[0],
-	                    _val2 = _Object$entries4$_i[1];
+	                    _val3 = _Object$entries4$_i[1];
 
-	                set_1(draft[_pageName6], _key, _val2);
+	                set_1(draft[_pageName6], _key, _val3);
 	              }
 
 	              break;
@@ -84432,9 +84571,9 @@
 	              for (var _i5 = 0, _Object$entries5 = Object.entries(_builtInFns); _i5 < _Object$entries5.length; _i5++) {
 	                var _Object$entries5$_i = slicedToArray(_Object$entries5[_i5], 2),
 	                    _key2 = _Object$entries5$_i[0],
-	                    _val3 = _Object$entries5$_i[1];
+	                    _val4 = _Object$entries5$_i[1];
 
-	                set_1(draft['builtIn'], _key2, _val3);
+	                set_1(draft['builtIn'], _key2, _val4);
 	              }
 
 	              break;

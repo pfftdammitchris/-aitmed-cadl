@@ -79,7 +79,6 @@ function create({ pageName, apiObject, dispatch }) {
   return async ({ data, typeForBinary }) => {
     //@ts-ignore
     const { dataKey, dataIn, dataOut, id, type } = _.cloneDeep(apiObject || {})
-
     const currentVal = dispatch({
       type: 'get-data',
       payload: {
@@ -90,7 +89,6 @@ function create({ pageName, apiObject, dispatch }) {
 
     const mergedVal = mergeDeep(currentVal, { name: { data, type } })
     const { api, ...options } = mergedVal
-
     let res
     //If id is in apiObject then it is an updateRequest
     if (id) {

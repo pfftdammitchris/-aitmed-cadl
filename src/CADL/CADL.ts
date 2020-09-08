@@ -698,11 +698,12 @@ export default class CADL extends EventEmitter {
           locations: [this, this.root, this.root[pageName]],
         })
 
-        populateAfterInheriting.map((command) => {
+        if (isObject(populateAfterInheriting)) {
+          const command = populateAfterInheriting
           const objectKeys = Object.keys(command)
           asyncForEach(objectKeys, async (key) => {
             if (key === 'if') {
-              await this.handleIfCommand({ pageName, ifCommand: command })
+              await this.handleIfCommand({ pageName, ifCommand: command[key] })
             } else if (!key.startsWith('=')) {
               let trimPath, val
               val = command[key]
@@ -776,7 +777,88 @@ export default class CADL extends EventEmitter {
               }
             }
           })
-        })
+        } else if (Array.isArray(populateAfterInheriting)) {
+          populateAfterInheriting.map((command) => {
+            const objectKeys = Object.keys(command)
+            asyncForEach(objectKeys, async (key) => {
+              if (key === 'if') {
+                await this.handleIfCommand({ pageName, ifCommand: command })
+              } else if (!key.startsWith('=')) {
+                let trimPath, val
+                val = command[key]
+                if (key.startsWith('..')) {
+                  trimPath = key.substring(2, key.length - 1)
+                  const pathArr = trimPath.split('.')
+
+                  this.newDispatch({
+                    type: 'SET_VALUE',
+                    payload: {
+                      pageName,
+                      dataKey: pathArr,
+                      value: val,
+                    },
+                  })
+                  this.emit('stateChanged', {
+                    name: 'update',
+                    path: `${pageName}.${trimPath}`,
+                    newVal: val,
+                  })
+                } else if (key.startsWith('.')) {
+                  trimPath = key.substring(1, key.length - 1)
+                  const pathArr = trimPath.split('.')
+
+                  this.newDispatch({
+                    type: 'SET_VALUE',
+                    payload: {
+                      dataKey: pathArr,
+                      value: val,
+                    },
+                  })
+                  this.emit('stateChanged', {
+                    name: 'update',
+                    path: `${trimPath}`,
+                    newVal: val,
+                  })
+                }
+              } else if (key.startsWith('=')) {
+                const trimPath = key.substring(2, key.length)
+                const pathArr = trimPath.split('.')
+                let val =
+                  _.get(this.root, pathArr) ||
+                  _.get(this.root[pageName], pathArr)
+
+                if (isObject(val)) {
+                  const populateWithRoot = populateObject({
+                    source: val,
+                    lookFor: '.',
+                    locations: [this.root, this.root[pageName]],
+                  })
+
+                  const populateWithSelf = populateObject({
+                    source: populateWithRoot,
+                    lookFor: '..',
+                    locations: [this.root, this.root[pageName]],
+                  })
+
+                  const populateAfterInheriting = populateObject({
+                    source: populateWithSelf,
+                    lookFor: '=',
+                    locations: [this.root, this.root[pageName]],
+                  })
+
+                  const boundDispatch = this.dispatch.bind(this)
+                  val = attachFns({
+                    cadlObject: populateAfterInheriting,
+                    dispatch: boundDispatch,
+                  })
+                  await val()
+                } else if (typeof val === 'function') {
+                  await val()
+                }
+              }
+            })
+          })
+        }
         //populates Global because this object is instantiated once
         //unlike pages that are instantiated multiple times and can be repopulated
         //when they are loaded again
