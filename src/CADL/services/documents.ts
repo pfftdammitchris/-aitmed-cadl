@@ -76,6 +76,7 @@ function get({ pageName, apiObject, dispatch }) {
 }
 
 function create({ pageName, apiObject, dispatch }) {
+  //@ts-ignore
   return async ({ data, typeForBinary }) => {
     //@ts-ignore
     const { dataKey, dataIn, dataOut, id, type } = _.cloneDeep(apiObject || {})
