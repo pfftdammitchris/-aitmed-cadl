@@ -72366,6 +72366,7 @@
 	  var pageName = _ref5.pageName,
 	      apiObject = _ref5.apiObject,
 	      dispatch = _ref5.dispatch;
+	  //@ts-ignore
 	  return /*#__PURE__*/function () {
 	    var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref6) {
 	      var data, typeForBinary, _cloneDeep3, dataKey, dataIn, dataOut, id, type, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
