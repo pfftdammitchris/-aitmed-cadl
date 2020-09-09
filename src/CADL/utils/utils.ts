@@ -408,7 +408,9 @@ function populateString({
   if (!source.startsWith(lookFor)) return source
   let currVal = source
   let replacement
-  if (lookFor === '_' && currVal.includes('.')) {
+  if (lookFor === '~') {
+    currVal = '.myBaseUrl'
+  } else if (lookFor === '_' && currVal.includes('.')) {
     let charArr = currVal.split('')
     let copyPath = _.clone(path) || []
     let currChar = charArr.shift()
@@ -436,7 +438,10 @@ function populateString({
     try {
       replacement = dot.pick(currVal, location)
       // replacement = lookUp(currVal, location)
-      if (replacement && replacement !== source) {
+      if (replacement && lookFor == '~') {
+        replacement = replacement + source.substring(2)
+        break
+      } else if (replacement && replacement !== source) {
         if (
           typeof replacement === 'string' &&
           replacement.startsWith(lookFor)

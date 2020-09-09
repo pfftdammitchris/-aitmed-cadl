@@ -29,6 +29,7 @@ export default class CADL extends EventEmitter {
   private _cadlEndpoint: CADL_OBJECT
   private _cadlBaseUrl: string
   private _baseUrl: string
+  private _myBaseUrl: string
   private _assetsUrl: string
   private _root: Record<string, any> = this.initRoot({})
   private _initCallQueue: any[]
@@ -89,11 +90,14 @@ export default class CADL extends EventEmitter {
       )
     }
 
-    const { web, cadlBaseUrl, cadlMain, designSuffix } = config
+    const { web, cadlBaseUrl, cadlMain, designSuffix, myBaseUrl } = config
     //set cadlVersion
     this.cadlVersion = web.cadlVersion[this.cadlVersion]
     this.designSuffix = designSuffix
     this.cadlBaseUrl = cadlBaseUrl
+
+    //set myBaseUrl
+    this.myBaseUrl = myBaseUrl
 
     //set cadlEndpoint
     let cadlEndpointUrl = `${this.cadlBaseUrl}${cadlMain}`
@@ -110,7 +114,7 @@ export default class CADL extends EventEmitter {
     if (BaseDataModel) {
       const processedBaseDataModel = this.processPopulate({
         source: BaseDataModel,
-        lookFor: ['.', '..', '='],
+        lookFor: ['.', '..', '=', '~'],
       })
       this.newDispatch({
         type: 'SET_ROOT_PROPERTIES',
@@ -122,7 +126,7 @@ export default class CADL extends EventEmitter {
     if (BaseCSS) {
       const processedBaseCSS = this.processPopulate({
         source: BaseCSS,
-        lookFor: ['.', '..', '='],
+        lookFor: ['.', '..', '=', '~'],
       })
       this.newDispatch({
         type: 'SET_ROOT_PROPERTIES',
@@ -132,7 +136,7 @@ export default class CADL extends EventEmitter {
     if (BasePage) {
       const processedBasePage = this.processPopulate({
         source: BasePage,
-        lookFor: ['.', '..', '='],
+        lookFor: ['.', '..', '=', '~'],
       })
       this.newDispatch({
         type: 'SET_ROOT_PROPERTIES',
@@ -148,7 +152,7 @@ export default class CADL extends EventEmitter {
             const rawBaseDataModel = await this.getPage('BaseDataModel')
             const processedBaseDataModel = this.processPopulate({
               source: rawBaseDataModel,
-              lookFor: ['.', '..', '='],
+              lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
               type: 'SET_ROOT_PROPERTIES',
@@ -163,7 +167,7 @@ export default class CADL extends EventEmitter {
             const rawBaseCSS = await this.getPage('BaseCSS')
             const processedBaseCSS = this.processPopulate({
               source: rawBaseCSS,
-              lookFor: ['.', '..', '='],
+              lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
               type: 'SET_ROOT_PROPERTIES',
@@ -176,7 +180,7 @@ export default class CADL extends EventEmitter {
             const rawBasePage = await this.getPage('BasePage')
             const processedBasePage = this.processPopulate({
               source: rawBasePage,
-              lookFor: ['.', '..', '='],
+              lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
               type: 'SET_ROOT_PROPERTIES',
@@ -188,7 +192,7 @@ export default class CADL extends EventEmitter {
             const rawPage = await this.getPage(pageName)
             const processedRawPage = this.processPopulate({
               source: rawPage,
-              lookFor: ['.', '..', '='],
+              lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
               type: 'SET_ROOT_PROPERTIES',
@@ -275,7 +279,7 @@ export default class CADL extends EventEmitter {
     }
     const processedFormData = this.processPopulate({
       source: pageCADL,
-      lookFor: ['.', '..', '='],
+      lookFor: ['.', '..', '=', '~'],
       skip: ['update', 'components', 'init', ...skip],
       withFns: true,
       pageName,
@@ -285,7 +289,7 @@ export default class CADL extends EventEmitter {
     //process components
     const processedWithFns = this.processPopulate({
       source: processedFormData,
-      lookFor: ['.', '..', '=', '_'],
+      lookFor: ['.', '..', '=', '_', '~'],
       skip: ['update', 'formData', 'components', ...skip],
       withFns: true,
       pageName,
@@ -401,7 +405,7 @@ export default class CADL extends EventEmitter {
     //process components
     const processedComponents = this.processPopulate({
       source: processedPage,
-      lookFor: ['.', '..', '=', '_'],
+      lookFor: ['.', '..', '=', '_', '~'],
       skip: ['update', 'formData', ...skip],
       withFns: true,
       pageName,
@@ -409,7 +413,7 @@ export default class CADL extends EventEmitter {
     //process components again to fill in new values
     const processedComponentsAgain = this.processPopulate({
       source: processedComponents,
-      lookFor: ['.', '..', '=', '_'],
+      lookFor: ['.', '..', '=', '_', '~'],
       skip: ['update', 'formData', ...skip],
       withFns: true,
       pageName,
@@ -535,7 +539,6 @@ export default class CADL extends EventEmitter {
       lookFor: '.',
       locations: [this.root, sourceCopy],
     })
-
     //populate the keys from the local page object
     const sourceCopyWithLocalKeys = populateKeys({
       source: sourceCopyWithRootKeys,
@@ -551,7 +554,7 @@ export default class CADL extends EventEmitter {
       source: sourceCopyWithLocalKeys,
       lookFor,
       skip,
-      locations: [this.root, localRoot],
+      locations: [this, this.root, localRoot],
       pageName,
       dispatch: boundDispatch,
     })
@@ -594,9 +597,14 @@ export default class CADL extends EventEmitter {
           lookFor: '=',
           locations: [this.root, this.root[pageName]],
         })
+        const populateMyBaseUrl = populateObject({
+          source: populateAfterInheriting,
+          lookFor: '~',
+          locations: [this],
+        })
 
         const withFNs = attachFns({
-          cadlObject: populateAfterInheriting,
+          cadlObject: populateMyBaseUrl,
           dispatch: boundDispatch,
         })
 
@@ -697,8 +705,13 @@ export default class CADL extends EventEmitter {
           lookFor: '=',
           locations: [this, this.root, this.root[pageName]],
         })
+        const populateAfterAttachingMyBaseUrl = populateObject({
+          source: populateAfterInheriting,
+          lookFor: '~',
+          locations: [this],
+        })
 
-        if (isObject(populateAfterInheriting)) {
+        if (isObject(populateAfterAttachingMyBaseUrl)) {
           const command = populateAfterInheriting
           const objectKeys = Object.keys(command)
           asyncForEach(objectKeys, async (key) => {
@@ -765,10 +778,15 @@ export default class CADL extends EventEmitter {
                   lookFor: '=',
                   locations: [this.root, this.root[pageName]],
                 })
+                const populateAfterAttachingMyBaseUrl = populateObject({
+                  source: populateAfterInheriting,
+                  lookFor: '~',
+                  locations: [this],
+                })
 
                 const boundDispatch = this.dispatch.bind(this)
                 val = attachFns({
-                  cadlObject: populateAfterInheriting,
+                  cadlObject: populateAfterAttachingMyBaseUrl,
                   dispatch: boundDispatch,
                 })
                 await val()
@@ -1436,6 +1454,13 @@ export default class CADL extends EventEmitter {
 
   public set baseUrl(baseUrl) {
     this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
+  }
+  public get myBaseUrl() {
+    return this._myBaseUrl
+  }
+
+  public set myBaseUrl(myBaseUrl) {
+    this._myBaseUrl = myBaseUrl
   }
 
   public get cadlBaseUrl() {

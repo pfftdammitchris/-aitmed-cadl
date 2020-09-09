@@ -82085,7 +82085,9 @@
 	  var currVal = source;
 	  var replacement;
 
-	  if (lookFor === '_' && currVal.includes('.')) {
+	  if (lookFor === '~') {
+	    currVal = '.myBaseUrl';
+	  } else if (lookFor === '_' && currVal.includes('.')) {
 	    var charArr = currVal.split('');
 	    var copyPath = clone_1(path) || [];
 	    var currChar = charArr.shift();
@@ -82124,7 +82126,10 @@
 	      try {
 	        replacement = dotObject.pick(currVal, location); // replacement = lookUp(currVal, location)
 
-	        if (replacement && replacement !== source) {
+	        if (replacement && lookFor == '~') {
+	          replacement = replacement + source.substring(2);
+	          break;
+	        } else if (replacement && replacement !== source) {
 	          if (typeof replacement === 'string' && replacement.startsWith(lookFor)) {
 	            return populateString({
 	              source: replacement,
@@ -82420,6 +82425,8 @@
 
 	    defineProperty(assertThisInitialized(_this), "_baseUrl", void 0);
 
+	    defineProperty(assertThisInitialized(_this), "_myBaseUrl", void 0);
+
 	    defineProperty(assertThisInitialized(_this), "_assetsUrl", void 0);
 
 	    defineProperty(assertThisInitialized(_this), "_root", _this.initRoot({}));
@@ -82474,6 +82481,7 @@
 	            cadlBaseUrl,
 	            cadlMain,
 	            designSuffix,
+	            myBaseUrl,
 	            cadlEndpointUrl,
 	            cadlEndpoint,
 	            _this$cadlEndpoint,
@@ -82518,17 +82526,19 @@
 	                throw new UnableToLoadConfig('An error occured while trying to load the config', _context.t0);
 
 	              case 10:
-	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain, designSuffix = _config.designSuffix; //set cadlVersion
+	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain, designSuffix = _config.designSuffix, myBaseUrl = _config.myBaseUrl; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
 	                this.designSuffix = designSuffix;
-	                this.cadlBaseUrl = cadlBaseUrl; //set cadlEndpoint
+	                this.cadlBaseUrl = cadlBaseUrl; //set myBaseUrl
+
+	                this.myBaseUrl = myBaseUrl; //set cadlEndpoint
 
 	                cadlEndpointUrl = "".concat(this.cadlBaseUrl).concat(cadlMain);
-	                _context.next = 17;
+	                _context.next = 18;
 	                return this.defaultObject(cadlEndpointUrl);
 
-	              case 17:
+	              case 18:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
 	                _this$cadlEndpoint = this.cadlEndpoint, baseUrl = _this$cadlEndpoint.baseUrl, assetsUrl = _this$cadlEndpoint.assetsUrl, preload = _this$cadlEndpoint.preload; //set baseUrl and assets Url
@@ -82539,7 +82549,7 @@
 	                if (BaseDataModel) {
 	                  processedBaseDataModel = this.processPopulate({
 	                    source: BaseDataModel,
-	                    lookFor: ['.', '..', '=']
+	                    lookFor: ['.', '..', '=', '~']
 	                  });
 	                  this.newDispatch({
 	                    type: 'SET_ROOT_PROPERTIES',
@@ -82552,7 +82562,7 @@
 	                if (BaseCSS) {
 	                  processedBaseCSS = this.processPopulate({
 	                    source: BaseCSS,
-	                    lookFor: ['.', '..', '=']
+	                    lookFor: ['.', '..', '=', '~']
 	                  });
 	                  this.newDispatch({
 	                    type: 'SET_ROOT_PROPERTIES',
@@ -82565,7 +82575,7 @@
 	                if (BasePage) {
 	                  processedBasePage = this.processPopulate({
 	                    source: BasePage,
-	                    lookFor: ['.', '..', '=']
+	                    lookFor: ['.', '..', '=', '~']
 	                  });
 	                  this.newDispatch({
 	                    type: 'SET_ROOT_PROPERTIES',
@@ -82576,43 +82586,43 @@
 	                }
 
 	                if (!(preload && preload.length)) {
-	                  _context.next = 74;
+	                  _context.next = 75;
 	                  break;
 	                }
 
 	                _iterator = _createForOfIteratorHelper$h(preload);
-	                _context.prev = 27;
+	                _context.prev = 28;
 
 	                _iterator.s();
 
-	              case 29:
+	              case 30:
 	                if ((_step = _iterator.n()).done) {
-	                  _context.next = 66;
+	                  _context.next = 67;
 	                  break;
 	                }
 
 	                pageName = _step.value;
 	                _context.t1 = pageName;
-	                _context.next = _context.t1 === 'BaseDataModel' ? 34 : _context.t1 === 'BaseCSS' ? 42 : _context.t1 === 'BasePage' ? 50 : 58;
+	                _context.next = _context.t1 === 'BaseDataModel' ? 35 : _context.t1 === 'BaseCSS' ? 43 : _context.t1 === 'BasePage' ? 51 : 59;
 	                break;
 
-	              case 34:
+	              case 35:
 	                if (!BaseDataModel) {
-	                  _context.next = 36;
+	                  _context.next = 37;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 36:
-	                _context.next = 38;
+	              case 37:
+	                _context.next = 39;
 	                return this.getPage('BaseDataModel');
 
-	              case 38:
+	              case 39:
 	                rawBaseDataModel = _context.sent;
 	                _processedBaseDataModel = this.processPopulate({
 	                  source: rawBaseDataModel,
-	                  lookFor: ['.', '..', '=']
+	                  lookFor: ['.', '..', '=', '~']
 	                });
 	                this.newDispatch({
 	                  type: 'SET_ROOT_PROPERTIES',
@@ -82620,25 +82630,25 @@
 	                    properties: _processedBaseDataModel
 	                  }
 	                });
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 42:
+	              case 43:
 	                if (!BaseCSS) {
-	                  _context.next = 44;
+	                  _context.next = 45;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 44:
-	                _context.next = 46;
+	              case 45:
+	                _context.next = 47;
 	                return this.getPage('BaseCSS');
 
-	              case 46:
+	              case 47:
 	                rawBaseCSS = _context.sent;
 	                _processedBaseCSS = this.processPopulate({
 	                  source: rawBaseCSS,
-	                  lookFor: ['.', '..', '=']
+	                  lookFor: ['.', '..', '=', '~']
 	                });
 	                this.newDispatch({
 	                  type: 'SET_ROOT_PROPERTIES',
@@ -82646,25 +82656,25 @@
 	                    properties: _processedBaseCSS
 	                  }
 	                });
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 50:
+	              case 51:
 	                if (!BasePage) {
-	                  _context.next = 52;
+	                  _context.next = 53;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 52:
-	                _context.next = 54;
+	              case 53:
+	                _context.next = 55;
 	                return this.getPage('BasePage');
 
-	              case 54:
+	              case 55:
 	                rawBasePage = _context.sent;
 	                _processedBasePage = this.processPopulate({
 	                  source: rawBasePage,
-	                  lookFor: ['.', '..', '=']
+	                  lookFor: ['.', '..', '=', '~']
 	                });
 	                this.newDispatch({
 	                  type: 'SET_ROOT_PROPERTIES',
@@ -82672,17 +82682,17 @@
 	                    properties: _processedBasePage
 	                  }
 	                });
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 58:
-	                _context.next = 60;
+	              case 59:
+	                _context.next = 61;
 	                return this.getPage(pageName);
 
-	              case 60:
+	              case 61:
 	                rawPage = _context.sent;
 	                processedRawPage = this.processPopulate({
 	                  source: rawPage,
-	                  lookFor: ['.', '..', '=']
+	                  lookFor: ['.', '..', '=', '~']
 	                });
 	                this.newDispatch({
 	                  type: 'SET_ROOT_PROPERTIES',
@@ -82690,30 +82700,30 @@
 	                    properties: processedRawPage
 	                  }
 	                });
-	                return _context.abrupt("break", 64);
+	                return _context.abrupt("break", 65);
 
-	              case 64:
-	                _context.next = 29;
+	              case 65:
+	                _context.next = 30;
 	                break;
 
-	              case 66:
-	                _context.next = 71;
+	              case 67:
+	                _context.next = 72;
 	                break;
 
-	              case 68:
-	                _context.prev = 68;
-	                _context.t2 = _context["catch"](27);
+	              case 69:
+	                _context.prev = 69;
+	                _context.t2 = _context["catch"](28);
 
 	                _iterator.e(_context.t2);
 
-	              case 71:
-	                _context.prev = 71;
+	              case 72:
+	                _context.prev = 72;
 
 	                _iterator.f();
 
-	                return _context.finish(71);
+	                return _context.finish(72);
 
-	              case 74:
+	              case 75:
 	                localStorageGlobal = localStorage.getItem('Global');
 	                localStorageGlobalParsed = null;
 
@@ -82752,12 +82762,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 78:
+	              case 79:
 	              case "end":
 	                return _context.stop();
 	            }
 	          }
-	        }, _callee, this, [[1, 7], [27, 68, 71, 74]]);
+	        }, _callee, this, [[1, 7], [28, 69, 72, 75]]);
 	      }));
 
 	      function init() {
@@ -82854,7 +82864,7 @@
 
 	                processedFormData = this.processPopulate({
 	                  source: pageCADL,
-	                  lookFor: ['.', '..', '='],
+	                  lookFor: ['.', '..', '=', '~'],
 	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
@@ -82863,7 +82873,7 @@
 
 	                processedWithFns = this.processPopulate({
 	                  source: processedFormData,
-	                  lookFor: ['.', '..', '=', '_'],
+	                  lookFor: ['.', '..', '=', '_', '~'],
 	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
@@ -83043,7 +83053,7 @@
 	                //process components
 	                processedComponents = this.processPopulate({
 	                  source: processedPage,
-	                  lookFor: ['.', '..', '=', '_'],
+	                  lookFor: ['.', '..', '=', '_', '~'],
 	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
@@ -83051,7 +83061,7 @@
 
 	                processedComponentsAgain = this.processPopulate({
 	                  source: processedComponents,
-	                  lookFor: ['.', '..', '=', '_'],
+	                  lookFor: ['.', '..', '=', '_', '~'],
 	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
@@ -83270,7 +83280,7 @@
 	        source: sourceCopyWithLocalKeys,
 	        lookFor: lookFor,
 	        skip: skip,
-	        locations: [this.root, localRoot],
+	        locations: [this, this.root, localRoot],
 	        pageName: pageName,
 	        dispatch: boundDispatch
 	      });
@@ -83319,8 +83329,13 @@
 	              lookFor: '=',
 	              locations: [this.root, this.root[pageName]]
 	            });
+	            var populateMyBaseUrl = populateObject({
+	              source: populateAfterInheriting,
+	              lookFor: '~',
+	              locations: [this]
+	            });
 	            var withFNs = attachFns({
-	              cadlObject: populateAfterInheriting,
+	              cadlObject: populateMyBaseUrl,
 	              dispatch: boundDispatch
 	            });
 	            this.newDispatch({
@@ -83450,12 +83465,18 @@
 	              locations: [this, this.root, this.root[_pageName3]]
 	            });
 
-	            if (isObject$5(_populateAfterInheriting)) {
+	            var populateAfterAttachingMyBaseUrl = populateObject({
+	              source: _populateAfterInheriting,
+	              lookFor: '~',
+	              locations: [this]
+	            });
+
+	            if (isObject$5(populateAfterAttachingMyBaseUrl)) {
 	              var command = _populateAfterInheriting;
 	              var objectKeys = Object.keys(command);
 	              asyncForEach(objectKeys, /*#__PURE__*/function () {
 	                var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                  var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _boundDispatch;
+	                  var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _populateAfterAttachingMyBaseUrl, _boundDispatch;
 
 	                  return regenerator.wrap(function _callee5$(_context5) {
 	                    while (1) {
@@ -83473,7 +83494,7 @@
 	                          });
 
 	                        case 3:
-	                          _context5.next = 27;
+	                          _context5.next = 28;
 	                          break;
 
 	                        case 5:
@@ -83521,12 +83542,12 @@
 	                            });
 	                          }
 
-	                          _context5.next = 27;
+	                          _context5.next = 28;
 	                          break;
 
 	                        case 10:
 	                          if (!key.startsWith('=')) {
-	                            _context5.next = 27;
+	                            _context5.next = 28;
 	                            break;
 	                          }
 
@@ -83535,7 +83556,7 @@
 	                          _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
 
 	                          if (!isObject$5(_val)) {
-	                            _context5.next = 24;
+	                            _context5.next = 25;
 	                            break;
 	                          }
 
@@ -83554,28 +83575,33 @@
 	                            lookFor: '=',
 	                            locations: [_this2.root, _this2.root[_pageName3]]
 	                          });
+	                          _populateAfterAttachingMyBaseUrl = populateObject({
+	                            source: _populateAfterInheriting2,
+	                            lookFor: '~',
+	                            locations: [_this2]
+	                          });
 	                          _boundDispatch = _this2.dispatch.bind(_this2);
 	                          _val = attachFns({
-	                            cadlObject: _populateAfterInheriting2,
+	                            cadlObject: _populateAfterAttachingMyBaseUrl,
 	                            dispatch: _boundDispatch
 	                          });
-	                          _context5.next = 22;
+	                          _context5.next = 23;
 	                          return _val();
 
-	                        case 22:
-	                          _context5.next = 27;
+	                        case 23:
+	                          _context5.next = 28;
 	                          break;
 
-	                        case 24:
+	                        case 25:
 	                          if (!(typeof _val === 'function')) {
-	                            _context5.next = 27;
+	                            _context5.next = 28;
 	                            break;
 	                          }
 
-	                          _context5.next = 27;
+	                          _context5.next = 28;
 	                          return _val();
 
-	                        case 27:
+	                        case 28:
 	                        case "end":
 	                          return _context5.stop();
 	                      }
@@ -84623,6 +84649,14 @@
 	    },
 	    set: function set(baseUrl) {
 	      this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl);
+	    }
+	  }, {
+	    key: "myBaseUrl",
+	    get: function get() {
+	      return this._myBaseUrl;
+	    },
+	    set: function set(myBaseUrl) {
+	      this._myBaseUrl = myBaseUrl;
 	    }
 	  }, {
 	    key: "cadlBaseUrl",
