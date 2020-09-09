@@ -27,7 +27,7 @@ import builtInFns from './services/builtIn'
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
   private _cadlEndpoint: CADL_OBJECT
-  private _cadlBaseUrl: string
+  private _cadlBaseUrl: string | undefined
   private _baseUrl: string
   private _myBaseUrl: string
   private _assetsUrl: string
@@ -102,6 +102,7 @@ export default class CADL extends EventEmitter {
     //set cadlEndpoint
     let cadlEndpointUrl = `${this.cadlBaseUrl}${cadlMain}`
     let cadlEndpoint = await this.defaultObject(cadlEndpointUrl)
+
     this.cadlEndpoint = cadlEndpoint
 
     const { baseUrl, assetsUrl, preload } = this.cadlEndpoint
@@ -445,8 +446,15 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     let pageCADL
+    let pageUrl
+    if (pageName.startsWith('~')) {
+      pageUrl = this.myBaseUrl
+      pageName = pageName.substring(2)
+    } else {
+      pageUrl = this.baseUrl
+    }
     try {
-      let url = `${this.baseUrl}${pageName}_en.yml`
+      let url = `${pageUrl}${pageName}_en.yml`
       pageCADL = await this.defaultObject(url)
     } catch (error) {
       throw error
@@ -1448,12 +1456,14 @@ export default class CADL extends EventEmitter {
   public set cadlEndpoint(cadlEndpoint) {
     this._cadlEndpoint = cadlEndpoint
   }
-  public get baseUrl() {
+  private get baseUrl() {
     return this._baseUrl
   }
 
-  public set baseUrl(baseUrl) {
-    this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
+  private set baseUrl(baseUrl) {
+    if (this.cadlBaseUrl) {
+      this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
+    }
   }
   public get myBaseUrl() {
     return this._myBaseUrl
@@ -1464,6 +1474,7 @@ export default class CADL extends EventEmitter {
   }
 
   public get cadlBaseUrl() {
+    if (!this._cadlBaseUrl) return undefined
     let baseUrlWithVersion = this._cadlBaseUrl
     if (baseUrlWithVersion.includes('cadlVersion')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
@@ -1489,7 +1500,9 @@ export default class CADL extends EventEmitter {
   }
 
   public set assetsUrl(assetsUrl) {
-    this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
+    if (this.cadlBaseUrl) {
+      this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
+    }
   }
 
   public get designSuffix() {
