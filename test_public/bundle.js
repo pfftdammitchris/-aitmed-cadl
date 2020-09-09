@@ -82511,22 +82511,21 @@
 	            switch (_context.prev = _context.next) {
 	              case 0:
 	                _ref2 = _args.length > 0 && _args[0] !== undefined ? _args[0] : {}, BaseDataModel = _ref2.BaseDataModel, BaseCSS = _ref2.BaseCSS, BasePage = _ref2.BasePage;
-	                debugger;
-	                _context.prev = 2;
-	                _context.next = 5;
+	                _context.prev = 1;
+	                _context.next = 4;
 	                return store$3.level2SDK.loadConfigData();
 
-	              case 5:
+	              case 4:
 	                config = _context.sent;
-	                _context.next = 11;
+	                _context.next = 10;
 	                break;
 
-	              case 8:
-	                _context.prev = 8;
-	                _context.t0 = _context["catch"](2);
+	              case 7:
+	                _context.prev = 7;
+	                _context.t0 = _context["catch"](1);
 	                throw new UnableToLoadConfig('An error occured while trying to load the config', _context.t0);
 
-	              case 11:
+	              case 10:
 	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain, designSuffix = _config.designSuffix, myBaseUrl = _config.myBaseUrl; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
@@ -82536,10 +82535,10 @@
 	                this.myBaseUrl = myBaseUrl; //set cadlEndpoint
 
 	                cadlEndpointUrl = "".concat(this.cadlBaseUrl).concat(cadlMain);
-	                _context.next = 19;
+	                _context.next = 18;
 	                return this.defaultObject(cadlEndpointUrl);
 
-	              case 19:
+	              case 18:
 	                cadlEndpoint = _context.sent;
 	                this.cadlEndpoint = cadlEndpoint;
 	                _this$cadlEndpoint = this.cadlEndpoint, baseUrl = _this$cadlEndpoint.baseUrl, assetsUrl = _this$cadlEndpoint.assetsUrl, preload = _this$cadlEndpoint.preload; //set baseUrl and assets Url
@@ -82587,39 +82586,39 @@
 	                }
 
 	                if (!(preload && preload.length)) {
-	                  _context.next = 76;
+	                  _context.next = 75;
 	                  break;
 	                }
 
 	                _iterator = _createForOfIteratorHelper$h(preload);
-	                _context.prev = 29;
+	                _context.prev = 28;
 
 	                _iterator.s();
 
-	              case 31:
+	              case 30:
 	                if ((_step = _iterator.n()).done) {
-	                  _context.next = 68;
+	                  _context.next = 67;
 	                  break;
 	                }
 
 	                pageName = _step.value;
 	                _context.t1 = pageName;
-	                _context.next = _context.t1 === 'BaseDataModel' ? 36 : _context.t1 === 'BaseCSS' ? 44 : _context.t1 === 'BasePage' ? 52 : 60;
+	                _context.next = _context.t1 === 'BaseDataModel' ? 35 : _context.t1 === 'BaseCSS' ? 43 : _context.t1 === 'BasePage' ? 51 : 59;
 	                break;
 
-	              case 36:
+	              case 35:
 	                if (!BaseDataModel) {
-	                  _context.next = 38;
+	                  _context.next = 37;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 38:
-	                _context.next = 40;
+	              case 37:
+	                _context.next = 39;
 	                return this.getPage('BaseDataModel');
 
-	              case 40:
+	              case 39:
 	                rawBaseDataModel = _context.sent;
 	                _processedBaseDataModel = this.processPopulate({
 	                  source: rawBaseDataModel,
@@ -82631,21 +82630,21 @@
 	                    properties: _processedBaseDataModel
 	                  }
 	                });
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 44:
+	              case 43:
 	                if (!BaseCSS) {
-	                  _context.next = 46;
+	                  _context.next = 45;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 46:
-	                _context.next = 48;
+	              case 45:
+	                _context.next = 47;
 	                return this.getPage('BaseCSS');
 
-	              case 48:
+	              case 47:
 	                rawBaseCSS = _context.sent;
 	                _processedBaseCSS = this.processPopulate({
 	                  source: rawBaseCSS,
@@ -82657,21 +82656,21 @@
 	                    properties: _processedBaseCSS
 	                  }
 	                });
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 52:
+	              case 51:
 	                if (!BasePage) {
-	                  _context.next = 54;
+	                  _context.next = 53;
 	                  break;
 	                }
 
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 54:
-	                _context.next = 56;
+	              case 53:
+	                _context.next = 55;
 	                return this.getPage('BasePage');
 
-	              case 56:
+	              case 55:
 	                rawBasePage = _context.sent;
 	                _processedBasePage = this.processPopulate({
 	                  source: rawBasePage,
@@ -82683,13 +82682,13 @@
 	                    properties: _processedBasePage
 	                  }
 	                });
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 60:
-	                _context.next = 62;
+	              case 59:
+	                _context.next = 61;
 	                return this.getPage(pageName);
 
-	              case 62:
+	              case 61:
 	                rawPage = _context.sent;
 	                processedRawPage = this.processPopulate({
 	                  source: rawPage,
@@ -82701,30 +82700,30 @@
 	                    properties: processedRawPage
 	                  }
 	                });
-	                return _context.abrupt("break", 66);
+	                return _context.abrupt("break", 65);
 
-	              case 66:
-	                _context.next = 31;
+	              case 65:
+	                _context.next = 30;
 	                break;
 
-	              case 68:
-	                _context.next = 73;
+	              case 67:
+	                _context.next = 72;
 	                break;
 
-	              case 70:
-	                _context.prev = 70;
-	                _context.t2 = _context["catch"](29);
+	              case 69:
+	                _context.prev = 69;
+	                _context.t2 = _context["catch"](28);
 
 	                _iterator.e(_context.t2);
 
-	              case 73:
-	                _context.prev = 73;
+	              case 72:
+	                _context.prev = 72;
 
 	                _iterator.f();
 
-	                return _context.finish(73);
+	                return _context.finish(72);
 
-	              case 76:
+	              case 75:
 	                localStorageGlobal = localStorage.getItem('Global');
 	                localStorageGlobalParsed = null;
 
@@ -82763,12 +82762,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 80:
+	              case 79:
 	              case "end":
 	                return _context.stop();
 	            }
 	          }
-	        }, _callee, this, [[2, 8], [29, 70, 73, 76]]);
+	        }, _callee, this, [[1, 7], [28, 69, 72, 75]]);
 	      }));
 
 	      function init() {
@@ -84671,7 +84670,6 @@
 	  }, {
 	    key: "cadlBaseUrl",
 	    get: function get() {
-	      debugger;
 	      if (!this._cadlBaseUrl) return undefined;
 	      var baseUrlWithVersion = this._cadlBaseUrl;
 
