@@ -9,16 +9,25 @@ export { get, create }
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
     let res
-    const { api, dataKey, dataIn, dataOut, id, ids, ...rest } = _.cloneDeep(
-      apiObject || {}
-    )
+    const {
+      api,
+      dataKey,
+      dataIn,
+      dataOut,
+      id,
+      ids,
+      filter: { applicationDataType = '' },
+      type,
+      maxcount,
+      ...rest
+    } = _.cloneDeep(apiObject || {})
     let idList = [ids ? ids : id ? id : '']
     try {
       if (store.env === 'test') {
         console.log(
           '%cGet Document Request',
           'background: purple; color: white; display: block;',
-          { idList, options: { ...rest } }
+          { idList, options: { ...rest, maxcount } }
         )
       }
       const data = await store.level2SDK.documentServices
@@ -53,6 +62,16 @@ function get({ pageName, apiObject, dispatch }) {
       throw error
     }
     if (res) {
+      if (Array.isArray(res) && res.length && applicationDataType) {
+        const filteredRes = res.filter((doc) => {
+          return doc.type.applicationDataType === parseInt(applicationDataType)
+        })
+        if (filteredRes.length && parseInt(maxcount) === 1) {
+          res = filteredRes[0]
+        } else {
+          res = filteredRes
+        }
+      }
       dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
@@ -77,7 +96,7 @@ function get({ pageName, apiObject, dispatch }) {
 
 function create({ pageName, apiObject, dispatch }) {
   //@ts-ignore
-  return async ({ data, typeForBinary }) => {
+  return async ({ data, type: typeForBinary, title }) => {
     //@ts-ignore
     const { dataKey, dataIn, dataOut, id, type } = _.cloneDeep(apiObject || {})
     const currentVal = dispatch({

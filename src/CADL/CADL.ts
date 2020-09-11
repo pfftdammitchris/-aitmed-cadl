@@ -90,7 +90,13 @@ export default class CADL extends EventEmitter {
       )
     }
 
-    const { web, cadlBaseUrl, cadlMain, designSuffix, myBaseUrl } = config
+    const {
+      web = { cadlVersion: '' },
+      cadlBaseUrl = '',
+      cadlMain = '',
+      designSuffix = '',
+      myBaseUrl = '',
+    } = config
     //set cadlVersion
     this.cadlVersion = web.cadlVersion[this.cadlVersion]
     this.designSuffix = designSuffix
@@ -670,6 +676,12 @@ export default class CADL extends EventEmitter {
               mergedVal = data
             } else {
               mergedVal = [data]
+            }
+          } else if (isObject(currentVal) && Array.isArray(data)) {
+            if (!data.length) {
+              mergedVal = currentVal
+            } else if (data.length === 1) {
+              mergedVal = data[0]
             }
           } else {
             mergedVal = data

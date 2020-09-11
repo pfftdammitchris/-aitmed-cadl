@@ -24685,7 +24685,7 @@
 	  }
 	});
 
-	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$1 !== 'undefined' ? global$1 : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
 	function commonjsRequire$1 () {
 		throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
@@ -57792,27 +57792,28 @@
 	          case 0:
 	            fn = _ref.fn, args = _ref.args;
 	            _context.prev = 1;
+	            debugger;
 	            account = new Account();
-	            _context.next = 5;
+	            _context.next = 6;
 	            return account.login();
 
-	          case 5:
+	          case 6:
 	            return _context.abrupt("return", fn(args));
 
-	          case 8:
-	            _context.prev = 8;
+	          case 9:
+	            _context.prev = 9;
 	            _context.t0 = _context["catch"](1);
 	            throw new AitmedError({
 	              code: _context.t0.code,
-	              message: _context.t0.message || "There was an error retrieving a new JWT"
+	              message: _context.t0.message || 'There was an error retrieving a new JWT'
 	            });
 
-	          case 11:
+	          case 12:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, _callee, null, [[1, 8]]);
+	    }, _callee, null, [[1, 9]]);
 	  }));
 
 	  return function jwtExpired(_x) {
@@ -60536,7 +60537,7 @@
 	     *
 	     * the user's credentials found in the locaStorage are used to authenticate the user
 	     * this sends back a JWT token
-	     * 
+	     *
 	     * Logic here is also used for automatic login to replace the jwt when its expired
 	     *
 	     */
@@ -60565,20 +60566,21 @@
 	            switch (_context4.prev = _context4.next) {
 	              case 0:
 	                _ref7 = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : {}, password = _ref7.password;
+	                debugger;
 
 	                if (!(store$2.getConfig() === null)) {
-	                  _context4.next = 4;
+	                  _context4.next = 5;
 	                  break;
 	                }
 
-	                _context4.next = 4;
+	                _context4.next = 5;
 	                return store$2.loadConfig();
 
-	              case 4:
+	              case 5:
 	                user_id = localStorage.getItem('user_vid');
 
 	                if (!(user_id === null)) {
-	                  _context4.next = 7;
+	                  _context4.next = 8;
 	                  break;
 	                }
 
@@ -60586,7 +60588,7 @@
 	                  name: 'REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE'
 	                });
 
-	              case 7:
+	              case 8:
 	                userIdToUint8Array = utils$2.base64ToUint8Array(user_id); //TODO eventually a signature parameter will be sent along
 	                //with the loginUser createEdge request to verify that the sk is valid
 	                //Check for invalid password or user is not registered
@@ -60594,17 +60596,17 @@
 	                sk = localStorage.getItem('sk');
 
 	                if (!(password !== undefined && sk === null)) {
-	                  _context4.next = 22;
+	                  _context4.next = 23;
 	                  break;
 	                }
 
-	                _context4.prev = 10;
+	                _context4.prev = 11;
 	                _this$verifyUserPassw = this.verifyUserPassword({
 	                  password: password
 	                }), _this$verifyUserPassw2 = slicedToArray$1(_this$verifyUserPassw, 2), isPasswordValid = _this$verifyUserPassw2[0], secretKey = _this$verifyUserPassw2[1];
 
 	                if (!(isPasswordValid === false)) {
-	                  _context4.next = 16;
+	                  _context4.next = 17;
 	                  break;
 	                }
 
@@ -60612,49 +60614,49 @@
 	                  name: 'PASSWORD_INVALID'
 	                });
 
-	              case 16:
+	              case 17:
 	                if (isPasswordValid && secretKey !== null) {
 	                  utils$2.storeCredentialsInLocalStorage({
 	                    secretKey: secretKey
 	                  });
 	                }
 
-	              case 17:
-	                _context4.next = 22;
+	              case 18:
+	                _context4.next = 23;
 	                break;
 
-	              case 19:
-	                _context4.prev = 19;
-	                _context4.t0 = _context4["catch"](10);
+	              case 20:
+	                _context4.prev = 20;
+	                _context4.t0 = _context4["catch"](11);
 	                throw _context4.t0;
 
-	              case 22:
-	                _context4.prev = 22;
-	                _context4.next = 25;
+	              case 23:
+	                _context4.prev = 23;
+	                _context4.next = 26;
 	                return edgesServices.createEdge({
 	                  type: etypes.loginUser,
 	                  bvid: userIdToUint8Array,
 	                  stime: Date.now()
 	                });
 
-	              case 25:
+	              case 26:
 	                _ref8 = _context4.sent;
 	                code = _ref8.code;
 	                return _context4.abrupt("return", new Response$1({
 	                  code: code
 	                }));
 
-	              case 30:
-	                _context4.prev = 30;
-	                _context4.t1 = _context4["catch"](22);
+	              case 31:
+	                _context4.prev = 31;
+	                _context4.t1 = _context4["catch"](23);
 	                throw _context4.t1;
 
-	              case 33:
+	              case 34:
 	              case "end":
 	                return _context4.stop();
 	            }
 	          }
-	        }, _callee4, this, [[10, 19], [22, 30]]);
+	        }, _callee4, this, [[11, 20], [23, 31]]);
 	      }));
 
 	      function login() {
@@ -60818,7 +60820,7 @@
 	    }
 	    /**
 	     * Retrieves the users login status
-	     * 
+	     *
 	     *  @returns Status
 	     * Status.code:
 	     *  0 - LOGGED_IN
@@ -61085,13 +61087,13 @@
 	    }()
 	    /**
 	     *
-	     * @param {VerifyUserPasswordArgs} args.password 
-	     * @returns Array<[boolean, null | Uint8Array]> 
-	     * 
+	     * @param {VerifyUserPasswordArgs} args.password
+	     * @returns Array<[boolean, null | Uint8Array]>
+	     *
 	     * used to verify the user's password
-	     * 
+	     *
 	     * returns [true, sk:Uint8Array] if password is valid
-	     * 
+	     *
 	     */
 
 	  }, {
@@ -70356,7 +70358,7 @@
 	              name: {
 	                title: name.title,
 	                type: contentType,
-	                content: content,
+	                data: content,
 	                tags: name.tags || []
 	              },
 	              created_at: document.ctime * 1000,
@@ -72257,20 +72259,22 @@
 	      apiObject = _ref.apiObject,
 	      dispatch = _ref.dispatch;
 	  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var res, _cloneDeep2, api, dataKey, dataIn, dataOut, id, ids, rest, idList, data;
+	    var res, _cloneDeep2, api, dataKey, dataIn, dataOut, id, ids, _cloneDeep2$filter$ap, applicationDataType, type, maxcount, rest, idList, data, filteredRes;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
 	        switch (_context2.prev = _context2.next) {
 	          case 0:
-	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, id = _cloneDeep2.id, ids = _cloneDeep2.ids, rest = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut", "id", "ids"]);
+	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, id = _cloneDeep2.id, ids = _cloneDeep2.ids, _cloneDeep2$filter$ap = _cloneDeep2.filter.applicationDataType, applicationDataType = _cloneDeep2$filter$ap === void 0 ? '' : _cloneDeep2$filter$ap, type = _cloneDeep2.type, maxcount = _cloneDeep2.maxcount, rest = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut", "id", "ids", "filter", "type", "maxcount"]);
 	            idList = [ids ? ids : id ? id : ''];
 	            _context2.prev = 2;
 
 	            if (store$3.env === 'test') {
 	              console.log('%cGet Document Request', 'background: purple; color: white; display: block;', {
 	                idList: idList,
-	                options: _objectSpread$b({}, rest)
+	                options: _objectSpread$b(_objectSpread$b({}, rest), {}, {
+	                  maxcount: maxcount
+	                })
 	              });
 	            }
 
@@ -72332,6 +72336,18 @@
 
 	          case 14:
 	            if (res) {
+	              if (Array.isArray(res) && res.length && applicationDataType) {
+	                filteredRes = res.filter(function (doc) {
+	                  return doc.type.applicationDataType === parseInt(applicationDataType);
+	                });
+
+	                if (filteredRes.length && parseInt(maxcount) === 1) {
+	                  res = filteredRes[0];
+	                } else {
+	                  res = filteredRes;
+	                }
+	              }
+
 	              dispatch({
 	                type: 'update-data',
 	                //TODO: handle case for data is an array or an object
@@ -72369,13 +72385,13 @@
 	  //@ts-ignore
 	  return /*#__PURE__*/function () {
 	    var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref6) {
-	      var data, typeForBinary, _cloneDeep3, dataKey, dataIn, dataOut, id, type, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
+	      var data, typeForBinary, title, _cloneDeep3, dataKey, dataIn, dataOut, id, type, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
 
 	      return regenerator.wrap(function _callee3$(_context3) {
 	        while (1) {
 	          switch (_context3.prev = _context3.next) {
 	            case 0:
-	              data = _ref6.data, typeForBinary = _ref6.typeForBinary;
+	              data = _ref6.data, typeForBinary = _ref6.type, title = _ref6.title;
 	              //@ts-ignore
 	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id, type = _cloneDeep3.type;
 	              currentVal = dispatch({
@@ -80961,7 +80977,7 @@
 	              name: {
 	                title: name.title,
 	                type: contentType,
-	                content: content,
+	                data: content,
 	                tags: name.tags || []
 	              },
 	              created_at: document.ctime * 1000,
@@ -81559,6 +81575,24 @@
 	          }
 	        }, _callee6);
 	      }))();
+	    },
+	    isIOS: function isIOS() {
+	      var userAgent = navigator.userAgent || navigator.vendor;
+
+	      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+	        return true;
+	      }
+
+	      return false;
+	    },
+	    isAndroid: function isAndroid() {
+	      var userAgent = navigator.userAgent || navigator.vendor;
+
+	      if (/android/i.test(userAgent)) {
+	        return true;
+	      }
+
+	      return false;
 	    }
 	  };
 	}
@@ -82477,10 +82511,15 @@
 	            BasePage,
 	            config,
 	            _config,
+	            _config$web,
 	            web,
+	            _config$cadlBaseUrl,
 	            cadlBaseUrl,
+	            _config$cadlMain,
 	            cadlMain,
+	            _config$designSuffix,
 	            designSuffix,
+	            _config$myBaseUrl,
 	            myBaseUrl,
 	            cadlEndpointUrl,
 	            cadlEndpoint,
@@ -82526,7 +82565,9 @@
 	                throw new UnableToLoadConfig('An error occured while trying to load the config', _context.t0);
 
 	              case 10:
-	                _config = config, web = _config.web, cadlBaseUrl = _config.cadlBaseUrl, cadlMain = _config.cadlMain, designSuffix = _config.designSuffix, myBaseUrl = _config.myBaseUrl; //set cadlVersion
+	                _config = config, _config$web = _config.web, web = _config$web === void 0 ? {
+	                  cadlVersion: ''
+	                } : _config$web, _config$cadlBaseUrl = _config.cadlBaseUrl, cadlBaseUrl = _config$cadlBaseUrl === void 0 ? '' : _config$cadlBaseUrl, _config$cadlMain = _config.cadlMain, cadlMain = _config$cadlMain === void 0 ? '' : _config$cadlMain, _config$designSuffix = _config.designSuffix, designSuffix = _config$designSuffix === void 0 ? '' : _config$designSuffix, _config$myBaseUrl = _config.myBaseUrl, myBaseUrl = _config$myBaseUrl === void 0 ? '' : _config$myBaseUrl; //set cadlVersion
 
 	                this.cadlVersion = web.cadlVersion[this.cadlVersion];
 	                this.designSuffix = designSuffix;
@@ -83414,6 +83455,12 @@
 	                  _mergedVal = data;
 	                } else {
 	                  _mergedVal = [data];
+	                }
+	              } else if (isObject$5(_currentVal) && Array.isArray(data)) {
+	                if (!data.length) {
+	                  _mergedVal = _currentVal;
+	                } else if (data.length === 1) {
+	                  _mergedVal = data[0];
 	                }
 	              } else {
 	                _mergedVal = data;

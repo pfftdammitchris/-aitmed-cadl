@@ -177,5 +177,19 @@ export default function builtInFns(dispatch?: Function) {
       }
       return res
     },
+    isIOS() {
+      const userAgent = navigator.userAgent || navigator.vendor
+      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+        return true
+      }
+      return false
+    },
+    isAndroid() {
+      const userAgent = navigator.userAgent || navigator.vendor
+      if (/android/i.test(userAgent)) {
+        return true
+      }
+      return false
+    },
   }
 }

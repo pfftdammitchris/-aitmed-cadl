@@ -187,7 +187,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     name: {
       title: name.title,
       type: contentType,
-      content,
+      data: content,
       tags: name.tags || [],
     },
 
