@@ -72385,15 +72385,15 @@
 	  //@ts-ignore
 	  return /*#__PURE__*/function () {
 	    var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(_ref6) {
-	      var data, typeForBinary, title, _cloneDeep3, dataKey, dataIn, dataOut, id, type, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
+	      var data, typeForStringData, title, _cloneDeep3, dataKey, dataIn, dataOut, id, currentVal, mergedVal, api, options, res, _yield$store$level2SD, _data, appDataType, eid, name, response;
 
 	      return regenerator.wrap(function _callee3$(_context3) {
 	        while (1) {
 	          switch (_context3.prev = _context3.next) {
 	            case 0:
-	              data = _ref6.data, typeForBinary = _ref6.type, title = _ref6.title;
+	              data = _ref6.data, typeForStringData = _ref6.type, title = _ref6.title;
 	              //@ts-ignore
-	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id, type = _cloneDeep3.type;
+	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id;
 	              currentVal = dispatch({
 	                type: 'get-data',
 	                payload: {
@@ -72404,7 +72404,8 @@
 	              mergedVal = mergeDeep(currentVal, {
 	                name: {
 	                  data: data,
-	                  type: type
+	                  type: typeForStringData,
+	                  title: title
 	                }
 	              });
 	              api = mergedVal.api, options = objectWithoutProperties(mergedVal, ["api"]);
@@ -72457,7 +72458,7 @@
 	                  edge_id: eid,
 	                  dataType: parseInt(appDataType.applicationDataType),
 	                  content: data,
-	                  type: type,
+	                  type: typeForStringData,
 	                  title: name.title
 	                });
 	              }
@@ -72467,7 +72468,7 @@
 	                edge_id: eid,
 	                dataType: parseInt(appDataType.applicationDataType),
 	                content: data,
-	                type: type,
+	                type: typeForStringData,
 	                title: name.title
 	              });
 

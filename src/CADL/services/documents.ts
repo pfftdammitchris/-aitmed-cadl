@@ -96,9 +96,10 @@ function get({ pageName, apiObject, dispatch }) {
 
 function create({ pageName, apiObject, dispatch }) {
   //@ts-ignore
-  return async ({ data, type: typeForBinary, title }) => {
+  return async ({ data, type: typeForStringData, title }) => {
     //@ts-ignore
-    const { dataKey, dataIn, dataOut, id, type } = _.cloneDeep(apiObject || {})
+    const { dataKey, dataIn, dataOut, id } = _.cloneDeep(apiObject || {})
+
     const currentVal = dispatch({
       type: 'get-data',
       payload: {
@@ -107,7 +108,9 @@ function create({ pageName, apiObject, dispatch }) {
       },
     })
 
-    const mergedVal = mergeDeep(currentVal, { name: { data, type } })
+    const mergedVal = mergeDeep(currentVal, {
+      name: { data, type: typeForStringData, title },
+    })
     const { api, ...options } = mergedVal
     let res
     //If id is in apiObject then it is an updateRequest
@@ -147,7 +150,7 @@ function create({ pageName, apiObject, dispatch }) {
               edge_id: eid,
               dataType: parseInt(appDataType.applicationDataType),
               content: data,
-              type,
+              type: typeForStringData,
               title: name.title,
             }
           )
@@ -156,7 +159,7 @@ function create({ pageName, apiObject, dispatch }) {
           edge_id: eid,
           dataType: parseInt(appDataType.applicationDataType),
           content: data,
-          type,
+          type: typeForStringData,
           title: name.title,
         })
         res = response
