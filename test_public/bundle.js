@@ -83447,7 +83447,6 @@
 
 	              if (Array.isArray(currentVal)) {
 	                if (Array.isArray(data)) {
-	                  debugger;
 	                  mergedVal = data;
 	                } else {
 	                  mergedVal = [data];
