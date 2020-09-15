@@ -24685,7 +24685,7 @@
 	  }
 	});
 
-	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+	var commonjsGlobal$1 = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global$1 !== 'undefined' ? global$1 : typeof self !== 'undefined' ? self : {};
 
 	function commonjsRequire$1 () {
 		throw new Error('Dynamic requires are not currently supported by rollup-plugin-commonjs');
@@ -57792,28 +57792,27 @@
 	          case 0:
 	            fn = _ref.fn, args = _ref.args;
 	            _context.prev = 1;
-	            debugger;
 	            account = new Account();
-	            _context.next = 6;
+	            _context.next = 5;
 	            return account.login();
 
-	          case 6:
+	          case 5:
 	            return _context.abrupt("return", fn(args));
 
-	          case 9:
-	            _context.prev = 9;
+	          case 8:
+	            _context.prev = 8;
 	            _context.t0 = _context["catch"](1);
 	            throw new AitmedError({
 	              code: _context.t0.code,
-	              message: _context.t0.message || 'There was an error retrieving a new JWT'
+	              message: _context.t0.message || "There was an error retrieving a new JWT"
 	            });
 
-	          case 12:
+	          case 11:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, _callee, null, [[1, 9]]);
+	    }, _callee, null, [[1, 8]]);
 	  }));
 
 	  return function jwtExpired(_x) {
@@ -60537,7 +60536,7 @@
 	     *
 	     * the user's credentials found in the locaStorage are used to authenticate the user
 	     * this sends back a JWT token
-	     *
+	     * 
 	     * Logic here is also used for automatic login to replace the jwt when its expired
 	     *
 	     */
@@ -60566,21 +60565,20 @@
 	            switch (_context4.prev = _context4.next) {
 	              case 0:
 	                _ref7 = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : {}, password = _ref7.password;
-	                debugger;
 
 	                if (!(store$2.getConfig() === null)) {
-	                  _context4.next = 5;
+	                  _context4.next = 4;
 	                  break;
 	                }
 
-	                _context4.next = 5;
+	                _context4.next = 4;
 	                return store$2.loadConfig();
 
-	              case 5:
+	              case 4:
 	                user_id = localStorage.getItem('user_vid');
 
 	                if (!(user_id === null)) {
-	                  _context4.next = 8;
+	                  _context4.next = 7;
 	                  break;
 	                }
 
@@ -60588,7 +60586,7 @@
 	                  name: 'REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE'
 	                });
 
-	              case 8:
+	              case 7:
 	                userIdToUint8Array = utils$2.base64ToUint8Array(user_id); //TODO eventually a signature parameter will be sent along
 	                //with the loginUser createEdge request to verify that the sk is valid
 	                //Check for invalid password or user is not registered
@@ -60596,17 +60594,17 @@
 	                sk = localStorage.getItem('sk');
 
 	                if (!(password !== undefined && sk === null)) {
-	                  _context4.next = 23;
+	                  _context4.next = 22;
 	                  break;
 	                }
 
-	                _context4.prev = 11;
+	                _context4.prev = 10;
 	                _this$verifyUserPassw = this.verifyUserPassword({
 	                  password: password
 	                }), _this$verifyUserPassw2 = slicedToArray$1(_this$verifyUserPassw, 2), isPasswordValid = _this$verifyUserPassw2[0], secretKey = _this$verifyUserPassw2[1];
 
 	                if (!(isPasswordValid === false)) {
-	                  _context4.next = 17;
+	                  _context4.next = 16;
 	                  break;
 	                }
 
@@ -60614,49 +60612,49 @@
 	                  name: 'PASSWORD_INVALID'
 	                });
 
-	              case 17:
+	              case 16:
 	                if (isPasswordValid && secretKey !== null) {
 	                  utils$2.storeCredentialsInLocalStorage({
 	                    secretKey: secretKey
 	                  });
 	                }
 
-	              case 18:
-	                _context4.next = 23;
+	              case 17:
+	                _context4.next = 22;
 	                break;
 
-	              case 20:
-	                _context4.prev = 20;
-	                _context4.t0 = _context4["catch"](11);
+	              case 19:
+	                _context4.prev = 19;
+	                _context4.t0 = _context4["catch"](10);
 	                throw _context4.t0;
 
-	              case 23:
-	                _context4.prev = 23;
-	                _context4.next = 26;
+	              case 22:
+	                _context4.prev = 22;
+	                _context4.next = 25;
 	                return edgesServices.createEdge({
 	                  type: etypes.loginUser,
 	                  bvid: userIdToUint8Array,
 	                  stime: Date.now()
 	                });
 
-	              case 26:
+	              case 25:
 	                _ref8 = _context4.sent;
 	                code = _ref8.code;
 	                return _context4.abrupt("return", new Response$1({
 	                  code: code
 	                }));
 
-	              case 31:
-	                _context4.prev = 31;
-	                _context4.t1 = _context4["catch"](23);
+	              case 30:
+	                _context4.prev = 30;
+	                _context4.t1 = _context4["catch"](22);
 	                throw _context4.t1;
 
-	              case 34:
+	              case 33:
 	              case "end":
 	                return _context4.stop();
 	            }
 	          }
-	        }, _callee4, this, [[11, 20], [23, 31]]);
+	        }, _callee4, this, [[10, 19], [22, 30]]);
 	      }));
 
 	      function login() {
@@ -60820,7 +60818,7 @@
 	    }
 	    /**
 	     * Retrieves the users login status
-	     *
+	     * 
 	     *  @returns Status
 	     * Status.code:
 	     *  0 - LOGGED_IN
@@ -61087,13 +61085,13 @@
 	    }()
 	    /**
 	     *
-	     * @param {VerifyUserPasswordArgs} args.password
-	     * @returns Array<[boolean, null | Uint8Array]>
-	     *
+	     * @param {VerifyUserPasswordArgs} args.password 
+	     * @returns Array<[boolean, null | Uint8Array]> 
+	     * 
 	     * used to verify the user's password
-	     *
+	     * 
 	     * returns [true, sk:Uint8Array] if password is valid
-	     *
+	     * 
 	     */
 
 	  }, {
@@ -69456,6 +69454,15 @@
 	              }), deat = _dispatch.deat, id = _dispatch.id, currentVal = objectWithoutProperties(_dispatch, ["deat", "id"]); //merging existing name field and incoming name field
 
 	              parsedType = parseInt(currentVal.type);
+
+	              if (!(parsedType === NaN || parsedType === 0)) {
+	                _context2.next = 5;
+	                break;
+	              }
+
+	              return _context2.abrupt("return");
+
+	            case 5:
 	              mergedVal = _objectSpread$6(_objectSpread$6({}, currentVal), {}, {
 	                type: parsedType
 	              });
@@ -69467,11 +69474,11 @@
 	              }
 
 	              if (!(id && !id.startsWith('.'))) {
-	                _context2.next = 21;
+	                _context2.next = 23;
 	                break;
 	              }
 
-	              _context2.prev = 6;
+	              _context2.prev = 8;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
@@ -69479,12 +69486,12 @@
 	                }));
 	              }
 
-	              _context2.next = 10;
+	              _context2.next = 12;
 	              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
 	                id: id
 	              }));
 
-	            case 10:
+	            case 12:
 	              _yield$store$level2SD2 = _context2.sent;
 	              data = _yield$store$level2SD2.data;
 	              res = data;
@@ -69493,20 +69500,20 @@
 	                console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context2.next = 19;
+	              _context2.next = 21;
 	              break;
 
-	            case 16:
-	              _context2.prev = 16;
-	              _context2.t0 = _context2["catch"](6);
+	            case 18:
+	              _context2.prev = 18;
+	              _context2.t0 = _context2["catch"](8);
 	              throw _context2.t0;
 
-	            case 19:
-	              _context2.next = 34;
+	            case 21:
+	              _context2.next = 36;
 	              break;
 
-	            case 21:
-	              _context2.prev = 21;
+	            case 23:
+	              _context2.prev = 23;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
@@ -69514,10 +69521,10 @@
 	                }));
 	              }
 
-	              _context2.next = 25;
+	              _context2.next = 27;
 	              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$6({}, mergedVal));
 
-	            case 25:
+	            case 27:
 	              _yield$store$level2SD3 = _context2.sent;
 	              _data = _yield$store$level2SD3.data;
 	              res = _data;
@@ -69526,15 +69533,15 @@
 	                console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context2.next = 34;
+	              _context2.next = 36;
 	              break;
 
-	            case 31:
-	              _context2.prev = 31;
-	              _context2.t1 = _context2["catch"](21);
+	            case 33:
+	              _context2.prev = 33;
+	              _context2.t1 = _context2["catch"](23);
 	              throw _context2.t1;
 
-	            case 34:
+	            case 36:
 	              if (res) {
 	                res = replaceEidWithId(res);
 	                dispatch({
@@ -69566,12 +69573,12 @@
 
 	              return _context2.abrupt("return", res);
 
-	            case 36:
+	            case 38:
 	            case "end":
 	              return _context2.stop();
 	          }
 	        }
-	      }, _callee2, null, [[6, 16], [21, 31]]);
+	      }, _callee2, null, [[8, 18], [23, 33]]);
 	    }));
 
 	    return function (_x) {
@@ -81368,16 +81375,23 @@
 	  return {
 	    createNewAccount: function createNewAccount(_ref3) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	        var phoneNumber, password, verificationCode, userName, data, sk;
+	        var phoneNumber, password, verificationCode, userName, validPhoneNumber, data, sk;
 	        return regenerator.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
 	                phoneNumber = _ref3.phoneNumber, password = _ref3.password, verificationCode = _ref3.verificationCode, userName = _ref3.userName;
-	                _context2.next = 3;
-	                return Account$1.create(phoneNumber, password, verificationCode, userName);
 
-	              case 3:
+	                if (phoneNumber.includes('-')) {
+	                  validPhoneNumber = phoneNumber.replace(/-/g, '');
+	                } else {
+	                  validPhoneNumber = phoneNumber;
+	                }
+
+	                _context2.next = 4;
+	                return Account$1.create(validPhoneNumber, password, verificationCode, userName);
+
+	              case 4:
 	                data = _context2.sent;
 	                sk = localStorage.getItem('sk');
 
@@ -81397,7 +81411,7 @@
 
 	                return _context2.abrupt("return", data);
 
-	              case 7:
+	              case 8:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -81407,16 +81421,23 @@
 	    },
 	    signIn: function signIn(_ref4) {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-	        var phoneNumber, password, verificationCode, data, sk;
+	        var phoneNumber, password, verificationCode, validPhoneNumber, data, sk;
 	        return regenerator.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
 	                phoneNumber = _ref4.phoneNumber, password = _ref4.password, verificationCode = _ref4.verificationCode;
-	                _context3.next = 3;
-	                return Account$1.login(phoneNumber, password, verificationCode);
 
-	              case 3:
+	                if (phoneNumber.includes('-')) {
+	                  validPhoneNumber = phoneNumber.replace(/-/g, '');
+	                } else {
+	                  validPhoneNumber = phoneNumber;
+	                }
+
+	                _context3.next = 4;
+	                return Account$1.login(validPhoneNumber, password, verificationCode);
+
+	              case 4:
 	                data = _context3.sent;
 	                sk = localStorage.getItem('sk');
 
@@ -81436,7 +81457,7 @@
 
 	                return _context3.abrupt("return", data);
 
-	              case 7:
+	              case 8:
 	              case "end":
 	                return _context3.stop();
 	            }
@@ -83426,6 +83447,7 @@
 
 	              if (Array.isArray(currentVal)) {
 	                if (Array.isArray(data)) {
+	                  debugger;
 	                  mergedVal = data;
 	                } else {
 	                  mergedVal = [data];
@@ -83488,6 +83510,7 @@
 	            var _action$payload2 = action.payload,
 	                _pageName2 = _action$payload2.pageName,
 	                _dataKey = _action$payload2.dataKey;
+	            if (!_dataKey) return;
 
 	            var _pathArr = _dataKey.split('.');
 
@@ -83673,7 +83696,7 @@
 	                var objectKeys = Object.keys(command);
 	                asyncForEach(objectKeys, /*#__PURE__*/function () {
 	                  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(key) {
-	                    var trimPath, val, _pathArr5, _pathArr6, _trimPath2, _pathArr7, _val2, _populateWithRoot3, _populateWithSelf3, _populateAfterInheriting3, _boundDispatch2;
+	                    var trimPath, val, _pathArr5, _pathArr6, _trimPath2, _pathArr7, _val2, _populateWithRoot3, _populateWithSelf3, _populateAfterInheriting3, _populateAfterAttachingMyBaseUrl2, _boundDispatch2;
 
 	                    return regenerator.wrap(function _callee6$(_context6) {
 	                      while (1) {
@@ -83691,7 +83714,7 @@
 	                            });
 
 	                          case 3:
-	                            _context6.next = 27;
+	                            _context6.next = 28;
 	                            break;
 
 	                          case 5:
@@ -83739,12 +83762,12 @@
 	                              });
 	                            }
 
-	                            _context6.next = 27;
+	                            _context6.next = 28;
 	                            break;
 
 	                          case 10:
 	                            if (!key.startsWith('=')) {
-	                              _context6.next = 27;
+	                              _context6.next = 28;
 	                              break;
 	                            }
 
@@ -83753,7 +83776,7 @@
 	                            _val2 = get_1(_this2.root, _pathArr7) || get_1(_this2.root[_pageName3], _pathArr7);
 
 	                            if (!isObject$5(_val2)) {
-	                              _context6.next = 24;
+	                              _context6.next = 25;
 	                              break;
 	                            }
 
@@ -83772,28 +83795,33 @@
 	                              lookFor: '=',
 	                              locations: [_this2.root, _this2.root[_pageName3]]
 	                            });
+	                            _populateAfterAttachingMyBaseUrl2 = populateObject({
+	                              source: _populateAfterInheriting3,
+	                              lookFor: '~',
+	                              locations: [_this2]
+	                            });
 	                            _boundDispatch2 = _this2.dispatch.bind(_this2);
 	                            _val2 = attachFns({
-	                              cadlObject: _populateAfterInheriting3,
+	                              cadlObject: _populateAfterAttachingMyBaseUrl2,
 	                              dispatch: _boundDispatch2
 	                            });
-	                            _context6.next = 22;
+	                            _context6.next = 23;
 	                            return _val2();
 
-	                          case 22:
-	                            _context6.next = 27;
+	                          case 23:
+	                            _context6.next = 28;
 	                            break;
 
-	                          case 24:
+	                          case 25:
 	                            if (!(typeof _val2 === 'function')) {
-	                              _context6.next = 27;
+	                              _context6.next = 28;
 	                              break;
 	                            }
 
-	                            _context6.next = 27;
+	                            _context6.next = 28;
 	                            return _val2();
 
-	                          case 27:
+	                          case 28:
 	                          case "end":
 	                            return _context6.stop();
 	                        }

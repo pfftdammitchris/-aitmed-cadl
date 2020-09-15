@@ -117,6 +117,7 @@ function create({ pageName, apiObject, dispatch }) {
     })
     //merging existing name field and incoming name field
     const parsedType = parseInt(currentVal.type)
+    if (parsedType === NaN || parsedType === 0) return
     let mergedVal = { ...currentVal, type: parsedType }
     if (name) {
       mergedVal = mergeDeep(mergedVal, { name })

@@ -703,6 +703,7 @@ export default class CADL extends EventEmitter {
       }
       case 'get-data': {
         const { pageName, dataKey } = action.payload
+        if (!dataKey) return
         const pathArr = dataKey.split('.')
         const currentVal =
           _.get(this.root[pageName], pathArr) || _.get(this.root, pathArr)
@@ -883,10 +884,15 @@ export default class CADL extends EventEmitter {
                     lookFor: '=',
                     locations: [this.root, this.root[pageName]],
                   })
+                  const populateAfterAttachingMyBaseUrl = populateObject({
+                    source: populateAfterInheriting,
+                    lookFor: '~',
+                    locations: [this],
+                  })
 
                   const boundDispatch = this.dispatch.bind(this)
                   val = attachFns({
-                    cadlObject: populateAfterInheriting,
+                    cadlObject: populateAfterAttachingMyBaseUrl,
                     dispatch: boundDispatch,
                   })
                   await val()

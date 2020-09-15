@@ -82,8 +82,14 @@ export default function builtInFns(dispatch?: Function) {
       verificationCode,
       userName,
     }) {
+      let validPhoneNumber
+      if (phoneNumber.includes('-')) {
+        validPhoneNumber = phoneNumber.replace(/-/g, '')
+      } else {
+        validPhoneNumber = phoneNumber
+      }
       const data = await Account.create(
-        phoneNumber,
+        validPhoneNumber,
         password,
         verificationCode,
         userName
@@ -103,7 +109,17 @@ export default function builtInFns(dispatch?: Function) {
       return data
     },
     async signIn({ phoneNumber, password, verificationCode }) {
-      const data = await Account.login(phoneNumber, password, verificationCode)
+      let validPhoneNumber
+      if (phoneNumber.includes('-')) {
+        validPhoneNumber = phoneNumber.replace(/-/g, '')
+      } else {
+        validPhoneNumber = phoneNumber
+      }
+      const data = await Account.login(
+        validPhoneNumber,
+        password,
+        verificationCode
+      )
       let sk = localStorage.getItem('sk')
       if (dispatch) {
         dispatch({
