@@ -80566,7 +80566,7 @@
 
 	var create$5 = /*#__PURE__*/function () {
 	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, userName) {
-	    var _yield$getStatus, statusCode, user_id, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
+	    var _yield$getStatus, statusCode, rest, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
@@ -80578,7 +80578,7 @@
 	          case 2:
 	            _yield$getStatus = _context2.sent;
 	            statusCode = _yield$getStatus.code;
-	            user_id = _yield$getStatus.data.user_id;
+	            rest = objectWithoutProperties(_yield$getStatus, ["code"]);
 
 	            if (!(statusCode === 3)) {
 	              _context2.next = 13;
@@ -80587,7 +80587,7 @@
 
 	            _context2.next = 8;
 	            return store$3.level2SDK.Account.createInvitedUser({
-	              id: user_id,
+	              id: rest === null || rest === void 0 ? void 0 : rest.data.user_id,
 	              phone_number: phone_number,
 	              password: password,
 	              userInfo: {
