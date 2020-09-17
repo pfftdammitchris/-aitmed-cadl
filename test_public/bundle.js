@@ -45268,60 +45268,60 @@
 	  REQUIRED_VERIFICATION_CODE: 'verification code is required',
 	  REQUIRED_PASSWORD: 'password is required',
 	  REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE: 'phone number and verification are required',
-	  ERROR_CLEARING_CREDENTIALS: "There was an error clearing out the localStorage.",
+	  ERROR_CLEARING_CREDENTIALS: 'There was an error clearing out the localStorage.',
 
 	  /* common     - 2000 */
 	  OBJECT_TYPE_INVALID: 'Object type is invalid',
-	  NUll_INPUT_OBJECT: "Nil Input Object",
-	  INVALID_NAME_JSON: "Invalid name Json",
-	  JWT_OBJECT_TYPE_ERROR: "Mismatched JWT object type",
-	  JWT_NOT_FOUND: "JWT is not found, may have been expired",
-	  JWT_V_CODE_ERROR: "JWT Verification Code Error",
-	  JWT_EXPIRED: "JWT Expired",
-	  JWT_PERMISSION_DENY: "JWT Permission Deny",
-	  DB_CONNECTION_ERROR: "Cannot connect to DB",
-	  SQL_EXEC_ERROR: "SQL Execution Error",
-	  SQL_BEGIN_ERROR: "SQL Begin Transaction Error",
-	  SQL_COMMIT_ERROR: "SQL Commit Transaction Error",
-	  SQL_RESULT_ERROR: "SQL Result Processing Error",
-	  SQL_STATEMENT_GEN_ERROR: "SQL Error When Generate Statement",
-	  SQL_UPDATE_WITHOUT_ID: "Update Without ID",
-	  TWILIO_CONNECTION_ERROR: "Twilio Http Connection Error",
-	  TWILIO_RESPONSE_ERROR: "Twilio Http Response Error",
-	  NOT_IMPLEMENTED_MULTIPLE_DELETE: "Multiple id deletion has not implemented",
-	  JSON_STRINGIFY_FAILED: "Failed attempt to stringify value.",
-	  ERROR_DECRYPTING_DATA: "Error in decrypting data.",
-	  JSON_PARSE_FAILED: "Failed attempt to parse JSON",
+	  NUll_INPUT_OBJECT: 'Nil Input Object',
+	  INVALID_NAME_JSON: 'Invalid name Json',
+	  JWT_OBJECT_TYPE_ERROR: 'Mismatched JWT object type',
+	  JWT_NOT_FOUND: 'JWT is not found, may have been expired',
+	  JWT_V_CODE_ERROR: 'JWT Verification Code Error',
+	  JWT_EXPIRED: 'JWT Expired',
+	  JWT_PERMISSION_DENY: 'JWT Permission Deny',
+	  DB_CONNECTION_ERROR: 'Cannot connect to DB',
+	  SQL_EXEC_ERROR: 'SQL Execution Error',
+	  SQL_BEGIN_ERROR: 'SQL Begin Transaction Error',
+	  SQL_COMMIT_ERROR: 'SQL Commit Transaction Error',
+	  SQL_RESULT_ERROR: 'SQL Result Processing Error',
+	  SQL_STATEMENT_GEN_ERROR: 'SQL Error When Generate Statement',
+	  SQL_UPDATE_WITHOUT_ID: 'Update Without ID',
+	  TWILIO_CONNECTION_ERROR: 'Twilio Http Connection Error',
+	  TWILIO_RESPONSE_ERROR: 'Twilio Http Response Error',
+	  NOT_IMPLEMENTED_MULTIPLE_DELETE: 'Multiple id deletion has not implemented',
+	  JSON_STRINGIFY_FAILED: 'Failed attempt to stringify value.',
+	  ERROR_DECRYPTING_DATA: 'Error in decrypting data.',
+	  JSON_PARSE_FAILED: 'Failed attempt to parse JSON',
 
 	  /* Vertex     - 3000 */
-	  CREATE_VERTEX_WRONG_ID: "Create Vertex With a Wrong Id",
-	  INVALID_USER_ID: "Invalid user_id",
-	  CANNOT_FIND_UID: "Cannot Find user_id",
-	  DELETE_ID_NOT_FOUND: "Delete ID not found",
-	  CANNOT_FIND_USER_ID: "Cannot Find user_id",
-	  UID_HAS_BEEN_USED: "Uid Has Been Used",
-	  USER_ID_NOT_MATCH: "UserId not match",
-	  UID_IS_EMPTY: "Uid Is Empty",
-	  INVALID_PUBLIC_KEY_LENGTH: "Invalid Public Key Length, expected 32",
-	  INVALID_SECRET_KEY_LENGTH: "Invalid Encrypted Secret Key Length, expected 72",
-	  CANNOT_FIND_HOST_EDGE: "Create Doc Cannot Find Host Edge",
-	  DELETE_HOST_ID_NOT_FOUND: "Cannot find the host ID of a Delete item",
-	  VERTEX_IS_UNDEFINED: "Vertex is undefined",
+	  CREATE_VERTEX_WRONG_ID: 'Create Vertex With a Wrong Id',
+	  INVALID_USER_ID: 'Invalid user_id',
+	  CANNOT_FIND_UID: 'Cannot Find user_id',
+	  DELETE_ID_NOT_FOUND: 'Delete ID not found',
+	  CANNOT_FIND_USER_ID: 'Cannot Find user_id',
+	  UID_HAS_BEEN_USED: 'Uid Has Been Used',
+	  USER_ID_NOT_MATCH: 'UserId not match',
+	  UID_IS_EMPTY: 'Uid Is Empty',
+	  INVALID_PUBLIC_KEY_LENGTH: 'Invalid Public Key Length, expected 32',
+	  INVALID_SECRET_KEY_LENGTH: 'Invalid Encrypted Secret Key Length, expected 72',
+	  CANNOT_FIND_HOST_EDGE: 'Create Doc Cannot Find Host Edge',
+	  DELETE_HOST_ID_NOT_FOUND: 'Cannot find the host ID of a Delete item',
+	  VERTEX_IS_UNDEFINED: 'Vertex is undefined',
 
 	  /* Edge       - 4000 */
-	  CREATE_EDGE_WRONG_ID: "Create Edge With a Wrong Id",
-	  UPDATE_EDGE_ID_NOT_FOUND: "Update Edge, ID is not found",
-	  INVALID_E_TYPE: "Invalid etype, not implemented yet",
-	  DELETE_OBJ_HAS_CHILD: "Cannot Delete Item which has child(ren)",
-	  NO_VERIFICATION_CODE: "No Verication Code in name of edge",
-	  EDGE_IS_UNDEFINED: "The edge is undefined.",
-	  ERROR_CREATING_BESAK: "There was an error creating the edge besak",
+	  CREATE_EDGE_WRONG_ID: 'Create Edge With a Wrong Id',
+	  UPDATE_EDGE_ID_NOT_FOUND: 'Update Edge, ID is not found',
+	  INVALID_E_TYPE: 'Invalid etype, not implemented yet',
+	  DELETE_OBJ_HAS_CHILD: 'Cannot Delete Item which has child(ren)',
+	  NO_VERIFICATION_CODE: 'No Verication Code in name of edge',
+	  EDGE_IS_UNDEFINED: 'The edge is undefined.',
+	  ERROR_CREATING_BESAK: 'There was an error creating the edge besak',
 
 	  /* Document   - 5000 */
-	  CREATE_DOC_WRONG_ID: "Create Doc With a Wrong Id",
-	  UPDATE_DOC_ID_NOT_FOUND: "Update Doc, ID is not found",
-	  CREATE_DOC_INVALID_EID: "Create Doc with Invalid Edge Id",
-	  DOCUMENT_IS_UNDEFINED: "Document is undefined",
+	  CREATE_DOC_WRONG_ID: 'Create Doc With a Wrong Id',
+	  UPDATE_DOC_ID_NOT_FOUND: 'Update Doc, ID is not found',
+	  CREATE_DOC_INVALID_EID: 'Create Doc with Invalid Edge Id',
+	  DOCUMENT_IS_UNDEFINED: 'Document is undefined',
 
 	  /* UIDL   - 6000 */
 	  YAML_PARSE_FAILED: 'Failed to parse yaml',
@@ -57319,7 +57319,7 @@
 	   *
 	   * @param string
 	   *
-	   * converts utf8 string to base64 
+	   * converts utf8 string to base64
 	   */
 
 
@@ -57331,12 +57331,12 @@
 	   *
 	   * @param string
 	   *
-	   * converts base64 string to utf8 
+	   * converts base64 string to utf8
 	   */
 
 
 	  function base64ToUTF8(string) {
-	    var stringUTF8 = Buffer$1$1.from(string, "base64").toString('utf8');
+	    var stringUTF8 = Buffer$1$1.from(string, 'base64').toString('utf8');
 	    return stringUTF8;
 	  }
 	  /**
@@ -57661,9 +57661,9 @@
 	    return naclUtil_2(data);
 	  }
 	  /**
-	   * 
-	   * @param data 
-	   * 
+	   *
+	   * @param data
+	   *
 	   * converts data from Blob to Uint8Array
 	   */
 
@@ -57672,10 +57672,10 @@
 	    return _blobToUint8Array.apply(this, arguments);
 	  }
 	  /**
-	   * 
-	   * @param data 
-	   * @param type 
-	   * 
+	   *
+	   * @param data
+	   * @param type
+	   *
 	   * converts data from Uint8Array to Blob
 	   */
 
@@ -57738,40 +57738,580 @@
 	  return str.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t');
 	};
 
+	/**
+	 * Checks if `value` is the
+	 * [language type](http://www.ecma-international.org/ecma-262/7.0/#sec-ecmascript-language-types)
+	 * of `Object`. (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(_.noop);
+	 * // => true
+	 *
+	 * _.isObject(null);
+	 * // => false
+	 */
+	function isObject$1$1(value) {
+	  var type = typeof value;
+	  return value != null && (type == 'object' || type == 'function');
+	}
+
+	var isObject_1$1 = isObject$1$1;
+
+	/** Detect free variable `global` from Node.js. */
+	var freeGlobal$1 = typeof commonjsGlobal$1 == 'object' && commonjsGlobal$1 && commonjsGlobal$1.Object === Object && commonjsGlobal$1;
+
+	var _freeGlobal$1 = freeGlobal$1;
+
+	/** Detect free variable `self`. */
+	var freeSelf$1 = typeof self == 'object' && self && self.Object === Object && self;
+
+	/** Used as a reference to the global object. */
+	var root$1 = _freeGlobal$1 || freeSelf$1 || Function('return this')();
+
+	var _root$1 = root$1;
+
+	/**
+	 * Gets the timestamp of the number of milliseconds that have elapsed since
+	 * the Unix epoch (1 January 1970 00:00:00 UTC).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 2.4.0
+	 * @category Date
+	 * @returns {number} Returns the timestamp.
+	 * @example
+	 *
+	 * _.defer(function(stamp) {
+	 *   console.log(_.now() - stamp);
+	 * }, _.now());
+	 * // => Logs the number of milliseconds it took for the deferred invocation.
+	 */
+	var now = function() {
+	  return _root$1.Date.now();
+	};
+
+	var now_1 = now;
+
+	/** Built-in value references. */
+	var Symbol$1$1 = _root$1.Symbol;
+
+	var _Symbol$1 = Symbol$1$1;
+
+	/** Used for built-in method references. */
+	var objectProto$d = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty$b = objectProto$d.hasOwnProperty;
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var nativeObjectToString$2 = objectProto$d.toString;
+
+	/** Built-in value references. */
+	var symToStringTag$2 = _Symbol$1 ? _Symbol$1.toStringTag : undefined;
+
+	/**
+	 * A specialized version of `baseGetTag` which ignores `Symbol.toStringTag` values.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the raw `toStringTag`.
+	 */
+	function getRawTag$1(value) {
+	  var isOwn = hasOwnProperty$b.call(value, symToStringTag$2),
+	      tag = value[symToStringTag$2];
+
+	  try {
+	    value[symToStringTag$2] = undefined;
+	    var unmasked = true;
+	  } catch (e) {}
+
+	  var result = nativeObjectToString$2.call(value);
+	  if (unmasked) {
+	    if (isOwn) {
+	      value[symToStringTag$2] = tag;
+	    } else {
+	      delete value[symToStringTag$2];
+	    }
+	  }
+	  return result;
+	}
+
+	var _getRawTag$1 = getRawTag$1;
+
+	/** Used for built-in method references. */
+	var objectProto$1$1 = Object.prototype;
+
+	/**
+	 * Used to resolve the
+	 * [`toStringTag`](http://ecma-international.org/ecma-262/7.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var nativeObjectToString$1$1 = objectProto$1$1.toString;
+
+	/**
+	 * Converts `value` to a string using `Object.prototype.toString`.
+	 *
+	 * @private
+	 * @param {*} value The value to convert.
+	 * @returns {string} Returns the converted string.
+	 */
+	function objectToString$2(value) {
+	  return nativeObjectToString$1$1.call(value);
+	}
+
+	var _objectToString$1 = objectToString$2;
+
+	/** `Object#toString` result references. */
+	var nullTag$1 = '[object Null]',
+	    undefinedTag$1 = '[object Undefined]';
+
+	/** Built-in value references. */
+	var symToStringTag$1$1 = _Symbol$1 ? _Symbol$1.toStringTag : undefined;
+
+	/**
+	 * The base implementation of `getTag` without fallbacks for buggy environments.
+	 *
+	 * @private
+	 * @param {*} value The value to query.
+	 * @returns {string} Returns the `toStringTag`.
+	 */
+	function baseGetTag$1(value) {
+	  if (value == null) {
+	    return value === undefined ? undefinedTag$1 : nullTag$1;
+	  }
+	  return (symToStringTag$1$1 && symToStringTag$1$1 in Object(value))
+	    ? _getRawTag$1(value)
+	    : _objectToString$1(value);
+	}
+
+	var _baseGetTag$1 = baseGetTag$1;
+
+	/**
+	 * Checks if `value` is object-like. A value is object-like if it's not `null`
+	 * and has a `typeof` result of "object".
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 * @example
+	 *
+	 * _.isObjectLike({});
+	 * // => true
+	 *
+	 * _.isObjectLike([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObjectLike(_.noop);
+	 * // => false
+	 *
+	 * _.isObjectLike(null);
+	 * // => false
+	 */
+	function isObjectLike$1(value) {
+	  return value != null && typeof value == 'object';
+	}
+
+	var isObjectLike_1$1 = isObjectLike$1;
+
+	/** `Object#toString` result references. */
+	var symbolTag$3 = '[object Symbol]';
+
+	/**
+	 * Checks if `value` is classified as a `Symbol` primitive or object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a symbol, else `false`.
+	 * @example
+	 *
+	 * _.isSymbol(Symbol.iterator);
+	 * // => true
+	 *
+	 * _.isSymbol('abc');
+	 * // => false
+	 */
+	function isSymbol$2(value) {
+	  return typeof value == 'symbol' ||
+	    (isObjectLike_1$1(value) && _baseGetTag$1(value) == symbolTag$3);
+	}
+
+	var isSymbol_1$1 = isSymbol$2;
+
+	/** Used as references for various `Number` constants. */
+	var NAN = 0 / 0;
+
+	/** Used to match leading and trailing whitespace. */
+	var reTrim = /^\s+|\s+$/g;
+
+	/** Used to detect bad signed hexadecimal string values. */
+	var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+
+	/** Used to detect binary string values. */
+	var reIsBinary = /^0b[01]+$/i;
+
+	/** Used to detect octal string values. */
+	var reIsOctal = /^0o[0-7]+$/i;
+
+	/** Built-in method references without a dependency on `root`. */
+	var freeParseInt = parseInt;
+
+	/**
+	 * Converts `value` to a number.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 4.0.0
+	 * @category Lang
+	 * @param {*} value The value to process.
+	 * @returns {number} Returns the number.
+	 * @example
+	 *
+	 * _.toNumber(3.2);
+	 * // => 3.2
+	 *
+	 * _.toNumber(Number.MIN_VALUE);
+	 * // => 5e-324
+	 *
+	 * _.toNumber(Infinity);
+	 * // => Infinity
+	 *
+	 * _.toNumber('3.2');
+	 * // => 3.2
+	 */
+	function toNumber$1(value) {
+	  if (typeof value == 'number') {
+	    return value;
+	  }
+	  if (isSymbol_1$1(value)) {
+	    return NAN;
+	  }
+	  if (isObject_1$1(value)) {
+	    var other = typeof value.valueOf == 'function' ? value.valueOf() : value;
+	    value = isObject_1$1(other) ? (other + '') : other;
+	  }
+	  if (typeof value != 'string') {
+	    return value === 0 ? value : +value;
+	  }
+	  value = value.replace(reTrim, '');
+	  var isBinary = reIsBinary.test(value);
+	  return (isBinary || reIsOctal.test(value))
+	    ? freeParseInt(value.slice(2), isBinary ? 2 : 8)
+	    : (reIsBadHex.test(value) ? NAN : +value);
+	}
+
+	var toNumber_1 = toNumber$1;
+
+	/** Error message constants. */
+	var FUNC_ERROR_TEXT$1 = 'Expected a function';
+
+	/* Built-in method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max,
+	    nativeMin = Math.min;
+
+	/**
+	 * Creates a debounced function that delays invoking `func` until after `wait`
+	 * milliseconds have elapsed since the last time the debounced function was
+	 * invoked. The debounced function comes with a `cancel` method to cancel
+	 * delayed `func` invocations and a `flush` method to immediately invoke them.
+	 * Provide `options` to indicate whether `func` should be invoked on the
+	 * leading and/or trailing edge of the `wait` timeout. The `func` is invoked
+	 * with the last arguments provided to the debounced function. Subsequent
+	 * calls to the debounced function return the result of the last `func`
+	 * invocation.
+	 *
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
+	 * invoked on the trailing edge of the timeout only if the debounced function
+	 * is invoked more than once during the `wait` timeout.
+	 *
+	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+	 *
+	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+	 * for details over the differences between `_.debounce` and `_.throttle`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Function
+	 * @param {Function} func The function to debounce.
+	 * @param {number} [wait=0] The number of milliseconds to delay.
+	 * @param {Object} [options={}] The options object.
+	 * @param {boolean} [options.leading=false]
+	 *  Specify invoking on the leading edge of the timeout.
+	 * @param {number} [options.maxWait]
+	 *  The maximum time `func` is allowed to be delayed before it's invoked.
+	 * @param {boolean} [options.trailing=true]
+	 *  Specify invoking on the trailing edge of the timeout.
+	 * @returns {Function} Returns the new debounced function.
+	 * @example
+	 *
+	 * // Avoid costly calculations while the window size is in flux.
+	 * jQuery(window).on('resize', _.debounce(calculateLayout, 150));
+	 *
+	 * // Invoke `sendMail` when clicked, debouncing subsequent calls.
+	 * jQuery(element).on('click', _.debounce(sendMail, 300, {
+	 *   'leading': true,
+	 *   'trailing': false
+	 * }));
+	 *
+	 * // Ensure `batchLog` is invoked once after 1 second of debounced calls.
+	 * var debounced = _.debounce(batchLog, 250, { 'maxWait': 1000 });
+	 * var source = new EventSource('/stream');
+	 * jQuery(source).on('message', debounced);
+	 *
+	 * // Cancel the trailing debounced invocation.
+	 * jQuery(window).on('popstate', debounced.cancel);
+	 */
+	function debounce(func, wait, options) {
+	  var lastArgs,
+	      lastThis,
+	      maxWait,
+	      result,
+	      timerId,
+	      lastCallTime,
+	      lastInvokeTime = 0,
+	      leading = false,
+	      maxing = false,
+	      trailing = true;
+
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT$1);
+	  }
+	  wait = toNumber_1(wait) || 0;
+	  if (isObject_1$1(options)) {
+	    leading = !!options.leading;
+	    maxing = 'maxWait' in options;
+	    maxWait = maxing ? nativeMax(toNumber_1(options.maxWait) || 0, wait) : maxWait;
+	    trailing = 'trailing' in options ? !!options.trailing : trailing;
+	  }
+
+	  function invokeFunc(time) {
+	    var args = lastArgs,
+	        thisArg = lastThis;
+
+	    lastArgs = lastThis = undefined;
+	    lastInvokeTime = time;
+	    result = func.apply(thisArg, args);
+	    return result;
+	  }
+
+	  function leadingEdge(time) {
+	    // Reset any `maxWait` timer.
+	    lastInvokeTime = time;
+	    // Start the timer for the trailing edge.
+	    timerId = setTimeout(timerExpired, wait);
+	    // Invoke the leading edge.
+	    return leading ? invokeFunc(time) : result;
+	  }
+
+	  function remainingWait(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime,
+	        timeWaiting = wait - timeSinceLastCall;
+
+	    return maxing
+	      ? nativeMin(timeWaiting, maxWait - timeSinceLastInvoke)
+	      : timeWaiting;
+	  }
+
+	  function shouldInvoke(time) {
+	    var timeSinceLastCall = time - lastCallTime,
+	        timeSinceLastInvoke = time - lastInvokeTime;
+
+	    // Either this is the first call, activity has stopped and we're at the
+	    // trailing edge, the system time has gone backwards and we're treating
+	    // it as the trailing edge, or we've hit the `maxWait` limit.
+	    return (lastCallTime === undefined || (timeSinceLastCall >= wait) ||
+	      (timeSinceLastCall < 0) || (maxing && timeSinceLastInvoke >= maxWait));
+	  }
+
+	  function timerExpired() {
+	    var time = now_1();
+	    if (shouldInvoke(time)) {
+	      return trailingEdge(time);
+	    }
+	    // Restart the timer.
+	    timerId = setTimeout(timerExpired, remainingWait(time));
+	  }
+
+	  function trailingEdge(time) {
+	    timerId = undefined;
+
+	    // Only invoke if we have `lastArgs` which means `func` has been
+	    // debounced at least once.
+	    if (trailing && lastArgs) {
+	      return invokeFunc(time);
+	    }
+	    lastArgs = lastThis = undefined;
+	    return result;
+	  }
+
+	  function cancel() {
+	    if (timerId !== undefined) {
+	      clearTimeout(timerId);
+	    }
+	    lastInvokeTime = 0;
+	    lastArgs = lastCallTime = lastThis = timerId = undefined;
+	  }
+
+	  function flush() {
+	    return timerId === undefined ? result : trailingEdge(now_1());
+	  }
+
+	  function debounced() {
+	    var time = now_1(),
+	        isInvoking = shouldInvoke(time);
+
+	    lastArgs = arguments;
+	    lastThis = this;
+	    lastCallTime = time;
+
+	    if (isInvoking) {
+	      if (timerId === undefined) {
+	        return leadingEdge(lastCallTime);
+	      }
+	      if (maxing) {
+	        // Handle invocations in a tight loop.
+	        clearTimeout(timerId);
+	        timerId = setTimeout(timerExpired, wait);
+	        return invokeFunc(lastCallTime);
+	      }
+	    }
+	    if (timerId === undefined) {
+	      timerId = setTimeout(timerExpired, wait);
+	    }
+	    return result;
+	  }
+	  debounced.cancel = cancel;
+	  debounced.flush = flush;
+	  return debounced;
+	}
+
+	var debounce_1 = debounce;
+
+	/** Error message constants. */
+	var FUNC_ERROR_TEXT$1$1 = 'Expected a function';
+
+	/**
+	 * Creates a throttled function that only invokes `func` at most once per
+	 * every `wait` milliseconds. The throttled function comes with a `cancel`
+	 * method to cancel delayed `func` invocations and a `flush` method to
+	 * immediately invoke them. Provide `options` to indicate whether `func`
+	 * should be invoked on the leading and/or trailing edge of the `wait`
+	 * timeout. The `func` is invoked with the last arguments provided to the
+	 * throttled function. Subsequent calls to the throttled function return the
+	 * result of the last `func` invocation.
+	 *
+	 * **Note:** If `leading` and `trailing` options are `true`, `func` is
+	 * invoked on the trailing edge of the timeout only if the throttled function
+	 * is invoked more than once during the `wait` timeout.
+	 *
+	 * If `wait` is `0` and `leading` is `false`, `func` invocation is deferred
+	 * until to the next tick, similar to `setTimeout` with a timeout of `0`.
+	 *
+	 * See [David Corbacho's article](https://css-tricks.com/debouncing-throttling-explained-examples/)
+	 * for details over the differences between `_.throttle` and `_.debounce`.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @since 0.1.0
+	 * @category Function
+	 * @param {Function} func The function to throttle.
+	 * @param {number} [wait=0] The number of milliseconds to throttle invocations to.
+	 * @param {Object} [options={}] The options object.
+	 * @param {boolean} [options.leading=true]
+	 *  Specify invoking on the leading edge of the timeout.
+	 * @param {boolean} [options.trailing=true]
+	 *  Specify invoking on the trailing edge of the timeout.
+	 * @returns {Function} Returns the new throttled function.
+	 * @example
+	 *
+	 * // Avoid excessively updating the position while scrolling.
+	 * jQuery(window).on('scroll', _.throttle(updatePosition, 100));
+	 *
+	 * // Invoke `renewToken` when the click event is fired, but not more than once every 5 minutes.
+	 * var throttled = _.throttle(renewToken, 300000, { 'trailing': false });
+	 * jQuery(element).on('click', throttled);
+	 *
+	 * // Cancel the trailing throttled invocation.
+	 * jQuery(window).on('popstate', throttled.cancel);
+	 */
+	function throttle(func, wait, options) {
+	  var leading = true,
+	      trailing = true;
+
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT$1$1);
+	  }
+	  if (isObject_1$1(options)) {
+	    leading = 'leading' in options ? !!options.leading : leading;
+	    trailing = 'trailing' in options ? !!options.trailing : trailing;
+	  }
+	  return debounce_1(func, wait, {
+	    'leading': leading,
+	    'maxWait': wait,
+	    'trailing': trailing
+	  });
+	}
+
+	var throttle_1 = throttle;
+
 	var jwtNotFound =
 	/*#__PURE__*/
 	function () {
 	  var _ref2 = asyncToGenerator$1(
 	  /*#__PURE__*/
 	  regenerator$1.mark(function _callee(_ref) {
-	    var fn, args, account;
+	    var fn, args;
 	    return regenerator$1.wrap(function _callee$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
 	          case 0:
 	            fn = _ref.fn, args = _ref.args;
 	            _context.prev = 1;
-	            account = new Account();
-	            _context.next = 5;
-	            return account.login();
+	            _context.next = 4;
+	            return automaticLogin();
 
-	          case 5:
+	          case 4:
 	            return _context.abrupt("return", fn(args));
 
-	          case 8:
-	            _context.prev = 8;
+	          case 7:
+	            _context.prev = 7;
 	            _context.t0 = _context["catch"](1);
 	            throw new AitmedError({
 	              code: _context.t0.code,
-	              message: _context.t0.message || "There was an error retrieving a new JWT"
+	              message: _context.t0.message || 'There was an error retrieving a new JWT'
 	            });
 
-	          case 11:
+	          case 10:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, _callee, null, [[1, 8]]);
+	    }, _callee, null, [[1, 7]]);
 	  }));
 
 	  return function jwtNotFound(_x) {
@@ -57779,46 +58319,53 @@
 	  };
 	}();
 
+	var throttledJWTNotFound = throttle_1(jwtNotFound, 6000000, {
+	  trailing: false
+	});
+
 	var jwtExpired =
 	/*#__PURE__*/
 	function () {
 	  var _ref2 = asyncToGenerator$1(
 	  /*#__PURE__*/
 	  regenerator$1.mark(function _callee(_ref) {
-	    var fn, args, account;
+	    var fn, args;
 	    return regenerator$1.wrap(function _callee$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
 	          case 0:
 	            fn = _ref.fn, args = _ref.args;
 	            _context.prev = 1;
-	            account = new Account();
-	            _context.next = 5;
-	            return account.login();
+	            _context.next = 4;
+	            return automaticLogin();
 
-	          case 5:
+	          case 4:
 	            return _context.abrupt("return", fn(args));
 
-	          case 8:
-	            _context.prev = 8;
+	          case 7:
+	            _context.prev = 7;
 	            _context.t0 = _context["catch"](1);
 	            throw new AitmedError({
 	              code: _context.t0.code,
-	              message: _context.t0.message || "There was an error retrieving a new JWT"
+	              message: _context.t0.message || 'There was an error retrieving a new JWT'
 	            });
 
-	          case 11:
+	          case 10:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, _callee, null, [[1, 8]]);
+	    }, _callee, null, [[1, 7]]);
 	  }));
 
 	  return function jwtExpired(_x) {
 	    return _ref2.apply(this, arguments);
 	  };
 	}();
+
+	var throttledJWTExpired = throttle_1(jwtExpired, 6000000, {
+	  trailing: false
+	});
 
 	var errorSwitch =
 	/*#__PURE__*/
@@ -58795,10 +59342,10 @@
 	    downloadDocumentFromS3: downloadDocumentFromS3
 	  };
 	  /**
-	     *
-	     * @param {DocumentRequestArgs} args
-	     * @param {string | Uint8Array} args.id if id is undefined, create document, otherwise, update document.
-	     */
+	   *
+	   * @param {DocumentRequestArgs} args
+	   * @param {string | Uint8Array} args.id if id is undefined, create document, otherwise, update document.
+	   */
 
 	  function documentRequest(_ref) {
 	    var documentOptions = _extends_1({}, _ref);
@@ -59345,7 +59892,7 @@
 
 	  if (edgeIsUndefined) {
 	    reject(new AitmedError({
-	      name: "EDGE_IS_UNDEFINED"
+	      name: 'EDGE_IS_UNDEFINED'
 	    }));
 	  }
 
@@ -59365,9 +59912,9 @@
 
 	function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$2(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$2(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	/**
-	 * 
+	 *
 	 * @param edgeOptions
-	 * 
+	 *
 	 * @param edgeOptions.tage  number
 	 * @param edgeOptions.id  Uint8Array | string
 	 * @param edgeOptions.type  number
@@ -59383,7 +59930,7 @@
 	 * @param edgeOptions.eesak  Uint8Array | string
 	 * @param edgeOptions.sig  Uint8Array | string
 	 * @param edgeOptions.isEncrypt  boolean
-	 *  
+	 *
 	 */
 
 	function defaultPath(_ref) {
@@ -59419,7 +59966,7 @@
 	      apiEdge.setSig(pk ? pkToUint8Array : '');
 	    } catch (error) {
 	      throw new AitmedError({
-	        name: "ERROR_CREATING_BESAK"
+	        name: 'ERROR_CREATING_BESAK'
 	      });
 	    }
 	  } else {
@@ -59462,26 +60009,26 @@
 	  return apiEdge;
 	}
 	/**
-	   * 
-	   * @param edgeOptions
-	   * @param edgeOptions.name Record<string, any>
-	   * @param edgeOptions.type number
-	   * @param edgeOptions.refid string //eventId 
-	   * @param edgeOptions.evid string //the receiver of this particular edge
-	   */
+	 *
+	 * @param edgeOptions
+	 * @param edgeOptions.name Record<string, any>
+	 * @param edgeOptions.type number
+	 * @param edgeOptions.refid string //eventId
+	 * @param edgeOptions.evid string //the receiver of this particular edge
+	 */
 
 
 	function createInvite(_x) {
 	  return _createInvite.apply(this, arguments);
 	}
 	/**
-	   * 
-	   * @param params
-	   * @param params.name Record<string, any> 
-	   * @param params.type number 
-	   * @param params.refid string //inviteId
-	   * @param params.evid string //the receiver of this particular edge(i.e. who this acceptance is directed to)
-	   */
+	 *
+	 * @param params
+	 * @param params.name Record<string, any>
+	 * @param params.type number
+	 * @param params.refid string //inviteId
+	 * @param params.evid string //the receiver of this particular edge(i.e. who this acceptance is directed to)
+	 */
 
 
 	function _createInvite() {
@@ -59529,7 +60076,7 @@
 
 	function acceptInvite(_x2) {
 	  return _acceptInvite.apply(this, arguments);
-	} // used for one to many communications 
+	} // used for one to many communications
 	// ex shared notebooks
 	// where multiple users are able to access the same edge
 
@@ -59620,7 +60167,7 @@
 	            throw _context3.t0;
 
 	          case 15:
-	            apiEdge = new types_pb_1$1(); //check if event is encrypted 
+	            apiEdge = new types_pb_1$1(); //check if event is encrypted
 	            //if so attach a eesak to this edge
 
 	            if (!sharedEvent.besak) {
@@ -59748,7 +60295,7 @@
 	            throw _context4.t0;
 
 	          case 15:
-	            apiEdge = new types_pb_1$1(); //check if event is encrypted 
+	            apiEdge = new types_pb_1$1(); //check if event is encrypted
 	            //if so attach a eesak to this edge
 
 	            if (!isEncrypt) {
@@ -59783,7 +60330,7 @@
 	            _context4.prev = 30;
 	            _context4.t1 = _context4["catch"](26);
 	            throw new AitmedError({
-	              name: "ERROR_CREATING_BESAK"
+	              name: 'ERROR_CREATING_BESAK'
 	            });
 
 	          case 33:
@@ -59874,11 +60421,11 @@
 	    deleteEdge: deleteRequest
 	  };
 	  /**
-	    *
-	    * @param {EdgeRequestArgs} args
-	    * @param {string | Uint8Array} args.id if id is undefined, create edge, otherwise, update edge.
-	    * 
-	    */
+	   *
+	   * @param {EdgeRequestArgs} args
+	   * @param {string | Uint8Array} args.id if id is undefined, create edge, otherwise, update edge.
+	   *
+	   */
 
 	  function edgeRequest(_ref) {
 	    var edgeOptions = _extends_1({}, _ref);
@@ -60178,9 +60725,9 @@
 
 	var defaultMessages$1 = {
 	  LOGGED_IN: 'User is already in a logged in state.',
-	  LOGGED_OUT: "User needs to verify their password to be logged in.",
-	  NEW_DEVICE: "There are no user credentials stored. User must be authenticated.",
-	  TEMP_ACCOUNT: "The user has been invited to join and needs to complete registration."
+	  LOGGED_OUT: 'User needs to verify their password to be logged in.',
+	  NEW_DEVICE: 'There are no user credentials stored. User must be authenticated.',
+	  TEMP_ACCOUNT: 'The user has been invited to join and needs to complete registration.'
 	};
 
 	var Status = function Status(_ref) {
@@ -60536,7 +61083,7 @@
 	     *
 	     * the user's credentials found in the locaStorage are used to authenticate the user
 	     * this sends back a JWT token
-	     * 
+	     *
 	     * Logic here is also used for automatic login to replace the jwt when its expired
 	     *
 	     */
@@ -60818,7 +61365,7 @@
 	    }
 	    /**
 	     * Retrieves the users login status
-	     * 
+	     *
 	     *  @returns Status
 	     * Status.code:
 	     *  0 - LOGGED_IN
@@ -61085,13 +61632,13 @@
 	    }()
 	    /**
 	     *
-	     * @param {VerifyUserPasswordArgs} args.password 
-	     * @returns Array<[boolean, null | Uint8Array]> 
-	     * 
+	     * @param {VerifyUserPasswordArgs} args.password
+	     * @returns Array<[boolean, null | Uint8Array]>
+	     *
 	     * used to verify the user's password
-	     * 
+	     *
 	     * returns [true, sk:Uint8Array] if password is valid
-	     * 
+	     *
 	     */
 
 	  }, {
@@ -61166,6 +61713,56 @@
 
 	  return Account;
 	}();
+
+	function automaticLoginWrapper() {
+	  var calls = 0;
+	  return (
+	    /*#__PURE__*/
+	    asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee9() {
+	      return regenerator$1.wrap(function _callee9$(_context9) {
+	        while (1) {
+	          switch (_context9.prev = _context9.next) {
+	            case 0:
+	              if (!(calls > 0)) {
+	                _context9.next = 4;
+	                break;
+	              }
+
+	              throw new AitmedError({
+	                name: 'LOGIN_REQUIRED'
+	              });
+
+	            case 4:
+	              if (!(calls === 0)) {
+	                _context9.next = 8;
+	                break;
+	              }
+
+	              _context9.next = 7;
+	              return Account.prototype.login();
+
+	            case 7:
+	              setTimeout(function () {
+	                calls = 0;
+	              }, 3600000);
+
+	            case 8:
+	              calls++;
+	              return _context9.abrupt("return");
+
+	            case 10:
+	            case "end":
+	              return _context9.stop();
+	          }
+	        }
+	      }, _callee9);
+	    }))
+	  );
+	}
+
+	var automaticLogin = automaticLoginWrapper();
 
 	var SDK =
 	/*#__PURE__*/
@@ -61847,7 +62444,7 @@
 	  return parts
 	}
 
-	var hasOwnProperty$b = Object.prototype.hasOwnProperty;
+	var hasOwnProperty$c = Object.prototype.hasOwnProperty;
 
 	function DotObject (separator, override, useArray, useBrackets) {
 	  if (!(this instanceof DotObject)) {
@@ -62216,7 +62813,7 @@
 	    if (i === keys.length - 1) {
 	      if (merge && isObject$4(val) && isObject$4(obj[key])) {
 	        for (k in val) {
-	          if (hasOwnProperty$b.call(val, k)) {
+	          if (hasOwnProperty$c.call(val, k)) {
 	            obj[key][k] = val[k];
 	          }
 	        }
@@ -62229,7 +62826,7 @@
 	      }
 	    } else if (
 	      // force the value to be an object
-	      !hasOwnProperty$b.call(obj, key) ||
+	      !hasOwnProperty$c.call(obj, key) ||
 	      (!isObject$4(obj[key]) && !Array.isArray(obj[key]))
 	    ) {
 	      // initialize as array if next key is numeric
@@ -79969,7 +80566,7 @@
 
 	var create$5 = /*#__PURE__*/function () {
 	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, userName) {
-	    var _yield$getStatus, statusCode, userId, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
+	    var _yield$getStatus, statusCode, user_id, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
@@ -79981,7 +80578,7 @@
 	          case 2:
 	            _yield$getStatus = _context2.sent;
 	            statusCode = _yield$getStatus.code;
-	            userId = _yield$getStatus.userId;
+	            user_id = _yield$getStatus.data.user_id;
 
 	            if (!(statusCode === 3)) {
 	              _context2.next = 13;
@@ -79990,7 +80587,7 @@
 
 	            _context2.next = 8;
 	            return store$3.level2SDK.Account.createInvitedUser({
-	              id: userId,
+	              id: user_id,
 	              phone_number: phone_number,
 	              password: password,
 	              userInfo: {
