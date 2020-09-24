@@ -1074,14 +1074,11 @@ export default class CADL extends EventEmitter {
         lookFor = '='
       }
       if (lookFor) {
-        console.log(lookFor)
-        console.log(ifFalseEffect)
         let res = populateString({
           source: ifFalseEffect,
           locations: [this.root, this.root[pageName]],
           lookFor,
         })
-        console.log(res)
 
         if (typeof res === 'function') {
           await res()
