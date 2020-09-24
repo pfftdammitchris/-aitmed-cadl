@@ -998,7 +998,10 @@ export default class CADL extends EventEmitter {
       ) {
         await this.root.builtIn['goto'](ifTrueEffect['goto'])
         return
-      } else if (ifTrueEffect.includes('@')) {
+      } else if (
+        isObject(ifTrueEffect) &&
+        Object.keys(ifTrueEffect)?.[0]?.includes('@')
+      ) {
         this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: { ...ifTrueEffect } },
@@ -1033,6 +1036,8 @@ export default class CADL extends EventEmitter {
           ) {
             await withFns[1]()
           }
+        } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
+          await res[1]()
         }
       }
     } else if (condResult === false) {
@@ -1052,7 +1057,10 @@ export default class CADL extends EventEmitter {
       } else if (typeof ifFalseEffect === 'function') {
         await ifFalseEffect()
         return
-      } else if (ifFalseEffect.includes('@')) {
+      } else if (
+        isObject(ifFalseEffect) &&
+        Object.keys(ifFalseEffect)?.[0]?.includes('@')
+      ) {
         this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: { ...ifFalseEffect } },
@@ -1066,11 +1074,15 @@ export default class CADL extends EventEmitter {
         lookFor = '='
       }
       if (lookFor) {
+        console.log(lookFor)
+        console.log(ifFalseEffect)
         let res = populateString({
           source: ifFalseEffect,
           locations: [this.root, this.root[pageName]],
           lookFor,
         })
+        console.log(res)
+
         if (typeof res === 'function') {
           await res()
         } else if (isObject(res)) {
@@ -1087,6 +1099,8 @@ export default class CADL extends EventEmitter {
           ) {
             await withFns[1]()
           }
+        } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
+          await res[1]()
         }
       }
     }
