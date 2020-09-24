@@ -990,6 +990,7 @@ export default class CADL extends EventEmitter {
       }
     }
     if (condResult === true) {
+      let lookFor
       if (
         isObject(ifTrueEffect) &&
         'goto' in ifTrueEffect &&
@@ -997,6 +998,42 @@ export default class CADL extends EventEmitter {
       ) {
         await this.root.builtIn['goto'](ifTrueEffect['goto'])
         return
+      } else if (ifTrueEffect.includes('@')) {
+        this.dispatch({
+          type: 'eval-object',
+          payload: { pageName, updateObject: { ...ifTrueEffect } },
+        })
+        return
+      } else if (ifTrueEffect.startsWith('..')) {
+        lookFor = '..'
+      } else if (ifTrueEffect.startsWith('.')) {
+        lookFor = '.'
+      } else if (ifTrueEffect.startsWith('=')) {
+        lookFor = '='
+      }
+      if (lookFor) {
+        let res = populateString({
+          source: ifTrueEffect,
+          locations: [this.root, this.root[pageName]],
+          lookFor,
+        })
+        if (typeof res === 'function') {
+          await res()
+        } else if (isObject(res)) {
+          const boundDispatch = this.dispatch.bind(this)
+          const withFns = attachFns({
+            cadlObject: res,
+            dispatch: boundDispatch,
+          })
+          if (typeof withFns === 'function') {
+            await withFns()
+          } else if (
+            Array.isArray(withFns) &&
+            typeof withFns[1] === 'function'
+          ) {
+            await withFns[1]()
+          }
+        }
       }
     } else if (condResult === false) {
       let lookFor
@@ -1014,6 +1051,12 @@ export default class CADL extends EventEmitter {
         }
       } else if (typeof ifFalseEffect === 'function') {
         await ifFalseEffect()
+        return
+      } else if (ifFalseEffect.includes('@')) {
+        this.dispatch({
+          type: 'eval-object',
+          payload: { pageName, updateObject: { ...ifFalseEffect } },
+        })
         return
       } else if (ifFalseEffect.startsWith('..')) {
         lookFor = '..'
