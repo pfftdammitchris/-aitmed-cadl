@@ -86690,12 +86690,12 @@
 	                return _res[1]();
 
 	              case 54:
-	                _context7.next = 102;
+	                _context7.next = 99;
 	                break;
 
 	              case 56:
 	                if (!(condResult === false)) {
-	                  _context7.next = 102;
+	                  _context7.next = 99;
 	                  break;
 	                }
 
@@ -86757,34 +86757,31 @@
 
 	              case 76:
 	                if (!_lookFor2) {
-	                  _context7.next = 102;
+	                  _context7.next = 99;
 	                  break;
 	                }
 
-	                console.log(_lookFor2);
-	                console.log(ifFalseEffect);
 	                _res2 = populateString({
 	                  source: ifFalseEffect,
 	                  locations: [this.root, this.root[pageName]],
 	                  lookFor: _lookFor2
 	                });
-	                console.log(_res2);
 
 	                if (!(typeof _res2 === 'function')) {
-	                  _context7.next = 86;
+	                  _context7.next = 83;
 	                  break;
 	                }
 
-	                _context7.next = 84;
+	                _context7.next = 81;
 	                return _res2();
 
-	              case 84:
-	                _context7.next = 102;
+	              case 81:
+	                _context7.next = 99;
 	                break;
 
-	              case 86:
+	              case 83:
 	                if (!isObject$5(_res2)) {
-	                  _context7.next = 99;
+	                  _context7.next = 96;
 	                  break;
 	                }
 
@@ -86795,40 +86792,40 @@
 	                });
 
 	                if (!(typeof _withFns === 'function')) {
+	                  _context7.next = 91;
+	                  break;
+	                }
+
+	                _context7.next = 89;
+	                return _withFns();
+
+	              case 89:
+	                _context7.next = 94;
+	                break;
+
+	              case 91:
+	                if (!(Array.isArray(_withFns) && typeof _withFns[1] === 'function')) {
 	                  _context7.next = 94;
 	                  break;
 	                }
 
-	                _context7.next = 92;
-	                return _withFns();
-
-	              case 92:
-	                _context7.next = 97;
-	                break;
-
-	              case 94:
-	                if (!(Array.isArray(_withFns) && typeof _withFns[1] === 'function')) {
-	                  _context7.next = 97;
-	                  break;
-	                }
-
-	                _context7.next = 97;
+	                _context7.next = 94;
 	                return _withFns[1]();
 
-	              case 97:
-	                _context7.next = 102;
+	              case 94:
+	                _context7.next = 99;
 	                break;
 
-	              case 99:
+	              case 96:
 	                if (!(Array.isArray(_res2) && typeof (_res2 === null || _res2 === void 0 ? void 0 : _res2[1]) === 'function')) {
-	                  _context7.next = 102;
+	                  _context7.next = 99;
 	                  break;
 	                }
 
-	                _context7.next = 102;
+	                _context7.next = 99;
 	                return _res2[1]();
 
-	              case 102:
+	              case 99:
 	              case "end":
 	                return _context7.stop();
 	            }
