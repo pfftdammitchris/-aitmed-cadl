@@ -207,10 +207,16 @@ export default function builtInFns(dispatch?: Function) {
       }
       return false
     },
-    signature({ username, phoneNumber, timestamp }) {
-      const plainText = `${username}+${phoneNumber}+${timestamp}`
-      const sig = store.level2SDK.utilServices.signature(plainText)
+    signature(message: string): string {
+      const sig = store.level2SDK.utilServices.signature(message)
       return sig
+    },
+    verifySignature(signature: string, pkSign: string): boolean {
+      const isValid = store.level2SDK.utilServices.verifySignature(
+        signature,
+        pkSign
+      )
+      return isValid
     },
   }
 }
