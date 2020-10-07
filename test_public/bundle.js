@@ -72492,8 +72492,7 @@
 	            });
 
 	          case 26:
-	            debugger;
-	            _context.next = 29;
+	            _context.next = 28;
 	            return dispatch({
 	              type: 'emit-update',
 	              payload: {
@@ -72503,10 +72502,10 @@
 	              }
 	            });
 
-	          case 29:
+	          case 28:
 	            return _context.abrupt("return", res);
 
-	          case 30:
+	          case 29:
 	          case "end":
 	            return _context.stop();
 	        }
@@ -86629,7 +86628,6 @@
 	                              trimPath = key.substring(2, key.length - 1);
 	                              _pathArr2 = trimPath.split('.');
 	                              currValue = get_1(_this2.root, [_pageName4].concat(toConsumableArray(_pathArr2))) || '';
-	                              debugger;
 
 	                              if (isObject$5(currValue)) {
 	                                val = mergeDeep(currValue, val);
@@ -86653,7 +86651,6 @@
 	                              trimPath = key.substring(1, key.length - 1);
 	                              _pathArr3 = trimPath.split('.');
 	                              _currValue = get_1(_this2.root, toConsumableArray(_pathArr3)) || '';
-	                              debugger;
 
 	                              if (isObject$5(_currValue)) {
 	                                val = mergeDeep(_currValue, val);
@@ -86840,7 +86837,7 @@
 	                                        return _context6.abrupt("return", result);
 
 	                                      case 6:
-	                                        _context6.next = 39;
+	                                        _context6.next = 37;
 	                                        break;
 
 	                                      case 8:
@@ -86855,7 +86852,6 @@
 	                                          trimPath = key.substring(2, key.length - 1);
 	                                          _pathArr6 = trimPath.split('.');
 	                                          currValue = get_1(_this2.root, [_pageName4].concat(toConsumableArray(_pathArr6))) || '';
-	                                          debugger;
 
 	                                          if (isObject$5(currValue)) {
 	                                            val = mergeDeep(currValue, val);
@@ -86879,7 +86875,6 @@
 	                                          trimPath = key.substring(1, key.length - 1);
 	                                          _pathArr7 = trimPath.split('.');
 	                                          _currValue2 = get_1(_this2.root, toConsumableArray(_pathArr7)) || '';
-	                                          debugger;
 
 	                                          if (isObject$5(_currValue2)) {
 	                                            val = mergeDeep(_currValue2, val);
@@ -86900,12 +86895,12 @@
 	                                          });
 	                                        }
 
-	                                        _context6.next = 39;
+	                                        _context6.next = 37;
 	                                        break;
 
 	                                      case 13:
 	                                        if (!key.startsWith('=')) {
-	                                          _context6.next = 39;
+	                                          _context6.next = 37;
 	                                          break;
 	                                        }
 
@@ -86942,7 +86937,7 @@
 	                                        }
 
 	                                        if (!(typeof func === 'function')) {
-	                                          _context6.next = 34;
+	                                          _context6.next = 33;
 	                                          break;
 	                                        }
 
@@ -86973,30 +86968,28 @@
 	                                          newVal: _result2
 	                                        });
 
-	                                        _context6.next = 32;
+	                                        _context6.next = 31;
 	                                        break;
 
 	                                      case 29:
-	                                        debugger;
-	                                        _context6.next = 32;
+	                                        _context6.next = 31;
 	                                        return func();
 
-	                                      case 32:
-	                                        _context6.next = 39;
+	                                      case 31:
+	                                        _context6.next = 37;
 	                                        break;
 
-	                                      case 34:
+	                                      case 33:
 	                                        if (!Array.isArray(func)) {
-	                                          _context6.next = 39;
+	                                          _context6.next = 37;
 	                                          break;
 	                                        }
 
-	                                        debugger;
 	                                        func = func[1];
-	                                        _context6.next = 39;
+	                                        _context6.next = 37;
 	                                        return func();
 
-	                                      case 39:
+	                                      case 37:
 	                                      case "end":
 	                                        return _context6.stop();
 	                                    }
