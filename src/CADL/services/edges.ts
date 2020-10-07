@@ -22,7 +22,7 @@ function get({ pageName, apiObject, dispatch }) {
       ...options
     } = _.cloneDeep(apiObject || {})
 
-    let res: any[] = []
+    let res: Record<string, any> = {}
     let idList: string[] | Uint8Array[] = []
     if (id) {
       idList = Array.isArray(id) ? [...id] : [id]
@@ -58,7 +58,7 @@ function get({ pageName, apiObject, dispatch }) {
     }
 
     //Doesn't update the state. Shows mock data instead.
-    if (!res.length && store.env === 'test') {
+    if (!res?.edge.length && store.env === 'test') {
       console.log(
         '%cGet Edge Response',
         'background: purple; color: white; display: block;',
@@ -66,9 +66,11 @@ function get({ pageName, apiObject, dispatch }) {
       )
     } else {
       //maps edge.eid to edge.id
-      res = res.map((edge) => {
+      let listOfEdgesWithId = res?.edge.map((edge) => {
         return replaceEidWithId(edge)
       })
+      res.edge = listOfEdgesWithId
+
       if (store.env === 'test') {
         console.log(
           '%cGet Edge Response',
@@ -77,7 +79,7 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -86,7 +88,7 @@ function get({ pageName, apiObject, dispatch }) {
           data: res,
         },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,
@@ -111,14 +113,19 @@ function create({ pageName, apiObject, dispatch }) {
     const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
 
     //get current object name value
-    const { deat, id, ...currentVal } = dispatch({
+    const { deat, id, ...currentVal } = await dispatch({
       type: 'get-data',
       payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
     })
+
+    let populatedCurrentVal = await dispatch({
+      type: 'populate-object',
+      payload: { object: currentVal, pageName },
+    })
     //merging existing name field and incoming name field
-    const parsedType = parseInt(currentVal.type)
+    const parsedType = parseInt(populatedCurrentVal.type)
     if (parsedType === NaN || parsedType === 0) return
-    let mergedVal = { ...currentVal, type: parsedType }
+    let mergedVal = { ...populatedCurrentVal, type: parsedType }
     if (name) {
       mergedVal = mergeDeep(mergedVal, { name })
     }
@@ -160,7 +167,6 @@ function create({ pageName, apiObject, dispatch }) {
             { ...mergedVal, id }
           )
         }
-
         const { data } = await store.level2SDK.edgeServices.createEdge({
           ...mergedVal,
         })
@@ -179,7 +185,7 @@ function create({ pageName, apiObject, dispatch }) {
     }
     if (res) {
       res = replaceEidWithId(res)
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -191,11 +197,11 @@ function create({ pageName, apiObject, dispatch }) {
 
       //dispatch action to update state that is dependant of this response
       //TODO: optimize by updating a slice rather than entire object
-      dispatch({
+      await dispatch({
         type: 'populate',
         payload: { pageName },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,

@@ -47150,361 +47150,6 @@
 	module.exports = _extends;
 	});
 
-	var Codes;
-
-	(function (Codes) {
-	  Codes[Codes["SUCCESS"] = 0] = "SUCCESS";
-	  Codes[Codes["PERMISSION_DENIED"] = 1] = "PERMISSION_DENIED";
-	  Codes[Codes["UNREGISTERED"] = 2] = "UNREGISTERED";
-	  Codes[Codes["REGISTERED"] = 3] = "REGISTERED";
-	  Codes[Codes["INVALID_API_VERSION"] = 4] = "INVALID_API_VERSION";
-	  Codes[Codes["ERROR_UPLOADING_TO_AWS_S3"] = 5] = "ERROR_UPLOADING_TO_AWS_S3";
-	  Codes[Codes["ERROR_DOWNLOADING_FROM_AWS_S3"] = 6] = "ERROR_DOWNLOADING_FROM_AWS_S3";
-	  Codes[Codes["ERROR_CREATING_ESAK"] = 7] = "ERROR_CREATING_ESAK";
-	  Codes[Codes["PHONE_NUMBER_INVALID"] = 1000] = "PHONE_NUMBER_INVALID";
-	  Codes[Codes["PASSWORD_INVALID"] = 1001] = "PASSWORD_INVALID";
-	  Codes[Codes["VERIFICATION_CODE_INVALID"] = 1002] = "VERIFICATION_CODE_INVALID";
-	  Codes[Codes["REQUIRED_VERIFICATION_CODE"] = 1003] = "REQUIRED_VERIFICATION_CODE";
-	  Codes[Codes["REQUIRED_PASSWORD"] = 1004] = "REQUIRED_PASSWORD";
-	  Codes[Codes["REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE"] = 1005] = "REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE";
-	  Codes[Codes["ERROR_CLEARING_CREDENTIALS"] = 1006] = "ERROR_CLEARING_CREDENTIALS";
-	  Codes[Codes["LOGIN_REQUIRED"] = 1007] = "LOGIN_REQUIRED";
-	  Codes[Codes["OBJECT_TYPE_INVALID"] = 2000] = "OBJECT_TYPE_INVALID";
-	  Codes[Codes["NUll_INPUT_OBJECT"] = 2001] = "NUll_INPUT_OBJECT";
-	  Codes[Codes["INVALID_NAME_JSON"] = 2002] = "INVALID_NAME_JSON";
-	  Codes[Codes["JWT_OBJECT_TYPE_ERROR"] = 2003] = "JWT_OBJECT_TYPE_ERROR";
-	  Codes[Codes["JWT_NOT_FOUND"] = 2004] = "JWT_NOT_FOUND";
-	  Codes[Codes["JWT_V_CODE_ERROR"] = 2005] = "JWT_V_CODE_ERROR";
-	  Codes[Codes["JWT_EXPIRED"] = 2006] = "JWT_EXPIRED";
-	  Codes[Codes["JWT_PERMISSION_DENY"] = 2007] = "JWT_PERMISSION_DENY";
-	  Codes[Codes["DB_CONNECTION_ERROR"] = 2008] = "DB_CONNECTION_ERROR";
-	  Codes[Codes["SQL_EXEC_ERROR"] = 2009] = "SQL_EXEC_ERROR";
-	  Codes[Codes["SQL_BEGIN_ERROR"] = 2010] = "SQL_BEGIN_ERROR";
-	  Codes[Codes["SQL_COMMIT_ERROR"] = 2011] = "SQL_COMMIT_ERROR";
-	  Codes[Codes["SQL_RESULT_ERROR"] = 2012] = "SQL_RESULT_ERROR";
-	  Codes[Codes["SQL_STATEMENT_GEN_ERROR"] = 2013] = "SQL_STATEMENT_GEN_ERROR";
-	  Codes[Codes["SQL_UPDATE_WITHOUT_ID"] = 2014] = "SQL_UPDATE_WITHOUT_ID";
-	  Codes[Codes["TWILIO_CONNECTION_ERROR"] = 2015] = "TWILIO_CONNECTION_ERROR";
-	  Codes[Codes["TWILIO_RESPONSE_ERROR"] = 2016] = "TWILIO_RESPONSE_ERROR";
-	  Codes[Codes["NOT_IMPLEMENTED_MULTIPLE_DELETE"] = 2017] = "NOT_IMPLEMENTED_MULTIPLE_DELETE";
-	  Codes[Codes["JSON_STRINGIFY_FAILED"] = 2018] = "JSON_STRINGIFY_FAILED";
-	  Codes[Codes["ERROR_DECRYPTING_DATA"] = 2019] = "ERROR_DECRYPTING_DATA";
-	  Codes[Codes["JSON_PARSE_FAILED"] = 2020] = "JSON_PARSE_FAILED";
-	  Codes[Codes["CREATE_VERTEX_WRONG_ID"] = 3000] = "CREATE_VERTEX_WRONG_ID";
-	  Codes[Codes["INVALID_USER_ID"] = 3001] = "INVALID_USER_ID";
-	  Codes[Codes["CANNOT_FIND_UID"] = 3002] = "CANNOT_FIND_UID";
-	  Codes[Codes["DELETE_ID_NOT_FOUND"] = 3003] = "DELETE_ID_NOT_FOUND";
-	  Codes[Codes["CANNOT_FIND_USER_ID"] = 3004] = "CANNOT_FIND_USER_ID";
-	  Codes[Codes["UID_HAS_BEEN_USED"] = 3005] = "UID_HAS_BEEN_USED";
-	  Codes[Codes["USER_ID_NOT_MATCH"] = 3006] = "USER_ID_NOT_MATCH";
-	  Codes[Codes["UID_IS_EMPTY"] = 3007] = "UID_IS_EMPTY";
-	  Codes[Codes["INVALID_PUBLIC_KEY_LENGTH"] = 3008] = "INVALID_PUBLIC_KEY_LENGTH";
-	  Codes[Codes["INVALID_SECRET_KEY_LENGTH"] = 3009] = "INVALID_SECRET_KEY_LENGTH";
-	  Codes[Codes["CANNOT_FIND_HOST_EDGE"] = 3010] = "CANNOT_FIND_HOST_EDGE";
-	  Codes[Codes["DELETE_HOST_ID_NOT_FOUND"] = 3011] = "DELETE_HOST_ID_NOT_FOUND";
-	  Codes[Codes["VERTEX_IS_UNDEFINED"] = 3012] = "VERTEX_IS_UNDEFINED";
-	  Codes[Codes["CREATE_EDGE_WRONG_ID"] = 4000] = "CREATE_EDGE_WRONG_ID";
-	  Codes[Codes["UPDATE_EDGE_ID_NOT_FOUND"] = 4001] = "UPDATE_EDGE_ID_NOT_FOUND";
-	  Codes[Codes["INVALID_E_TYPE"] = 4002] = "INVALID_E_TYPE";
-	  Codes[Codes["DELETE_OBJ_HAS_CHILD"] = 4003] = "DELETE_OBJ_HAS_CHILD";
-	  Codes[Codes["NO_VERIFICATION_CODE"] = 4004] = "NO_VERIFICATION_CODE";
-	  Codes[Codes["EDGE_IS_UNDEFINED"] = 4005] = "EDGE_IS_UNDEFINED";
-	  Codes[Codes["ERROR_CREATING_BESAK"] = 4006] = "ERROR_CREATING_BESAK";
-	  Codes[Codes["CREATE_DOC_WRONG_ID"] = 5000] = "CREATE_DOC_WRONG_ID";
-	  Codes[Codes["UPDATE_DOC_ID_NOT_FOUND"] = 5001] = "UPDATE_DOC_ID_NOT_FOUND";
-	  Codes[Codes["CREATE_DOC_INVALID_EID"] = 5002] = "CREATE_DOC_INVALID_EID";
-	  Codes[Codes["DOCUMENT_IS_UNDEFINED"] = 5003] = "DOCUMENT_IS_UNDEFINED";
-	  Codes[Codes["YAML_PARSE_FAILED"] = 6000] = "YAML_PARSE_FAILED";
-	  Codes[Codes["REACT_YAML_PARSE_FAILED"] = 6001] = "REACT_YAML_PARSE_FAILED";
-	  Codes[Codes["INVALID_TARGET_OPTION"] = 6002] = "INVALID_TARGET_OPTION";
-	})(Codes || (Codes = {}));
-
-	var defaultMessages = {
-	  UNKNOWN_ERROR: 'error occurred',
-	  SUCCESS: 'success',
-	  PERMISSION_DENIED: 'permission denied',
-	  UNREGISTERED: 'account is not registered',
-	  REGISTERED: 'account is already registered',
-	  INVALID_API_VERSION: 'Invalid apiVersion',
-	  ERROR_UPLOADING_TO_AWS_S3: 'Error uploading document to aws S3',
-	  ERROR_DOWNLOADING_FROM_AWS_S3: 'Error downloading document from aws S3',
-	  ERROR_CREATING_ESAK: 'Please provide a public key',
-
-	  /* Account    - 1000 */
-	  PHONE_NUMBER_INVALID: 'phone number is invalid',
-	  PASSWORD_INVALID: 'password is invalid',
-	  VERIFICATION_CODE_INVALID: 'verification code is invalid',
-	  REQUIRED_VERIFICATION_CODE: 'verification code is required',
-	  REQUIRED_PASSWORD: 'password is required',
-	  REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE: 'phone number and verification are required',
-	  ERROR_CLEARING_CREDENTIALS: 'There was an error clearing out the localStorage.',
-	  LOGIN_REQUIRED: 'User must log In.',
-
-	  /* common     - 2000 */
-	  OBJECT_TYPE_INVALID: 'Object type is invalid',
-	  NUll_INPUT_OBJECT: 'Nil Input Object',
-	  INVALID_NAME_JSON: 'Invalid name Json',
-	  JWT_OBJECT_TYPE_ERROR: 'Mismatched JWT object type',
-	  JWT_NOT_FOUND: 'JWT is not found, may have been expired',
-	  JWT_V_CODE_ERROR: 'JWT Verification Code Error',
-	  JWT_EXPIRED: 'JWT Expired',
-	  JWT_PERMISSION_DENY: 'JWT Permission Deny',
-	  DB_CONNECTION_ERROR: 'Cannot connect to DB',
-	  SQL_EXEC_ERROR: 'SQL Execution Error',
-	  SQL_BEGIN_ERROR: 'SQL Begin Transaction Error',
-	  SQL_COMMIT_ERROR: 'SQL Commit Transaction Error',
-	  SQL_RESULT_ERROR: 'SQL Result Processing Error',
-	  SQL_STATEMENT_GEN_ERROR: 'SQL Error When Generate Statement',
-	  SQL_UPDATE_WITHOUT_ID: 'Update Without ID',
-	  TWILIO_CONNECTION_ERROR: 'Twilio Http Connection Error',
-	  TWILIO_RESPONSE_ERROR: 'Twilio Http Response Error',
-	  NOT_IMPLEMENTED_MULTIPLE_DELETE: 'Multiple id deletion has not implemented',
-	  JSON_STRINGIFY_FAILED: 'Failed attempt to stringify value.',
-	  ERROR_DECRYPTING_DATA: 'Error in decrypting data.',
-	  JSON_PARSE_FAILED: 'Failed attempt to parse JSON',
-
-	  /* Vertex     - 3000 */
-	  CREATE_VERTEX_WRONG_ID: 'Create Vertex With a Wrong Id',
-	  INVALID_USER_ID: 'Invalid user_id',
-	  CANNOT_FIND_UID: 'Cannot Find user_id',
-	  DELETE_ID_NOT_FOUND: 'Delete ID not found',
-	  CANNOT_FIND_USER_ID: 'Cannot Find user_id',
-	  UID_HAS_BEEN_USED: 'Uid Has Been Used',
-	  USER_ID_NOT_MATCH: 'UserId not match',
-	  UID_IS_EMPTY: 'Uid Is Empty',
-	  INVALID_PUBLIC_KEY_LENGTH: 'Invalid Public Key Length, expected 32',
-	  INVALID_SECRET_KEY_LENGTH: 'Invalid Encrypted Secret Key Length, expected 72',
-	  CANNOT_FIND_HOST_EDGE: 'Create Doc Cannot Find Host Edge',
-	  DELETE_HOST_ID_NOT_FOUND: 'Cannot find the host ID of a Delete item',
-	  VERTEX_IS_UNDEFINED: 'Vertex is undefined',
-
-	  /* Edge       - 4000 */
-	  CREATE_EDGE_WRONG_ID: 'Create Edge With a Wrong Id',
-	  UPDATE_EDGE_ID_NOT_FOUND: 'Update Edge, ID is not found',
-	  INVALID_E_TYPE: 'Invalid etype, not implemented yet',
-	  DELETE_OBJ_HAS_CHILD: 'Cannot Delete Item which has child(ren)',
-	  NO_VERIFICATION_CODE: 'No Verication Code in name of edge',
-	  EDGE_IS_UNDEFINED: 'The edge is undefined.',
-	  ERROR_CREATING_BESAK: 'There was an error creating the edge besak',
-
-	  /* Document   - 5000 */
-	  CREATE_DOC_WRONG_ID: 'Create Doc With a Wrong Id',
-	  UPDATE_DOC_ID_NOT_FOUND: 'Update Doc, ID is not found',
-	  CREATE_DOC_INVALID_EID: 'Create Doc with Invalid Edge Id',
-	  DOCUMENT_IS_UNDEFINED: 'Document is undefined',
-
-	  /* UIDL   - 6000 */
-	  YAML_PARSE_FAILED: 'Failed to parse yaml',
-	  REACT_YAML_PARSE_FAILED: 'Something went wrong while attempting to use react yaml parser',
-	  INVALID_TARGET_OPTION: 'Please enter a valid target option'
-	};
-
-	var AitmedError =
-	/*#__PURE__*/
-	function (_Error) {
-	  inherits$1(AitmedError, _Error);
-
-	  function AitmedError(_ref) {
-	    var _this;
-
-	    var code = _ref.code,
-	        message = _ref.message,
-	        source = _ref.source,
-	        name = _ref.name;
-
-	    classCallCheck$1(this, AitmedError);
-
-	    _this = possibleConstructorReturn$1(this, getPrototypeOf$1(AitmedError).call(this));
-
-	    defineProperty$e(assertThisInitialized$1(_this), "code", void 0);
-
-	    defineProperty$e(assertThisInitialized$1(_this), "name", void 0);
-
-	    defineProperty$e(assertThisInitialized$1(_this), "message", void 0);
-
-	    defineProperty$e(assertThisInitialized$1(_this), "source", void 0);
-
-	    if (code === undefined && name) {
-	      _this.code = Codes[name] === undefined ? -1 : Codes[name];
-	      _this.name = name;
-	      _this.message = message === undefined ? defaultMessages[name] : message;
-	    } else if (name === undefined && code) {
-	      _this.name = Codes[code] === undefined ? 'UNKNOWN_ERROR' : Codes[code];
-	      _this.code = code;
-	      _this.message = message === undefined ? defaultMessages[code] : message;
-	    } else {
-	      _this.code = -1;
-	      _this.name = 'UNKNOWN_ERROR';
-	    }
-
-	    if (source === undefined) {
-	      _this.source = 'lvl-2';
-	    } else {
-	      _this.source = source;
-	    }
-
-	    return _this;
-	  }
-
-	  return AitmedError;
-	}(wrapNativeSuper$1(Error));
-	var translateErrorCode = function translateErrorCode(code) {
-	  switch (code) {
-	    //common - 2000
-	    case 10:
-	      return 2001;
-
-	    case 20:
-	      return 2002;
-
-	    case 110:
-	      return 2003;
-
-	    case 111:
-	      return 2004;
-
-	    case 112:
-	      return 2005;
-
-	    case 113:
-	      return 2006;
-
-	    case 114:
-	      return 2007;
-
-	    case 120:
-	      return 2008;
-
-	    case 200:
-	      return 2009;
-
-	    case 201:
-	      return 2010;
-
-	    case 202:
-	      return 2011;
-
-	    case 205:
-	      return 2012;
-
-	    case 210:
-	      return 2013;
-
-	    case 240:
-	      return 2014;
-
-	    case 300:
-	      return 2015;
-
-	    case 310:
-	      return 2016;
-
-	    case 400:
-	      return 2017;
-	    // Vertex
-
-	    case 1060:
-	      return 3000;
-
-	    case 1000:
-	      return 3001;
-
-	    case 1020:
-	      return 3002;
-
-	    case 1072:
-	      return 3003;
-
-	    case 1010:
-	      return 3004;
-
-	    case 1030:
-	      return 3005;
-
-	    case 1030:
-	      return 3005;
-
-	    case 1040:
-	      return 3006;
-
-	    case 1050:
-	      return 3007;
-
-	    case 1070:
-	      return 3008;
-
-	    case 1071:
-	      return 3009;
-
-	    case 2010:
-	      return 3010;
-
-	    case 2072:
-	      return 3011;
-	    // Edge
-
-	    case 3060:
-	      return 4000;
-
-	    case 3070:
-	      return 4001;
-
-	    case 3000:
-	      return 4002;
-
-	    case 3001:
-	      return 4003;
-
-	    case 3010:
-	      return 4004;
-	    //Document
-
-	    case 2060:
-	      return 5000;
-
-	    case 2070:
-	      return 5001;
-
-	    case 2000:
-	      return 5002;
-
-	    default:
-	      return -1;
-	  }
-	};
-
-	var Response$1 = function Response(_ref) {
-	  var code = _ref.code,
-	      message = _ref.message,
-	      data = _ref.data;
-
-	  classCallCheck$1(this, Response);
-
-	  defineProperty$e(this, "code", void 0);
-
-	  defineProperty$e(this, "name", void 0);
-
-	  defineProperty$e(this, "message", void 0);
-
-	  defineProperty$e(this, "data", void 0);
-
-	  var name = Codes[code];
-
-	  if (data !== undefined) {
-	    this.data = data;
-	  }
-
-	  if (name === undefined) {
-	    this.code = -1;
-	    this.name = 'UNKNOWN_ERROR';
-	  } else {
-	    this.code = code;
-	    this.name = name;
-	  }
-
-	  this.message = message === undefined ? defaultMessages[name] : message;
-	};
-
 	var $jscomp$1=$jscomp$1||{};$jscomp$1.scope={};$jscomp$1.findInternal=function(a,b,c){a instanceof String&&(a=String(a));for(var d=a.length,e=0;e<d;e++){var f=a[e];if(b.call(c,f,e,a))return {i:e,v:f}}return {i:-1,v:void 0}};$jscomp$1.ASSUME_ES5=!1;$jscomp$1.ASSUME_NO_NATIVE_MAP=!1;$jscomp$1.ASSUME_NO_NATIVE_SET=!1;$jscomp$1.SIMPLE_FROUND_POLYFILL=!1;
 	$jscomp$1.defineProperty=$jscomp$1.ASSUME_ES5||"function"==typeof Object.defineProperties?Object.defineProperty:function(a,b,c){a!=Array.prototype&&a!=Object.prototype&&(a[b]=c.value);};$jscomp$1.getGlobal=function(a){return "undefined"!=typeof window&&window===a?a:"undefined"!=typeof commonjsGlobal$1&&null!=commonjsGlobal$1?commonjsGlobal$1:a};$jscomp$1.global=$jscomp$1.getGlobal(commonjsGlobal$1);
 	$jscomp$1.polyfill=function(a,b,c,d){if(b){c=$jscomp$1.global;a=a.split(".");for(d=0;d<a.length-1;d++){var e=a[d];e in c||(c[e]={});c=c[e];}a=a[a.length-1];d=c[a];b=b(d);b!=d&&null!=b&&$jscomp$1.defineProperty(c,a,{configurable:!0,writable:!0,value:b});}};$jscomp$1.polyfill("Array.prototype.findIndex",function(a){return a?a:function(a,c){return $jscomp$1.findInternal(this,a,c).i}},"es6","es3");
@@ -53469,6 +53114,361 @@
 	var ecos_api_pb_11$1 = ecos_api_pb$1.rvResp;
 	var ecos_api_pb_12$1 = ecos_api_pb$1.rxReq;
 
+	var Codes;
+
+	(function (Codes) {
+	  Codes[Codes["SUCCESS"] = 0] = "SUCCESS";
+	  Codes[Codes["PERMISSION_DENIED"] = 1] = "PERMISSION_DENIED";
+	  Codes[Codes["UNREGISTERED"] = 2] = "UNREGISTERED";
+	  Codes[Codes["REGISTERED"] = 3] = "REGISTERED";
+	  Codes[Codes["INVALID_API_VERSION"] = 4] = "INVALID_API_VERSION";
+	  Codes[Codes["ERROR_UPLOADING_TO_AWS_S3"] = 5] = "ERROR_UPLOADING_TO_AWS_S3";
+	  Codes[Codes["ERROR_DOWNLOADING_FROM_AWS_S3"] = 6] = "ERROR_DOWNLOADING_FROM_AWS_S3";
+	  Codes[Codes["ERROR_CREATING_ESAK"] = 7] = "ERROR_CREATING_ESAK";
+	  Codes[Codes["PHONE_NUMBER_INVALID"] = 1000] = "PHONE_NUMBER_INVALID";
+	  Codes[Codes["PASSWORD_INVALID"] = 1001] = "PASSWORD_INVALID";
+	  Codes[Codes["VERIFICATION_CODE_INVALID"] = 1002] = "VERIFICATION_CODE_INVALID";
+	  Codes[Codes["REQUIRED_VERIFICATION_CODE"] = 1003] = "REQUIRED_VERIFICATION_CODE";
+	  Codes[Codes["REQUIRED_PASSWORD"] = 1004] = "REQUIRED_PASSWORD";
+	  Codes[Codes["REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE"] = 1005] = "REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE";
+	  Codes[Codes["ERROR_CLEARING_CREDENTIALS"] = 1006] = "ERROR_CLEARING_CREDENTIALS";
+	  Codes[Codes["LOGIN_REQUIRED"] = 1007] = "LOGIN_REQUIRED";
+	  Codes[Codes["OBJECT_TYPE_INVALID"] = 2000] = "OBJECT_TYPE_INVALID";
+	  Codes[Codes["NUll_INPUT_OBJECT"] = 2001] = "NUll_INPUT_OBJECT";
+	  Codes[Codes["INVALID_NAME_JSON"] = 2002] = "INVALID_NAME_JSON";
+	  Codes[Codes["JWT_OBJECT_TYPE_ERROR"] = 2003] = "JWT_OBJECT_TYPE_ERROR";
+	  Codes[Codes["JWT_NOT_FOUND"] = 2004] = "JWT_NOT_FOUND";
+	  Codes[Codes["JWT_V_CODE_ERROR"] = 2005] = "JWT_V_CODE_ERROR";
+	  Codes[Codes["JWT_EXPIRED"] = 2006] = "JWT_EXPIRED";
+	  Codes[Codes["JWT_PERMISSION_DENY"] = 2007] = "JWT_PERMISSION_DENY";
+	  Codes[Codes["DB_CONNECTION_ERROR"] = 2008] = "DB_CONNECTION_ERROR";
+	  Codes[Codes["SQL_EXEC_ERROR"] = 2009] = "SQL_EXEC_ERROR";
+	  Codes[Codes["SQL_BEGIN_ERROR"] = 2010] = "SQL_BEGIN_ERROR";
+	  Codes[Codes["SQL_COMMIT_ERROR"] = 2011] = "SQL_COMMIT_ERROR";
+	  Codes[Codes["SQL_RESULT_ERROR"] = 2012] = "SQL_RESULT_ERROR";
+	  Codes[Codes["SQL_STATEMENT_GEN_ERROR"] = 2013] = "SQL_STATEMENT_GEN_ERROR";
+	  Codes[Codes["SQL_UPDATE_WITHOUT_ID"] = 2014] = "SQL_UPDATE_WITHOUT_ID";
+	  Codes[Codes["TWILIO_CONNECTION_ERROR"] = 2015] = "TWILIO_CONNECTION_ERROR";
+	  Codes[Codes["TWILIO_RESPONSE_ERROR"] = 2016] = "TWILIO_RESPONSE_ERROR";
+	  Codes[Codes["NOT_IMPLEMENTED_MULTIPLE_DELETE"] = 2017] = "NOT_IMPLEMENTED_MULTIPLE_DELETE";
+	  Codes[Codes["JSON_STRINGIFY_FAILED"] = 2018] = "JSON_STRINGIFY_FAILED";
+	  Codes[Codes["ERROR_DECRYPTING_DATA"] = 2019] = "ERROR_DECRYPTING_DATA";
+	  Codes[Codes["JSON_PARSE_FAILED"] = 2020] = "JSON_PARSE_FAILED";
+	  Codes[Codes["CREATE_VERTEX_WRONG_ID"] = 3000] = "CREATE_VERTEX_WRONG_ID";
+	  Codes[Codes["INVALID_USER_ID"] = 3001] = "INVALID_USER_ID";
+	  Codes[Codes["CANNOT_FIND_UID"] = 3002] = "CANNOT_FIND_UID";
+	  Codes[Codes["DELETE_ID_NOT_FOUND"] = 3003] = "DELETE_ID_NOT_FOUND";
+	  Codes[Codes["CANNOT_FIND_USER_ID"] = 3004] = "CANNOT_FIND_USER_ID";
+	  Codes[Codes["UID_HAS_BEEN_USED"] = 3005] = "UID_HAS_BEEN_USED";
+	  Codes[Codes["USER_ID_NOT_MATCH"] = 3006] = "USER_ID_NOT_MATCH";
+	  Codes[Codes["UID_IS_EMPTY"] = 3007] = "UID_IS_EMPTY";
+	  Codes[Codes["INVALID_PUBLIC_KEY_LENGTH"] = 3008] = "INVALID_PUBLIC_KEY_LENGTH";
+	  Codes[Codes["INVALID_SECRET_KEY_LENGTH"] = 3009] = "INVALID_SECRET_KEY_LENGTH";
+	  Codes[Codes["CANNOT_FIND_HOST_EDGE"] = 3010] = "CANNOT_FIND_HOST_EDGE";
+	  Codes[Codes["DELETE_HOST_ID_NOT_FOUND"] = 3011] = "DELETE_HOST_ID_NOT_FOUND";
+	  Codes[Codes["VERTEX_IS_UNDEFINED"] = 3012] = "VERTEX_IS_UNDEFINED";
+	  Codes[Codes["CREATE_EDGE_WRONG_ID"] = 4000] = "CREATE_EDGE_WRONG_ID";
+	  Codes[Codes["UPDATE_EDGE_ID_NOT_FOUND"] = 4001] = "UPDATE_EDGE_ID_NOT_FOUND";
+	  Codes[Codes["INVALID_E_TYPE"] = 4002] = "INVALID_E_TYPE";
+	  Codes[Codes["DELETE_OBJ_HAS_CHILD"] = 4003] = "DELETE_OBJ_HAS_CHILD";
+	  Codes[Codes["NO_VERIFICATION_CODE"] = 4004] = "NO_VERIFICATION_CODE";
+	  Codes[Codes["EDGE_IS_UNDEFINED"] = 4005] = "EDGE_IS_UNDEFINED";
+	  Codes[Codes["ERROR_CREATING_BESAK"] = 4006] = "ERROR_CREATING_BESAK";
+	  Codes[Codes["CREATE_DOC_WRONG_ID"] = 5000] = "CREATE_DOC_WRONG_ID";
+	  Codes[Codes["UPDATE_DOC_ID_NOT_FOUND"] = 5001] = "UPDATE_DOC_ID_NOT_FOUND";
+	  Codes[Codes["CREATE_DOC_INVALID_EID"] = 5002] = "CREATE_DOC_INVALID_EID";
+	  Codes[Codes["DOCUMENT_IS_UNDEFINED"] = 5003] = "DOCUMENT_IS_UNDEFINED";
+	  Codes[Codes["YAML_PARSE_FAILED"] = 6000] = "YAML_PARSE_FAILED";
+	  Codes[Codes["REACT_YAML_PARSE_FAILED"] = 6001] = "REACT_YAML_PARSE_FAILED";
+	  Codes[Codes["INVALID_TARGET_OPTION"] = 6002] = "INVALID_TARGET_OPTION";
+	})(Codes || (Codes = {}));
+
+	var defaultMessages = {
+	  UNKNOWN_ERROR: 'error occurred',
+	  SUCCESS: 'success',
+	  PERMISSION_DENIED: 'permission denied',
+	  UNREGISTERED: 'account is not registered',
+	  REGISTERED: 'account is already registered',
+	  INVALID_API_VERSION: 'Invalid apiVersion',
+	  ERROR_UPLOADING_TO_AWS_S3: 'Error uploading document to aws S3',
+	  ERROR_DOWNLOADING_FROM_AWS_S3: 'Error downloading document from aws S3',
+	  ERROR_CREATING_ESAK: 'Please provide a public key',
+
+	  /* Account    - 1000 */
+	  PHONE_NUMBER_INVALID: 'phone number is invalid',
+	  PASSWORD_INVALID: 'password is invalid',
+	  VERIFICATION_CODE_INVALID: 'verification code is invalid',
+	  REQUIRED_VERIFICATION_CODE: 'verification code is required',
+	  REQUIRED_PASSWORD: 'password is required',
+	  REQUIRED_PHONE_NUMBER_AND_VERIFICATION_CODE: 'phone number and verification are required',
+	  ERROR_CLEARING_CREDENTIALS: 'There was an error clearing out the localStorage.',
+	  LOGIN_REQUIRED: 'User must log In.',
+
+	  /* common     - 2000 */
+	  OBJECT_TYPE_INVALID: 'Object type is invalid',
+	  NUll_INPUT_OBJECT: 'Nil Input Object',
+	  INVALID_NAME_JSON: 'Invalid name Json',
+	  JWT_OBJECT_TYPE_ERROR: 'Mismatched JWT object type',
+	  JWT_NOT_FOUND: 'JWT is not found, may have been expired',
+	  JWT_V_CODE_ERROR: 'JWT Verification Code Error',
+	  JWT_EXPIRED: 'JWT Expired',
+	  JWT_PERMISSION_DENY: 'JWT Permission Deny',
+	  DB_CONNECTION_ERROR: 'Cannot connect to DB',
+	  SQL_EXEC_ERROR: 'SQL Execution Error',
+	  SQL_BEGIN_ERROR: 'SQL Begin Transaction Error',
+	  SQL_COMMIT_ERROR: 'SQL Commit Transaction Error',
+	  SQL_RESULT_ERROR: 'SQL Result Processing Error',
+	  SQL_STATEMENT_GEN_ERROR: 'SQL Error When Generate Statement',
+	  SQL_UPDATE_WITHOUT_ID: 'Update Without ID',
+	  TWILIO_CONNECTION_ERROR: 'Twilio Http Connection Error',
+	  TWILIO_RESPONSE_ERROR: 'Twilio Http Response Error',
+	  NOT_IMPLEMENTED_MULTIPLE_DELETE: 'Multiple id deletion has not implemented',
+	  JSON_STRINGIFY_FAILED: 'Failed attempt to stringify value.',
+	  ERROR_DECRYPTING_DATA: 'Error in decrypting data.',
+	  JSON_PARSE_FAILED: 'Failed attempt to parse JSON',
+
+	  /* Vertex     - 3000 */
+	  CREATE_VERTEX_WRONG_ID: 'Create Vertex With a Wrong Id',
+	  INVALID_USER_ID: 'Invalid user_id',
+	  CANNOT_FIND_UID: 'Cannot Find user_id',
+	  DELETE_ID_NOT_FOUND: 'Delete ID not found',
+	  CANNOT_FIND_USER_ID: 'Cannot Find user_id',
+	  UID_HAS_BEEN_USED: 'Uid Has Been Used',
+	  USER_ID_NOT_MATCH: 'UserId not match',
+	  UID_IS_EMPTY: 'Uid Is Empty',
+	  INVALID_PUBLIC_KEY_LENGTH: 'Invalid Public Key Length, expected 32',
+	  INVALID_SECRET_KEY_LENGTH: 'Invalid Encrypted Secret Key Length, expected 72',
+	  CANNOT_FIND_HOST_EDGE: 'Create Doc Cannot Find Host Edge',
+	  DELETE_HOST_ID_NOT_FOUND: 'Cannot find the host ID of a Delete item',
+	  VERTEX_IS_UNDEFINED: 'Vertex is undefined',
+
+	  /* Edge       - 4000 */
+	  CREATE_EDGE_WRONG_ID: 'Create Edge With a Wrong Id',
+	  UPDATE_EDGE_ID_NOT_FOUND: 'Update Edge, ID is not found',
+	  INVALID_E_TYPE: 'Invalid etype, not implemented yet',
+	  DELETE_OBJ_HAS_CHILD: 'Cannot Delete Item which has child(ren)',
+	  NO_VERIFICATION_CODE: 'No Verication Code in name of edge',
+	  EDGE_IS_UNDEFINED: 'The edge is undefined.',
+	  ERROR_CREATING_BESAK: 'There was an error creating the edge besak',
+
+	  /* Document   - 5000 */
+	  CREATE_DOC_WRONG_ID: 'Create Doc With a Wrong Id',
+	  UPDATE_DOC_ID_NOT_FOUND: 'Update Doc, ID is not found',
+	  CREATE_DOC_INVALID_EID: 'Create Doc with Invalid Edge Id',
+	  DOCUMENT_IS_UNDEFINED: 'Document is undefined',
+
+	  /* UIDL   - 6000 */
+	  YAML_PARSE_FAILED: 'Failed to parse yaml',
+	  REACT_YAML_PARSE_FAILED: 'Something went wrong while attempting to use react yaml parser',
+	  INVALID_TARGET_OPTION: 'Please enter a valid target option'
+	};
+
+	var AitmedError =
+	/*#__PURE__*/
+	function (_Error) {
+	  inherits$1(AitmedError, _Error);
+
+	  function AitmedError(_ref) {
+	    var _this;
+
+	    var code = _ref.code,
+	        message = _ref.message,
+	        source = _ref.source,
+	        name = _ref.name;
+
+	    classCallCheck$1(this, AitmedError);
+
+	    _this = possibleConstructorReturn$1(this, getPrototypeOf$1(AitmedError).call(this));
+
+	    defineProperty$e(assertThisInitialized$1(_this), "code", void 0);
+
+	    defineProperty$e(assertThisInitialized$1(_this), "name", void 0);
+
+	    defineProperty$e(assertThisInitialized$1(_this), "message", void 0);
+
+	    defineProperty$e(assertThisInitialized$1(_this), "source", void 0);
+
+	    if (code === undefined && name) {
+	      _this.code = Codes[name] === undefined ? -1 : Codes[name];
+	      _this.name = name;
+	      _this.message = message === undefined ? defaultMessages[name] : message;
+	    } else if (name === undefined && code) {
+	      _this.name = Codes[code] === undefined ? 'UNKNOWN_ERROR' : Codes[code];
+	      _this.code = code;
+	      _this.message = message === undefined ? defaultMessages[code] : message;
+	    } else {
+	      _this.code = -1;
+	      _this.name = 'UNKNOWN_ERROR';
+	    }
+
+	    if (source === undefined) {
+	      _this.source = 'lvl-2';
+	    } else {
+	      _this.source = source;
+	    }
+
+	    return _this;
+	  }
+
+	  return AitmedError;
+	}(wrapNativeSuper$1(Error));
+	var translateErrorCode = function translateErrorCode(code) {
+	  switch (code) {
+	    //common - 2000
+	    case 10:
+	      return 2001;
+
+	    case 20:
+	      return 2002;
+
+	    case 110:
+	      return 2003;
+
+	    case 111:
+	      return 2004;
+
+	    case 112:
+	      return 2005;
+
+	    case 113:
+	      return 2006;
+
+	    case 114:
+	      return 2007;
+
+	    case 120:
+	      return 2008;
+
+	    case 200:
+	      return 2009;
+
+	    case 201:
+	      return 2010;
+
+	    case 202:
+	      return 2011;
+
+	    case 205:
+	      return 2012;
+
+	    case 210:
+	      return 2013;
+
+	    case 240:
+	      return 2014;
+
+	    case 300:
+	      return 2015;
+
+	    case 310:
+	      return 2016;
+
+	    case 400:
+	      return 2017;
+	    // Vertex
+
+	    case 1060:
+	      return 3000;
+
+	    case 1000:
+	      return 3001;
+
+	    case 1020:
+	      return 3002;
+
+	    case 1072:
+	      return 3003;
+
+	    case 1010:
+	      return 3004;
+
+	    case 1030:
+	      return 3005;
+
+	    case 1030:
+	      return 3005;
+
+	    case 1040:
+	      return 3006;
+
+	    case 1050:
+	      return 3007;
+
+	    case 1070:
+	      return 3008;
+
+	    case 1071:
+	      return 3009;
+
+	    case 2010:
+	      return 3010;
+
+	    case 2072:
+	      return 3011;
+	    // Edge
+
+	    case 3060:
+	      return 4000;
+
+	    case 3070:
+	      return 4001;
+
+	    case 3000:
+	      return 4002;
+
+	    case 3001:
+	      return 4003;
+
+	    case 3010:
+	      return 4004;
+	    //Document
+
+	    case 2060:
+	      return 5000;
+
+	    case 2070:
+	      return 5001;
+
+	    case 2000:
+	      return 5002;
+
+	    default:
+	      return -1;
+	  }
+	};
+
+	var Response$1 = function Response(_ref) {
+	  var code = _ref.code,
+	      message = _ref.message,
+	      data = _ref.data;
+
+	  classCallCheck$1(this, Response);
+
+	  defineProperty$e(this, "code", void 0);
+
+	  defineProperty$e(this, "name", void 0);
+
+	  defineProperty$e(this, "message", void 0);
+
+	  defineProperty$e(this, "data", void 0);
+
+	  var name = Codes[code];
+
+	  if (data !== undefined) {
+	    this.data = data;
+	  }
+
+	  if (name === undefined) {
+	    this.code = -1;
+	    this.name = 'UNKNOWN_ERROR';
+	  } else {
+	    this.code = code;
+	    this.name = name;
+	  }
+
+	  this.message = message === undefined ? defaultMessages[name] : message;
+	};
+
 	var minimalisticAssert = assert;
 
 	function assert(val, msg) {
@@ -59209,7 +59209,9 @@
 	    base64ToUTF8: base64ToUTF8,
 	    blobToUint8Array: blobToUint8Array,
 	    uint8ArrayToBlob: uint8ArrayToBlob,
-	    signature: signature
+	    signature: signature,
+	    generateSignatureKeyPair: generateSignatureKeyPair,
+	    verifySignature: verifySignature
 	  };
 	  /**
 	   *
@@ -59321,7 +59323,9 @@
 
 
 	  function storeCredentialsInLocalStorage(_ref2) {
-	    var secretKey = _ref2.secretKey,
+	    var pkSign = _ref2.pkSign,
+	        eskSign = _ref2.eskSign,
+	        secretKey = _ref2.secretKey,
 	        publicKey = _ref2.publicKey,
 	        encryptedSecretKey = _ref2.encryptedSecretKey,
 	        vcjwt = _ref2.vcjwt,
@@ -59363,6 +59367,22 @@
 	      }
 
 	      localStorage.setItem('esk', esk);
+	    }
+
+	    if (eskSign) {
+	      if (typeof eskSign !== 'string') {
+	        eskSign = uint8ArrayToBase64(eskSign);
+	      }
+
+	      localStorage.setItem('eskSign', eskSign);
+	    }
+
+	    if (pkSign) {
+	      if (typeof pkSign !== 'string') {
+	        pkSign = uint8ArrayToBase64(pkSign);
+	      }
+
+	      localStorage.setItem('pkSign', pkSign);
 	    }
 
 	    if (user_vid) {
@@ -59463,11 +59483,11 @@
 	    var nonce = eData.slice(0, naclFast_3.nonceLength);
 	    var message = eData.slice(naclFast_3.nonceLength, eData.length);
 	    var decrypted = extraKey ? naclFast_3.open(message, nonce, extraKey, sharedKey) : naclFast_3.open.after(message, nonce, sharedKey);
-	    /*
-	            if (!decrypted) {
-	            throw new Error('Could not decrypt message');
-	        }
-	        */
+
+	    if (!decrypted) {
+	      console.log('fail to decrypt!');
+	      return decrypted;
+	    }
 
 	    return decrypted;
 	  }
@@ -59707,25 +59727,78 @@
 	  }
 	  /**
 	   *
-	   * @param plainText
+	   * @param
+	   */
+
+
+	  function generateSignatureKeyPair() {
+	    var _sign$keyPair = naclFast_5.keyPair(),
+	        publicKey = _sign$keyPair.publicKey,
+	        secretKey = _sign$keyPair.secretKey;
+
+	    return {
+	      pkSign: publicKey,
+	      skSign: secretKey
+	    };
+	  }
+	  /**
+	   *
+	   * @param message
 	   * @throws {LOGIN_REQUIRED} If the user is not logged in.
 	   */
 
 
-	  function signature(plainText) {
+	  function signature(message) {
 	    var secretKey = localStorage.getItem('sk');
+	    var eskSign = localStorage.getItem('eskSign');
 
-	    if (secretKey === null) {
+	    if (!secretKey || !eskSign) {
 	      throw new AitmedError({
 	        name: 'LOGIN_REQUIRED'
 	      });
-	    } else {
-	      var plainTextSha256 = hash_2().update(plainText).digest();
-	      var plainTextUint8Array = new Uint8Array(plainTextSha256);
-	      var secretKeyUint8Array = base64ToUint8Array(secretKey);
-	      var encryptedPlainText = sKeyEncrypt(secretKeyUint8Array, plainTextUint8Array);
-	      return encryptedPlainText;
 	    }
+
+	    var skSign, signature;
+
+	    if (secretKey && eskSign) {
+	      var secretKeyUint8Array = utils$2.base64ToUint8Array(secretKey);
+	      var eskSignUint8Array = utils$2.base64ToUint8Array(eskSign);
+
+	      try {
+	        skSign = utils$2.sKeyDecrypt(secretKeyUint8Array, eskSignUint8Array);
+	      } catch (error) {
+	        throw error;
+	      }
+	    }
+
+	    if (skSign) {
+	      var messageSha256 = hash_2().update(message).digest();
+	      var messageUint8Array = new Uint8Array(messageSha256);
+	      var signatureUint8Array = naclFast_5(messageUint8Array, skSign);
+	      var signatureBase64 = utils$2.uint8ArrayToBase64(signatureUint8Array);
+	      signature = signatureBase64;
+	    }
+
+	    return signature;
+	  }
+	  /**
+	   *
+	   * @param signature
+	   * @param pkSign
+	   */
+
+
+	  function verifySignature(signature, pkSign) {
+	    if (typeof signature === 'string') {
+	      signature = utils$2.base64ToUint8Array(signature);
+	    }
+
+	    if (typeof pkSign === 'string') {
+	      pkSign = utils$2.base64ToUint8Array(pkSign);
+	    }
+
+	    var isValid = naclFast_5.open(signature, pkSign);
+	    return !!isValid;
 	  }
 	}();
 
@@ -60919,7 +60992,7 @@
 	  _retrieveVertexCallBack = asyncToGenerator$1(
 	  /*#__PURE__*/
 	  regenerator$1.mark(function _callee2(_error, _response, resolve, reject) {
-	    var gRPCErrorExists, serverResponseCode, serverErrorExists, list, listIsUndefined, sdkList, newJWT, response;
+	    var gRPCErrorExists, serverResponseCode, serverErrorExists, vertex, listIsUndefined, sdkList, newJWT, response;
 	    return regenerator$1.wrap(function _callee2$(_context2) {
 	      while (1) {
 	        switch (_context2.prev = _context2.next) {
@@ -60940,8 +61013,8 @@
 	              resolve([serverErrorExists, _response]);
 	            }
 
-	            list = _response.getVertexList();
-	            listIsUndefined = list === undefined;
+	            vertex = _response.getVertexList();
+	            listIsUndefined = vertex === undefined;
 
 	            if (listIsUndefined) {
 	              reject(new AitmedError({
@@ -60949,7 +61022,7 @@
 	              }));
 	            }
 
-	            sdkList = list.map(function (data) {
+	            sdkList = vertex.map(function (data) {
 	              return toSDKVertex(data);
 	            });
 	            newJWT = _response.getJwt();
@@ -60958,7 +61031,12 @@
 	            });
 	            response = new Response$1({
 	              code: 0,
-	              data: sdkList
+	              data: {
+	                vertex: sdkList,
+	                jwt: newJWT,
+	                code: serverResponseCode,
+	                error: _error
+	              }
 	            });
 	            resolve([false, response]);
 
@@ -60980,7 +61058,7 @@
 	  _retrieveDocumentCallBack = asyncToGenerator$1(
 	  /*#__PURE__*/
 	  regenerator$1.mark(function _callee3(_error, _response, resolve, reject) {
-	    var gRPCErrorExists, serverResponseCode, serverErrorExists, list, listIsUndefined, sdkList, newJWT, response;
+	    var gRPCErrorExists, serverResponseCode, serverErrorExists, document, listIsUndefined, sdkList, newJWT, response;
 	    return regenerator$1.wrap(function _callee3$(_context3) {
 	      while (1) {
 	        switch (_context3.prev = _context3.next) {
@@ -61001,8 +61079,8 @@
 	              resolve([serverErrorExists, _response]);
 	            }
 
-	            list = _response.getDocList();
-	            listIsUndefined = list === undefined;
+	            document = _response.getDocList();
+	            listIsUndefined = document === undefined;
 
 	            if (listIsUndefined) {
 	              reject(new AitmedError({
@@ -61010,7 +61088,7 @@
 	              }));
 	            }
 
-	            sdkList = list.map(function (data) {
+	            sdkList = document.map(function (data) {
 	              return toSDKDoc(data);
 	            });
 	            newJWT = _response.getJwt();
@@ -61019,7 +61097,12 @@
 	            });
 	            response = new Response$1({
 	              code: 0,
-	              data: sdkList
+	              data: {
+	                document: sdkList,
+	                jwt: newJWT,
+	                code: serverResponseCode,
+	                error: _error
+	              }
 	            });
 	            resolve([false, response]);
 
@@ -61041,7 +61124,7 @@
 	  _retrieveEdgeCallBack = asyncToGenerator$1(
 	  /*#__PURE__*/
 	  regenerator$1.mark(function _callee4(_error, _response, resolve, reject) {
-	    var gRPCErrorExists, serverResponseCode, serverErrorExists, list, listIsUndefined, sdkList, newJWT, response;
+	    var gRPCErrorExists, serverResponseCode, serverErrorExists, edge, listIsUndefined, sdkList, newJWT, response;
 	    return regenerator$1.wrap(function _callee4$(_context4) {
 	      while (1) {
 	        switch (_context4.prev = _context4.next) {
@@ -61062,8 +61145,8 @@
 	              resolve([serverErrorExists, _response]);
 	            }
 
-	            list = _response.getEdgeList();
-	            listIsUndefined = list === undefined;
+	            edge = _response.getEdgeList();
+	            listIsUndefined = edge === undefined;
 
 	            if (listIsUndefined) {
 	              reject(new AitmedError({
@@ -61071,7 +61154,7 @@
 	              }));
 	            }
 
-	            sdkList = list.map(function (data) {
+	            sdkList = edge.map(function (data) {
 	              return toSDKEdge(data);
 	            });
 	            newJWT = _response.getJwt();
@@ -61080,7 +61163,12 @@
 	            });
 	            response = new Response$1({
 	              code: 0,
-	              data: sdkList
+	              data: {
+	                edge: sdkList,
+	                jwt: newJWT,
+	                code: serverResponseCode,
+	                error: _error
+	              }
 	            });
 	            resolve([false, response]);
 
@@ -61298,7 +61386,12 @@
 	                  jwt: newJWT
 	                });
 	                response = new Response$1({
-	                  code: responseCode
+	                  code: responseCode,
+	                  data: {
+	                    jwt: newJWT,
+	                    code: responseCode,
+	                    error: _error
+	                  }
 	                });
 	                resolve(response);
 	                return _context.abrupt("return");
@@ -61446,7 +61539,12 @@
 	                  sdkDocument = toSDKDoc(document);
 	                  response = new Response$1({
 	                    code: responseCode,
-	                    data: sdkDocument
+	                    data: {
+	                      document: sdkDocument,
+	                      code: responseCode,
+	                      jwt: newJWT,
+	                      error: _error
+	                    }
 	                  });
 	                  resolve(response);
 	                  return _context.abrupt("return");
@@ -61703,106 +61801,18 @@
 	  }
 	}
 
-	function findRoot(_x) {
-	  return _findRoot.apply(this, arguments);
-	}
-
-	function _findRoot() {
-	  _findRoot = asyncToGenerator$1(
-	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee(id) {
-	    var _ref2, edge, refid;
-
-	    return regenerator$1.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            _context.next = 2;
-	            return edgesServices.retrieveEdge({
-	              idList: [id]
-	            });
-
-	          case 2:
-	            _ref2 = _context.sent;
-	            edge = _ref2.data;
-	            refid = edge[0].refid;
-
-	            if (!refid) {
-	              _context.next = 7;
-	              break;
-	            }
-
-	            return _context.abrupt("return", findRoot(refid));
-
-	          case 7:
-	            return _context.abrupt("return", edge[0]);
-
-	          case 8:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-	  return _findRoot.apply(this, arguments);
-	}
-
-	function findEdgeWithEsak(_x2) {
-	  return _findEdgeWithEsak.apply(this, arguments);
-	}
-
-	function _findEdgeWithEsak() {
-	  _findEdgeWithEsak = asyncToGenerator$1(
-	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee2(id) {
-	    var _ref3, edge, _edge$, eesak, besak, refid;
-
-	    return regenerator$1.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return edgesServices.retrieveEdge({
-	              idList: [id]
-	            });
-
-	          case 2:
-	            _ref3 = _context2.sent;
-	            edge = _ref3.data;
-	            _edge$ = edge[0], eesak = _edge$.eesak, besak = _edge$.besak, refid = _edge$.refid;
-
-	            if (!(eesak || besak)) {
-	              _context2.next = 9;
-	              break;
-	            }
-
-	            return _context2.abrupt("return", edge[0]);
-
-	          case 9:
-	            return _context2.abrupt("return", findEdgeWithEsak(refid));
-
-	          case 10:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-	  return _findEdgeWithEsak.apply(this, arguments);
-	}
-
-	function handleServerError$1(_x3) {
+	function handleServerError$1(_x) {
 	  return _handleServerError$1.apply(this, arguments);
 	}
 
 	function _handleServerError$1() {
 	  _handleServerError$1 = asyncToGenerator$1(
 	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee3(_ref) {
+	  regenerator$1.mark(function _callee(_ref) {
 	    var response, fn, args, reject, resolve, serverResponseCode, serverError, translatedCode, errorIsUnknown, errorName, switchResponse;
-	    return regenerator$1.wrap(function _callee3$(_context3) {
+	    return regenerator$1.wrap(function _callee$(_context) {
 	      while (1) {
-	        switch (_context3.prev = _context3.next) {
+	        switch (_context.prev = _context.next) {
 	          case 0:
 	            response = _ref.response, fn = _ref.fn, args = _ref.args, reject = _ref.reject, resolve = _ref.resolve;
 	            serverResponseCode = response.getCode();
@@ -61811,7 +61821,7 @@
 	            errorIsUnknown = translatedCode === -1;
 
 	            if (!errorIsUnknown) {
-	              _context3.next = 10;
+	              _context.next = 10;
 	              break;
 	            }
 
@@ -61820,12 +61830,12 @@
 	              source: 'lvl-1',
 	              message: serverError
 	            }));
-	            return _context3.abrupt("return");
+	            return _context.abrupt("return");
 
 	          case 10:
-	            _context3.prev = 10;
+	            _context.prev = 10;
 	            errorName = Codes[translatedCode];
-	            _context3.next = 14;
+	            _context.next = 14;
 	            return errorSwitch({
 	              name: errorName,
 	              fn: fn,
@@ -61833,22 +61843,22 @@
 	            });
 
 	          case 14:
-	            switchResponse = _context3.sent;
+	            switchResponse = _context.sent;
 	            resolve(switchResponse);
-	            return _context3.abrupt("return");
+	            return _context.abrupt("return");
 
 	          case 19:
-	            _context3.prev = 19;
-	            _context3.t0 = _context3["catch"](10);
-	            reject(_context3.t0);
-	            return _context3.abrupt("return");
+	            _context.prev = 19;
+	            _context.t0 = _context["catch"](10);
+	            reject(_context.t0);
+	            return _context.abrupt("return");
 
 	          case 23:
 	          case "end":
-	            return _context3.stop();
+	            return _context.stop();
 	        }
 	      }
-	    }, _callee3, null, [[10, 19]]);
+	    }, _callee, null, [[10, 19]]);
 	  }));
 	  return _handleServerError$1.apply(this, arguments);
 	}
@@ -61898,7 +61908,12 @@
 	  setJWT(sdkEdge.type, newJWT);
 	  var response = new Response$1({
 	    code: 0,
-	    data: sdkEdge
+	    data: {
+	      edge: sdkEdge,
+	      jwt: newJWT,
+	      code: serverResponseCode,
+	      error: _error
+	    }
 	  });
 	  resolve([false, response]);
 	}
@@ -61906,511 +61921,14 @@
 	function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 	function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$2(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$2(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	/**
-	 *
-	 * @param edgeOptions
-	 *
-	 * @param edgeOptions.tage  number
-	 * @param edgeOptions.id  Uint8Array | string
-	 * @param edgeOptions.type  number
-	 * @param edgeOptions.name  Record<string, any>
-	 * @param edgeOptions.deat  Record<string, any>
-	 * @param edgeOptions.subtype  number
-	 * @param edgeOptions.bvid  Uint8Array | string
-	 * @param edgeOptions.evid  Uint8Array | string
-	 * @param edgeOptions.stime  number
-	 * @param edgeOptions.etime  number
-	 * @param edgeOptions.refid  Uint8Array | string
-	 * @param edgeOptions.besak  Uint8Array | string
-	 * @param edgeOptions.eesak  Uint8Array | string
-	 * @param edgeOptions.sig  Uint8Array | string
-	 * @param edgeOptions.isEncrypt  boolean
-	 *
-	 */
-
-	function defaultPath(_ref) {
-	  var tage = _ref.tage,
-	      id = _ref.id,
-	      type = _ref.type,
-	      name = _ref.name,
-	      deat = _ref.deat,
-	      subtype = _ref.subtype,
-	      bvid = _ref.bvid,
-	      evid = _ref.evid,
-	      stime = _ref.stime,
-	      etime = _ref.etime,
-	      refid = _ref.refid,
-	      eesak = _ref.eesak,
-	      sig = _ref.sig,
-	      isEncrypt = _ref.isEncrypt;
-	  var apiEdge = new types_pb_1$1();
-	  var besak;
-
-	  if (isEncrypt === true) {
-	    //event is encrypted
-	    try {
-	      //TODO refactor uneeded conversion to Uint8Array
-	      var pk = localStorage.getItem('pk');
-	      var pkToUint8Array;
-
-	      if (pk) {
-	        pkToUint8Array = utils$2.base64ToUint8Array(pk);
-	      }
-
-	      besak = generateEsak(pk);
-	      apiEdge.setSig(pk ? pkToUint8Array : '');
-	    } catch (error) {
-	      throw new AitmedError({
-	        name: 'ERROR_CREATING_BESAK'
-	      });
-	    }
-	  } else {
-	    if (sig !== undefined) apiEdge.setSig(sig);
-	  }
-
-	  if (name) {
-	    try {
-	      var nameJSONString = JSON.stringify(name);
-	      apiEdge.setName(nameJSONString);
-	    } catch (error) {
-	      throw new AitmedError({
-	        name: 'JSON_STRINGIFY_FAILED'
-	      });
-	    }
-	  }
-
-	  if (deat) {
-	    try {
-	      var deatJSONString = JSON.stringify(deat);
-	      apiEdge.setDeat(deatJSONString);
-	    } catch (error) {
-	      throw new AitmedError({
-	        name: 'JSON_STRINGIFY_FAILED'
-	      });
-	    }
-	  }
-
-	  if (bvid !== undefined) apiEdge.setBvid(bvid);
-	  if (stime !== undefined) apiEdge.setStime(stime);
-	  if (type !== undefined) apiEdge.setType(type);
-	  if (tage !== undefined) apiEdge.setTage(tage);
-	  if (id !== undefined) apiEdge.setId(id);
-	  if (subtype !== undefined) apiEdge.setSubtype(subtype);
-	  if (evid !== undefined) apiEdge.setEvid(evid);
-	  if (etime !== undefined) apiEdge.setEtime(etime);
-	  if (refid !== undefined) apiEdge.setRefid(refid);
-	  if (besak !== undefined) apiEdge.setBesak(besak);
-	  if (eesak !== undefined) apiEdge.setEesak(eesak);
-	  return apiEdge;
-	}
-	/**
-	 *
-	 * @param edgeOptions
-	 * @param edgeOptions.name Record<string, any>
-	 * @param edgeOptions.type number
-	 * @param edgeOptions.refid string //eventId
-	 * @param edgeOptions.evid string //the receiver of this particular edge
-	 */
-
-
-	function createInvite(_x) {
-	  return _createInvite.apply(this, arguments);
-	}
-	/**
-	 *
-	 * @param params
-	 * @param params.name Record<string, any>
-	 * @param params.type number
-	 * @param params.refid string //inviteId
-	 * @param params.evid string //the receiver of this particular edge(i.e. who this acceptance is directed to)
-	 */
-
-
-	function _createInvite() {
-	  _createInvite = asyncToGenerator$1(
-	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee(_ref2) {
-	    var name, type, refid, bvid, evid, apiEdge, nameJSONString;
-	    return regenerator$1.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            name = _ref2.name, type = _ref2.type, refid = _ref2.refid, bvid = _ref2.bvid, evid = _ref2.evid;
-	            apiEdge = new types_pb_1$1();
-	            _context.prev = 2;
-	            nameJSONString = JSON.stringify(name);
-	            apiEdge.setName(nameJSONString);
-	            _context.next = 10;
-	            break;
-
-	          case 7:
-	            _context.prev = 7;
-	            _context.t0 = _context["catch"](2);
-	            throw new AitmedError({
-	              name: 'JSON_STRINGIFY_FAILED'
-	            });
-
-	          case 10:
-	            apiEdge.setType(type);
-	            apiEdge.setBvid(bvid);
-	            apiEdge.setRefid(refid);
-	            if (typeof evid !== 'undefined') apiEdge.setEvid(evid); // if (stime !== undefined) apiEdge.setStime(stime)
-	            // if (etime !== undefined) apiEdge.setEtime(etime)
-
-	            return _context.abrupt("return", apiEdge);
-
-	          case 15:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee, null, [[2, 7]]);
-	  }));
-	  return _createInvite.apply(this, arguments);
-	}
-
-	function acceptInvite(_x2) {
-	  return _acceptInvite.apply(this, arguments);
-	} // used for one to many communications
-	// ex shared notebooks
-	// where multiple users are able to access the same edge
-
-
-	function _acceptInvite() {
-	  _acceptInvite = asyncToGenerator$1(
-	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee2(_ref3) {
-	    var name, type, refid, evid, bvid, apiEdge, nameJSONString, evidPk;
-	    return regenerator$1.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            name = _ref3.name, type = _ref3.type, refid = _ref3.refid, evid = _ref3.evid, bvid = _ref3.bvid;
-	            apiEdge = new types_pb_1$1();
-	            _context2.prev = 2;
-	            nameJSONString = JSON.stringify(name);
-	            apiEdge.setName(nameJSONString);
-	            _context2.next = 10;
-	            break;
-
-	          case 7:
-	            _context2.prev = 7;
-	            _context2.t0 = _context2["catch"](2);
-	            throw new AitmedError({
-	              name: 'JSON_STRINGIFY_FAILED'
-	            });
-
-	          case 10:
-	            evidPk = localStorage.getItem('pk');
-	            apiEdge.setSig(evidPk === null ? '' : evidPk);
-	            apiEdge.setType(type);
-	            apiEdge.setRefid(refid);
-	            apiEdge.setEvid(evid);
-	            apiEdge.setBvid(bvid);
-	            return _context2.abrupt("return", apiEdge);
-
-	          case 17:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2, null, [[2, 7]]);
-	  }));
-	  return _acceptInvite.apply(this, arguments);
-	}
-
-	function authorizeEvent_Dependent(_x3) {
-	  return _authorizeEvent_Dependent.apply(this, arguments);
-	} //ex. authorize inbox
-	// used for one to one communication
-	// only one bvid and evid are able to modify and access the docs on edge
-
-
-	function _authorizeEvent_Dependent() {
-	  _authorizeEvent_Dependent = asyncToGenerator$1(
-	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee3(_ref4) {
-	    var bvid, evid, refid, name, sharedEvent, _ref6, besak, rootName, type, eid, apiEdge, eesak, esak, edgeWithEsak, _ref7, acceptEdge, evidPk, evidPkUint8Array, publicKey, secretKey, partialKey, pkToUint8Array, skToUint8Array, mergedName, nameJSONString;
-
-	    return regenerator$1.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            bvid = _ref4.bvid, evid = _ref4.evid, refid = _ref4.refid, name = _ref4.name;
-	            _context3.prev = 1;
-	            _context3.next = 4;
-	            return findRoot(refid);
-
-	          case 4:
-	            _ref6 = _context3.sent;
-	            besak = _ref6.besak;
-	            rootName = _ref6.rootName;
-	            type = _ref6.type;
-	            eid = _ref6.eid;
-	            sharedEvent = {
-	              besak: besak,
-	              rootName: rootName,
-	              type: type,
-	              eid: eid
-	            };
-	            _context3.next = 15;
-	            break;
-
-	          case 12:
-	            _context3.prev = 12;
-	            _context3.t0 = _context3["catch"](1);
-	            throw _context3.t0;
-
-	          case 15:
-	            apiEdge = new types_pb_1$1(); //check if event is encrypted
-	            //if so attach a eesak to this edge
-
-	            if (!sharedEvent.besak) {
-	              _context3.next = 31;
-	              break;
-	            }
-
-	            _context3.next = 19;
-	            return findEdgeWithEsak(refid);
-
-	          case 19:
-	            edgeWithEsak = _context3.sent;
-	            _context3.next = 22;
-	            return edgesServices.retrieveEdge({
-	              idList: [refid]
-	            });
-
-	          case 22:
-	            _ref7 = _context3.sent;
-	            acceptEdge = _ref7.data;
-	            evidPk = acceptEdge[0].sig;
-	            evidPkUint8Array = evidPk;
-
-	            if (typeof evidPk === 'string') {
-	              evidPkUint8Array = utils$2.base64ToUint8Array(evidPk);
-	            }
-
-	            if (edgeWithEsak.besak) {
-	              esak = edgeWithEsak.besak; //user authorizing shared edge is user who created the orignal notebook
-
-	              publicKey = localStorage.getItem('pk');
-	              secretKey = localStorage.getItem('sk');
-	            } else {
-	              esak = edgeWithEsak.eesak; //user authorizing shared edge is not the user who created the original notebook
-
-	              publicKey = utils$2.uint8ArrayToBase64(edgeWithEsak.sig);
-	              secretKey = localStorage.getItem('sk');
-	            } //get the sak
-
-
-	            if (publicKey && secretKey) {
-	              pkToUint8Array = utils$2.base64ToUint8Array(publicKey);
-	              skToUint8Array = utils$2.base64ToUint8Array(secretKey);
-	              partialKey = utils$2.aKeyDecrypt(pkToUint8Array, skToUint8Array, esak);
-	            } //encrypt sak with receiverPk and senderSk
-
-
-	            if (partialKey) {
-	              eesak = utils$2.aKeyEncrypt(evidPkUint8Array, skToUint8Array, partialKey);
-	            } //attach sender public key so receiver can decrypt eesak
-
-
-	            apiEdge.setSig(publicKey === null ? '' : publicKey);
-
-	          case 31:
-	            _context3.prev = 31;
-	            mergedName = _objectSpread$2({}, sharedEvent.rootName, {}, name);
-	            nameJSONString = JSON.stringify(mergedName);
-	            apiEdge.setName(nameJSONString);
-	            _context3.next = 40;
-	            break;
-
-	          case 37:
-	            _context3.prev = 37;
-	            _context3.t1 = _context3["catch"](31);
-	            throw new AitmedError({
-	              name: 'JSON_STRINGIFY_FAILED'
-	            });
-
-	          case 40:
-	            if (eesak !== undefined) apiEdge.setEesak(eesak);
-	            apiEdge.setType(sharedEvent.type);
-	            apiEdge.setRefid(sharedEvent.eid);
-	            apiEdge.setEvid(evid);
-	            apiEdge.setBvid(bvid);
-	            return _context3.abrupt("return", apiEdge);
-
-	          case 46:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3, null, [[1, 12], [31, 37]]);
-	  }));
-	  return _authorizeEvent_Dependent.apply(this, arguments);
-	}
-
-	function authorizeEvent_Independent(_x4) {
-	  return _authorizeEvent_Independent.apply(this, arguments);
-	}
-
-	function _authorizeEvent_Independent() {
-	  _authorizeEvent_Independent = asyncToGenerator$1(
-	  /*#__PURE__*/
-	  regenerator$1.mark(function _callee4(_ref5) {
-	    var evid, bvid, refid, name, _ref5$isEncrypt, isEncrypt, sharedEvent, _ref8, _besak, rootName, type, eid, apiEdge, eesak, besak, _ref9, acceptEdge, evidPk, evidPkUint8Array, bvidPk, bvidSK, partialKey, pkToUint8Array, skToUint8Array, mergedName, nameJSONString;
-
-	    return regenerator$1.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            evid = _ref5.evid, bvid = _ref5.bvid, refid = _ref5.refid, name = _ref5.name, _ref5$isEncrypt = _ref5.isEncrypt, isEncrypt = _ref5$isEncrypt === void 0 ? false : _ref5$isEncrypt;
-	            _context4.prev = 1;
-	            _context4.next = 4;
-	            return findRoot(refid);
-
-	          case 4:
-	            _ref8 = _context4.sent;
-	            _besak = _ref8.besak;
-	            rootName = _ref8.name;
-	            type = _ref8.type;
-	            eid = _ref8.eid;
-	            sharedEvent = {
-	              besak: _besak,
-	              rootName: rootName,
-	              type: type,
-	              eid: eid
-	            };
-	            _context4.next = 15;
-	            break;
-
-	          case 12:
-	            _context4.prev = 12;
-	            _context4.t0 = _context4["catch"](1);
-	            throw _context4.t0;
-
-	          case 15:
-	            apiEdge = new types_pb_1$1(); //check if event is encrypted
-	            //if so attach a eesak to this edge
-
-	            if (!isEncrypt) {
-	              _context4.next = 36;
-	              break;
-	            }
-
-	            _context4.next = 19;
-	            return edgesServices.retrieveEdge({
-	              idList: [refid]
-	            });
-
-	          case 19:
-	            _ref9 = _context4.sent;
-	            acceptEdge = _ref9.data;
-	            evidPk = acceptEdge[0].sig;
-	            evidPkUint8Array = evidPk;
-
-	            if (typeof evidPk === 'string') {
-	              evidPkUint8Array = utils$2.base64ToUint8Array(evidPk);
-	            } //get the pk and sk of bvid
-
-
-	            bvidPk = localStorage.getItem('pk');
-	            bvidSK = localStorage.getItem('sk');
-	            _context4.prev = 26;
-	            besak = generateEsak(bvidPk);
-	            _context4.next = 33;
-	            break;
-
-	          case 30:
-	            _context4.prev = 30;
-	            _context4.t1 = _context4["catch"](26);
-	            throw new AitmedError({
-	              name: 'ERROR_CREATING_BESAK'
-	            });
-
-	          case 33:
-	            if (bvidPk && bvidSK) {
-	              pkToUint8Array = utils$2.base64ToUint8Array(bvidPk);
-	              skToUint8Array = utils$2.base64ToUint8Array(bvidSK);
-	              partialKey = utils$2.aKeyDecrypt(pkToUint8Array, skToUint8Array, besak);
-	            } //encrypt sak with receiverPk and senderSk
-
-
-	            if (partialKey) {
-	              eesak = utils$2.aKeyEncrypt(evidPkUint8Array, skToUint8Array, partialKey);
-	            } //attach sender public key so receiver can decrypt eesak
-
-
-	            apiEdge.setSig(bvidPk === null ? '' : bvidPk);
-
-	          case 36:
-	            _context4.prev = 36;
-	            mergedName = _objectSpread$2({}, sharedEvent.rootName, {}, name);
-	            nameJSONString = JSON.stringify(mergedName);
-	            apiEdge.setName(nameJSONString);
-	            _context4.next = 45;
-	            break;
-
-	          case 42:
-	            _context4.prev = 42;
-	            _context4.t2 = _context4["catch"](36);
-	            throw new AitmedError({
-	              name: 'JSON_STRINGIFY_FAILED'
-	            });
-
-	          case 45:
-	            if (besak !== undefined) apiEdge.setBesak(besak);
-	            if (eesak !== undefined) apiEdge.setEesak(eesak);
-	            apiEdge.setType(sharedEvent.type);
-	            apiEdge.setRefid(sharedEvent.eid);
-	            apiEdge.setEvid(evid);
-	            apiEdge.setBvid(bvid);
-	            return _context4.abrupt("return", apiEdge);
-
-	          case 52:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4, null, [[1, 12], [26, 30], [36, 42]]);
-	  }));
-	  return _authorizeEvent_Independent.apply(this, arguments);
-	}
-
-	var buildRequest = function buildRequest(edgeOptions) {
-	  switch (edgeOptions.type) {
-	    case 1050:
-	      return createInvite(edgeOptions);
-
-	    case 1060:
-	      return acceptInvite(edgeOptions);
-
-	    case 1070:
-	      //this type(1070) serves as a placeholder
-	      //and will be replaced by the type of the original event
-	      return authorizeEvent_Dependent(edgeOptions);
-
-	    case 1071:
-	      //this type(1071) serves as a placeholder
-	      //and will be replaced by the type of the original event
-	      return authorizeEvent_Independent(edgeOptions);
-
-	    default:
-	      return defaultPath(edgeOptions);
-	  }
-	};
-
-	function ownKeys$3(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$3(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$3(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$3(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	var edgesServices = function () {
 	  var services = {
 	    createEdge: function createEdge(args) {
-	      return edgeRequest(_objectSpread$3({}, args));
+	      return edgeRequest(_objectSpread$2({}, args));
 	    },
 	    updateEdge: function updateEdge(args) {
-	      return edgeRequest(_objectSpread$3({}, args));
+	      return edgeRequest(_objectSpread$2({}, args));
 	    },
 	    retrieveEdge: retrieveRequest(2),
 	    deleteEdge: deleteRequest
@@ -62452,7 +61970,7 @@
 	              case 4:
 	                _request = new ecos_api_pb_3$1();
 	                _context.next = 7;
-	                return buildRequest(_objectSpread$3({}, edgeOptions));
+	                return buildRequest(_objectSpread$2({}, edgeOptions));
 
 	              case 7:
 	                requestEdge = _context.sent;
@@ -62508,21 +62026,603 @@
 	      };
 	    }());
 	  }
+	  /**
+	   *
+	   * @param edgeOptions
+	   *
+	   * @param edgeOptions.tage  number
+	   * @param edgeOptions.id  Uint8Array | string
+	   * @param edgeOptions.type  number
+	   * @param edgeOptions.name  Record<string, any>
+	   * @param edgeOptions.deat  Record<string, any>
+	   * @param edgeOptions.subtype  number
+	   * @param edgeOptions.bvid  Uint8Array | string
+	   * @param edgeOptions.evid  Uint8Array | string
+	   * @param edgeOptions.stime  number
+	   * @param edgeOptions.etime  number
+	   * @param edgeOptions.refid  Uint8Array | string
+	   * @param edgeOptions.besak  Uint8Array | string
+	   * @param edgeOptions.eesak  Uint8Array | string
+	   * @param edgeOptions.sig  Uint8Array | string
+	   * @param edgeOptions.isEncrypt  boolean
+	   *
+	   */
+
+
+	  function defaultPath(_ref5) {
+	    var tage = _ref5.tage,
+	        id = _ref5.id,
+	        type = _ref5.type,
+	        name = _ref5.name,
+	        deat = _ref5.deat,
+	        subtype = _ref5.subtype,
+	        bvid = _ref5.bvid,
+	        evid = _ref5.evid,
+	        stime = _ref5.stime,
+	        etime = _ref5.etime,
+	        refid = _ref5.refid,
+	        eesak = _ref5.eesak,
+	        sig = _ref5.sig,
+	        isEncrypt = _ref5.isEncrypt;
+	    var apiEdge = new types_pb_1$1();
+	    var besak;
+
+	    if (isEncrypt === true) {
+	      //event is encrypted
+	      try {
+	        //TODO refactor uneeded conversion to Uint8Array
+	        var pk = localStorage.getItem('pk');
+	        var pkToUint8Array;
+
+	        if (pk) {
+	          pkToUint8Array = utils$2.base64ToUint8Array(pk);
+	        }
+
+	        besak = generateEsak(pk);
+	        apiEdge.setSig(pk ? pkToUint8Array : '');
+	      } catch (error) {
+	        throw new AitmedError({
+	          name: 'ERROR_CREATING_BESAK'
+	        });
+	      }
+	    } else {
+	      if (sig !== undefined) apiEdge.setSig(sig);
+	    }
+
+	    if (name) {
+	      try {
+	        var nameJSONString = JSON.stringify(name);
+	        apiEdge.setName(nameJSONString);
+	      } catch (error) {
+	        throw new AitmedError({
+	          name: 'JSON_STRINGIFY_FAILED'
+	        });
+	      }
+	    }
+
+	    if (deat) {
+	      try {
+	        var deatJSONString = JSON.stringify(deat);
+	        apiEdge.setDeat(deatJSONString);
+	      } catch (error) {
+	        throw new AitmedError({
+	          name: 'JSON_STRINGIFY_FAILED'
+	        });
+	      }
+	    }
+
+	    if (bvid !== undefined) apiEdge.setBvid(bvid);
+	    if (stime !== undefined) apiEdge.setStime(stime);
+	    if (type !== undefined) apiEdge.setType(type);
+	    if (tage !== undefined) apiEdge.setTage(tage);
+	    if (id !== undefined) apiEdge.setId(id);
+	    if (subtype !== undefined) apiEdge.setSubtype(subtype);
+	    if (evid !== undefined) apiEdge.setEvid(evid);
+	    if (etime !== undefined) apiEdge.setEtime(etime);
+	    if (refid !== undefined) apiEdge.setRefid(refid);
+	    if (besak !== undefined) apiEdge.setBesak(besak);
+	    if (eesak !== undefined) apiEdge.setEesak(eesak);
+	    return apiEdge;
+	  }
+	  /**
+	   *
+	   * @param edgeOptions
+	   * @param edgeOptions.name Record<string, any>
+	   * @param edgeOptions.type number
+	   * @param edgeOptions.refid string //eventId
+	   * @param edgeOptions.evid string //the receiver of this particular edge
+	   */
+
+
+	  function createInvite(_x3) {
+	    return _createInvite.apply(this, arguments);
+	  }
+	  /**
+	   *
+	   * @param params
+	   * @param params.name Record<string, any>
+	   * @param params.type number
+	   * @param params.refid string //inviteId
+	   * @param params.evid string //the receiver of this particular edge(i.e. who this acceptance is directed to)
+	   */
+
+
+	  function _createInvite() {
+	    _createInvite = asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee2(_ref6) {
+	      var name, type, refid, bvid, evid, apiEdge, nameJSONString;
+	      return regenerator$1.wrap(function _callee2$(_context2) {
+	        while (1) {
+	          switch (_context2.prev = _context2.next) {
+	            case 0:
+	              name = _ref6.name, type = _ref6.type, refid = _ref6.refid, bvid = _ref6.bvid, evid = _ref6.evid;
+	              apiEdge = new types_pb_1$1();
+	              _context2.prev = 2;
+	              nameJSONString = JSON.stringify(name);
+	              apiEdge.setName(nameJSONString);
+	              _context2.next = 10;
+	              break;
+
+	            case 7:
+	              _context2.prev = 7;
+	              _context2.t0 = _context2["catch"](2);
+	              throw new AitmedError({
+	                name: 'JSON_STRINGIFY_FAILED'
+	              });
+
+	            case 10:
+	              apiEdge.setType(type);
+	              apiEdge.setBvid(bvid);
+	              apiEdge.setRefid(refid);
+	              if (typeof evid !== 'undefined') apiEdge.setEvid(evid); // if (stime !== undefined) apiEdge.setStime(stime)
+	              // if (etime !== undefined) apiEdge.setEtime(etime)
+
+	              return _context2.abrupt("return", apiEdge);
+
+	            case 15:
+	            case "end":
+	              return _context2.stop();
+	          }
+	        }
+	      }, _callee2, null, [[2, 7]]);
+	    }));
+	    return _createInvite.apply(this, arguments);
+	  }
+
+	  function acceptInvite(_x4) {
+	    return _acceptInvite.apply(this, arguments);
+	  } // used for one to many communications
+	  // ex shared notebooks
+	  // where multiple users are able to access the same edge
+
+
+	  function _acceptInvite() {
+	    _acceptInvite = asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee3(_ref7) {
+	      var name, type, refid, evid, bvid, apiEdge, nameJSONString, evidPk;
+	      return regenerator$1.wrap(function _callee3$(_context3) {
+	        while (1) {
+	          switch (_context3.prev = _context3.next) {
+	            case 0:
+	              name = _ref7.name, type = _ref7.type, refid = _ref7.refid, evid = _ref7.evid, bvid = _ref7.bvid;
+	              apiEdge = new types_pb_1$1();
+	              _context3.prev = 2;
+	              nameJSONString = JSON.stringify(name);
+	              apiEdge.setName(nameJSONString);
+	              _context3.next = 10;
+	              break;
+
+	            case 7:
+	              _context3.prev = 7;
+	              _context3.t0 = _context3["catch"](2);
+	              throw new AitmedError({
+	                name: 'JSON_STRINGIFY_FAILED'
+	              });
+
+	            case 10:
+	              evidPk = localStorage.getItem('pk');
+	              apiEdge.setSig(evidPk === null ? '' : evidPk);
+	              apiEdge.setType(type);
+	              apiEdge.setRefid(refid);
+	              apiEdge.setEvid(evid);
+	              apiEdge.setBvid(bvid);
+	              return _context3.abrupt("return", apiEdge);
+
+	            case 17:
+	            case "end":
+	              return _context3.stop();
+	          }
+	        }
+	      }, _callee3, null, [[2, 7]]);
+	    }));
+	    return _acceptInvite.apply(this, arguments);
+	  }
+
+	  function authorizeEvent_Dependent(_x5) {
+	    return _authorizeEvent_Dependent.apply(this, arguments);
+	  } //ex. authorize inbox
+	  // used for one to one communication
+	  // only one bvid and evid are able to modify and access the docs on edge
+
+
+	  function _authorizeEvent_Dependent() {
+	    _authorizeEvent_Dependent = asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee4(_ref8) {
+	      var bvid, evid, refid, name, sharedEvent, _ref10, besak, rootName, type, eid, apiEdge, eesak, esak, edgeWithEsak, _ref11, acceptEdge, evidPk, evidPkUint8Array, publicKey, secretKey, partialKey, pkToUint8Array, skToUint8Array, mergedName, nameJSONString;
+
+	      return regenerator$1.wrap(function _callee4$(_context4) {
+	        while (1) {
+	          switch (_context4.prev = _context4.next) {
+	            case 0:
+	              bvid = _ref8.bvid, evid = _ref8.evid, refid = _ref8.refid, name = _ref8.name;
+	              _context4.prev = 1;
+	              _context4.next = 4;
+	              return findRoot(refid);
+
+	            case 4:
+	              _ref10 = _context4.sent;
+	              besak = _ref10.besak;
+	              rootName = _ref10.rootName;
+	              type = _ref10.type;
+	              eid = _ref10.eid;
+	              sharedEvent = {
+	                besak: besak,
+	                rootName: rootName,
+	                type: type,
+	                eid: eid
+	              };
+	              _context4.next = 15;
+	              break;
+
+	            case 12:
+	              _context4.prev = 12;
+	              _context4.t0 = _context4["catch"](1);
+	              throw _context4.t0;
+
+	            case 15:
+	              apiEdge = new types_pb_1$1(); //check if event is encrypted
+	              //if so attach a eesak to this edge
+
+	              if (!sharedEvent.besak) {
+	                _context4.next = 31;
+	                break;
+	              }
+
+	              _context4.next = 19;
+	              return findEdgeWithEsak(refid);
+
+	            case 19:
+	              edgeWithEsak = _context4.sent;
+	              _context4.next = 22;
+	              return services.retrieveEdge({
+	                idList: [refid]
+	              });
+
+	            case 22:
+	              _ref11 = _context4.sent;
+	              acceptEdge = _ref11.data;
+	              evidPk = acceptEdge[0].sig;
+	              evidPkUint8Array = evidPk;
+
+	              if (typeof evidPk === 'string') {
+	                evidPkUint8Array = utils$2.base64ToUint8Array(evidPk);
+	              }
+
+	              if (edgeWithEsak.besak) {
+	                esak = edgeWithEsak.besak; //user authorizing shared edge is user who created the orignal notebook
+
+	                publicKey = localStorage.getItem('pk');
+	                secretKey = localStorage.getItem('sk');
+	              } else {
+	                esak = edgeWithEsak.eesak; //user authorizing shared edge is not the user who created the original notebook
+
+	                publicKey = utils$2.uint8ArrayToBase64(edgeWithEsak.sig);
+	                secretKey = localStorage.getItem('sk');
+	              } //get the sak
+
+
+	              if (publicKey && secretKey) {
+	                pkToUint8Array = utils$2.base64ToUint8Array(publicKey);
+	                skToUint8Array = utils$2.base64ToUint8Array(secretKey);
+	                partialKey = utils$2.aKeyDecrypt(pkToUint8Array, skToUint8Array, esak);
+	              } //encrypt sak with receiverPk and senderSk
+
+
+	              if (partialKey) {
+	                eesak = utils$2.aKeyEncrypt(evidPkUint8Array, skToUint8Array, partialKey);
+	              } //attach sender public key so receiver can decrypt eesak
+
+
+	              apiEdge.setSig(publicKey === null ? '' : publicKey);
+
+	            case 31:
+	              _context4.prev = 31;
+	              mergedName = _objectSpread$2({}, sharedEvent.rootName, {}, name);
+	              nameJSONString = JSON.stringify(mergedName);
+	              apiEdge.setName(nameJSONString);
+	              _context4.next = 40;
+	              break;
+
+	            case 37:
+	              _context4.prev = 37;
+	              _context4.t1 = _context4["catch"](31);
+	              throw new AitmedError({
+	                name: 'JSON_STRINGIFY_FAILED'
+	              });
+
+	            case 40:
+	              if (eesak !== undefined) apiEdge.setEesak(eesak);
+	              apiEdge.setType(sharedEvent.type);
+	              apiEdge.setRefid(sharedEvent.eid);
+	              apiEdge.setEvid(evid);
+	              apiEdge.setBvid(bvid);
+	              return _context4.abrupt("return", apiEdge);
+
+	            case 46:
+	            case "end":
+	              return _context4.stop();
+	          }
+	        }
+	      }, _callee4, null, [[1, 12], [31, 37]]);
+	    }));
+	    return _authorizeEvent_Dependent.apply(this, arguments);
+	  }
+
+	  function authorizeEvent_Independent(_x6) {
+	    return _authorizeEvent_Independent.apply(this, arguments);
+	  }
+
+	  function _authorizeEvent_Independent() {
+	    _authorizeEvent_Independent = asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee5(_ref9) {
+	      var evid, bvid, refid, name, _ref9$isEncrypt, isEncrypt, sharedEvent, _ref12, _besak, rootName, type, eid, apiEdge, eesak, besak, _ref13, acceptEdge, evidPk, evidPkUint8Array, bvidPk, bvidSK, partialKey, pkToUint8Array, skToUint8Array, mergedName, nameJSONString;
+
+	      return regenerator$1.wrap(function _callee5$(_context5) {
+	        while (1) {
+	          switch (_context5.prev = _context5.next) {
+	            case 0:
+	              evid = _ref9.evid, bvid = _ref9.bvid, refid = _ref9.refid, name = _ref9.name, _ref9$isEncrypt = _ref9.isEncrypt, isEncrypt = _ref9$isEncrypt === void 0 ? false : _ref9$isEncrypt;
+	              _context5.prev = 1;
+	              _context5.next = 4;
+	              return findRoot(refid);
+
+	            case 4:
+	              _ref12 = _context5.sent;
+	              _besak = _ref12.besak;
+	              rootName = _ref12.name;
+	              type = _ref12.type;
+	              eid = _ref12.eid;
+	              sharedEvent = {
+	                besak: _besak,
+	                rootName: rootName,
+	                type: type,
+	                eid: eid
+	              };
+	              _context5.next = 15;
+	              break;
+
+	            case 12:
+	              _context5.prev = 12;
+	              _context5.t0 = _context5["catch"](1);
+	              throw _context5.t0;
+
+	            case 15:
+	              apiEdge = new types_pb_1$1(); //check if event is encrypted
+	              //if so attach a eesak to this edge
+
+	              if (!isEncrypt) {
+	                _context5.next = 36;
+	                break;
+	              }
+
+	              _context5.next = 19;
+	              return services.retrieveEdge({
+	                idList: [refid]
+	              });
+
+	            case 19:
+	              _ref13 = _context5.sent;
+	              acceptEdge = _ref13.data;
+	              evidPk = acceptEdge[0].sig;
+	              evidPkUint8Array = evidPk;
+
+	              if (typeof evidPk === 'string') {
+	                evidPkUint8Array = utils$2.base64ToUint8Array(evidPk);
+	              } //get the pk and sk of bvid
+
+
+	              bvidPk = localStorage.getItem('pk');
+	              bvidSK = localStorage.getItem('sk');
+	              _context5.prev = 26;
+	              besak = generateEsak(bvidPk);
+	              _context5.next = 33;
+	              break;
+
+	            case 30:
+	              _context5.prev = 30;
+	              _context5.t1 = _context5["catch"](26);
+	              throw new AitmedError({
+	                name: 'ERROR_CREATING_BESAK'
+	              });
+
+	            case 33:
+	              if (bvidPk && bvidSK) {
+	                pkToUint8Array = utils$2.base64ToUint8Array(bvidPk);
+	                skToUint8Array = utils$2.base64ToUint8Array(bvidSK);
+	                partialKey = utils$2.aKeyDecrypt(pkToUint8Array, skToUint8Array, besak);
+	              } //encrypt sak with receiverPk and senderSk
+
+
+	              if (partialKey) {
+	                eesak = utils$2.aKeyEncrypt(evidPkUint8Array, skToUint8Array, partialKey);
+	              } //attach sender public key so receiver can decrypt eesak
+
+
+	              apiEdge.setSig(bvidPk === null ? '' : bvidPk);
+
+	            case 36:
+	              _context5.prev = 36;
+	              mergedName = _objectSpread$2({}, sharedEvent.rootName, {}, name);
+	              nameJSONString = JSON.stringify(mergedName);
+	              apiEdge.setName(nameJSONString);
+	              _context5.next = 45;
+	              break;
+
+	            case 42:
+	              _context5.prev = 42;
+	              _context5.t2 = _context5["catch"](36);
+	              throw new AitmedError({
+	                name: 'JSON_STRINGIFY_FAILED'
+	              });
+
+	            case 45:
+	              if (besak !== undefined) apiEdge.setBesak(besak);
+	              if (eesak !== undefined) apiEdge.setEesak(eesak);
+	              apiEdge.setType(sharedEvent.type);
+	              apiEdge.setRefid(sharedEvent.eid);
+	              apiEdge.setEvid(evid);
+	              apiEdge.setBvid(bvid);
+	              return _context5.abrupt("return", apiEdge);
+
+	            case 52:
+	            case "end":
+	              return _context5.stop();
+	          }
+	        }
+	      }, _callee5, null, [[1, 12], [26, 30], [36, 42]]);
+	    }));
+	    return _authorizeEvent_Independent.apply(this, arguments);
+	  }
+
+	  function findRoot(_x7) {
+	    return _findRoot.apply(this, arguments);
+	  }
+
+	  function _findRoot() {
+	    _findRoot = asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee6(id) {
+	      var _ref14, edge, refid;
+
+	      return regenerator$1.wrap(function _callee6$(_context6) {
+	        while (1) {
+	          switch (_context6.prev = _context6.next) {
+	            case 0:
+	              _context6.next = 2;
+	              return services.retrieveEdge({
+	                idList: [id]
+	              });
+
+	            case 2:
+	              _ref14 = _context6.sent;
+	              edge = _ref14.data;
+	              refid = edge[0].refid;
+
+	              if (!refid) {
+	                _context6.next = 7;
+	                break;
+	              }
+
+	              return _context6.abrupt("return", findRoot(refid));
+
+	            case 7:
+	              return _context6.abrupt("return", edge[0]);
+
+	            case 8:
+	            case "end":
+	              return _context6.stop();
+	          }
+	        }
+	      }, _callee6);
+	    }));
+	    return _findRoot.apply(this, arguments);
+	  }
+
+	  function findEdgeWithEsak(_x8) {
+	    return _findEdgeWithEsak.apply(this, arguments);
+	  }
+
+	  function _findEdgeWithEsak() {
+	    _findEdgeWithEsak = asyncToGenerator$1(
+	    /*#__PURE__*/
+	    regenerator$1.mark(function _callee7(id) {
+	      var _ref15, edge, _edge$, eesak, besak, refid;
+
+	      return regenerator$1.wrap(function _callee7$(_context7) {
+	        while (1) {
+	          switch (_context7.prev = _context7.next) {
+	            case 0:
+	              _context7.next = 2;
+	              return services.retrieveEdge({
+	                idList: [id]
+	              });
+
+	            case 2:
+	              _ref15 = _context7.sent;
+	              edge = _ref15.data;
+	              _edge$ = edge[0], eesak = _edge$.eesak, besak = _edge$.besak, refid = _edge$.refid;
+
+	              if (!(eesak || besak)) {
+	                _context7.next = 9;
+	                break;
+	              }
+
+	              return _context7.abrupt("return", edge[0]);
+
+	            case 9:
+	              return _context7.abrupt("return", findEdgeWithEsak(refid));
+
+	            case 10:
+	            case "end":
+	              return _context7.stop();
+	          }
+	        }
+	      }, _callee7);
+	    }));
+	    return _findEdgeWithEsak.apply(this, arguments);
+	  }
+
+	  var buildRequest = function buildRequest(edgeOptions) {
+	    switch (edgeOptions.type) {
+	      case 1050:
+	        return createInvite(edgeOptions);
+
+	      case 1060:
+	        return acceptInvite(edgeOptions);
+
+	      case 1070:
+	        //this type(1070) serves as a placeholder
+	        //and will be replaced by the type of the original event
+	        return authorizeEvent_Dependent(edgeOptions);
+
+	      case 1071:
+	        //this type(1071) serves as a placeholder
+	        //and will be replaced by the type of the original event
+	        return authorizeEvent_Independent(edgeOptions);
+
+	      default:
+	        return defaultPath(edgeOptions);
+	    }
+	  };
 
 	  return services;
 	}();
 
-	function ownKeys$4(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+	function ownKeys$3(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-	function _objectSpread$4(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$4(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$4(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	function _objectSpread$3(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$3(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$3(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 	var vertexServices = function () {
 	  var services = {
 	    createVertex: function createVertex(args) {
-	      return vertexRequest(_objectSpread$4({}, args));
+	      return vertexRequest(_objectSpread$3({}, args));
 	    },
 	    updateVertex: function updateVertex(args) {
-	      return vertexRequest(_objectSpread$4({}, args));
+	      return vertexRequest(_objectSpread$3({}, args));
 	    },
 	    retrieveVertex: retrieveRequest(0),
 	    deleteVertex: deleteRequest
@@ -62544,7 +62644,7 @@
 	        return;
 	      }
 
-	      var apiVertex = generateGRPCVertex(_objectSpread$4({}, vertexOptions));
+	      var apiVertex = generateGRPCVertex(_objectSpread$3({}, vertexOptions));
 	      var request = new ecos_api_pb_5$1();
 
 	      if (vertexOptions.type && [1, -1].includes(vertexOptions.type)) {
@@ -62644,7 +62744,12 @@
 	                  sdkVertex = toSDKVertex(vertex);
 	                  response = new Response$1({
 	                    code: responseCode,
-	                    data: sdkVertex
+	                    data: {
+	                      vertex: sdkVertex,
+	                      jwt: newJWT,
+	                      code: responseCode,
+	                      error: _error
+	                    }
 	                  });
 	                  resolve(response);
 	                  return _context.abrupt("return");
@@ -62829,6 +62934,10 @@
 	  };
 	}();
 
+	function ownKeys$4(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$4(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$4(source, true).forEach(function (key) { defineProperty$e(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$4(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 	var Account =
 	/*#__PURE__*/
 	function () {
@@ -62850,7 +62959,7 @@
 	      var _requestVerificationCode = asyncToGenerator$1(
 	      /*#__PURE__*/
 	      regenerator$1.mark(function _callee(_ref) {
-	        var phone_number, name, _ref2, deat;
+	        var phone_number, name, _ref2, data, _ref3, deat;
 
 	        return regenerator$1.wrap(function _callee$(_context) {
 	          while (1) {
@@ -62879,23 +62988,24 @@
 
 	              case 8:
 	                _ref2 = _context.sent;
-	                deat = _ref2.data.deat;
+	                data = _ref2.data;
+	                _ref3 = data === null || data === void 0 ? void 0 : data.edge, deat = _ref3.deat;
 	                return _context.abrupt("return", new Response$1({
 	                  code: 0,
 	                  data: deat
 	                }));
 
-	              case 13:
-	                _context.prev = 13;
+	              case 14:
+	                _context.prev = 14;
 	                _context.t0 = _context["catch"](5);
 	                throw _context.t0;
 
-	              case 16:
+	              case 17:
 	              case "end":
 	                return _context.stop();
 	            }
 	          }
-	        }, _callee, null, [[5, 13]]);
+	        }, _callee, null, [[5, 14]]);
 	      }));
 
 	      function requestVerificationCode(_x) {
@@ -62917,14 +63027,14 @@
 	    value: function () {
 	      var _createUser = asyncToGenerator$1(
 	      /*#__PURE__*/
-	      regenerator$1.mark(function _callee2(_ref3) {
-	        var password, phone_number, verification_code, name, _ref3$type, type, _utils$generateAKey, publicKey, secretKey, encryptedSecretKey, _ref4, code, deat;
+	      regenerator$1.mark(function _callee2(_ref4) {
+	        var password, phone_number, verification_code, name, _ref4$type, type, _utils$generateAKey, publicKey, secretKey, encryptedSecretKey, _utils$generateSignat, pkSign, skSign, eskSign, pkSignBase64, eskSignBase64, _ref5, code, data, _ref6, deat;
 
 	        return regenerator$1.wrap(function _callee2$(_context2) {
 	          while (1) {
 	            switch (_context2.prev = _context2.next) {
 	              case 0:
-	                password = _ref3.password, phone_number = _ref3.phone_number, verification_code = _ref3.verification_code, name = _ref3.userInfo, _ref3$type = _ref3.type, type = _ref3$type === void 0 ? 1 : _ref3$type;
+	                password = _ref4.password, phone_number = _ref4.phone_number, verification_code = _ref4.verification_code, name = _ref4.userInfo, _ref4$type = _ref4.type, type = _ref4$type === void 0 ? 1 : _ref4$type;
 
 	                if (!(store$2.getConfig() === null)) {
 	                  _context2.next = 4;
@@ -62935,30 +63045,42 @@
 	                return store$2.loadConfig();
 
 	              case 4:
-	                //generate assymetric keyPair
+	                //generate assymetric keyPair for credentials
 	                _utils$generateAKey = utils$2.generateAKey(), publicKey = _utils$generateAKey.publicKey, secretKey = _utils$generateAKey.secretKey; //symmetrically encrypt secretKey with password
 
 	                encryptedSecretKey = utils$2.encryptSecretKeyWithPassword({
 	                  password: password,
 	                  secretKey: secretKey
-	                });
-	                _context2.prev = 6;
-	                _context2.next = 9;
+	                }); //generate keyPair for signature
+
+	                _utils$generateSignat = utils$2.generateSignatureKeyPair(), pkSign = _utils$generateSignat.pkSign, skSign = _utils$generateSignat.skSign; //symmetrically encrypt skSign with sk from credentials
+
+	                eskSign = utils$2.sKeyEncrypt(secretKey, skSign);
+	                pkSignBase64 = utils$2.uint8ArrayToBase64(pkSign);
+	                eskSignBase64 = utils$2.uint8ArrayToBase64(eskSign);
+	                _context2.prev = 10;
+	                _context2.next = 13;
 	                return vertexServices.createVertex({
 	                  uid: phone_number,
-	                  name: name,
+	                  name: _objectSpread$4({}, name, {
+	                    pkSign: pkSignBase64,
+	                    eskSign: eskSignBase64
+	                  }),
 	                  pk: publicKey,
 	                  type: type,
 	                  tage: verification_code,
 	                  esk: encryptedSecretKey
 	                });
 
-	              case 9:
-	                _ref4 = _context2.sent;
-	                code = _ref4.code;
-	                deat = _ref4.data;
-	                //store credentials in local storage
+	              case 13:
+	                _ref5 = _context2.sent;
+	                code = _ref5.code;
+	                data = _ref5.data;
+	                _ref6 = data === null || data === void 0 ? void 0 : data.vertex, deat = _ref6.deat; //store credentials in local storage
+
 	                utils$2.storeCredentialsInLocalStorage({
+	                  pkSign: pkSign,
+	                  eskSign: eskSign,
 	                  publicKey: publicKey,
 	                  secretKey: secretKey,
 	                  encryptedSecretKey: encryptedSecretKey,
@@ -62967,20 +63089,20 @@
 	                });
 	                return _context2.abrupt("return", new Response$1({
 	                  code: code,
-	                  data: deat
+	                  data: data
 	                }));
 
-	              case 16:
-	                _context2.prev = 16;
-	                _context2.t0 = _context2["catch"](6);
+	              case 21:
+	                _context2.prev = 21;
+	                _context2.t0 = _context2["catch"](10);
 	                throw _context2.t0;
 
-	              case 19:
+	              case 24:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, null, [[6, 16]]);
+	        }, _callee2, null, [[10, 21]]);
 	      }));
 
 	      function createUser(_x2) {
@@ -63002,14 +63124,14 @@
 	    value: function () {
 	      var _createInvitedUser = asyncToGenerator$1(
 	      /*#__PURE__*/
-	      regenerator$1.mark(function _callee3(_ref5) {
-	        var id, phone_number, password, name, _utils$generateAKey2, publicKey, secretKey, encryptedSecretKey, _ref6, code, deat;
+	      regenerator$1.mark(function _callee3(_ref7) {
+	        var id, phone_number, password, name, _utils$generateAKey2, publicKey, secretKey, encryptedSecretKey, _utils$generateSignat2, pkSign, skSign, eskSign, pkSignBase64, eskSignBase64, _ref8, code, data, _ref9, deat;
 
 	        return regenerator$1.wrap(function _callee3$(_context3) {
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
-	                id = _ref5.id, phone_number = _ref5.phone_number, password = _ref5.password, name = _ref5.userInfo;
+	                id = _ref7.id, phone_number = _ref7.phone_number, password = _ref7.password, name = _ref7.userInfo;
 
 	                if (!(store$2.getConfig() === null)) {
 	                  _context3.next = 4;
@@ -63026,22 +63148,34 @@
 	                encryptedSecretKey = utils$2.encryptSecretKeyWithPassword({
 	                  password: password,
 	                  secretKey: secretKey
-	                });
-	                _context3.prev = 6;
-	                _context3.next = 9;
+	                }); //generate keyPair for signature
+
+	                _utils$generateSignat2 = utils$2.generateSignatureKeyPair(), pkSign = _utils$generateSignat2.pkSign, skSign = _utils$generateSignat2.skSign; //symmetrically encrypt skSign with sk from credentials
+
+	                eskSign = utils$2.sKeyEncrypt(secretKey, skSign);
+	                pkSignBase64 = utils$2.uint8ArrayToBase64(pkSign);
+	                eskSignBase64 = utils$2.uint8ArrayToBase64(eskSign);
+	                _context3.prev = 10;
+	                _context3.next = 13;
 	                return vertexServices.updateVertex({
-	                  name: name,
+	                  name: _objectSpread$4({}, name, {
+	                    pkSign: pkSignBase64,
+	                    eskSign: eskSignBase64
+	                  }),
 	                  pk: publicKey,
 	                  esk: encryptedSecretKey,
 	                  id: id
 	                });
 
-	              case 9:
-	                _ref6 = _context3.sent;
-	                code = _ref6.code;
-	                deat = _ref6.data;
-	                //store credentials in local storage
+	              case 13:
+	                _ref8 = _context3.sent;
+	                code = _ref8.code;
+	                data = _ref8.data;
+	                _ref9 = data === null || data === void 0 ? void 0 : data.vertex, deat = _ref9.deat; //store credentials in local storage
+
 	                utils$2.storeCredentialsInLocalStorage({
+	                  pkSign: pkSign,
+	                  eskSign: eskSign,
 	                  publicKey: publicKey,
 	                  secretKey: secretKey,
 	                  encryptedSecretKey: encryptedSecretKey,
@@ -63050,20 +63184,20 @@
 	                });
 	                return _context3.abrupt("return", new Response$1({
 	                  code: code,
-	                  data: deat
+	                  data: data
 	                }));
 
-	              case 16:
-	                _context3.prev = 16;
-	                _context3.t0 = _context3["catch"](6);
+	              case 21:
+	                _context3.prev = 21;
+	                _context3.t0 = _context3["catch"](10);
 	                throw _context3.t0;
 
-	              case 19:
+	              case 24:
 	              case "end":
 	                return _context3.stop();
 	            }
 	          }
-	        }, _callee3, null, [[6, 16]]);
+	        }, _callee3, null, [[10, 21]]);
 	      }));
 
 	      function createInvitedUser(_x3) {
@@ -63089,7 +63223,7 @@
 	      var _login = asyncToGenerator$1(
 	      /*#__PURE__*/
 	      regenerator$1.mark(function _callee4() {
-	        var _ref7,
+	        var _ref10,
 	            password,
 	            user_id,
 	            userIdToUint8Array,
@@ -63098,15 +63232,37 @@
 	            _this$verifyUserPassw2,
 	            isPasswordValid,
 	            secretKey,
-	            _ref8,
+	            _data$vertex$,
+	            _data$vertex$$name,
+	            _data$vertex$2,
+	            _data$vertex$2$name,
+	            _data$vertex$4,
+	            _data$vertex$4$name,
+	            _data$vertex$5,
+	            _data$vertex$5$name,
+	            _ref11,
+	            data,
+	            _utils$generateSignat3,
+	            pkSign,
+	            skSign,
+	            eskSign,
+	            pkSignBase64,
+	            eskSignBase64,
+	            _data$vertex$3,
+	            _data$vertex$6,
+	            _data$vertex$6$name,
+	            _data$vertex$7,
+	            _data$vertex$7$name,
+	            _ref12,
 	            code,
+	            _data,
 	            _args4 = arguments;
 
 	        return regenerator$1.wrap(function _callee4$(_context4) {
 	          while (1) {
 	            switch (_context4.prev = _context4.next) {
 	              case 0:
-	                _ref7 = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : {}, password = _ref7.password;
+	                _ref10 = _args4.length > 0 && _args4[0] !== undefined ? _args4[0] : {}, password = _ref10.password;
 
 	                if (!(store$2.getConfig() === null)) {
 	                  _context4.next = 4;
@@ -63136,7 +63292,7 @@
 	                sk = localStorage.getItem('sk');
 
 	                if (!(password !== undefined && sk === null)) {
-	                  _context4.next = 22;
+	                  _context4.next = 44;
 	                  break;
 	                }
 
@@ -63155,48 +63311,110 @@
 	                });
 
 	              case 16:
-	                if (isPasswordValid && secretKey !== null) {
+	                if (!(isPasswordValid && secretKey !== null)) {
+	                  _context4.next = 39;
+	                  break;
+	                }
+
+	                _context4.next = 19;
+	                return vertexServices.retrieveVertex({
+	                  idList: [user_id]
+	                });
+
+	              case 19:
+	                _ref11 = _context4.sent;
+	                data = _ref11.data;
+
+	                if (!(!(data === null || data === void 0 ? void 0 : (_data$vertex$ = data.vertex[0]) === null || _data$vertex$ === void 0 ? void 0 : (_data$vertex$$name = _data$vertex$.name) === null || _data$vertex$$name === void 0 ? void 0 : _data$vertex$$name.eskSign) || !(data === null || data === void 0 ? void 0 : (_data$vertex$2 = data.vertex[0]) === null || _data$vertex$2 === void 0 ? void 0 : (_data$vertex$2$name = _data$vertex$2.name) === null || _data$vertex$2$name === void 0 ? void 0 : _data$vertex$2$name.pkSign))) {
+	                  _context4.next = 37;
+	                  break;
+	                }
+
+	                //user does not have a signature key pair
+	                //generate keyPair for signature
+	                _utils$generateSignat3 = utils$2.generateSignatureKeyPair(), pkSign = _utils$generateSignat3.pkSign, skSign = _utils$generateSignat3.skSign; //symmetrically encrypt skSign with sk from credentials
+
+	                eskSign = utils$2.sKeyEncrypt(secretKey, skSign);
+	                pkSignBase64 = utils$2.uint8ArrayToBase64(pkSign);
+	                eskSignBase64 = utils$2.uint8ArrayToBase64(eskSign);
+	                _context4.prev = 26;
+	                _context4.next = 29;
+	                return vertexServices.updateVertex({
+	                  id: user_id,
+	                  name: _objectSpread$4({}, data === null || data === void 0 ? void 0 : (_data$vertex$3 = data.vertex[0]) === null || _data$vertex$3 === void 0 ? void 0 : _data$vertex$3.name, {
+	                    pkSign: pkSignBase64,
+	                    eskSign: eskSignBase64
+	                  })
+	                });
+
+	              case 29:
+	                utils$2.storeCredentialsInLocalStorage({
+	                  pkSign: pkSign,
+	                  eskSign: eskSign
+	                });
+	                _context4.next = 35;
+	                break;
+
+	              case 32:
+	                _context4.prev = 32;
+	                _context4.t0 = _context4["catch"](26);
+	                console.log(_context4.t0);
+
+	              case 35:
+	                _context4.next = 38;
+	                break;
+
+	              case 37:
+	                if ((data === null || data === void 0 ? void 0 : (_data$vertex$4 = data.vertex[0]) === null || _data$vertex$4 === void 0 ? void 0 : (_data$vertex$4$name = _data$vertex$4.name) === null || _data$vertex$4$name === void 0 ? void 0 : _data$vertex$4$name.eskSign) && (data === null || data === void 0 ? void 0 : (_data$vertex$5 = data.vertex[0]) === null || _data$vertex$5 === void 0 ? void 0 : (_data$vertex$5$name = _data$vertex$5.name) === null || _data$vertex$5$name === void 0 ? void 0 : _data$vertex$5$name.pkSign)) {
 	                  utils$2.storeCredentialsInLocalStorage({
-	                    secretKey: secretKey
+	                    pkSign: data === null || data === void 0 ? void 0 : (_data$vertex$6 = data.vertex[0]) === null || _data$vertex$6 === void 0 ? void 0 : (_data$vertex$6$name = _data$vertex$6.name) === null || _data$vertex$6$name === void 0 ? void 0 : _data$vertex$6$name.pkSign,
+	                    eskSign: data === null || data === void 0 ? void 0 : (_data$vertex$7 = data.vertex[0]) === null || _data$vertex$7 === void 0 ? void 0 : (_data$vertex$7$name = _data$vertex$7.name) === null || _data$vertex$7$name === void 0 ? void 0 : _data$vertex$7$name.eskSign
 	                  });
 	                }
 
-	              case 17:
-	                _context4.next = 22;
+	              case 38:
+	                utils$2.storeCredentialsInLocalStorage({
+	                  secretKey: secretKey
+	                });
+
+	              case 39:
+	                _context4.next = 44;
 	                break;
 
-	              case 19:
-	                _context4.prev = 19;
-	                _context4.t0 = _context4["catch"](10);
-	                throw _context4.t0;
+	              case 41:
+	                _context4.prev = 41;
+	                _context4.t1 = _context4["catch"](10);
+	                throw _context4.t1;
 
-	              case 22:
-	                _context4.prev = 22;
-	                _context4.next = 25;
+	              case 44:
+	                _context4.prev = 44;
+	                _context4.next = 47;
 	                return edgesServices.createEdge({
 	                  type: etypes.loginUser,
 	                  bvid: userIdToUint8Array,
 	                  stime: Date.now()
 	                });
 
-	              case 25:
-	                _ref8 = _context4.sent;
-	                code = _ref8.code;
+	              case 47:
+	                _ref12 = _context4.sent;
+	                code = _ref12.code;
+	                _data = _ref12.data;
 	                return _context4.abrupt("return", new Response$1({
-	                  code: code
+	                  code: code,
+	                  data: _data
 	                }));
 
-	              case 30:
-	                _context4.prev = 30;
-	                _context4.t1 = _context4["catch"](22);
-	                throw _context4.t1;
+	              case 53:
+	                _context4.prev = 53;
+	                _context4.t2 = _context4["catch"](44);
+	                throw _context4.t2;
 
-	              case 33:
+	              case 56:
 	              case "end":
 	                return _context4.stop();
 	            }
 	          }
-	        }, _callee4, this, [[10, 19], [22, 30]]);
+	        }, _callee4, this, [[10, 41], [26, 32], [44, 53]]);
 	      }));
 
 	      function login() {
@@ -63217,14 +63435,14 @@
 	    value: function () {
 	      var _loginNewDevice = asyncToGenerator$1(
 	      /*#__PURE__*/
-	      regenerator$1.mark(function _callee5(_ref9) {
-	        var phone_number, verification_code, name, _response, _response2, data, deat;
+	      regenerator$1.mark(function _callee5(_ref13) {
+	        var phone_number, verification_code, name, _response, _response2, data, _ref14, deat;
 
 	        return regenerator$1.wrap(function _callee5$(_context5) {
 	          while (1) {
 	            switch (_context5.prev = _context5.next) {
 	              case 0:
-	                phone_number = _ref9.phone_number, verification_code = _ref9.verification_code;
+	                phone_number = _ref13.phone_number, verification_code = _ref13.verification_code;
 
 	                if (!(store$2.getConfig() === null)) {
 	                  _context5.next = 4;
@@ -63258,7 +63476,7 @@
 
 	              case 14:
 	                _response2 = _response, data = _response2.data;
-	                deat = data.deat;
+	                _ref14 = data === null || data === void 0 ? void 0 : data.edge, deat = _ref14.deat;
 
 	                if (!(deat.pk && deat.esk)) {
 	                  _context5.next = 21;
@@ -63451,20 +63669,20 @@
 	    value: function () {
 	      var _changePasswordWithOldPassword = asyncToGenerator$1(
 	      /*#__PURE__*/
-	      regenerator$1.mark(function _callee7(_ref10) {
-	        var oldPassword, newPassword, _ref11, statusCode, pk, userIdBase64, isOldPasswordValid, sk, _this$verifyUserPassw3, _this$verifyUserPassw4, response;
+	      regenerator$1.mark(function _callee7(_ref15) {
+	        var oldPassword, newPassword, _ref16, statusCode, pk, userIdBase64, isOldPasswordValid, sk, _this$verifyUserPassw3, _this$verifyUserPassw4, response;
 
 	        return regenerator$1.wrap(function _callee7$(_context7) {
 	          while (1) {
 	            switch (_context7.prev = _context7.next) {
 	              case 0:
-	                oldPassword = _ref10.oldPassword, newPassword = _ref10.newPassword;
+	                oldPassword = _ref15.oldPassword, newPassword = _ref15.newPassword;
 	                _context7.next = 3;
 	                return this.getStatus();
 
 	              case 3:
-	                _ref11 = _context7.sent;
-	                statusCode = _ref11.code;
+	                _ref16 = _context7.sent;
+	                statusCode = _ref16.code;
 
 	                if (!(statusCode === 2)) {
 	                  _context7.next = 7;
@@ -63558,20 +63776,20 @@
 	    value: function () {
 	      var _changePasswordWithVerificationCode = asyncToGenerator$1(
 	      /*#__PURE__*/
-	      regenerator$1.mark(function _callee8(_ref12) {
-	        var password, _ref13, statusCode, pk, userIdBase64, sk, response;
+	      regenerator$1.mark(function _callee8(_ref17) {
+	        var password, _ref18, statusCode, pk, userIdBase64, sk, response;
 
 	        return regenerator$1.wrap(function _callee8$(_context8) {
 	          while (1) {
 	            switch (_context8.prev = _context8.next) {
 	              case 0:
-	                password = _ref12.password;
+	                password = _ref17.password;
 	                _context8.next = 3;
 	                return this.getStatus();
 
 	              case 3:
-	                _ref13 = _context8.sent;
-	                statusCode = _ref13.code;
+	                _ref18 = _context8.sent;
+	                statusCode = _ref18.code;
 
 	                if (!(statusCode === 2)) {
 	                  _context8.next = 7;
@@ -63638,8 +63856,8 @@
 
 	  }, {
 	    key: "verifyUserPassword",
-	    value: function verifyUserPassword(_ref14) {
-	      var password = _ref14.password;
+	    value: function verifyUserPassword(_ref19) {
+	      var password = _ref19.password;
 	      var passwordTo32BitArray = utils$2.normalizeStringTo32BitArray(password);
 	      var eskBase64 = localStorage.getItem('esk');
 	      var pkBase64 = localStorage.getItem('pk');
@@ -63667,43 +63885,7 @@
 	      }
 
 	      return [false, null];
-	    } // async changePasswordWithoutOldPassword({
-	    //     password,
-	    //     phone_number,
-	    //     verification_code,
-	    // }: ChangePasswordWithoutOldPasswordArgs): Promise<Response> {
-	    //     const vidBase64 = localStorage.getItem('user')
-	    //     if (vidBase64 === null) {
-	    //         throw new AitmedError({ code: 1005, message: "User id was not found. Please login as new device." })
-	    //     }
-	    //     // const vidUint8Array = utils.base64ToUint8Array(vidBase64)
-	    //     //generate assymetric keyPair
-	    //     const { publicKey, secretKey } = utils.generateAKey()
-	    //     //symmetrically encrypt secretKey with password
-	    //     const encryptedSecretKey = utils.encryptSecretKeyWithPassword({
-	    //         password,
-	    //         secretKey,
-	    //     })
-	    //     try {
-	    //         const { data: deat } = await vertexServices.updateVertex({
-	    //             id: vidBase64,
-	    //             tage: verification_code,
-	    //             pk: publicKey,
-	    //             esk: encryptedSecretKey,
-	    //         })
-	    //         utils.storeCredentialsInLocalStorage({
-	    //             publicKey,
-	    //             secretKey,
-	    //             encryptedSecretKey,
-	    //             user: deat.user_id,
-	    //             uid: phone_number
-	    //         })
-	    //         return new Response({ code: 0 })
-	    //     } catch (error) {
-	    //         throw error
-	    //     }
-	    // }
-
+	    }
 	  }]);
 
 	  return Account;
@@ -71923,14 +72105,16 @@
 	      apiObject = _ref.apiObject,
 	      dispatch = _ref.dispatch;
 	  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	    var _cloneDeep2, api, dataKey, dataIn, dataOut, id, maxcount, type, sCondition, options, res, idList, _yield$store$level2SD, data;
+	    var _res;
+
+	    var _cloneDeep2, api, dataKey, dataIn, dataOut, id, maxcount, type, sCondition, options, res, idList, _yield$store$level2SD, data, _res2, listOfEdgesWithId;
 
 	    return regenerator.wrap(function _callee$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
 	          case 0:
 	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, id = _cloneDeep2.id, maxcount = _cloneDeep2.maxcount, type = _cloneDeep2.type, sCondition = _cloneDeep2.sCondition, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut", "id", "maxcount", "type", "sCondition"]);
-	            res = [];
+	            res = {};
 	            idList = [];
 
 	            if (id) {
@@ -71977,41 +72161,52 @@
 	            throw _context.t0;
 
 	          case 19:
-	            //Doesn't update the state. Shows mock data instead.
-	            if (!res.length && store$3.env === 'test') {
-	              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-	            } else {
-	              //maps edge.eid to edge.id
-	              res = res.map(function (edge) {
-	                return replaceEidWithId(edge);
-	              });
-
-	              if (store$3.env === 'test') {
-	                console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
-	              }
-
-	              dispatch({
-	                type: 'update-data',
-	                //TODO: handle case for data is an array or an object
-	                payload: {
-	                  pageName: pageName,
-	                  dataKey: dataOut ? dataOut : dataKey,
-	                  data: res
-	                }
-	              });
-	              dispatch({
-	                type: 'emit-update',
-	                payload: {
-	                  pageName: pageName,
-	                  dataKey: dataOut ? dataOut : dataKey,
-	                  newVal: res
-	                }
-	              });
+	            if (!(!((_res = res) === null || _res === void 0 ? void 0 : _res.edge.length) && store$3.env === 'test')) {
+	              _context.next = 23;
+	              break;
 	            }
 
+	            console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	            _context.next = 30;
+	            break;
+
+	          case 23:
+	            //maps edge.eid to edge.id
+	            listOfEdgesWithId = (_res2 = res) === null || _res2 === void 0 ? void 0 : _res2.edge.map(function (edge) {
+	              return replaceEidWithId(edge);
+	            });
+	            res.edge = listOfEdgesWithId;
+
+	            if (store$3.env === 'test') {
+	              console.log('%cGet Edge Response', 'background: purple; color: white; display: block;', res);
+	            }
+
+	            _context.next = 28;
+	            return dispatch({
+	              type: 'update-data',
+	              //TODO: handle case for data is an array or an object
+	              payload: {
+	                pageName: pageName,
+	                dataKey: dataOut ? dataOut : dataKey,
+	                data: res
+	              }
+	            });
+
+	          case 28:
+	            _context.next = 30;
+	            return dispatch({
+	              type: 'emit-update',
+	              payload: {
+	                pageName: pageName,
+	                dataKey: dataOut ? dataOut : dataKey,
+	                newVal: res
+	              }
+	            });
+
+	          case 30:
 	            return _context.abrupt("return", res);
 
-	          case 21:
+	          case 31:
 	          case "end":
 	            return _context.stop();
 	        }
@@ -72033,7 +72228,7 @@
 	      dispatch = _ref3.dispatch;
 	  return /*#__PURE__*/function () {
 	    var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(name) {
-	      var _cloneDeep3, dataKey, dataIn, dataOut, _dispatch, deat, id, currentVal, parsedType, mergedVal, res, _yield$store$level2SD2, data, _yield$store$level2SD3, _data;
+	      var _cloneDeep3, dataKey, dataIn, dataOut, _yield$dispatch, deat, id, currentVal, populatedCurrentVal, parsedType, mergedVal, res, _yield$store$level2SD2, data, _yield$store$level2SD3, _data;
 
 	      return regenerator.wrap(function _callee2$(_context2) {
 	        while (1) {
@@ -72041,25 +72236,43 @@
 	            case 0:
 	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut; //get current object name value
 
-	              _dispatch = dispatch({
+	              _context2.next = 3;
+	              return dispatch({
 	                type: 'get-data',
 	                payload: {
 	                  pageName: pageName,
 	                  dataKey: dataIn ? dataIn : dataKey
 	                }
-	              }), deat = _dispatch.deat, id = _dispatch.id, currentVal = objectWithoutProperties(_dispatch, ["deat", "id"]); //merging existing name field and incoming name field
+	              });
 
-	              parsedType = parseInt(currentVal.type);
+	            case 3:
+	              _yield$dispatch = _context2.sent;
+	              deat = _yield$dispatch.deat;
+	              id = _yield$dispatch.id;
+	              currentVal = objectWithoutProperties(_yield$dispatch, ["deat", "id"]);
+	              _context2.next = 9;
+	              return dispatch({
+	                type: 'populate-object',
+	                payload: {
+	                  object: currentVal,
+	                  pageName: pageName
+	                }
+	              });
+
+	            case 9:
+	              populatedCurrentVal = _context2.sent;
+	              //merging existing name field and incoming name field
+	              parsedType = parseInt(populatedCurrentVal.type);
 
 	              if (!(parsedType === NaN || parsedType === 0)) {
-	                _context2.next = 5;
+	                _context2.next = 13;
 	                break;
 	              }
 
 	              return _context2.abrupt("return");
 
-	            case 5:
-	              mergedVal = _objectSpread$6(_objectSpread$6({}, currentVal), {}, {
+	            case 13:
+	              mergedVal = _objectSpread$6(_objectSpread$6({}, populatedCurrentVal), {}, {
 	                type: parsedType
 	              });
 
@@ -72070,11 +72283,11 @@
 	              }
 
 	              if (!(id && !id.startsWith('.'))) {
-	                _context2.next = 23;
+	                _context2.next = 31;
 	                break;
 	              }
 
-	              _context2.prev = 8;
+	              _context2.prev = 16;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cUpdate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
@@ -72082,12 +72295,12 @@
 	                }));
 	              }
 
-	              _context2.next = 12;
+	              _context2.next = 20;
 	              return store$3.level2SDK.edgeServices.updateEdge(_objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
 	                id: id
 	              }));
 
-	            case 12:
+	            case 20:
 	              _yield$store$level2SD2 = _context2.sent;
 	              data = _yield$store$level2SD2.data;
 	              res = data;
@@ -72096,20 +72309,20 @@
 	                console.log('%cUpdate Edge Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context2.next = 21;
+	              _context2.next = 29;
 	              break;
 
-	            case 18:
-	              _context2.prev = 18;
-	              _context2.t0 = _context2["catch"](8);
+	            case 26:
+	              _context2.prev = 26;
+	              _context2.t0 = _context2["catch"](16);
 	              throw _context2.t0;
 
-	            case 21:
-	              _context2.next = 36;
+	            case 29:
+	              _context2.next = 44;
 	              break;
 
-	            case 23:
-	              _context2.prev = 23;
+	            case 31:
+	              _context2.prev = 31;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cCreate Edge Request', 'background: purple; color: white; display: block;', _objectSpread$6(_objectSpread$6({}, mergedVal), {}, {
@@ -72117,10 +72330,10 @@
 	                }));
 	              }
 
-	              _context2.next = 27;
+	              _context2.next = 35;
 	              return store$3.level2SDK.edgeServices.createEdge(_objectSpread$6({}, mergedVal));
 
-	            case 27:
+	            case 35:
 	              _yield$store$level2SD3 = _context2.sent;
 	              _data = _yield$store$level2SD3.data;
 	              res = _data;
@@ -72129,52 +72342,61 @@
 	                console.log('%cCreate Edge Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context2.next = 36;
+	              _context2.next = 44;
 	              break;
 
-	            case 33:
-	              _context2.prev = 33;
-	              _context2.t1 = _context2["catch"](23);
+	            case 41:
+	              _context2.prev = 41;
+	              _context2.t1 = _context2["catch"](31);
 	              throw _context2.t1;
 
-	            case 36:
-	              if (res) {
-	                res = replaceEidWithId(res);
-	                dispatch({
-	                  type: 'update-data',
-	                  //TODO: handle case for data is an array or an object
-	                  payload: {
-	                    pageName: pageName,
-	                    dataKey: dataOut ? dataOut : dataKey,
-	                    data: res
-	                  }
-	                }); //dispatch action to update state that is dependant of this response
-	                //TODO: optimize by updating a slice rather than entire object
-
-	                dispatch({
-	                  type: 'populate',
-	                  payload: {
-	                    pageName: pageName
-	                  }
-	                });
-	                dispatch({
-	                  type: 'emit-update',
-	                  payload: {
-	                    pageName: pageName,
-	                    dataKey: dataOut ? dataOut : dataKey,
-	                    newVal: res
-	                  }
-	                });
+	            case 44:
+	              if (!res) {
+	                _context2.next = 52;
+	                break;
 	              }
 
+	              res = replaceEidWithId(res);
+	              _context2.next = 48;
+	              return dispatch({
+	                type: 'update-data',
+	                //TODO: handle case for data is an array or an object
+	                payload: {
+	                  pageName: pageName,
+	                  dataKey: dataOut ? dataOut : dataKey,
+	                  data: res
+	                }
+	              });
+
+	            case 48:
+	              _context2.next = 50;
+	              return dispatch({
+	                type: 'populate',
+	                payload: {
+	                  pageName: pageName
+	                }
+	              });
+
+	            case 50:
+	              _context2.next = 52;
+	              return dispatch({
+	                type: 'emit-update',
+	                payload: {
+	                  pageName: pageName,
+	                  dataKey: dataOut ? dataOut : dataKey,
+	                  newVal: res
+	                }
+	              });
+
+	            case 52:
 	              return _context2.abrupt("return", res);
 
-	            case 38:
+	            case 53:
 	            case "end":
 	              return _context2.stop();
 	          }
 	        }
-	      }, _callee2, null, [[8, 18], [23, 33]]);
+	      }, _callee2, null, [[16, 26], [31, 41]]);
 	    }));
 
 	    return function (_x) {
@@ -72192,15 +72414,41 @@
 	      apiObject = _ref.apiObject,
 	      dispatch = _ref.dispatch;
 	  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
-	    var _cloneDeep2, api, dataKey, dataIn, dataOut, options, res, _yield$store$level2SD, data;
+	    var _cloneDeep2, api, dataKey, dataIn, dataOut, options, _yield$dispatch, deat, currentVal, populatedCurrentVal, id, res, _yield$store$level2SD, data;
 
 	    return regenerator.wrap(function _callee$(_context) {
 	      while (1) {
 	        switch (_context.prev = _context.next) {
 	          case 0:
-	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut"]);
-	            res = [];
-	            _context.prev = 2;
+	            _cloneDeep2 = cloneDeep_1(apiObject || {}), api = _cloneDeep2.api, dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut, options = objectWithoutProperties(_cloneDeep2, ["api", "dataKey", "dataIn", "dataOut"]); //get current object name value
+
+	            _context.next = 3;
+	            return dispatch({
+	              type: 'get-data',
+	              payload: {
+	                pageName: pageName,
+	                dataKey: dataIn ? dataIn : dataKey
+	              }
+	            });
+
+	          case 3:
+	            _yield$dispatch = _context.sent;
+	            deat = _yield$dispatch.deat;
+	            currentVal = objectWithoutProperties(_yield$dispatch, ["deat"]);
+	            _context.next = 8;
+	            return dispatch({
+	              type: 'populate-object',
+	              payload: {
+	                object: currentVal,
+	                pageName: pageName
+	              }
+	            });
+
+	          case 8:
+	            populatedCurrentVal = _context.sent;
+	            id = populatedCurrentVal === null || populatedCurrentVal === void 0 ? void 0 : populatedCurrentVal.id;
+	            res = {};
+	            _context.prev = 11;
 
 	            if (store$3.env === 'test') {
 	              console.log('%cGet Vertex Request', 'background: purple; color: white; display: block;', {
@@ -72208,13 +72456,13 @@
 	              });
 	            }
 
-	            _context.next = 6;
+	            _context.next = 15;
 	            return store$3.level2SDK.vertexServices.retrieveVertex({
-	              idList: [],
+	              idList: [id],
 	              options: options
 	            });
 
-	          case 6:
+	          case 15:
 	            _yield$store$level2SD = _context.sent;
 	            data = _yield$store$level2SD.data;
 	            res = data;
@@ -72223,43 +72471,47 @@
 	              console.log('%cGet Vertex Response', 'background: purple; color: white; display: block;', res);
 	            }
 
-	            _context.next = 15;
+	            _context.next = 24;
 	            break;
 
-	          case 12:
-	            _context.prev = 12;
-	            _context.t0 = _context["catch"](2);
+	          case 21:
+	            _context.prev = 21;
+	            _context.t0 = _context["catch"](11);
 	            throw _context.t0;
 
-	          case 15:
-	            if (res.length > 0) {
-	              dispatch({
-	                type: 'update-data',
-	                //TODO: handle case for data is an array or an object
-	                payload: {
-	                  pageName: pageName,
-	                  dataKey: dataOut ? dataOut : dataKey,
-	                  data: res
-	                }
-	              });
-	              dispatch({
-	                type: 'emit-update',
-	                payload: {
-	                  pageName: pageName,
-	                  newVal: res,
-	                  dataKey: dataOut ? dataOut : dataKey
-	                }
-	              });
-	            }
+	          case 24:
+	            _context.next = 26;
+	            return dispatch({
+	              type: 'update-data',
+	              //TODO: handle case for data is an array or an object
+	              payload: {
+	                pageName: pageName,
+	                dataKey: dataOut ? dataOut : dataKey,
+	                data: res
+	              }
+	            });
 
+	          case 26:
+	            debugger;
+	            _context.next = 29;
+	            return dispatch({
+	              type: 'emit-update',
+	              payload: {
+	                pageName: pageName,
+	                newVal: res,
+	                dataKey: dataOut ? dataOut : dataKey
+	              }
+	            });
+
+	          case 29:
 	            return _context.abrupt("return", res);
 
-	          case 17:
+	          case 30:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, _callee, null, [[2, 12]]);
+	    }, _callee, null, [[11, 21]]);
 	  }));
 	}
 
@@ -72276,13 +72528,17 @@
 	          switch (_context2.prev = _context2.next) {
 	            case 0:
 	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id, cloneOutput = objectWithoutProperties(_cloneDeep3, ["dataKey", "dataIn", "dataOut", "id"]);
-	              currentVal = dispatch({
+	              _context2.next = 3;
+	              return dispatch({
 	                type: 'get-data',
 	                payload: {
 	                  dataKey: dataIn ? dataIn : dataKey,
 	                  pageName: pageName
 	                }
 	              });
+
+	            case 3:
+	              currentVal = _context2.sent;
 	              mergedVal = mergeDeep(currentVal, cloneOutput);
 	              mergedName = mergeDeep({
 	                name: mergedVal
@@ -72290,11 +72546,11 @@
 	              api = mergedVal.api, storeProp = mergedVal.store, get = mergedVal.get, options = objectWithoutProperties(mergedVal, ["api", "store", "get"]);
 
 	              if (!id) {
-	                _context2.next = 21;
+	                _context2.next = 23;
 	                break;
 	              }
 
-	              _context2.prev = 6;
+	              _context2.prev = 8;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cUpdate Vertex Request', 'background: purple; color: white; display: block;', _objectSpread$7(_objectSpread$7({}, options), {}, {
@@ -72303,13 +72559,13 @@
 	                }));
 	              }
 
-	              _context2.next = 10;
+	              _context2.next = 12;
 	              return store$3.level2SDK.vertexServices.updateVertex(_objectSpread$7(_objectSpread$7({}, options), {}, {
 	                mergedName: mergedName,
 	                id: id
 	              }));
 
-	            case 10:
+	            case 12:
 	              _yield$store$level2SD2 = _context2.sent;
 	              data = _yield$store$level2SD2.data;
 	              res = data;
@@ -72318,20 +72574,20 @@
 	                console.log('%cUpdate Vertex Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context2.next = 19;
+	              _context2.next = 21;
 	              break;
 
-	            case 16:
-	              _context2.prev = 16;
-	              _context2.t0 = _context2["catch"](6);
+	            case 18:
+	              _context2.prev = 18;
+	              _context2.t0 = _context2["catch"](8);
 	              throw _context2.t0;
 
-	            case 19:
-	              _context2.next = 33;
+	            case 21:
+	              _context2.next = 35;
 	              break;
 
-	            case 21:
-	              _context2.prev = 21;
+	            case 23:
+	              _context2.prev = 23;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cCreate Vertex Request', 'background: purple; color: white; display: block;', _objectSpread$7(_objectSpread$7({}, options), {}, {
@@ -72339,12 +72595,12 @@
 	                }));
 	              }
 
-	              _context2.next = 25;
+	              _context2.next = 27;
 	              return store$3.level2SDK.vertexServices.createVertex(_objectSpread$7(_objectSpread$7({}, options), {}, {
 	                name: name
 	              }));
 
-	            case 25:
+	            case 27:
 	              response = _context2.sent;
 	              res = response;
 
@@ -72352,43 +72608,51 @@
 	                console.log('%cCreate Vertex Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context2.next = 33;
+	              _context2.next = 35;
 	              break;
 
-	            case 30:
-	              _context2.prev = 30;
-	              _context2.t1 = _context2["catch"](21);
+	            case 32:
+	              _context2.prev = 32;
+	              _context2.t1 = _context2["catch"](23);
 	              throw _context2.t1;
 
-	            case 33:
-	              if (res) {
-	                dispatch({
-	                  type: 'update-data',
-	                  //TODO: handle case for data is an array or an object
-	                  payload: {
-	                    pageName: pageName,
-	                    dataKey: dataOut ? dataOut : dataKey,
-	                    data: res
-	                  }
-	                });
-	                dispatch({
-	                  type: 'emit-update',
-	                  payload: {
-	                    pageName: pageName,
-	                    newVal: res,
-	                    dataKey: dataOut ? dataOut : dataKey
-	                  }
-	                });
+	            case 35:
+	              if (!res) {
+	                _context2.next = 40;
+	                break;
 	              }
 
+	              _context2.next = 38;
+	              return dispatch({
+	                type: 'update-data',
+	                //TODO: handle case for data is an array or an object
+	                payload: {
+	                  pageName: pageName,
+	                  dataKey: dataOut ? dataOut : dataKey,
+	                  data: res
+	                }
+	              });
+
+	            case 38:
+	              _context2.next = 40;
+	              return dispatch({
+	                type: 'emit-update',
+	                payload: {
+	                  pageName: pageName,
+	                  newVal: res,
+	                  dataKey: dataOut ? dataOut : dataKey
+	                }
+	              });
+
+	            case 40:
 	              return _context2.abrupt("return", res);
 
-	            case 35:
+	            case 41:
 	            case "end":
 	              return _context2.stop();
 	          }
 	        }
-	      }, _callee2, null, [[6, 16], [21, 30]]);
+	      }, _callee2, null, [[8, 18], [23, 32]]);
 	    }));
 
 	    return function (_x) {
@@ -74862,7 +75126,7 @@
 	      apiObject = _ref.apiObject,
 	      dispatch = _ref.dispatch;
 	  return /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var res, _cloneDeep2, api, dataKey, dataIn, dataOut, id, ids, _cloneDeep2$filter$ap, applicationDataType, type, maxcount, rest, idList, data, filteredRes;
+	    var res, _cloneDeep2, api, dataKey, dataIn, dataOut, id, ids, _cloneDeep2$filter$ap, applicationDataType, type, maxcount, rest, idList, data, _res, _res2, _res3, filteredRes;
 
 	    return regenerator.wrap(function _callee2$(_context2) {
 	      while (1) {
@@ -74938,41 +75202,44 @@
 	            throw _context2.t0;
 
 	          case 14:
-	            if (res) {
-	              if (Array.isArray(res) && res.length && applicationDataType) {
-	                filteredRes = res.filter(function (doc) {
-	                  return doc.type.applicationDataType === parseInt(applicationDataType);
-	                });
-
-	                if (filteredRes.length && parseInt(maxcount) === 1) {
-	                  res = filteredRes[0];
-	                } else {
-	                  res = filteredRes;
-	                }
-	              }
-
-	              dispatch({
-	                type: 'update-data',
-	                //TODO: handle case for data is an array or an object
-	                payload: {
-	                  pageName: pageName,
-	                  dataKey: dataOut ? dataOut : dataKey,
-	                  data: res
-	                }
-	              });
-	              dispatch({
-	                type: 'emit-update',
-	                payload: {
-	                  pageName: pageName,
-	                  newVal: res,
-	                  dataKey: dataOut ? dataOut : dataKey
-	                }
-	              });
+	            if (!res) {
+	              _context2.next = 20;
+	              break;
 	            }
 
+	            if (Array.isArray((_res = res) === null || _res === void 0 ? void 0 : _res.document) && ((_res2 = res) === null || _res2 === void 0 ? void 0 : _res2.document.length) && applicationDataType) {
+	              filteredRes = (_res3 = res) === null || _res3 === void 0 ? void 0 : _res3.document.filter(function (doc) {
+	                return doc.type.applicationDataType === parseInt(applicationDataType);
+	              });
+	              res.document = filteredRes;
+	            }
+
+	            _context2.next = 18;
+	            return dispatch({
+	              type: 'update-data',
+	              //TODO: handle case for data is an array or an object
+	              payload: {
+	                pageName: pageName,
+	                dataKey: dataOut ? dataOut : dataKey,
+	                data: res
+	              }
+	            });
+
+	          case 18:
+	            _context2.next = 20;
+	            return dispatch({
+	              type: 'emit-update',
+	              payload: {
+	                pageName: pageName,
+	                newVal: res,
+	                dataKey: dataOut ? dataOut : dataKey
+	              }
+	            });
+
+	          case 20:
 	            return _context2.abrupt("return", res);
 
-	          case 16:
+	          case 21:
 	          case "end":
 	            return _context2.stop();
 	        }
@@ -74997,13 +75264,17 @@
 	              data = _ref6.data, typeForStringData = _ref6.type, title = _ref6.title;
 	              //@ts-ignore
 	              _cloneDeep3 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep3.dataKey, dataIn = _cloneDeep3.dataIn, dataOut = _cloneDeep3.dataOut, id = _cloneDeep3.id;
-	              currentVal = dispatch({
+	              _context3.next = 4;
+	              return dispatch({
 	                type: 'get-data',
 	                payload: {
 	                  dataKey: dataIn ? dataIn : dataKey,
 	                  pageName: pageName
 	                }
 	              });
+
+	            case 4:
+	              currentVal = _context3.sent;
 	              mergedVal = mergeDeep(currentVal, {
 	                name: {
 	                  data: data,
@@ -75014,11 +75285,11 @@
 	              api = mergedVal.api, options = objectWithoutProperties(mergedVal, ["api"]);
 
 	              if (!id) {
-	                _context3.next = 21;
+	                _context3.next = 23;
 	                break;
 	              }
 
-	              _context3.prev = 6;
+	              _context3.prev = 8;
 
 	              if (store$3.env === 'test') {
 	                console.log('%cUpdate Document Request', 'background: purple; color: white; display: block;', _objectSpread$b(_objectSpread$b({}, options), {}, {
@@ -75026,12 +75297,12 @@
 	                }));
 	              }
 
-	              _context3.next = 10;
+	              _context3.next = 12;
 	              return store$3.level2SDK.documentServices.updateDocument(_objectSpread$b(_objectSpread$b({}, options), {}, {
 	                id: id
 	              }));
 
-	            case 10:
+	            case 12:
 	              _yield$store$level2SD = _context3.sent;
 	              _data = _yield$store$level2SD.data;
 	              res = _data;
@@ -75040,20 +75311,20 @@
 	                console.log('%cUpdate Document Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context3.next = 19;
+	              _context3.next = 21;
 	              break;
 
-	            case 16:
-	              _context3.prev = 16;
-	              _context3.t0 = _context3["catch"](6);
+	            case 18:
+	              _context3.prev = 18;
+	              _context3.t0 = _context3["catch"](8);
 	              throw _context3.t0;
 
-	            case 19:
-	              _context3.next = 34;
+	            case 21:
+	              _context3.next = 36;
 	              break;
 
-	            case 21:
-	              _context3.prev = 21;
+	            case 23:
+	              _context3.prev = 23;
 	              appDataType = options.type, eid = options.eid, name = options.name;
 
 	              if (store$3.env === 'test') {
@@ -75066,7 +75337,7 @@
 	                });
 	              }
 
-	              _context3.next = 26;
+	              _context3.next = 28;
 	              return Document$3.create({
 	                edge_id: eid,
 	                dataType: parseInt(appDataType.applicationDataType),
@@ -75075,7 +75346,7 @@
 	                title: name.title
 	              });
 
-	            case 26:
+	            case 28:
 	              response = _context3.sent;
 	              res = response;
 
@@ -75083,43 +75354,51 @@
 	                console.log('%cCreate Document Response', 'background: purple; color: white; display: block;', res);
 	              }
 
-	              _context3.next = 34;
+	              _context3.next = 36;
 	              break;
 
-	            case 31:
-	              _context3.prev = 31;
-	              _context3.t1 = _context3["catch"](21);
+	            case 33:
+	              _context3.prev = 33;
+	              _context3.t1 = _context3["catch"](23);
 	              throw _context3.t1;
 
-	            case 34:
-	              if (res) {
-	                dispatch({
-	                  type: 'update-data',
-	                  //TODO: handle case for data is an array or an object
-	                  payload: {
-	                    pageName: pageName,
-	                    dataKey: dataOut ? dataOut : dataKey,
-	                    data: res
-	                  }
-	                });
-	                dispatch({
-	                  type: 'emit-update',
-	                  payload: {
-	                    pageName: pageName,
-	                    newVal: res,
-	                    dataKey: dataOut ? dataOut : dataKey
-	                  }
-	                });
+	            case 36:
+	              if (!res) {
+	                _context3.next = 41;
+	                break;
 	              }
 
+	              _context3.next = 39;
+	              return dispatch({
+	                type: 'update-data',
+	                //TODO: handle case for data is an array or an object
+	                payload: {
+	                  pageName: pageName,
+	                  dataKey: dataOut ? dataOut : dataKey,
+	                  data: res
+	                }
+	              });
+
+	            case 39:
+	              _context3.next = 41;
+	              return dispatch({
+	                type: 'emit-update',
+	                payload: {
+	                  pageName: pageName,
+	                  newVal: res,
+	                  dataKey: dataOut ? dataOut : dataKey
+	                }
+	              });
+
+	            case 41:
 	              return _context3.abrupt("return", res);
 
-	            case 36:
+	            case 42:
 	            case "end":
 	              return _context3.stop();
 	          }
 	        }
-	      }, _callee3, null, [[6, 16], [21, 31]]);
+	      }, _callee3, null, [[8, 18], [23, 33]]);
 	    }));
 
 	    return function (_x2) {
@@ -75127,6 +75406,1826 @@
 	    };
 	  }();
 	}
+
+	function ownKeys$c(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$c(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+	var eTypes;
+
+	(function (eTypes) {
+	  eTypes[eTypes["ROOT"] = 10000] = "ROOT";
+	  eTypes[eTypes["NOTEBOOK"] = 10001] = "NOTEBOOK";
+	  eTypes[eTypes["INVITE"] = 1050] = "INVITE";
+	  eTypes[eTypes["REJECT_INVITE"] = 1052] = "REJECT_INVITE";
+	  eTypes[eTypes["ACCEPT_INVITE"] = 1060] = "ACCEPT_INVITE";
+	  eTypes[eTypes["AUTHORIZE_INVITE"] = 1070] = "AUTHORIZE_INVITE";
+	  eTypes[eTypes["AUTHORIZE_INVITE_INDEPENDENT"] = 1071] = "AUTHORIZE_INVITE_INDEPENDENT";
+	  eTypes[eTypes["INBOX"] = 10002] = "INBOX";
+	})(eTypes || (eTypes = {}));
+
+	var _Object$keys$reduce = Object.keys(eTypes).reduce(function (acc, cur) {
+	  if (typeof eTypes[cur] === 'number') {
+	    acc[0] = _objectSpread$c(_objectSpread$c({}, acc[0]), {}, defineProperty({}, cur, parseInt(eTypes[cur])));
+	    acc[2].push(cur);
+	  } else {
+	    acc[1] = _objectSpread$c(_objectSpread$c({}, acc[1]), {}, defineProperty({}, cur, eTypes[cur]));
+	    acc[3].push(parseInt(cur));
+	  }
+
+	  return acc;
+	}, [{}, {}, [], []]),
+	    _Object$keys$reduce2 = slicedToArray(_Object$keys$reduce, 4),
+	    typeMapper = _Object$keys$reduce2[0],
+	    codeMapper = _Object$keys$reduce2[1],
+	    typeList = _Object$keys$reduce2[2],
+	    codeList = _Object$keys$reduce2[3];
+
+	var listEdges = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
+	    var params,
+	        _params$shared,
+	        _params$count,
+	        count,
+	        _params$edit_mode,
+	        _params$sort_by,
+	        sort_by,
+	        _params$type,
+	        type,
+	        _params$xfname,
+	        xfname,
+	        isEncrypt,
+	        _params$loid,
+	        loid,
+	        _params$obfname,
+	        obfname,
+	        scondition,
+	        condition,
+	        response,
+	        edges,
+	        _args2 = arguments;
+
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            params = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {};
+	            _params$shared = params.shared, _params$count = params.count, count = _params$count === void 0 ? 10 : _params$count, _params$edit_mode = params.edit_mode, _params$sort_by = params.sort_by, sort_by = _params$sort_by === void 0 ? 0 : _params$sort_by, _params$type = params.type, type = _params$type === void 0 ? eTypes.NOTEBOOK : _params$type, _params$xfname = params.xfname, xfname = _params$xfname === void 0 ? 'bvid' : _params$xfname, isEncrypt = params.isEncrypt, _params$loid = params.loid, loid = _params$loid === void 0 ? '' : _params$loid, _params$obfname = params.obfname, obfname = _params$obfname === void 0 ? 'mtime' : _params$obfname, scondition = params.scondition;
+
+	            if (codeList.includes(type)) {
+	              _context2.next = 4;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_TYPE_INVALID'
+	            });
+
+	          case 4:
+	            condition = [];
+
+	            if (typeof scondition !== 'undefined') {
+	              condition.push(scondition);
+	            }
+
+	            if (isEncrypt === true) condition.push('besak is not null');else if (isEncrypt === false) condition.push('besak is null');
+	            _context2.next = 9;
+	            return store$3.level2SDK.edgeServices.retrieveEdge({
+	              idList: [],
+	              options: {
+	                xfname: xfname,
+	                type: type,
+	                asc: !!sort_by,
+	                scondition: condition.join(' and '),
+	                maxcount: count,
+	                loid: loid,
+	                obfname: obfname
+	              }
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 9:
+	            response = _context2.sent;
+
+	            if (!(!response || !response.data || !Array.isArray(response.data))) {
+	              _context2.next = 12;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Notebook -> utils -> listEdges -> no response'
+	            });
+
+	          case 12:
+	            edges = response.data;
+	            return _context2.abrupt("return", edges);
+
+	          case 14:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function listEdges() {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+
+	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	var decodeUID = function decodeUID(uid) {
+	  var lastIOfPlus = uid.lastIndexOf('+');
+
+	  if (lastIOfPlus < 0) {
+	    throw new AiTmedError({
+	      name: 'UID_INVALID'
+	    });
+	  }
+
+	  return {
+	    userId: uid.slice(0, lastIOfPlus),
+	    phone_number: uid.slice(lastIOfPlus)
+	  };
+	};
+	var generateUser = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(edge, profile) {
+	    var id, response, vertex, name, _decodeUID, userId, phone_number;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            id = store$3.utils.idToBase64(edge.bvid);
+	            _context.next = 3;
+	            return store$3.level2SDK.vertexServices.retrieveVertex({
+	              idList: [id]
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 3:
+	            response = _context.sent;
+
+	            if (!(!response || response.code !== 0)) {
+	              _context.next = 6;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Account -> utils -> generateUser -> no response'
+	            });
+
+	          case 6:
+	            vertex = response.data[0];
+	            name = vertex.name !== null && vertex.name !== undefined ? vertex.name : {
+	              name: ''
+	            };
+	            _decodeUID = decodeUID(vertex.uid), userId = _decodeUID.userId, phone_number = _decodeUID.phone_number;
+	            return _context.abrupt("return", {
+	              id: id,
+	              name: name.name,
+	              userId: userId,
+	              phone_number: phone_number,
+	              profile: profile || null
+	            });
+
+	          case 10:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function generateUser(_x, _x2) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+	var retrieveRootEdge = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
+	    var edges;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return listEdges({
+	              type: eTypes.ROOT
+	            });
+
+	          case 2:
+	            edges = _context3.sent;
+
+	            if (!(edges.length <= 0)) {
+	              _context3.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'ROOT_NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 5:
+	            return _context3.abrupt("return", edges[0]);
+
+	          case 6:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function retrieveRootEdge() {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+	var createProfile = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(rootId, _ref4) {
+	    var profile_photo, _profile, profile, profilePhotoNote, note;
+
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            profile_photo = _ref4.profile_photo, _profile = objectWithoutProperties(_ref4, ["profile_photo"]);
+	            profile = _profile; // Upload Profile Photo
+
+	            if (!profile_photo) {
+	              _context4.next = 9;
+	              break;
+	            }
+
+	            if (/^image/.test(profile_photo.type)) {
+	              _context4.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'PROFILE_PHOTO_INVALID'
+	            });
+
+	          case 5:
+	            _context4.next = 7;
+	            return Note.create({
+	              notebook_id: rootId,
+	              title: 'profile_photo',
+	              content: profile_photo
+	            });
+
+	          case 7:
+	            profilePhotoNote = _context4.sent;
+	            profile.profile_photo = profilePhotoNote.id;
+
+	          case 9:
+	            _context4.next = 11;
+	            return Note.create({
+	              notebook_id: rootId,
+	              title: 'profile',
+	              content: profile,
+	              dataType: 1
+	            });
+
+	          case 11:
+	            note = _context4.sent;
+	            return _context4.abrupt("return", note);
+
+	          case 13:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function createProfile(_x3, _x4) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	var removeProfile = /*#__PURE__*/function () {
+	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, note) {
+	    var profile;
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            profile = note.info.content; // Remove Profile Photo
+
+	            if (!(profile && profile.profile_photo)) {
+	              _context5.next = 4;
+	              break;
+	            }
+
+	            _context5.next = 4;
+	            return store$3.level2SDK.documentServices.deleteDocument([profile.profile_photo]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 4:
+	            _context5.next = 6;
+	            return store$3.level2SDK.documentServices.deleteDocument([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 6:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function removeProfile(_x5, _x6) {
+	    return _ref6.apply(this, arguments);
+	  };
+	}();
+	var retrieveProfile = /*#__PURE__*/function () {
+	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(rootId) {
+	    var notes, noteId, profileInDoc, profile_photo, restProfile, profile, profilePhotoNote, content;
+	    return regenerator.wrap(function _callee6$(_context6) {
+	      while (1) {
+	        switch (_context6.prev = _context6.next) {
+	          case 0:
+	            _context6.next = 2;
+	            return Note.list(rootId, {
+	              dataType: 'profile'
+	            });
+
+	          case 2:
+	            notes = _context6.sent;
+
+	            if (!(notes.ids.length <= 0)) {
+	              _context6.next = 5;
+	              break;
+	            }
+
+	            return _context6.abrupt("return", null);
+
+	          case 5:
+	            noteId = notes.ids[0];
+	            profileInDoc = notes.mapper[noteId].info.content;
+
+	            if (profileInDoc) {
+	              _context6.next = 9;
+	              break;
+	            }
+
+	            return _context6.abrupt("return", null);
+
+	          case 9:
+	            profile_photo = profileInDoc.profile_photo, restProfile = objectWithoutProperties(profileInDoc, ["profile_photo"]);
+	            profile = _objectSpread$d({}, restProfile); // Retrieve Profile Photo
+
+	            if (!profile_photo) {
+	              _context6.next = 17;
+	              break;
+	            }
+
+	            _context6.next = 14;
+	            return Note.retrieve(profile_photo);
+
+	          case 14:
+	            profilePhotoNote = _context6.sent;
+	            content = profilePhotoNote.info.content;
+
+	            if (content && content instanceof Blob) {
+	              profile.profile_photo = content;
+	            }
+
+	          case 17:
+	            return _context6.abrupt("return", {
+	              noteId: noteId,
+	              profile: profile
+	            });
+
+	          case 18:
+	          case "end":
+	            return _context6.stop();
+	        }
+	      }
+	    }, _callee6);
+	  }));
+
+	  return function retrieveProfile(_x7) {
+	    return _ref7.apply(this, arguments);
+	  };
+	}();
+
+	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+	function _unsupportedIterableToArray$g(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$g(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$g(o, minLen); }
+
+	function _arrayLikeToArray$g(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+	/**
+	 * @param phone_number: string
+	 * @throws {UnableToMakeAnotherRequest} When the same request is made within 60secs
+	 * @returns Promise<string>
+	 */
+
+	var requestVerificationCode = /*#__PURE__*/function () {
+	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(phone_number) {
+	    var _response$data;
+
+	    var interval, response;
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            if (!store$3.noodlInstance) {
+	              _context.next = 8;
+	              break;
+	            }
+
+	            if (!(store$3.noodlInstance.verificationRequest.timer > 0 && store$3.noodlInstance.verificationRequest.phoneNumber === phone_number)) {
+	              _context.next = 5;
+	              break;
+	            }
+
+	            throw new UnableToMakeAnotherRequest('User must wait 60 sec to make another verification code request.');
+
+	          case 5:
+	            store$3.noodlInstance.verificationRequest.timer = 60;
+	            store$3.noodlInstance.verificationRequest.phoneNumber = phone_number;
+	            interval = setInterval(function () {
+	              if (store$3.noodlInstance.verificationRequest.timer === 0) {
+	                clearInterval(interval);
+	              } else {
+	                store$3.noodlInstance.verificationRequest.timer--;
+	              }
+	            }, 1000);
+
+	          case 8:
+	            _context.next = 10;
+	            return store$3.level2SDK.Account.requestVerificationCode({
+	              phone_number: phone_number
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 10:
+	            response = _context.sent;
+	            return _context.abrupt("return", response && response.data && ((_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.verification_code));
+
+	          case 12:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function requestVerificationCode(_x) {
+	    return _ref.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param phone_number: string
+	 * @param password: string
+	 * @param verification_code: string
+	 */
+
+	var create$5 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, userName) {
+	    var _yield$getStatus, statusCode, rest, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
+
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return getStatus();
+
+	          case 2:
+	            _yield$getStatus = _context2.sent;
+	            statusCode = _yield$getStatus.code;
+	            rest = objectWithoutProperties(_yield$getStatus, ["code"]);
+
+	            if (!(statusCode === 3)) {
+	              _context2.next = 13;
+	              break;
+	            }
+
+	            _context2.next = 8;
+	            return store$3.level2SDK.Account.createInvitedUser({
+	              id: rest === null || rest === void 0 ? void 0 : rest.data.user_id,
+	              phone_number: phone_number,
+	              password: password,
+	              userInfo: {
+	                userName: userName,
+	                phoneNumber: phone_number
+	              }
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 8:
+	            _yield$store$level2SD = _context2.sent;
+	            data = _yield$store$level2SD.data;
+	            userVertex = data;
+	            _context2.next = 18;
+	            break;
+
+	          case 13:
+	            _context2.next = 15;
+	            return store$3.level2SDK.Account.createUser({
+	              phone_number: phone_number,
+	              password: password,
+	              verification_code: verification_code,
+	              userInfo: {
+	                userName: userName,
+	                phoneNumber: phone_number
+	              }
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 15:
+	            _yield$store$level2SD2 = _context2.sent;
+	            _data = _yield$store$level2SD2.data;
+	            userVertex = _data;
+
+	          case 18:
+	            return _context2.abrupt("return", userVertex);
+
+	          case 19:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function create(_x2, _x3, _x4, _x5) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param phone_number: string
+	 * @param verification_code: string
+	 * @param password: string
+	 */
+
+	var login = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(phone_number, password, verification_code) {
+	    var res, user, userVertex;
+	    return regenerator.wrap(function _callee3$(_context3) {
+	      while (1) {
+	        switch (_context3.prev = _context3.next) {
+	          case 0:
+	            _context3.next = 2;
+	            return loginByVerificationCode(phone_number, verification_code);
+
+	          case 2:
+	            res = _context3.sent;
+
+	            if (!(res instanceof Status)) {
+	              _context3.next = 7;
+	              break;
+	            }
+
+	            _context3.next = 6;
+	            return store$3.level2SDK.Account.login();
+
+	          case 6:
+	            return _context3.abrupt("return", res);
+
+	          case 7:
+	            _context3.next = 9;
+	            return loginByPassword(password);
+
+	          case 9:
+	            user = _context3.sent;
+
+	            if (!user.id) {
+	              _context3.next = 18;
+	              break;
+	            }
+
+	            _context3.next = 13;
+	            return retrieveVertex(user.id);
+
+	          case 13:
+	            userVertex = _context3.sent;
+
+	            if (userVertex && userVertex.name && userVertex.name.username) {
+	              userVertex.name.userName = userVertex.name.username;
+	              delete userVertex.name.username;
+	            }
+
+	            return _context3.abrupt("return", userVertex);
+
+	          case 18:
+	            return _context3.abrupt("return", user);
+
+	          case 19:
+	          case "end":
+	            return _context3.stop();
+	        }
+	      }
+	    }, _callee3);
+	  }));
+
+	  return function login(_x6, _x7, _x8) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * This method is only able to be used after login new device (loginByVerificationCode)
+	 * @param password: string
+	 */
+
+	var loginByPassword = /*#__PURE__*/function () {
+	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(password) {
+	    var _yield$getStatus2, user_id, user, userVertex;
+
+	    return regenerator.wrap(function _callee4$(_context4) {
+	      while (1) {
+	        switch (_context4.prev = _context4.next) {
+	          case 0:
+	            _context4.next = 2;
+	            return store$3.level2SDK.Account.login({
+	              password: password
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            _context4.next = 4;
+	            return getStatus();
+
+	          case 4:
+	            _yield$getStatus2 = _context4.sent;
+	            user_id = _yield$getStatus2.data.user_id;
+
+	            if (!user_id) {
+	              _context4.next = 12;
+	              break;
+	            }
+
+	            _context4.next = 9;
+	            return retrieveVertex(user_id);
+
+	          case 9:
+	            userVertex = _context4.sent;
+
+	            if (userVertex && userVertex.name && userVertex.name.username) {
+	              userVertex.name.userName = userVertex.name.username;
+	              delete userVertex.name.username;
+	            }
+
+	            user = userVertex;
+
+	          case 12:
+	            return _context4.abrupt("return", user);
+
+	          case 13:
+	          case "end":
+	            return _context4.stop();
+	        }
+	      }
+	    }, _callee4);
+	  }));
+
+	  return function loginByPassword(_x9) {
+	    return _ref4.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param phone_number: string
+	 * @param verification_code: string
+	 */
+
+	var loginByVerificationCode = /*#__PURE__*/function () {
+	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(phone_number, verification_code) {
+	    return regenerator.wrap(function _callee5$(_context5) {
+	      while (1) {
+	        switch (_context5.prev = _context5.next) {
+	          case 0:
+	            _context5.next = 2;
+	            return store$3.level2SDK.Account.loginNewDevice({
+	              phone_number: phone_number,
+	              verification_code: verification_code
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	            return _context5.abrupt("return", _context5.sent);
+
+	          case 3:
+	          case "end":
+	            return _context5.stop();
+	        }
+	      }
+	    }, _callee5);
+	  }));
+
+	  return function loginByVerificationCode(_x10, _x11) {
+	    return _ref5.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Status
+	 * Status.code:
+	 *  0 - LOGGED_IN
+	 *  1 - LOGGED_OUT
+	 */
+
+	var logout = /*#__PURE__*/function () {
+	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6() {
+	    var clean,
+	        status,
+	        latestStatus,
+	        _args6 = arguments;
+	    return regenerator.wrap(function _callee6$(_context6) {
+	      while (1) {
+	        switch (_context6.prev = _context6.next) {
+	          case 0:
+	            clean = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : false;
+
+	            if (!clean) {
+	              _context6.next = 6;
+	              break;
+	            }
+
+	            store$3.level2SDK.Account.logoutClean();
+	            localStorage.removeItem('Global');
+	            _context6.next = 13;
+	            break;
+
+	          case 6:
+	            _context6.next = 8;
+	            return getStatus();
+
+	          case 8:
+	            status = _context6.sent;
+
+	            if (!(status.code === 1)) {
+	              _context6.next = 11;
+	              break;
+	            }
+
+	            return _context6.abrupt("return", status);
+
+	          case 11:
+	            store$3.level2SDK.Account.logout();
+	            localStorage.removeItem('Global');
+
+	          case 13:
+	            _context6.next = 15;
+	            return getStatus();
+
+	          case 15:
+	            latestStatus = _context6.sent;
+	            return _context6.abrupt("return", latestStatus);
+
+	          case 17:
+	          case "end":
+	            return _context6.stop();
+	        }
+	      }
+	    }, _callee6);
+	  }));
+
+	  return function logout() {
+	    return _ref6.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * Todo:
+	 *    waiting for backend to support verificating the verification code
+	 * @param phone_number: string
+	 * @param new_phone_number: string
+	 * @param verification_code: string
+	 * @returns Promise<User>
+	 */
+
+	/*
+	export const updatePhoneNumber = async (
+	  phone_number: string,
+	  new_phone_number: string,
+	  verification_code: string,
+	): Promise<AccountTypes.User> => {
+	  console.log(
+	    'Account->updatePhoneNumber',
+	    phone_number,
+	    new_phone_number,
+	    verification_code,
+	  )
+
+	  return mockUser
+	}
+	*/
+
+	/**
+	 * @param param
+	 * @param param.old_password: string
+	 * @param param.new_password: string
+	 */
+
+	var updatePassword$1 = /*#__PURE__*/function () {
+	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(old_password, new_password) {
+	    return regenerator.wrap(function _callee7$(_context7) {
+	      while (1) {
+	        switch (_context7.prev = _context7.next) {
+	          case 0:
+	            _context7.next = 2;
+	            return store$3.level2SDK.Account.changePasswordWithOldPassword({
+	              oldPassword: old_password,
+	              newPassword: new_password
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 2:
+	          case "end":
+	            return _context7.stop();
+	        }
+	      }
+	    }, _callee7);
+	  }));
+
+	  return function updatePassword(_x12, _x13) {
+	    return _ref7.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param param
+	 * @param param.phone_number: string
+	 * @param param.verification_code: string
+	 * @param param.new_password: string
+	 */
+
+	var updatePasswordByVerificationCode = /*#__PURE__*/function () {
+	  var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(_ref8) {
+	    var phone_number, verification_code, new_password;
+	    return regenerator.wrap(function _callee8$(_context8) {
+	      while (1) {
+	        switch (_context8.prev = _context8.next) {
+	          case 0:
+	            phone_number = _ref8.phone_number, verification_code = _ref8.verification_code, new_password = _ref8.new_password;
+	            _context8.next = 3;
+	            return store$3.level2SDK.Account.changePasswordWithVerificationCode({
+	              phone_number: phone_number,
+	              verification_code: verification_code,
+	              password: new_password
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 3:
+	          case "end":
+	            return _context8.stop();
+	        }
+	      }
+	    }, _callee8);
+	  }));
+
+	  return function updatePasswordByVerificationCode(_x14) {
+	    return _ref9.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @param profile: AccountTypes.Profile
+	 *
+	 * @param profile.first_name: string
+	 * @param profile.middle_name?: string
+	 * @param profile.last_name: string
+	 *
+	 * @param profile.gender: 'MALE' | 'FEMALE' | 'PNS'
+	 * @param profile.birthday: number
+	 * @param profile.languages?: string[]
+	 *
+	 * @param profile.profile_photo?: string
+	 *
+	 * @returns Promise<User>
+	 */
+
+	var updateProfile = /*#__PURE__*/function () {
+	  var _ref10 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(profile) {
+	    var root, notes, _iterator, _step, noteId, user;
+
+	    return regenerator.wrap(function _callee9$(_context9) {
+	      while (1) {
+	        switch (_context9.prev = _context9.next) {
+	          case 0:
+	            _context9.next = 2;
+	            return retrieveRootEdge();
+
+	          case 2:
+	            root = _context9.sent;
+	            _context9.next = 5;
+	            return Note.list(root.eid, {
+	              dataType: 'profile'
+	            });
+
+	          case 5:
+	            notes = _context9.sent;
+	            _iterator = _createForOfIteratorHelper$f(notes.ids);
+	            _context9.prev = 7;
+
+	            _iterator.s();
+
+	          case 9:
+	            if ((_step = _iterator.n()).done) {
+	              _context9.next = 15;
+	              break;
+	            }
+
+	            noteId = _step.value;
+	            _context9.next = 13;
+	            return removeProfile(noteId, notes.mapper[noteId]);
+
+	          case 13:
+	            _context9.next = 9;
+	            break;
+
+	          case 15:
+	            _context9.next = 20;
+	            break;
+
+	          case 17:
+	            _context9.prev = 17;
+	            _context9.t0 = _context9["catch"](7);
+
+	            _iterator.e(_context9.t0);
+
+	          case 20:
+	            _context9.prev = 20;
+
+	            _iterator.f();
+
+	            return _context9.finish(20);
+
+	          case 23:
+	            _context9.next = 25;
+	            return createProfile(root.eid, profile);
+
+	          case 25:
+	            _context9.next = 27;
+	            return retrieve$2();
+
+	          case 27:
+	            user = _context9.sent;
+	            return _context9.abrupt("return", user);
+
+	          case 29:
+	          case "end":
+	            return _context9.stop();
+	        }
+	      }
+	    }, _callee9, null, [[7, 17, 20, 23]]);
+	  }));
+
+	  return function updateProfile(_x15) {
+	    return _ref10.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Promise<User>
+	 */
+
+	var retrieve$2 = /*#__PURE__*/function () {
+	  var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10() {
+	    var root, profile, user;
+	    return regenerator.wrap(function _callee10$(_context10) {
+	      while (1) {
+	        switch (_context10.prev = _context10.next) {
+	          case 0:
+	            _context10.next = 2;
+	            return retrieveRootEdge();
+
+	          case 2:
+	            root = _context10.sent;
+	            _context10.next = 5;
+	            return retrieveProfile(root.eid);
+
+	          case 5:
+	            profile = _context10.sent;
+	            _context10.next = 8;
+	            return generateUser(root, profile ? profile.profile : null);
+
+	          case 8:
+	            user = _context10.sent;
+	            return _context10.abrupt("return", user);
+
+	          case 10:
+	          case "end":
+	            return _context10.stop();
+	        }
+	      }
+	    }, _callee10);
+	  }));
+
+	  return function retrieve() {
+	    return _ref11.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Promise<User>
+	 */
+
+	var remove$1 = /*#__PURE__*/function () {
+	  var _ref12 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
+	    var user, edge, notes, _iterator2, _step2, noteId;
+
+	    return regenerator.wrap(function _callee11$(_context11) {
+	      while (1) {
+	        switch (_context11.prev = _context11.next) {
+	          case 0:
+	            _context11.next = 2;
+	            return retrieve$2();
+
+	          case 2:
+	            user = _context11.sent;
+	            _context11.next = 5;
+	            return retrieveRootEdge();
+
+	          case 5:
+	            edge = _context11.sent;
+	            _context11.next = 8;
+	            return Note.list(edge.eid);
+
+	          case 8:
+	            notes = _context11.sent;
+	            // Remove all note under root edge
+	            _iterator2 = _createForOfIteratorHelper$f(notes.ids);
+	            _context11.prev = 10;
+
+	            _iterator2.s();
+
+	          case 12:
+	            if ((_step2 = _iterator2.n()).done) {
+	              _context11.next = 18;
+	              break;
+	            }
+
+	            noteId = _step2.value;
+	            _context11.next = 16;
+	            return store$3.level2SDK.documentServices.deleteDocument([noteId]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 16:
+	            _context11.next = 12;
+	            break;
+
+	          case 18:
+	            _context11.next = 23;
+	            break;
+
+	          case 20:
+	            _context11.prev = 20;
+	            _context11.t0 = _context11["catch"](10);
+
+	            _iterator2.e(_context11.t0);
+
+	          case 23:
+	            _context11.prev = 23;
+
+	            _iterator2.f();
+
+	            return _context11.finish(23);
+
+	          case 26:
+	            _context11.next = 28;
+	            return store$3.level2SDK.edgeServices.deleteEdge([edge.eid]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 28:
+	            _context11.next = 30;
+	            return store$3.level2SDK.vertexServices.deleteVertex([edge.bvid]);
+
+	          case 30:
+	            _context11.next = 32;
+	            return logout(true);
+
+	          case 32:
+	            return _context11.abrupt("return", user);
+
+	          case 33:
+	          case "end":
+	            return _context11.stop();
+	        }
+	      }
+	    }, _callee11, null, [[10, 20, 23, 26]]);
+	  }));
+
+	  return function remove() {
+	    return _ref12.apply(this, arguments);
+	  };
+	}();
+	/**
+	 * @returns Status
+	 * Status.code:
+	 *  0 - LOGGED_IN
+	 *  1 - LOGGED_OUT
+	 *  2 - NEW_DEVICE
+	 *  3 = TEMP_ACCOUNT
+	 * Status.userId: string
+	 * Status.code: string
+	 */
+
+	var getStatus = /*#__PURE__*/function () {
+	  var _ref13 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12() {
+	    var status, uid, utf8Uid, _accountUtils$decodeU, userId, phone_number;
+
+	    return regenerator.wrap(function _callee12$(_context12) {
+	      while (1) {
+	        switch (_context12.prev = _context12.next) {
+	          case 0:
+	            _context12.next = 2;
+	            return store$3.level2SDK.Account.getStatus();
+
+	          case 2:
+	            status = _context12.sent;
+	            _context12.prev = 3;
+	            uid = localStorage.getItem('uid');
+
+	            if (!(uid === null)) {
+	              _context12.next = 7;
+	              break;
+	            }
+
+	            throw new Error('uid is null');
+
+	          case 7:
+	            utf8Uid = store$3.level2SDK.utilServices.base64ToUTF8(uid);
+	            _accountUtils$decodeU = decodeUID(utf8Uid), userId = _accountUtils$decodeU.userId, phone_number = _accountUtils$decodeU.phone_number;
+	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
+	              userId: userId,
+	              phone_number: phone_number
+	            }));
+
+	          case 12:
+	            _context12.prev = 12;
+	            _context12.t0 = _context12["catch"](3);
+	            console.log(_context12.t0);
+	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
+	              userId: '',
+	              phone_number: ''
+	            }));
+
+	          case 16:
+	          case "end":
+	            return _context12.stop();
+	        }
+	      }
+	    }, _callee12, null, [[3, 12]]);
+	  }));
+
+	  return function getStatus() {
+	    return _ref13.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param password string
+	 * @returns boolean
+	 */
+
+	var verifyUserPassword = function verifyUserPassword(password) {
+	  try {
+	    var _store$level2SDK$Acco = store$3.level2SDK.Account.verifyUserPassword({
+	      password: password
+	    }),
+	        _store$level2SDK$Acco2 = slicedToArray(_store$level2SDK$Acco, 1),
+	        isPasswordValid = _store$level2SDK$Acco2[0];
+
+	    if (isPasswordValid) return true;
+	  } catch (error) {
+	    if (error.name = 'PASSWORD_INVALID') {
+	      return false;
+	    }
+	  }
+
+	  return false;
+	};
+
+	var Account$1 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		requestVerificationCode: requestVerificationCode,
+		create: create$5,
+		login: login,
+		loginByPassword: loginByPassword,
+		loginByVerificationCode: loginByVerificationCode,
+		logout: logout,
+		updatePassword: updatePassword$1,
+		updatePasswordByVerificationCode: updatePasswordByVerificationCode,
+		updateProfile: updateProfile,
+		retrieve: retrieve$2,
+		remove: remove$1,
+		getStatus: getStatus,
+		verifyUserPassword: verifyUserPassword
+	});
+
+	function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+	function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$f(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+	/**
+	 *
+	 * @param document: Doc
+	 * @param edge?: Edge
+	 * @returns Promise<Note>
+	 */
+
+	var documentToNote$2 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
+	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            document = _ref.document, _edge = _ref._edge, esakOfCurrentUser = _ref.esakOfCurrentUser;
+
+	            if (!(typeof _edge === 'undefined')) {
+	              _context.next = 7;
+	              break;
+	            }
+
+	            _context.next = 4;
+	            return retrieveEdge(document.eid);
+
+	          case 4:
+	            _context.t0 = _context.sent;
+	            _context.next = 8;
+	            break;
+
+	          case 7:
+	            _context.t0 = _edge;
+
+	          case 8:
+	            edge = _context.t0;
+
+	            if (!(edge === null)) {
+	              _context.next = 11;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
+	            });
+
+	          case 11:
+	            //TODO
+	            //currently commented since does not allow comparison between shared notebook
+	            //and docs from root notebook
+	            // if (
+	            //   !store.utils.compareUint8Arrays(
+	            //     <Uint8Array>edge.eid,
+	            //     <Uint8Array>document.eid,
+	            //   )
+	            // ) {
+	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
+	            // }
+	            name = document.name;
+	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
+	            deat = document.deat; // DType
+
+	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
+	            dType = isOldDataStructure ? new DType() : new DType(document.type);
+
+	            if (isOldDataStructure) {
+	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
+	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
+	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
+	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
+	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
+	              dType.setMediaType(name.type);
+	            } // Get data
+
+
+	            content = null, error = null;
+	            _context.prev = 18;
+
+	            if (!dType.isOnServer) {
+	              _context.next = 29;
+	              break;
+	            }
+
+	            if (!(name.data !== undefined)) {
+	              _context.next = 26;
+	              break;
+	            }
+
+	            _context.next = 23;
+	            return store$3.level2SDK.utilServices.base64ToUint8Array(name.data);
+
+	          case 23:
+	            data = _context.sent;
+	            _context.next = 27;
+	            break;
+
+	          case 26:
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'name.data is undefined'
+	            });
+
+	          case 27:
+	            _context.next = 46;
+	            break;
+
+	          case 29:
+	            if (!(deat !== null && deat.url)) {
+	              _context.next = 45;
+	              break;
+	            }
+
+	            _context.next = 32;
+	            return store$3.level2SDK.documentServices.downloadDocumentFromS3({
+	              url: deat.url
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 32:
+	            response = _context.sent;
+
+	            if (response) {
+	              _context.next = 35;
+	              break;
+	            }
+
+	            throw 'no response';
+
+	          case 35:
+	            if (!dType.isBinary) {
+	              _context.next = 39;
+	              break;
+	            }
+
+	            _context.t1 = response.data;
+	            _context.next = 42;
+	            break;
+
+	          case 39:
+	            _context.next = 41;
+	            return store$3.level2SDK.utilServices.base64ToUint8Array(response.data);
+
+	          case 41:
+	            _context.t1 = _context.sent;
+
+	          case 42:
+	            data = _context.t1;
+	            _context.next = 46;
+	            break;
+
+	          case 45:
+	            throw 'deat.url is missing';
+
+	          case 46:
+	            // Decryption
+	            edgeHasBesak = edge.besak && edge.besak !== '';
+	            edgeHasEesak = edge.eesak && edge.eesak !== '';
+
+	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
+	              _context.next = 71;
+	              break;
+	            }
+
+	            if (esakOfCurrentUser) {
+	              esak = esakOfCurrentUser;
+	            } else {
+	              esak = edgeHasBesak ? edge.besak : edge.eesak;
+	            }
+
+	            if (!edge.sig) {
+	              _context.next = 57;
+	              break;
+	            }
+
+	            if (edge.sig instanceof Uint8Array) {
+	              publicKeyOfReceiver = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+	            } else {
+	              publicKeyOfReceiver = edge.sig;
+	            }
+
+	            _context.next = 54;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 54:
+	            data = _context.sent;
+	            _context.next = 71;
+	            break;
+
+	          case 57:
+	            if (!(!edge.sig && edge.type === 10001)) {
+	              _context.next = 65;
+	              break;
+	            }
+
+	            pkLocalStorage = localStorage.getItem('pk');
+	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
+	            _context.next = 62;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 62:
+	            data = _context.sent;
+	            _context.next = 71;
+	            break;
+
+	          case 65:
+	            if (!(edge.type === 10000)) {
+	              _context.next = 71;
+	              break;
+	            }
+
+	            _pkLocalStorage = localStorage.getItem('pk');
+	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
+	            _context.next = 70;
+	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
+
+	          case 70:
+	            data = _context.sent;
+
+	          case 71:
+	            // Ungzip
+	            if (dType.isGzip) data = ungzip$1(data);
+	            _context.next = 74;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
+
+	          case 74:
+	            blob = _context.sent;
+
+	            if (!/^text\//.test(blob.type)) {
+	              _context.next = 81;
+	              break;
+	            }
+
+	            _context.next = 78;
+	            return new Response(blob).text();
+
+	          case 78:
+	            content = _context.sent;
+	            _context.next = 95;
+	            break;
+
+	          case 81:
+	            if (!(blob.type === 'application/json')) {
+	              _context.next = 94;
+	              break;
+	            }
+
+	            _context.next = 84;
+	            return new Response(blob).text();
+
+	          case 84:
+	            jsonStr = _context.sent;
+	            _context.prev = 85;
+	            content = JSON.parse(jsonStr);
+	            _context.next = 92;
+	            break;
+
+	          case 89:
+	            _context.prev = 89;
+	            _context.t2 = _context["catch"](85);
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
+	            });
+
+	          case 92:
+	            _context.next = 95;
+	            break;
+
+	          case 94:
+	            content = blob;
+
+	          case 95:
+	            _context.next = 102;
+	            break;
+
+	          case 97:
+	            _context.prev = 97;
+	            _context.t3 = _context["catch"](18);
+
+	            if (typeof _context.t3 === 'string') {
+	              error = new AiTmedError({
+	                name: 'DOWNLOAD_FROM_S3_FAIL',
+	                message: "Note -> documentToNote -> ".concat(_context.t3)
+	              });
+	            } else {
+	              error = _context.t3;
+	            }
+
+	            content = null;
+
+	          case 102:
+	            return _context.abrupt("return", _objectSpread$f(_objectSpread$f({}, document), {}, {
+	              name: {
+	                title: name.title,
+	                type: contentType,
+	                data: content,
+	                tags: name.tags || []
+	              },
+	              created_at: document.ctime * 1000,
+	              modified_at: document.mtime * 1000,
+	              type: {
+	                isOnServer: dType.isOnServer,
+	                isZipped: dType.isGzip,
+	                isBinary: dType.isBinary,
+	                isEncrypted: dType.isEncrypted,
+	                isEditable: dType.isEditable,
+	                applicationDataType: dType.dataType,
+	                mediaType: dType.mediaType,
+	                size: document.size
+	              }
+	            }));
+
+	          case 103:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee, null, [[18, 97], [85, 89]]);
+	  }));
+
+	  return function documentToNote(_x) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+
+	/**
+	 * @param params
+	 * @param params.edge_id: string
+	 * @param params.title: string
+	 * @param params.content: string | Blob
+	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
+	 * @param params.tags?: string[]
+	 * @param params.dataType?: number
+	 * @returns Promise<Note>
+	 */
+
+	var create$6 = /*#__PURE__*/function () {
+	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
+	    var edge_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
+
+	    return regenerator.wrap(function _callee$(_context) {
+	      while (1) {
+	        switch (_context.prev = _context.next) {
+	          case 0:
+	            edge_id = _ref.edge_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
+	            _context.next = 3;
+	            return retrieveEdge(edge_id);
+
+	          case 3:
+	            edge = _context.sent;
+
+	            if (edge) {
+	              _context.next = 6;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOTEBOOK_NOT_EXIST'
+	            });
+
+	          case 6:
+	            dType = new DType();
+	            dType.dataType = dataType; // Permission
+
+	            dType.isEditable = true; // Content to Blob
+
+	            _context.next = 11;
+	            return contentToBlob(content, type);
+
+	          case 11:
+	            blob = _context.sent;
+	            dType.setMediaType(blob.type); // Gzip
+
+	            _context.next = 15;
+	            return produceGzipData(blob);
+
+	          case 15:
+	            _yield$produceGzipDat = _context.sent;
+	            gzipData = _yield$produceGzipDat.data;
+	            isGzip = _yield$produceGzipDat.isGzip;
+	            dType.isGzip = isGzip;
+	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
+
+	            esak = '';
+	            publicKeyOfReceiver = '';
+
+	            if (!(edge.besak && edge.sig)) {
+	              _context.next = 33;
+	              break;
+	            }
+
+	            esak = edge.besak;
+
+	            if (!(edge.sig instanceof Uint8Array)) {
+	              _context.next = 30;
+	              break;
+	            }
+
+	            _context.next = 27;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+
+	          case 27:
+	            publicKeyOfReceiver = _context.sent;
+	            _context.next = 31;
+	            break;
+
+	          case 30:
+	            publicKeyOfReceiver = edge.sig;
+
+	          case 31:
+	            _context.next = 42;
+	            break;
+
+	          case 33:
+	            if (!(edge.eesak && edge.sig)) {
+	              _context.next = 42;
+	              break;
+	            }
+
+	            esak = edge.eesak;
+
+	            if (!(edge.sig instanceof Uint8Array)) {
+	              _context.next = 41;
+	              break;
+	            }
+
+	            _context.next = 38;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
+
+	          case 38:
+	            publicKeyOfReceiver = _context.sent;
+	            _context.next = 42;
+	            break;
+
+	          case 41:
+	            publicKeyOfReceiver = edge.sig;
+
+	          case 42:
+	            _context.next = 44;
+	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
+
+	          case 44:
+	            _yield$produceEncrypt = _context.sent;
+	            data = _yield$produceEncrypt.data;
+	            isEncrypt = _yield$produceEncrypt.isEncrypt;
+	            dType.isEncrypted = isEncrypt;
+	            _context.next = 50;
+	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
+
+	          case 50:
+	            bs64Data = _context.sent;
+	            dType.isBinary = false;
+	            name = {
+	              title: title,
+	              tags: tags,
+	              type: blob.type
+	            }; // data must be base64 in name field
+
+	            if (dType.isOnServer) name.data = bs64Data;
+	            _context.next = 56;
+	            return store$3.level2SDK.documentServices.createDocument({
+	              eid: edge.eid,
+	              type: dType.value,
+	              name: name,
+	              size: blob.size
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 56:
+	            response = _context.sent;
+
+	            if (!(!response || !response.data)) {
+	              _context.next = 59;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'UNKNOW_ERROR',
+	              message: 'Note -> create -> createDocument -> no response'
+	            });
+
+	          case 59:
+	            document = response.data;
+	            deat = document.deat;
+
+	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
+	              _context.next = 64;
+	              break;
+	            }
+
+	            _context.next = 64;
+	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
+	              url: deat.url,
+	              sig: deat.sig,
+	              data: bs64Data
+	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
+
+	          case 64:
+	            _context.next = 66;
+	            return documentToNote$2({
+	              document: document
+	            });
+
+	          case 66:
+	            note = _context.sent;
+	            return _context.abrupt("return", note);
+
+	          case 68:
+	          case "end":
+	            return _context.stop();
+	        }
+	      }
+	    }, _callee);
+	  }));
+
+	  return function create(_x) {
+	    return _ref2.apply(this, arguments);
+	  };
+	}();
+	/**
+	 *
+	 * @param id: Uint8Array | string
+	 * @param _edge?: Edge
+	 * @returns Promise<Note>
+	 */
+	//TODO: refactor to account for retrieving using edge and xfname:eid
+
+	var retrieve$3 = /*#__PURE__*/function () {
+	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id, _edge) {
+	    var document, note;
+	    return regenerator.wrap(function _callee2$(_context2) {
+	      while (1) {
+	        switch (_context2.prev = _context2.next) {
+	          case 0:
+	            _context2.next = 2;
+	            return retrieveDocument(id);
+
+	          case 2:
+	            document = _context2.sent;
+
+	            if (document) {
+	              _context2.next = 5;
+	              break;
+	            }
+
+	            throw new AiTmedError({
+	              name: 'NOT_A_NOTE'
+	            });
+
+	          case 5:
+	            _context2.next = 7;
+	            return documentToNote$2({
+	              document: document,
+	              _edge: _edge
+	            });
+
+	          case 7:
+	            note = _context2.sent;
+	            return _context2.abrupt("return", note);
+
+	          case 9:
+	          case "end":
+	            return _context2.stop();
+	        }
+	      }
+	    }, _callee2);
+	  }));
+
+	  return function retrieve(_x2, _x3) {
+	    return _ref3.apply(this, arguments);
+	  };
+	}();
+
+	var Document$4 = /*#__PURE__*/Object.freeze({
+		__proto__: null,
+		create: create$6,
+		retrieve: retrieve$3
+	});
+
+	var encryptionServices = {
+	  signature: function signature(message) {
+	    var sig = store$3.level2SDK.utilServices.signature(message);
+	    return sig;
+	  },
+	  verifySignature: function verifySignature(signature, pkSign) {
+	    var isValid = store$3.level2SDK.utilServices.verifySignature(signature, pkSign);
+	    return isValid;
+	  },
+	  decryptAES: function decryptAES(_ref) {
+	    var key = _ref.key,
+	        message = _ref.message;
+	    var secretKeyUInt8Array = store$3.level2SDK.utilServices.normalizeStringTo32BitArray(key);
+	    var encryptedDataUInt8Array = store$3.level2SDK.utilServices.base64ToUint8Array(message);
+	    var sk = store$3.level2SDK.utilServices.sKeyDecrypt(secretKeyUInt8Array, encryptedDataUInt8Array);
+	    var skBase64;
+
+	    if (sk instanceof Uint8Array) {
+	      skBase64 = store$3.level2SDK.utilServices.uint8ArrayToBase64(sk);
+	    }
+
+	    return skBase64;
+	  },
+	  skCheck: function skCheck(_ref2) {
+	    var pk = _ref2.pk,
+	        sk = _ref2.sk;
+	    var pkUInt8Array = pk;
+	    var skDataUInt8Array = sk;
+
+	    if (typeof pk === 'string') {
+	      pkUInt8Array = store$3.level2SDK.utilServices.base64ToUint8Array(pk);
+	    }
+
+	    if (typeof sk === 'string') {
+	      skDataUInt8Array = store$3.level2SDK.utilServices.base64ToUint8Array(sk);
+	    }
+
+	    var isValid = store$3.level2SDK.utilServices.aKeyCheck(pkUInt8Array, skDataUInt8Array);
+	    return isValid;
+	  }
+	};
 
 	var moment = createCommonjsModule(function (module, exports) {
 	(function (global, factory) {
@@ -82086,1783 +84185,21 @@
 	})(); // eslint-disable-line semi
 	});
 
-	function ownKeys$c(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$c(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$c(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$c(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	var eTypes;
-
-	(function (eTypes) {
-	  eTypes[eTypes["ROOT"] = 10000] = "ROOT";
-	  eTypes[eTypes["NOTEBOOK"] = 10001] = "NOTEBOOK";
-	  eTypes[eTypes["INVITE"] = 1050] = "INVITE";
-	  eTypes[eTypes["REJECT_INVITE"] = 1052] = "REJECT_INVITE";
-	  eTypes[eTypes["ACCEPT_INVITE"] = 1060] = "ACCEPT_INVITE";
-	  eTypes[eTypes["AUTHORIZE_INVITE"] = 1070] = "AUTHORIZE_INVITE";
-	  eTypes[eTypes["AUTHORIZE_INVITE_INDEPENDENT"] = 1071] = "AUTHORIZE_INVITE_INDEPENDENT";
-	  eTypes[eTypes["INBOX"] = 10002] = "INBOX";
-	})(eTypes || (eTypes = {}));
-
-	var _Object$keys$reduce = Object.keys(eTypes).reduce(function (acc, cur) {
-	  if (typeof eTypes[cur] === 'number') {
-	    acc[0] = _objectSpread$c(_objectSpread$c({}, acc[0]), {}, defineProperty({}, cur, parseInt(eTypes[cur])));
-	    acc[2].push(cur);
-	  } else {
-	    acc[1] = _objectSpread$c(_objectSpread$c({}, acc[1]), {}, defineProperty({}, cur, eTypes[cur]));
-	    acc[3].push(parseInt(cur));
-	  }
-
-	  return acc;
-	}, [{}, {}, [], []]),
-	    _Object$keys$reduce2 = slicedToArray(_Object$keys$reduce, 4),
-	    typeMapper = _Object$keys$reduce2[0],
-	    codeMapper = _Object$keys$reduce2[1],
-	    typeList = _Object$keys$reduce2[2],
-	    codeList = _Object$keys$reduce2[3];
-
-	var listEdges = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	    var params,
-	        _params$shared,
-	        _params$count,
-	        count,
-	        _params$edit_mode,
-	        _params$sort_by,
-	        sort_by,
-	        _params$type,
-	        type,
-	        _params$xfname,
-	        xfname,
-	        isEncrypt,
-	        _params$loid,
-	        loid,
-	        _params$obfname,
-	        obfname,
-	        scondition,
-	        condition,
-	        response,
-	        edges,
-	        _args2 = arguments;
-
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            params = _args2.length > 0 && _args2[0] !== undefined ? _args2[0] : {};
-	            _params$shared = params.shared, _params$count = params.count, count = _params$count === void 0 ? 10 : _params$count, _params$edit_mode = params.edit_mode, _params$sort_by = params.sort_by, sort_by = _params$sort_by === void 0 ? 0 : _params$sort_by, _params$type = params.type, type = _params$type === void 0 ? eTypes.NOTEBOOK : _params$type, _params$xfname = params.xfname, xfname = _params$xfname === void 0 ? 'bvid' : _params$xfname, isEncrypt = params.isEncrypt, _params$loid = params.loid, loid = _params$loid === void 0 ? '' : _params$loid, _params$obfname = params.obfname, obfname = _params$obfname === void 0 ? 'mtime' : _params$obfname, scondition = params.scondition;
-
-	            if (codeList.includes(type)) {
-	              _context2.next = 4;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_TYPE_INVALID'
-	            });
-
-	          case 4:
-	            condition = [];
-
-	            if (typeof scondition !== 'undefined') {
-	              condition.push(scondition);
-	            }
-
-	            if (isEncrypt === true) condition.push('besak is not null');else if (isEncrypt === false) condition.push('besak is null');
-	            _context2.next = 9;
-	            return store$3.level2SDK.edgeServices.retrieveEdge({
-	              idList: [],
-	              options: {
-	                xfname: xfname,
-	                type: type,
-	                asc: !!sort_by,
-	                scondition: condition.join(' and '),
-	                maxcount: count,
-	                loid: loid,
-	                obfname: obfname
-	              }
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 9:
-	            response = _context2.sent;
-
-	            if (!(!response || !response.data || !Array.isArray(response.data))) {
-	              _context2.next = 12;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Notebook -> utils -> listEdges -> no response'
-	            });
-
-	          case 12:
-	            edges = response.data;
-	            return _context2.abrupt("return", edges);
-
-	          case 14:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function listEdges() {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	function ownKeys$d(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$d(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$d(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$d(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	var decodeUID = function decodeUID(uid) {
-	  var lastIOfPlus = uid.lastIndexOf('+');
-
-	  if (lastIOfPlus < 0) {
-	    throw new AiTmedError({
-	      name: 'UID_INVALID'
-	    });
-	  }
-
-	  return {
-	    userId: uid.slice(0, lastIOfPlus),
-	    phone_number: uid.slice(lastIOfPlus)
-	  };
-	};
-	var generateUser = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(edge, profile) {
-	    var id, response, vertex, name, _decodeUID, userId, phone_number;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            id = store$3.utils.idToBase64(edge.bvid);
-	            _context.next = 3;
-	            return store$3.level2SDK.vertexServices.retrieveVertex({
-	              idList: [id]
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 3:
-	            response = _context.sent;
-
-	            if (!(!response || response.code !== 0)) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Account -> utils -> generateUser -> no response'
-	            });
-
-	          case 6:
-	            vertex = response.data[0];
-	            name = vertex.name !== null && vertex.name !== undefined ? vertex.name : {
-	              name: ''
-	            };
-	            _decodeUID = decodeUID(vertex.uid), userId = _decodeUID.userId, phone_number = _decodeUID.phone_number;
-	            return _context.abrupt("return", {
-	              id: id,
-	              name: name.name,
-	              userId: userId,
-	              phone_number: phone_number,
-	              profile: profile || null
-	            });
-
-	          case 10:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function generateUser(_x, _x2) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	var retrieveRootEdge = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3() {
-	    var edges;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return listEdges({
-	              type: eTypes.ROOT
-	            });
-
-	          case 2:
-	            edges = _context3.sent;
-
-	            if (!(edges.length <= 0)) {
-	              _context3.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'ROOT_NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 5:
-	            return _context3.abrupt("return", edges[0]);
-
-	          case 6:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function retrieveRootEdge() {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	var createProfile = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(rootId, _ref4) {
-	    var profile_photo, _profile, profile, profilePhotoNote, note;
-
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            profile_photo = _ref4.profile_photo, _profile = objectWithoutProperties(_ref4, ["profile_photo"]);
-	            profile = _profile; // Upload Profile Photo
-
-	            if (!profile_photo) {
-	              _context4.next = 9;
-	              break;
-	            }
-
-	            if (/^image/.test(profile_photo.type)) {
-	              _context4.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'PROFILE_PHOTO_INVALID'
-	            });
-
-	          case 5:
-	            _context4.next = 7;
-	            return Note.create({
-	              notebook_id: rootId,
-	              title: 'profile_photo',
-	              content: profile_photo
-	            });
-
-	          case 7:
-	            profilePhotoNote = _context4.sent;
-	            profile.profile_photo = profilePhotoNote.id;
-
-	          case 9:
-	            _context4.next = 11;
-	            return Note.create({
-	              notebook_id: rootId,
-	              title: 'profile',
-	              content: profile,
-	              dataType: 1
-	            });
-
-	          case 11:
-	            note = _context4.sent;
-	            return _context4.abrupt("return", note);
-
-	          case 13:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function createProfile(_x3, _x4) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	var removeProfile = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(id, note) {
-	    var profile;
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            profile = note.info.content; // Remove Profile Photo
-
-	            if (!(profile && profile.profile_photo)) {
-	              _context5.next = 4;
-	              break;
-	            }
-
-	            _context5.next = 4;
-	            return store$3.level2SDK.documentServices.deleteDocument([profile.profile_photo]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 4:
-	            _context5.next = 6;
-	            return store$3.level2SDK.documentServices.deleteDocument([id]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 6:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function removeProfile(_x5, _x6) {
-	    return _ref6.apply(this, arguments);
-	  };
-	}();
-	var retrieveProfile = /*#__PURE__*/function () {
-	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(rootId) {
-	    var notes, noteId, profileInDoc, profile_photo, restProfile, profile, profilePhotoNote, content;
-	    return regenerator.wrap(function _callee6$(_context6) {
-	      while (1) {
-	        switch (_context6.prev = _context6.next) {
-	          case 0:
-	            _context6.next = 2;
-	            return Note.list(rootId, {
-	              dataType: 'profile'
-	            });
-
-	          case 2:
-	            notes = _context6.sent;
-
-	            if (!(notes.ids.length <= 0)) {
-	              _context6.next = 5;
-	              break;
-	            }
-
-	            return _context6.abrupt("return", null);
-
-	          case 5:
-	            noteId = notes.ids[0];
-	            profileInDoc = notes.mapper[noteId].info.content;
-
-	            if (profileInDoc) {
-	              _context6.next = 9;
-	              break;
-	            }
-
-	            return _context6.abrupt("return", null);
-
-	          case 9:
-	            profile_photo = profileInDoc.profile_photo, restProfile = objectWithoutProperties(profileInDoc, ["profile_photo"]);
-	            profile = _objectSpread$d({}, restProfile); // Retrieve Profile Photo
-
-	            if (!profile_photo) {
-	              _context6.next = 17;
-	              break;
-	            }
-
-	            _context6.next = 14;
-	            return Note.retrieve(profile_photo);
-
-	          case 14:
-	            profilePhotoNote = _context6.sent;
-	            content = profilePhotoNote.info.content;
-
-	            if (content && content instanceof Blob) {
-	              profile.profile_photo = content;
-	            }
-
-	          case 17:
-	            return _context6.abrupt("return", {
-	              noteId: noteId,
-	              profile: profile
-	            });
-
-	          case 18:
-	          case "end":
-	            return _context6.stop();
-	        }
-	      }
-	    }, _callee6);
-	  }));
-
-	  return function retrieveProfile(_x7) {
-	    return _ref7.apply(this, arguments);
-	  };
-	}();
-
-	function ownKeys$e(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$e(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$e(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$e(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-	function _createForOfIteratorHelper$f(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = _unsupportedIterableToArray$g(o))) { var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
-
-	function _unsupportedIterableToArray$g(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray$g(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray$g(o, minLen); }
-
-	function _arrayLikeToArray$g(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-	/**
-	 * @param phone_number: string
-	 * @throws {UnableToMakeAnotherRequest} When the same request is made within 60secs
-	 * @returns Promise<string>
-	 */
-
-	var requestVerificationCode = /*#__PURE__*/function () {
-	  var _ref = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(phone_number) {
-	    var _response$data;
-
-	    var interval, response;
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            if (!store$3.noodlInstance) {
-	              _context.next = 8;
-	              break;
-	            }
-
-	            if (!(store$3.noodlInstance.verificationRequest.timer > 0 && store$3.noodlInstance.verificationRequest.phoneNumber === phone_number)) {
-	              _context.next = 5;
-	              break;
-	            }
-
-	            throw new UnableToMakeAnotherRequest('User must wait 60 sec to make another verification code request.');
-
-	          case 5:
-	            store$3.noodlInstance.verificationRequest.timer = 60;
-	            store$3.noodlInstance.verificationRequest.phoneNumber = phone_number;
-	            interval = setInterval(function () {
-	              if (store$3.noodlInstance.verificationRequest.timer === 0) {
-	                clearInterval(interval);
-	              } else {
-	                store$3.noodlInstance.verificationRequest.timer--;
-	              }
-	            }, 1000);
-
-	          case 8:
-	            _context.next = 10;
-	            return store$3.level2SDK.Account.requestVerificationCode({
-	              phone_number: phone_number
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 10:
-	            response = _context.sent;
-	            return _context.abrupt("return", response && response.data && ((_response$data = response.data) === null || _response$data === void 0 ? void 0 : _response$data.verification_code));
-
-	          case 12:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function requestVerificationCode(_x) {
-	    return _ref.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param phone_number: string
-	 * @param password: string
-	 * @param verification_code: string
-	 */
-
-	var create$5 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(phone_number, password, verification_code, userName) {
-	    var _yield$getStatus, statusCode, rest, userVertex, _yield$store$level2SD, data, _yield$store$level2SD2, _data;
-
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return getStatus();
-
-	          case 2:
-	            _yield$getStatus = _context2.sent;
-	            statusCode = _yield$getStatus.code;
-	            rest = objectWithoutProperties(_yield$getStatus, ["code"]);
-
-	            if (!(statusCode === 3)) {
-	              _context2.next = 13;
-	              break;
-	            }
-
-	            _context2.next = 8;
-	            return store$3.level2SDK.Account.createInvitedUser({
-	              id: rest === null || rest === void 0 ? void 0 : rest.data.user_id,
-	              phone_number: phone_number,
-	              password: password,
-	              userInfo: {
-	                userName: userName,
-	                phoneNumber: phone_number
-	              }
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 8:
-	            _yield$store$level2SD = _context2.sent;
-	            data = _yield$store$level2SD.data;
-	            userVertex = data;
-	            _context2.next = 18;
-	            break;
-
-	          case 13:
-	            _context2.next = 15;
-	            return store$3.level2SDK.Account.createUser({
-	              phone_number: phone_number,
-	              password: password,
-	              verification_code: verification_code,
-	              userInfo: {
-	                userName: userName,
-	                phoneNumber: phone_number
-	              }
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 15:
-	            _yield$store$level2SD2 = _context2.sent;
-	            _data = _yield$store$level2SD2.data;
-	            userVertex = _data;
-
-	          case 18:
-	            return _context2.abrupt("return", userVertex);
-
-	          case 19:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function create(_x2, _x3, _x4, _x5) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
-	 *
-	 * @param phone_number: string
-	 * @param verification_code: string
-	 * @param password: string
-	 */
-
-	var login = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee3(phone_number, password, verification_code) {
-	    var res, user, userVertex;
-	    return regenerator.wrap(function _callee3$(_context3) {
-	      while (1) {
-	        switch (_context3.prev = _context3.next) {
-	          case 0:
-	            _context3.next = 2;
-	            return loginByVerificationCode(phone_number, verification_code);
-
-	          case 2:
-	            res = _context3.sent;
-
-	            if (!(res instanceof Status)) {
-	              _context3.next = 7;
-	              break;
-	            }
-
-	            _context3.next = 6;
-	            return store$3.level2SDK.Account.login();
-
-	          case 6:
-	            return _context3.abrupt("return", res);
-
-	          case 7:
-	            _context3.next = 9;
-	            return loginByPassword(password);
-
-	          case 9:
-	            user = _context3.sent;
-
-	            if (!user.id) {
-	              _context3.next = 18;
-	              break;
-	            }
-
-	            _context3.next = 13;
-	            return retrieveVertex(user.id);
-
-	          case 13:
-	            userVertex = _context3.sent;
-
-	            if (userVertex && userVertex.name && userVertex.name.username) {
-	              userVertex.name.userName = userVertex.name.username;
-	              delete userVertex.name.username;
-	            }
-
-	            return _context3.abrupt("return", userVertex);
-
-	          case 18:
-	            return _context3.abrupt("return", user);
-
-	          case 19:
-	          case "end":
-	            return _context3.stop();
-	        }
-	      }
-	    }, _callee3);
-	  }));
-
-	  return function login(_x6, _x7, _x8) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * This method is only able to be used after login new device (loginByVerificationCode)
-	 * @param password: string
-	 */
-
-	var loginByPassword = /*#__PURE__*/function () {
-	  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee4(password) {
-	    var _yield$getStatus2, user_id, user, userVertex;
-
-	    return regenerator.wrap(function _callee4$(_context4) {
-	      while (1) {
-	        switch (_context4.prev = _context4.next) {
-	          case 0:
-	            _context4.next = 2;
-	            return store$3.level2SDK.Account.login({
-	              password: password
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            _context4.next = 4;
-	            return getStatus();
-
-	          case 4:
-	            _yield$getStatus2 = _context4.sent;
-	            user_id = _yield$getStatus2.data.user_id;
-
-	            if (!user_id) {
-	              _context4.next = 12;
-	              break;
-	            }
-
-	            _context4.next = 9;
-	            return retrieveVertex(user_id);
-
-	          case 9:
-	            userVertex = _context4.sent;
-
-	            if (userVertex && userVertex.name && userVertex.name.username) {
-	              userVertex.name.userName = userVertex.name.username;
-	              delete userVertex.name.username;
-	            }
-
-	            user = userVertex;
-
-	          case 12:
-	            return _context4.abrupt("return", user);
-
-	          case 13:
-	          case "end":
-	            return _context4.stop();
-	        }
-	      }
-	    }, _callee4);
-	  }));
-
-	  return function loginByPassword(_x9) {
-	    return _ref4.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param phone_number: string
-	 * @param verification_code: string
-	 */
-
-	var loginByVerificationCode = /*#__PURE__*/function () {
-	  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(phone_number, verification_code) {
-	    return regenerator.wrap(function _callee5$(_context5) {
-	      while (1) {
-	        switch (_context5.prev = _context5.next) {
-	          case 0:
-	            _context5.next = 2;
-	            return store$3.level2SDK.Account.loginNewDevice({
-	              phone_number: phone_number,
-	              verification_code: verification_code
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	            return _context5.abrupt("return", _context5.sent);
-
-	          case 3:
-	          case "end":
-	            return _context5.stop();
-	        }
-	      }
-	    }, _callee5);
-	  }));
-
-	  return function loginByVerificationCode(_x10, _x11) {
-	    return _ref5.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Status
-	 * Status.code:
-	 *  0 - LOGGED_IN
-	 *  1 - LOGGED_OUT
-	 */
-
-	var logout = /*#__PURE__*/function () {
-	  var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6() {
-	    var clean,
-	        status,
-	        latestStatus,
-	        _args6 = arguments;
-	    return regenerator.wrap(function _callee6$(_context6) {
-	      while (1) {
-	        switch (_context6.prev = _context6.next) {
-	          case 0:
-	            clean = _args6.length > 0 && _args6[0] !== undefined ? _args6[0] : false;
-
-	            if (!clean) {
-	              _context6.next = 6;
-	              break;
-	            }
-
-	            store$3.level2SDK.Account.logoutClean();
-	            localStorage.removeItem('Global');
-	            _context6.next = 13;
-	            break;
-
-	          case 6:
-	            _context6.next = 8;
-	            return getStatus();
-
-	          case 8:
-	            status = _context6.sent;
-
-	            if (!(status.code === 1)) {
-	              _context6.next = 11;
-	              break;
-	            }
-
-	            return _context6.abrupt("return", status);
-
-	          case 11:
-	            store$3.level2SDK.Account.logout();
-	            localStorage.removeItem('Global');
-
-	          case 13:
-	            _context6.next = 15;
-	            return getStatus();
-
-	          case 15:
-	            latestStatus = _context6.sent;
-	            return _context6.abrupt("return", latestStatus);
-
-	          case 17:
-	          case "end":
-	            return _context6.stop();
-	        }
-	      }
-	    }, _callee6);
-	  }));
-
-	  return function logout() {
-	    return _ref6.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * Todo:
-	 *    waiting for backend to support verificating the verification code
-	 * @param phone_number: string
-	 * @param new_phone_number: string
-	 * @param verification_code: string
-	 * @returns Promise<User>
-	 */
-
-	/*
-	export const updatePhoneNumber = async (
-	  phone_number: string,
-	  new_phone_number: string,
-	  verification_code: string,
-	): Promise<AccountTypes.User> => {
-	  console.log(
-	    'Account->updatePhoneNumber',
-	    phone_number,
-	    new_phone_number,
-	    verification_code,
-	  )
-
-	  return mockUser
-	}
-	*/
-
-	/**
-	 * @param param
-	 * @param param.old_password: string
-	 * @param param.new_password: string
-	 */
-
-	var updatePassword$1 = /*#__PURE__*/function () {
-	  var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(old_password, new_password) {
-	    return regenerator.wrap(function _callee7$(_context7) {
-	      while (1) {
-	        switch (_context7.prev = _context7.next) {
-	          case 0:
-	            _context7.next = 2;
-	            return store$3.level2SDK.Account.changePasswordWithOldPassword({
-	              oldPassword: old_password,
-	              newPassword: new_password
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 2:
-	          case "end":
-	            return _context7.stop();
-	        }
-	      }
-	    }, _callee7);
-	  }));
-
-	  return function updatePassword(_x12, _x13) {
-	    return _ref7.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param param
-	 * @param param.phone_number: string
-	 * @param param.verification_code: string
-	 * @param param.new_password: string
-	 */
-
-	var updatePasswordByVerificationCode = /*#__PURE__*/function () {
-	  var _ref9 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(_ref8) {
-	    var phone_number, verification_code, new_password;
-	    return regenerator.wrap(function _callee8$(_context8) {
-	      while (1) {
-	        switch (_context8.prev = _context8.next) {
-	          case 0:
-	            phone_number = _ref8.phone_number, verification_code = _ref8.verification_code, new_password = _ref8.new_password;
-	            _context8.next = 3;
-	            return store$3.level2SDK.Account.changePasswordWithVerificationCode({
-	              phone_number: phone_number,
-	              verification_code: verification_code,
-	              password: new_password
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 3:
-	          case "end":
-	            return _context8.stop();
-	        }
-	      }
-	    }, _callee8);
-	  }));
-
-	  return function updatePasswordByVerificationCode(_x14) {
-	    return _ref9.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @param profile: AccountTypes.Profile
-	 *
-	 * @param profile.first_name: string
-	 * @param profile.middle_name?: string
-	 * @param profile.last_name: string
-	 *
-	 * @param profile.gender: 'MALE' | 'FEMALE' | 'PNS'
-	 * @param profile.birthday: number
-	 * @param profile.languages?: string[]
-	 *
-	 * @param profile.profile_photo?: string
-	 *
-	 * @returns Promise<User>
-	 */
-
-	var updateProfile = /*#__PURE__*/function () {
-	  var _ref10 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(profile) {
-	    var root, notes, _iterator, _step, noteId, user;
-
-	    return regenerator.wrap(function _callee9$(_context9) {
-	      while (1) {
-	        switch (_context9.prev = _context9.next) {
-	          case 0:
-	            _context9.next = 2;
-	            return retrieveRootEdge();
-
-	          case 2:
-	            root = _context9.sent;
-	            _context9.next = 5;
-	            return Note.list(root.eid, {
-	              dataType: 'profile'
-	            });
-
-	          case 5:
-	            notes = _context9.sent;
-	            _iterator = _createForOfIteratorHelper$f(notes.ids);
-	            _context9.prev = 7;
-
-	            _iterator.s();
-
-	          case 9:
-	            if ((_step = _iterator.n()).done) {
-	              _context9.next = 15;
-	              break;
-	            }
-
-	            noteId = _step.value;
-	            _context9.next = 13;
-	            return removeProfile(noteId, notes.mapper[noteId]);
-
-	          case 13:
-	            _context9.next = 9;
-	            break;
-
-	          case 15:
-	            _context9.next = 20;
-	            break;
-
-	          case 17:
-	            _context9.prev = 17;
-	            _context9.t0 = _context9["catch"](7);
-
-	            _iterator.e(_context9.t0);
-
-	          case 20:
-	            _context9.prev = 20;
-
-	            _iterator.f();
-
-	            return _context9.finish(20);
-
-	          case 23:
-	            _context9.next = 25;
-	            return createProfile(root.eid, profile);
-
-	          case 25:
-	            _context9.next = 27;
-	            return retrieve$2();
-
-	          case 27:
-	            user = _context9.sent;
-	            return _context9.abrupt("return", user);
-
-	          case 29:
-	          case "end":
-	            return _context9.stop();
-	        }
-	      }
-	    }, _callee9, null, [[7, 17, 20, 23]]);
-	  }));
-
-	  return function updateProfile(_x15) {
-	    return _ref10.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Promise<User>
-	 */
-
-	var retrieve$2 = /*#__PURE__*/function () {
-	  var _ref11 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10() {
-	    var root, profile, user;
-	    return regenerator.wrap(function _callee10$(_context10) {
-	      while (1) {
-	        switch (_context10.prev = _context10.next) {
-	          case 0:
-	            _context10.next = 2;
-	            return retrieveRootEdge();
-
-	          case 2:
-	            root = _context10.sent;
-	            _context10.next = 5;
-	            return retrieveProfile(root.eid);
-
-	          case 5:
-	            profile = _context10.sent;
-	            _context10.next = 8;
-	            return generateUser(root, profile ? profile.profile : null);
-
-	          case 8:
-	            user = _context10.sent;
-	            return _context10.abrupt("return", user);
-
-	          case 10:
-	          case "end":
-	            return _context10.stop();
-	        }
-	      }
-	    }, _callee10);
-	  }));
-
-	  return function retrieve() {
-	    return _ref11.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Promise<User>
-	 */
-
-	var remove$1 = /*#__PURE__*/function () {
-	  var _ref12 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11() {
-	    var user, edge, notes, _iterator2, _step2, noteId;
-
-	    return regenerator.wrap(function _callee11$(_context11) {
-	      while (1) {
-	        switch (_context11.prev = _context11.next) {
-	          case 0:
-	            _context11.next = 2;
-	            return retrieve$2();
-
-	          case 2:
-	            user = _context11.sent;
-	            _context11.next = 5;
-	            return retrieveRootEdge();
-
-	          case 5:
-	            edge = _context11.sent;
-	            _context11.next = 8;
-	            return Note.list(edge.eid);
-
-	          case 8:
-	            notes = _context11.sent;
-	            // Remove all note under root edge
-	            _iterator2 = _createForOfIteratorHelper$f(notes.ids);
-	            _context11.prev = 10;
-
-	            _iterator2.s();
-
-	          case 12:
-	            if ((_step2 = _iterator2.n()).done) {
-	              _context11.next = 18;
-	              break;
-	            }
-
-	            noteId = _step2.value;
-	            _context11.next = 16;
-	            return store$3.level2SDK.documentServices.deleteDocument([noteId]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 16:
-	            _context11.next = 12;
-	            break;
-
-	          case 18:
-	            _context11.next = 23;
-	            break;
-
-	          case 20:
-	            _context11.prev = 20;
-	            _context11.t0 = _context11["catch"](10);
-
-	            _iterator2.e(_context11.t0);
-
-	          case 23:
-	            _context11.prev = 23;
-
-	            _iterator2.f();
-
-	            return _context11.finish(23);
-
-	          case 26:
-	            _context11.next = 28;
-	            return store$3.level2SDK.edgeServices.deleteEdge([edge.eid]).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 28:
-	            _context11.next = 30;
-	            return store$3.level2SDK.vertexServices.deleteVertex([edge.bvid]);
-
-	          case 30:
-	            _context11.next = 32;
-	            return logout(true);
-
-	          case 32:
-	            return _context11.abrupt("return", user);
-
-	          case 33:
-	          case "end":
-	            return _context11.stop();
-	        }
-	      }
-	    }, _callee11, null, [[10, 20, 23, 26]]);
-	  }));
-
-	  return function remove() {
-	    return _ref12.apply(this, arguments);
-	  };
-	}();
-	/**
-	 * @returns Status
-	 * Status.code:
-	 *  0 - LOGGED_IN
-	 *  1 - LOGGED_OUT
-	 *  2 - NEW_DEVICE
-	 *  3 = TEMP_ACCOUNT
-	 * Status.userId: string
-	 * Status.code: string
-	 */
-
-	var getStatus = /*#__PURE__*/function () {
-	  var _ref13 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee12() {
-	    var status, uid, utf8Uid, _accountUtils$decodeU, userId, phone_number;
-
-	    return regenerator.wrap(function _callee12$(_context12) {
-	      while (1) {
-	        switch (_context12.prev = _context12.next) {
-	          case 0:
-	            _context12.next = 2;
-	            return store$3.level2SDK.Account.getStatus();
-
-	          case 2:
-	            status = _context12.sent;
-	            _context12.prev = 3;
-	            uid = localStorage.getItem('uid');
-
-	            if (!(uid === null)) {
-	              _context12.next = 7;
-	              break;
-	            }
-
-	            throw new Error('uid is null');
-
-	          case 7:
-	            utf8Uid = store$3.level2SDK.utilServices.base64ToUTF8(uid);
-	            _accountUtils$decodeU = decodeUID(utf8Uid), userId = _accountUtils$decodeU.userId, phone_number = _accountUtils$decodeU.phone_number;
-	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
-	              userId: userId,
-	              phone_number: phone_number
-	            }));
-
-	          case 12:
-	            _context12.prev = 12;
-	            _context12.t0 = _context12["catch"](3);
-	            console.log(_context12.t0);
-	            return _context12.abrupt("return", _objectSpread$e(_objectSpread$e({}, status), {}, {
-	              userId: '',
-	              phone_number: ''
-	            }));
-
-	          case 16:
-	          case "end":
-	            return _context12.stop();
-	        }
-	      }
-	    }, _callee12, null, [[3, 12]]);
-	  }));
-
-	  return function getStatus() {
-	    return _ref13.apply(this, arguments);
-	  };
-	}();
-	/**
-	 *
-	 * @param password string
-	 * @returns boolean
-	 */
-
-	var verifyUserPassword = function verifyUserPassword(password) {
-	  try {
-	    var _store$level2SDK$Acco = store$3.level2SDK.Account.verifyUserPassword({
-	      password: password
-	    }),
-	        _store$level2SDK$Acco2 = slicedToArray(_store$level2SDK$Acco, 1),
-	        isPasswordValid = _store$level2SDK$Acco2[0];
-
-	    if (isPasswordValid) return true;
-	  } catch (error) {
-	    if (error.name = 'PASSWORD_INVALID') {
-	      return false;
+	var stringServices = {
+	  formatUnixtime_en: function formatUnixtime_en(unixTime) {
+	    return moment(unixTime * 1000).format('lll');
+	  },
+	  formatDurationInSecond: function formatDurationInSecond(unixTime) {
+	    return humanizeDuration(unixTime * 1000);
+	  },
+	  concat: function concat(stringArr) {
+	    if (Array.isArray(stringArr)) {
+	      return stringArr.join('');
 	    }
+
+	    return '';
 	  }
-
-	  return false;
 	};
-
-	var Account$1 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		requestVerificationCode: requestVerificationCode,
-		create: create$5,
-		login: login,
-		loginByPassword: loginByPassword,
-		loginByVerificationCode: loginByVerificationCode,
-		logout: logout,
-		updatePassword: updatePassword$1,
-		updatePasswordByVerificationCode: updatePasswordByVerificationCode,
-		updateProfile: updateProfile,
-		retrieve: retrieve$2,
-		remove: remove$1,
-		getStatus: getStatus,
-		verifyUserPassword: verifyUserPassword
-	});
-
-	function ownKeys$f(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-	function _objectSpread$f(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$f(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$f(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-	/**
-	 *
-	 * @param document: Doc
-	 * @param edge?: Edge
-	 * @returns Promise<Note>
-	 */
-
-	var documentToNote$2 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var document, _edge, esakOfCurrentUser, edge, name, contentType, deat, isOldDataStructure, dType, content, error, data, response, edgeHasBesak, edgeHasEesak, esak, publicKeyOfReceiver, pkLocalStorage, _pkLocalStorage, blob, jsonStr;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            document = _ref.document, _edge = _ref._edge, esakOfCurrentUser = _ref.esakOfCurrentUser;
-
-	            if (!(typeof _edge === 'undefined')) {
-	              _context.next = 7;
-	              break;
-	            }
-
-	            _context.next = 4;
-	            return retrieveEdge(document.eid);
-
-	          case 4:
-	            _context.t0 = _context.sent;
-	            _context.next = 8;
-	            break;
-
-	          case 7:
-	            _context.t0 = _edge;
-
-	          case 8:
-	            edge = _context.t0;
-
-	            if (!(edge === null)) {
-	              _context.next = 11;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> documentToNote -> retrieveEdge -> edge is null'
-	            });
-
-	          case 11:
-	            //TODO
-	            //currently commented since does not allow comparison between shared notebook
-	            //and docs from root notebook
-	            // if (
-	            //   !store.utils.compareUint8Arrays(
-	            //     <Uint8Array>edge.eid,
-	            //     <Uint8Array>document.eid,
-	            //   )
-	            // ) {
-	            //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
-	            // }
-	            name = document.name;
-	            contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type;
-	            deat = document.deat; // DType
-
-	            isOldDataStructure = typeof name.isOnS3 !== 'undefined' || typeof name.isGzip !== 'undefined' || typeof name.isBinary !== 'undefined' || typeof name.isEncrypt !== 'undefined' || typeof name.edit_mode !== 'undefined';
-	            dType = isOldDataStructure ? new DType() : new DType(document.type);
-
-	            if (isOldDataStructure) {
-	              if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3;else dType.isOnServer = true;
-	              if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip;
-	              if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary;
-	              if (typeof name.isEncrypt !== 'undefined') dType.isEncrypted = name.isEncrypt;
-	              if (typeof name.edit_mode !== 'undefined') dType.isEditable = !!name.edit_mode;
-	              dType.setMediaType(name.type);
-	            } // Get data
-
-
-	            content = null, error = null;
-	            _context.prev = 18;
-
-	            if (!dType.isOnServer) {
-	              _context.next = 29;
-	              break;
-	            }
-
-	            if (!(name.data !== undefined)) {
-	              _context.next = 26;
-	              break;
-	            }
-
-	            _context.next = 23;
-	            return store$3.level2SDK.utilServices.base64ToUint8Array(name.data);
-
-	          case 23:
-	            data = _context.sent;
-	            _context.next = 27;
-	            break;
-
-	          case 26:
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'name.data is undefined'
-	            });
-
-	          case 27:
-	            _context.next = 46;
-	            break;
-
-	          case 29:
-	            if (!(deat !== null && deat.url)) {
-	              _context.next = 45;
-	              break;
-	            }
-
-	            _context.next = 32;
-	            return store$3.level2SDK.documentServices.downloadDocumentFromS3({
-	              url: deat.url
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 32:
-	            response = _context.sent;
-
-	            if (response) {
-	              _context.next = 35;
-	              break;
-	            }
-
-	            throw 'no response';
-
-	          case 35:
-	            if (!dType.isBinary) {
-	              _context.next = 39;
-	              break;
-	            }
-
-	            _context.t1 = response.data;
-	            _context.next = 42;
-	            break;
-
-	          case 39:
-	            _context.next = 41;
-	            return store$3.level2SDK.utilServices.base64ToUint8Array(response.data);
-
-	          case 41:
-	            _context.t1 = _context.sent;
-
-	          case 42:
-	            data = _context.t1;
-	            _context.next = 46;
-	            break;
-
-	          case 45:
-	            throw 'deat.url is missing';
-
-	          case 46:
-	            // Decryption
-	            edgeHasBesak = edge.besak && edge.besak !== '';
-	            edgeHasEesak = edge.eesak && edge.eesak !== '';
-
-	            if (!(dType.isEncrypted && (edgeHasBesak || edgeHasEesak))) {
-	              _context.next = 71;
-	              break;
-	            }
-
-	            if (esakOfCurrentUser) {
-	              esak = esakOfCurrentUser;
-	            } else {
-	              esak = edgeHasBesak ? edge.besak : edge.eesak;
-	            }
-
-	            if (!edge.sig) {
-	              _context.next = 57;
-	              break;
-	            }
-
-	            if (edge.sig instanceof Uint8Array) {
-	              publicKeyOfReceiver = store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-	            } else {
-	              publicKeyOfReceiver = edge.sig;
-	            }
-
-	            _context.next = 54;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 54:
-	            data = _context.sent;
-	            _context.next = 71;
-	            break;
-
-	          case 57:
-	            if (!(!edge.sig && edge.type === 10001)) {
-	              _context.next = 65;
-	              break;
-	            }
-
-	            pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : '';
-	            _context.next = 62;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 62:
-	            data = _context.sent;
-	            _context.next = 71;
-	            break;
-
-	          case 65:
-	            if (!(edge.type === 10000)) {
-	              _context.next = 71;
-	              break;
-	            }
-
-	            _pkLocalStorage = localStorage.getItem('pk');
-	            publicKeyOfReceiver = _pkLocalStorage ? _pkLocalStorage : '';
-	            _context.next = 70;
-	            return store$3.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data);
-
-	          case 70:
-	            data = _context.sent;
-
-	          case 71:
-	            // Ungzip
-	            if (dType.isGzip) data = ungzip$1(data);
-	            _context.next = 74;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBlob(data, contentType);
-
-	          case 74:
-	            blob = _context.sent;
-
-	            if (!/^text\//.test(blob.type)) {
-	              _context.next = 81;
-	              break;
-	            }
-
-	            _context.next = 78;
-	            return new Response(blob).text();
-
-	          case 78:
-	            content = _context.sent;
-	            _context.next = 95;
-	            break;
-
-	          case 81:
-	            if (!(blob.type === 'application/json')) {
-	              _context.next = 94;
-	              break;
-	            }
-
-	            _context.next = 84;
-	            return new Response(blob).text();
-
-	          case 84:
-	            jsonStr = _context.sent;
-	            _context.prev = 85;
-	            content = JSON.parse(jsonStr);
-	            _context.next = 92;
-	            break;
-
-	          case 89:
-	            _context.prev = 89;
-	            _context.t2 = _context["catch"](85);
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> utils -> documentToNote -> JSON.parse failed'
-	            });
-
-	          case 92:
-	            _context.next = 95;
-	            break;
-
-	          case 94:
-	            content = blob;
-
-	          case 95:
-	            _context.next = 102;
-	            break;
-
-	          case 97:
-	            _context.prev = 97;
-	            _context.t3 = _context["catch"](18);
-
-	            if (typeof _context.t3 === 'string') {
-	              error = new AiTmedError({
-	                name: 'DOWNLOAD_FROM_S3_FAIL',
-	                message: "Note -> documentToNote -> ".concat(_context.t3)
-	              });
-	            } else {
-	              error = _context.t3;
-	            }
-
-	            content = null;
-
-	          case 102:
-	            return _context.abrupt("return", _objectSpread$f(_objectSpread$f({}, document), {}, {
-	              name: {
-	                title: name.title,
-	                type: contentType,
-	                data: content,
-	                tags: name.tags || []
-	              },
-	              created_at: document.ctime * 1000,
-	              modified_at: document.mtime * 1000,
-	              type: {
-	                isOnServer: dType.isOnServer,
-	                isZipped: dType.isGzip,
-	                isBinary: dType.isBinary,
-	                isEncrypted: dType.isEncrypted,
-	                isEditable: dType.isEditable,
-	                applicationDataType: dType.dataType,
-	                mediaType: dType.mediaType,
-	                size: document.size
-	              }
-	            }));
-
-	          case 103:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee, null, [[18, 97], [85, 89]]);
-	  }));
-
-	  return function documentToNote(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-
-	/**
-	 * @param params
-	 * @param params.edge_id: string
-	 * @param params.title: string
-	 * @param params.content: string | Blob
-	 * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
-	 * @param params.tags?: string[]
-	 * @param params.dataType?: number
-	 * @returns Promise<Note>
-	 */
-
-	var create$6 = /*#__PURE__*/function () {
-	  var _ref2 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee(_ref) {
-	    var edge_id, title, _ref$tags, tags, content, type, _ref$dataType, dataType, edge, dType, blob, _yield$produceGzipDat, gzipData, isGzip, esak, publicKeyOfReceiver, _yield$produceEncrypt, data, isEncrypt, bs64Data, name, response, document, deat, note;
-
-	    return regenerator.wrap(function _callee$(_context) {
-	      while (1) {
-	        switch (_context.prev = _context.next) {
-	          case 0:
-	            edge_id = _ref.edge_id, title = _ref.title, _ref$tags = _ref.tags, tags = _ref$tags === void 0 ? [] : _ref$tags, content = _ref.content, type = _ref.type, _ref$dataType = _ref.dataType, dataType = _ref$dataType === void 0 ? 0 : _ref$dataType;
-	            _context.next = 3;
-	            return retrieveEdge(edge_id);
-
-	          case 3:
-	            edge = _context.sent;
-
-	            if (edge) {
-	              _context.next = 6;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOTEBOOK_NOT_EXIST'
-	            });
-
-	          case 6:
-	            dType = new DType();
-	            dType.dataType = dataType; // Permission
-
-	            dType.isEditable = true; // Content to Blob
-
-	            _context.next = 11;
-	            return contentToBlob(content, type);
-
-	          case 11:
-	            blob = _context.sent;
-	            dType.setMediaType(blob.type); // Gzip
-
-	            _context.next = 15;
-	            return produceGzipData(blob);
-
-	          case 15:
-	            _yield$produceGzipDat = _context.sent;
-	            gzipData = _yield$produceGzipDat.data;
-	            isGzip = _yield$produceGzipDat.isGzip;
-	            dType.isGzip = isGzip;
-	            dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT; // Encryption
-
-	            esak = '';
-	            publicKeyOfReceiver = '';
-
-	            if (!(edge.besak && edge.sig)) {
-	              _context.next = 33;
-	              break;
-	            }
-
-	            esak = edge.besak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 30;
-	              break;
-	            }
-
-	            _context.next = 27;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 27:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 31;
-	            break;
-
-	          case 30:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 31:
-	            _context.next = 42;
-	            break;
-
-	          case 33:
-	            if (!(edge.eesak && edge.sig)) {
-	              _context.next = 42;
-	              break;
-	            }
-
-	            esak = edge.eesak;
-
-	            if (!(edge.sig instanceof Uint8Array)) {
-	              _context.next = 41;
-	              break;
-	            }
-
-	            _context.next = 38;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(edge.sig);
-
-	          case 38:
-	            publicKeyOfReceiver = _context.sent;
-	            _context.next = 42;
-	            break;
-
-	          case 41:
-	            publicKeyOfReceiver = edge.sig;
-
-	          case 42:
-	            _context.next = 44;
-	            return produceEncryptData(gzipData, esak, publicKeyOfReceiver);
-
-	          case 44:
-	            _yield$produceEncrypt = _context.sent;
-	            data = _yield$produceEncrypt.data;
-	            isEncrypt = _yield$produceEncrypt.isEncrypt;
-	            dType.isEncrypted = isEncrypt;
-	            _context.next = 50;
-	            return store$3.level2SDK.utilServices.uint8ArrayToBase64(data);
-
-	          case 50:
-	            bs64Data = _context.sent;
-	            dType.isBinary = false;
-	            name = {
-	              title: title,
-	              tags: tags,
-	              type: blob.type
-	            }; // data must be base64 in name field
-
-	            if (dType.isOnServer) name.data = bs64Data;
-	            _context.next = 56;
-	            return store$3.level2SDK.documentServices.createDocument({
-	              eid: edge.eid,
-	              type: dType.value,
-	              name: name,
-	              size: blob.size
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 56:
-	            response = _context.sent;
-
-	            if (!(!response || !response.data)) {
-	              _context.next = 59;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'UNKNOW_ERROR',
-	              message: 'Note -> create -> createDocument -> no response'
-	            });
-
-	          case 59:
-	            document = response.data;
-	            deat = document.deat;
-
-	            if (!(!dType.isOnServer && deat !== null && deat && deat.url && deat.sig)) {
-	              _context.next = 64;
-	              break;
-	            }
-
-	            _context.next = 64;
-	            return store$3.level2SDK.documentServices.uploadDocumentToS3({
-	              url: deat.url,
-	              sig: deat.sig,
-	              data: bs64Data
-	            }).then(store$3.responseCatcher)["catch"](store$3.errorCatcher);
-
-	          case 64:
-	            _context.next = 66;
-	            return documentToNote$2({
-	              document: document
-	            });
-
-	          case 66:
-	            note = _context.sent;
-	            return _context.abrupt("return", note);
-
-	          case 68:
-	          case "end":
-	            return _context.stop();
-	        }
-	      }
-	    }, _callee);
-	  }));
-
-	  return function create(_x) {
-	    return _ref2.apply(this, arguments);
-	  };
-	}();
-	/**
-	 *
-	 * @param id: Uint8Array | string
-	 * @param _edge?: Edge
-	 * @returns Promise<Note>
-	 */
-	//TODO: refactor to account for retrieving using edge and xfname:eid
-
-	var retrieve$3 = /*#__PURE__*/function () {
-	  var _ref3 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(id, _edge) {
-	    var document, note;
-	    return regenerator.wrap(function _callee2$(_context2) {
-	      while (1) {
-	        switch (_context2.prev = _context2.next) {
-	          case 0:
-	            _context2.next = 2;
-	            return retrieveDocument(id);
-
-	          case 2:
-	            document = _context2.sent;
-
-	            if (document) {
-	              _context2.next = 5;
-	              break;
-	            }
-
-	            throw new AiTmedError({
-	              name: 'NOT_A_NOTE'
-	            });
-
-	          case 5:
-	            _context2.next = 7;
-	            return documentToNote$2({
-	              document: document,
-	              _edge: _edge
-	            });
-
-	          case 7:
-	            note = _context2.sent;
-	            return _context2.abrupt("return", note);
-
-	          case 9:
-	          case "end":
-	            return _context2.stop();
-	        }
-	      }
-	    }, _callee2);
-	  }));
-
-	  return function retrieve(_x2, _x3) {
-	    return _ref3.apply(this, arguments);
-	  };
-	}();
-
-	var Document$4 = /*#__PURE__*/Object.freeze({
-		__proto__: null,
-		create: create$6,
-		retrieve: retrieve$3
-	});
 
 	function ownKeys$g(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
@@ -83888,26 +84225,30 @@
 	            case 0:
 	              //@ts-ignore
 	              _cloneDeep2 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep2.dataKey, dataIn = _cloneDeep2.dataIn, dataOut = _cloneDeep2.dataOut;
-	              currentVal = dispatch({
+	              _context.next = 3;
+	              return dispatch({
 	                type: 'get-data',
 	                payload: {
 	                  dataKey: dataIn ? dataIn : dataKey,
 	                  pageName: pageName
 	                }
 	              });
-	              _context.prev = 2;
+
+	            case 3:
+	              currentVal = _context.sent;
+	              _context.prev = 4;
 
 	              if (store$3.env === 'test') {
 	                console.log("%cBuiltIn Fn:".concat(pathArr, " Request ', 'background: purple; color: white; display: block;"), res);
 	              } //TODO: make signature more generic
 
 
-	              _context.next = 6;
+	              _context.next = 8;
 	              return builtInFn(_objectSpread$g(_objectSpread$g({}, input), {}, {
 	                name: _objectSpread$g(_objectSpread$g({}, currentVal.name), input)
 	              }));
 
-	            case 6:
+	            case 8:
 	              data = _context.sent;
 	              res = data;
 
@@ -83915,43 +84256,51 @@
 	                console.log("%cBuiltIn Fn:".concat(pathArr, " Response ', 'background: purple; color: white; display: block;"), res);
 	              }
 
-	              _context.next = 14;
+	              _context.next = 16;
 	              break;
 
-	            case 11:
-	              _context.prev = 11;
-	              _context.t0 = _context["catch"](2);
+	            case 13:
+	              _context.prev = 13;
+	              _context.t0 = _context["catch"](4);
 	              throw _context.t0;
 
-	            case 14:
-	              if (Array.isArray(res) && res.length > 0 || isObject$5(res)) {
-	                dispatch({
-	                  type: 'update-data',
-	                  //TODO: handle case for data is an array or an object
-	                  payload: {
-	                    pageName: pageName,
-	                    dataKey: dataOut ? dataOut : dataKey,
-	                    data: res
-	                  }
-	                });
-	                dispatch({
-	                  type: 'emit-update',
-	                  payload: {
-	                    pageName: pageName,
-	                    dataKey: dataOut ? dataOut : dataKey,
-	                    newVal: res
-	                  }
-	                });
+	            case 16:
+	              if (!(Array.isArray(res) && res.length > 0 || isObject$5(res))) {
+	                _context.next = 21;
+	                break;
 	              }
 
+	              _context.next = 19;
+	              return dispatch({
+	                type: 'update-data',
+	                //TODO: handle case for data is an array or an object
+	                payload: {
+	                  pageName: pageName,
+	                  dataKey: dataOut ? dataOut : dataKey,
+	                  data: res
+	                }
+	              });
+
+	            case 19:
+	              _context.next = 21;
+	              return dispatch({
+	                type: 'emit-update',
+	                payload: {
+	                  pageName: pageName,
+	                  dataKey: dataOut ? dataOut : dataKey,
+	                  newVal: res
+	                }
+	              });
+
+	            case 21:
 	              return _context.abrupt("return", res);
 
-	            case 16:
+	            case 22:
 	            case "end":
 	              return _context.stop();
 	          }
 	        }
-	      }, _callee, null, [[2, 11]]);
+	      }, _callee, null, [[4, 13]]);
 	    }));
 
 	    return function (_x) {
@@ -83991,23 +84340,28 @@
 	                data = _context2.sent;
 	                sk = localStorage.getItem('sk');
 
-	                if (dispatch) {
-	                  dispatch({
-	                    type: 'update-data',
-	                    //TODO: handle case for data is an array or an object
-	                    payload: {
-	                      pageName: 'builtIn',
-	                      dataKey: 'builtIn.UserVertex',
-	                      data: _objectSpread$g(_objectSpread$g({}, data), {}, {
-	                        sk: sk
-	                      })
-	                    }
-	                  });
+	                if (!dispatch) {
+	                  _context2.next = 9;
+	                  break;
 	                }
 
+	                _context2.next = 9;
+	                return dispatch({
+	                  type: 'update-data',
+	                  //TODO: handle case for data is an array or an object
+	                  payload: {
+	                    pageName: 'builtIn',
+	                    dataKey: 'builtIn.UserVertex',
+	                    data: _objectSpread$g(_objectSpread$g({}, data), {}, {
+	                      sk: sk
+	                    })
+	                  }
+	                });
+
+	              case 9:
 	                return _context2.abrupt("return", data);
 
-	              case 8:
+	              case 10:
 	              case "end":
 	                return _context2.stop();
 	            }
@@ -84037,23 +84391,28 @@
 	                data = _context3.sent;
 	                sk = localStorage.getItem('sk');
 
-	                if (dispatch) {
-	                  dispatch({
-	                    type: 'update-data',
-	                    //TODO: handle case for data is an array or an object
-	                    payload: {
-	                      pageName: 'builtIn',
-	                      dataKey: 'builtIn.UserVertex',
-	                      data: _objectSpread$g(_objectSpread$g({}, data), {}, {
-	                        sk: sk
-	                      })
-	                    }
-	                  });
+	                if (!dispatch) {
+	                  _context3.next = 9;
+	                  break;
 	                }
 
+	                _context3.next = 9;
+	                return dispatch({
+	                  type: 'update-data',
+	                  //TODO: handle case for data is an array or an object
+	                  payload: {
+	                    pageName: 'builtIn',
+	                    dataKey: 'builtIn.UserVertex',
+	                    data: _objectSpread$g(_objectSpread$g({}, data), {}, {
+	                      sk: sk
+	                    })
+	                  }
+	                });
+
+	              case 9:
 	                return _context3.abrupt("return", data);
 
-	              case 8:
+	              case 10:
 	              case "end":
 	                return _context3.stop();
 	            }
@@ -84075,21 +84434,25 @@
 	                data = _context4.sent;
 	                sk = localStorage.getItem('sk');
 
-	                if (dispatch) {
-	                  dispatch({
-	                    type: 'update-data',
-	                    //TODO: handle case for data is an array or an object
-	                    payload: {
-	                      pageName: 'builtIn',
-	                      dataKey: 'builtIn.UserVertex',
-	                      data: _objectSpread$g(_objectSpread$g({}, data), {}, {
-	                        sk: sk
-	                      })
-	                    }
-	                  });
+	                if (!dispatch) {
+	                  _context4.next = 7;
+	                  break;
 	                }
 
-	              case 5:
+	                _context4.next = 7;
+	                return dispatch({
+	                  type: 'update-data',
+	                  //TODO: handle case for data is an array or an object
+	                  payload: {
+	                    pageName: 'builtIn',
+	                    dataKey: 'builtIn.UserVertex',
+	                    data: _objectSpread$g(_objectSpread$g({}, data), {}, {
+	                      sk: sk
+	                    })
+	                  }
+	                });
+
+	              case 7:
 	              case "end":
 	                return _context4.stop();
 	            }
@@ -84100,14 +84463,7 @@
 	    currentDateTime: function () {
 	      return Date.now();
 	    }(),
-	    string: {
-	      formatUnixtime_en: function formatUnixtime_en(unixTime) {
-	        return moment(unixTime * 1000).format('lll');
-	      },
-	      formatDurationInSecond: function formatDurationInSecond(unixTime) {
-	        return humanizeDuration(unixTime * 1000);
-	      }
-	    },
+	    string: stringServices,
 	    SignInOk: function SignInOk() {
 	      return asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5() {
 	        var status;
@@ -84212,14 +84568,10 @@
 
 	      return false;
 	    },
-	    signature: function signature(_ref6) {
-	      var username = _ref6.username,
-	          phoneNumber = _ref6.phoneNumber,
-	          timestamp = _ref6.timestamp;
-	      var plainText = "".concat(username, "+").concat(phoneNumber, "+").concat(timestamp);
-	      var sig = store$3.level2SDK.utilServices.signature(plainText);
-	      return sig;
-	    }
+	    stringCompare: function stringCompare(string1, string2) {
+	      return string1 === string2;
+	    },
+	    eccNaCl: encryptionServices
 	  };
 	}
 
@@ -84236,14 +84588,18 @@
 	          case 0:
 	            _cloneDeep2 = cloneDeep_1(apiObject || {}), dataKey = _cloneDeep2.dataKey, filter = _cloneDeep2.filter, sourcePath = _cloneDeep2.source;
 	            _context.prev = 1;
-	            source = dispatch({
+	            _context.next = 4;
+	            return dispatch({
 	              type: 'get-data',
 	              payload: {
 	                pageName: pageName,
 	                dataKey: sourcePath
 	              }
-	            }); //TODO: make signature more generic
+	            });
 
+	          case 4:
+	            source = _context.sent;
+	            //TODO: make signature more generic
 	            data = source.filter(function (elem) {
 	              //TODO: make filter more universal
 	              for (var _i = 0, _Object$entries = Object.entries(filter); _i < _Object$entries.length; _i++) {
@@ -84260,43 +84616,51 @@
 	              return true;
 	            });
 	            res = data;
-	            _context.next = 10;
+	            _context.next = 12;
 	            break;
 
-	          case 7:
-	            _context.prev = 7;
+	          case 9:
+	            _context.prev = 9;
 	            _context.t0 = _context["catch"](1);
 	            throw _context.t0;
 
-	          case 10:
-	            if (Array.isArray(res) && res.length > 0) {
-	              dispatch({
-	                type: 'update-data',
-	                //TODO: handle case for data is an array or an object
-	                payload: {
-	                  pageName: pageName,
-	                  dataKey: dataKey,
-	                  data: res[0]
-	                }
-	              });
-	              dispatch({
-	                type: 'emit-update',
-	                payload: {
-	                  pageName: pageName,
-	                  newVal: res,
-	                  dataKey: dataKey
-	                }
-	              });
+	          case 12:
+	            if (!(Array.isArray(res) && res.length > 0)) {
+	              _context.next = 17;
+	              break;
 	            }
 
+	            _context.next = 15;
+	            return dispatch({
+	              type: 'update-data',
+	              //TODO: handle case for data is an array or an object
+	              payload: {
+	                pageName: pageName,
+	                dataKey: dataKey,
+	                data: res[0]
+	              }
+	            });
+
+	          case 15:
+	            _context.next = 17;
+	            return dispatch({
+	              type: 'emit-update',
+	              payload: {
+	                pageName: pageName,
+	                newVal: res,
+	                dataKey: dataKey
+	              }
+	            });
+
+	          case 17:
 	            return _context.abrupt("return", res);
 
-	          case 12:
+	          case 18:
 	          case "end":
 	            return _context.stop();
 	        }
 	      }
-	    }, _callee, null, [[1, 7]]);
+	    }, _callee, null, [[1, 9]]);
 	  }));
 	}
 
@@ -84672,49 +85036,80 @@
 
 	  var cadlCopy = cloneDeep_1(cadlObject || {});
 
-	  Object.keys(cadlCopy).forEach(function (key) {
-	    if (key === 'object' && cadlCopy.actionType === 'evalObject' && (Array.isArray(cadlCopy[key]) || isObject$5(cadlCopy[key]))) {
-	      var updateObject = cloneDeep_1(cadlCopy[key]);
+	  Object.keys(cadlCopy).forEach( /*#__PURE__*/function () {
+	    var _ref7 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2(key) {
+	      var updateObject;
+	      return regenerator.wrap(function _callee2$(_context2) {
+	        while (1) {
+	          switch (_context2.prev = _context2.next) {
+	            case 0:
+	              if (!(key === 'object' && cadlCopy.actionType === 'evalObject' && (Array.isArray(cadlCopy[key]) || isObject$5(cadlCopy[key])))) {
+	                _context2.next = 8;
+	                break;
+	              }
 
-	      cadlCopy[key] = evalState({
-	        pageName: pageName,
-	        updateObject: updateObject,
-	        dispatch: dispatch
-	      }); //used to update global state after user signin
+	              updateObject = cloneDeep_1(cadlCopy[key]);
+	              cadlCopy[key] = evalState({
+	                pageName: pageName,
+	                updateObject: updateObject,
+	                dispatch: dispatch
+	              }); //used to update global state after user signin
 
-	      if (pageName === 'SignIn' || pageName === 'CreateNewAccount' || pageName === 'SignUp') {
-	        dispatch({
-	          type: 'add-fn',
-	          payload: {
-	            pageName: pageName,
-	            fn: evalState({
-	              pageName: pageName,
-	              updateObject: updateObject,
-	              dispatch: dispatch
-	            })
+	              if (!(pageName === 'SignIn' || pageName === 'CreateNewAccount' || pageName === 'SignUp')) {
+	                _context2.next = 6;
+	                break;
+	              }
+
+	              _context2.next = 6;
+	              return dispatch({
+	                type: 'add-fn',
+	                payload: {
+	                  pageName: pageName,
+	                  fn: evalState({
+	                    pageName: pageName,
+	                    updateObject: updateObject,
+	                    dispatch: dispatch
+	                  })
+	                }
+	              });
+
+	            case 6:
+	              _context2.next = 9;
+	              break;
+
+	            case 8:
+	              if (isObject$5(cadlCopy[key])) {
+	                cadlCopy[key] = replaceEvalObject({
+	                  pageName: pageName,
+	                  cadlObject: cadlCopy[key],
+	                  dispatch: dispatch
+	                });
+	              } else if (Array.isArray(cadlCopy[key])) {
+	                cadlCopy[key] = cadlCopy[key].map(function (elem) {
+	                  if (isObject$5(elem)) {
+	                    return replaceEvalObject({
+	                      pageName: pageName,
+	                      cadlObject: elem,
+	                      dispatch: dispatch
+	                    });
+	                  }
+
+	                  return elem;
+	                });
+	              }
+
+	            case 9:
+	            case "end":
+	              return _context2.stop();
 	          }
-	        });
-	      }
-	    } else if (isObject$5(cadlCopy[key])) {
-	      cadlCopy[key] = replaceEvalObject({
-	        pageName: pageName,
-	        cadlObject: cadlCopy[key],
-	        dispatch: dispatch
-	      });
-	    } else if (Array.isArray(cadlCopy[key])) {
-	      cadlCopy[key] = cadlCopy[key].map(function (elem) {
-	        if (isObject$5(elem)) {
-	          return replaceEvalObject({
-	            pageName: pageName,
-	            cadlObject: elem,
-	            dispatch: dispatch
-	          });
 	        }
+	      }, _callee2);
+	    }));
 
-	        return elem;
-	      });
-	    }
-	  });
+	    return function (_x) {
+	      return _ref7.apply(this, arguments);
+	    };
+	  }());
 	  return cadlCopy;
 	}
 	/**
@@ -84732,14 +85127,14 @@
 	 */
 
 
-	function populateString(_ref7) {
-	  var source = _ref7.source,
-	      lookFor = _ref7.lookFor,
-	      skip = _ref7.skip,
-	      locations = _ref7.locations,
-	      path = _ref7.path,
-	      dispatch = _ref7.dispatch,
-	      pageName = _ref7.pageName;
+	function populateString(_ref8) {
+	  var source = _ref8.source,
+	      lookFor = _ref8.lookFor,
+	      skip = _ref8.skip,
+	      locations = _ref8.locations,
+	      path = _ref8.path,
+	      dispatch = _ref8.dispatch,
+	      pageName = _ref8.pageName;
 	  if (skip && skip.includes(source)) return source;
 	  if (!source.startsWith(lookFor)) return source;
 	  var currVal = source;
@@ -84839,14 +85234,14 @@
 	 */
 
 
-	function populateArray(_ref8) {
-	  var source = _ref8.source,
-	      lookFor = _ref8.lookFor,
-	      skip = _ref8.skip,
-	      locations = _ref8.locations,
-	      path = _ref8.path,
-	      dispatch = _ref8.dispatch,
-	      pageName = _ref8.pageName;
+	function populateArray(_ref9) {
+	  var source = _ref9.source,
+	      lookFor = _ref9.lookFor,
+	      skip = _ref9.skip,
+	      locations = _ref9.locations,
+	      path = _ref9.path,
+	      dispatch = _ref9.dispatch,
+	      pageName = _ref9.pageName;
 
 	  var sourceCopy = cloneDeep_1(source || []);
 
@@ -84908,16 +85303,16 @@
 	 */
 
 
-	function populateObject(_ref9) {
-	  var source = _ref9.source,
-	      lookFor = _ref9.lookFor,
-	      locations = _ref9.locations,
-	      _ref9$skip = _ref9.skip,
-	      skip = _ref9$skip === void 0 ? [] : _ref9$skip,
-	      _ref9$path = _ref9.path,
-	      path = _ref9$path === void 0 ? [] : _ref9$path,
-	      dispatch = _ref9.dispatch,
-	      pageName = _ref9.pageName;
+	function populateObject(_ref10) {
+	  var source = _ref10.source,
+	      lookFor = _ref10.lookFor,
+	      locations = _ref10.locations,
+	      _ref10$skip = _ref10.skip,
+	      skip = _ref10$skip === void 0 ? [] : _ref10$skip,
+	      _ref10$path = _ref10.path,
+	      path = _ref10$path === void 0 ? [] : _ref10$path,
+	      dispatch = _ref10.dispatch,
+	      pageName = _ref10.pageName;
 
 	  var sourceCopy = cloneDeep_1(source || {});
 
@@ -84976,13 +85371,13 @@
 	 */
 
 
-	function populateVals(_ref10) {
-	  var source = _ref10.source,
-	      lookFor = _ref10.lookFor,
-	      locations = _ref10.locations,
-	      skip = _ref10.skip,
-	      pageName = _ref10.pageName,
-	      dispatch = _ref10.dispatch;
+	function populateVals(_ref11) {
+	  var source = _ref11.source,
+	      lookFor = _ref11.lookFor,
+	      locations = _ref11.locations,
+	      skip = _ref11.skip,
+	      pageName = _ref11.pageName,
+	      dispatch = _ref11.dispatch;
 
 	  var sourceCopy = cloneDeep_1(source || {});
 
@@ -85394,34 +85789,42 @@
 	                localStorageGlobal = localStorage.getItem('Global');
 	                localStorageGlobalParsed = null;
 
-	                if (localStorageGlobal) {
-	                  try {
-	                    localStorageGlobalParsed = JSON.parse(localStorageGlobal);
-	                  } catch (error) {
-	                    console.log(error);
-	                  }
-
-	                  if (localStorageGlobalParsed) {
-	                    this.newDispatch({
-	                      type: 'SET_ROOT_PROPERTIES',
-	                      payload: {
-	                        properties: {
-	                          Global: localStorageGlobalParsed
-	                        }
-	                      }
-	                    });
-	                    this.dispatch({
-	                      type: 'update-data',
-	                      //TODO: handle case for data is an array or an object
-	                      payload: {
-	                        pageName: 'builtIn',
-	                        dataKey: 'builtIn.UserVertex',
-	                        data: localStorageGlobalParsed.currentUser.vertex
-	                      }
-	                    });
-	                  }
+	                if (!localStorageGlobal) {
+	                  _context.next = 83;
+	                  break;
 	                }
 
+	                try {
+	                  localStorageGlobalParsed = JSON.parse(localStorageGlobal);
+	                } catch (error) {
+	                  console.log(error);
+	                }
+
+	                if (!localStorageGlobalParsed) {
+	                  _context.next = 83;
+	                  break;
+	                }
+
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: {
+	                      Global: localStorageGlobalParsed
+	                    }
+	                  }
+	                });
+	                _context.next = 83;
+	                return this.dispatch({
+	                  type: 'update-data',
+	                  //TODO: handle case for data is an array or an object
+	                  payload: {
+	                    pageName: 'builtIn',
+	                    dataKey: 'builtIn.UserVertex',
+	                    data: localStorageGlobalParsed.currentUser.vertex
+	                  }
+	                });
+
+	              case 83:
 	                this.emit('stateChanged', {
 	                  name: 'update',
 	                  path: '.',
@@ -85429,7 +85832,7 @@
 	                  newVal: this.root
 	                });
 
-	              case 79:
+	              case 84:
 	              case "end":
 	                return _context.stop();
 	            }
@@ -85531,8 +85934,8 @@
 
 	                processedFormData = this.processPopulate({
 	                  source: pageCADL,
-	                  lookFor: ['.', '..', '=', '~'],
-	                  skip: ['update', 'components', 'init'].concat(toConsumableArray(skip)),
+	                  lookFor: ['.', '..', '~'],
+	                  skip: ['update', 'save', 'check', 'init', 'components'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
 	                }); //FOR FNS
@@ -85540,8 +85943,8 @@
 
 	                processedWithFns = this.processPopulate({
 	                  source: processedFormData,
-	                  lookFor: ['.', '..', '=', '_', '~'],
-	                  skip: ['update', 'formData', 'components'].concat(toConsumableArray(skip)),
+	                  lookFor: ['.', '..', '_', '~'],
+	                  skip: ['update', 'save', 'check', 'init', 'formData', 'components'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
 	                }); //replace updateObj with Fn
@@ -85558,7 +85961,7 @@
 	                init = Object.values(processedPage)[0].init;
 
 	                if (!init) {
-	                  _context2.next = 74;
+	                  _context2.next = 76;
 	                  break;
 	                }
 
@@ -85568,7 +85971,7 @@
 
 	              case 20:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context2.next = 74;
+	                  _context2.next = 76;
 	                  break;
 	                }
 
@@ -85594,109 +85997,115 @@
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t0);
 
 	              case 32:
-	                _context2.next = 66;
+	                _context2.next = 68;
 	                break;
 
 	              case 34:
 	                if (!(isObject$5(command) && 'actionType' in command)) {
-	                  _context2.next = 51;
+	                  _context2.next = 53;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, object = command.object, funcName = command.funcName;
 	                _context2.t1 = actionType;
-	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 41 : _context2.t1 === 'evalObject' ? 46 : 48;
+	                _context2.next = _context2.t1 === 'updateObject' ? 39 : _context2.t1 === 'builtIn' ? 42 : _context2.t1 === 'evalObject' ? 47 : 50;
 	                break;
 
 	              case 39:
-	                this.updateObject({
+	                _context2.next = 41;
+	                return this.updateObject({
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context2.abrupt("break", 49);
 
 	              case 41:
+	                return _context2.abrupt("break", 51);
+
+	              case 42:
 	                if (!(funcName === 'videoChat')) {
-	                  _context2.next = 45;
+	                  _context2.next = 46;
 	                  break;
 	                }
 
 	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
-	                  _context2.next = 45;
+	                  _context2.next = 46;
 	                  break;
 	                }
 
-	                _context2.next = 45;
+	                _context2.next = 46;
 	                return this.root.builtIn[funcName](command);
 
-	              case 45:
-	                return _context2.abrupt("break", 49);
-
 	              case 46:
-	                this.dispatch({
+	                return _context2.abrupt("break", 51);
+
+	              case 47:
+	                _context2.next = 49;
+	                return this.dispatch({
 	                  type: 'eval-object',
 	                  payload: {
 	                    pageName: pageName,
 	                    updateObject: object
 	                  }
 	                });
-	                return _context2.abrupt("break", 49);
-
-	              case 48:
-	                return _context2.abrupt("return");
 
 	              case 49:
-	                _context2.next = 66;
-	                break;
+	                return _context2.abrupt("break", 51);
+
+	              case 50:
+	                return _context2.abrupt("return");
 
 	              case 51:
+	                _context2.next = 68;
+	                break;
+
+	              case 53:
 	                if (!(isObject$5(command) && 'if' in command)) {
-	                  _context2.next = 56;
+	                  _context2.next = 58;
 	                  break;
 	                }
 
-	                _context2.next = 54;
+	                _context2.next = 56;
 	                return this.handleIfCommand({
 	                  pageName: pageName,
 	                  ifCommand: command
 	                });
 
-	              case 54:
-	                _context2.next = 66;
+	              case 56:
+	                _context2.next = 68;
 	                break;
 
-	              case 56:
+	              case 58:
 	                if (!Array.isArray(command)) {
-	                  _context2.next = 66;
+	                  _context2.next = 68;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context2.next = 66;
+	                  _context2.next = 68;
 	                  break;
 	                }
 
-	                _context2.prev = 58;
-	                _context2.next = 61;
+	                _context2.prev = 60;
+	                _context2.next = 63;
 	                return command[0][1]();
 
-	              case 61:
-	                _context2.next = 66;
+	              case 63:
+	                _context2.next = 68;
 	                break;
 
-	              case 63:
-	                _context2.prev = 63;
-	                _context2.t2 = _context2["catch"](58);
+	              case 65:
+	                _context2.prev = 65;
+	                _context2.t2 = _context2["catch"](60);
 	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context2.t2);
 
-	              case 66:
+	              case 68:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
 	                populatedUpdatedPage = populateObject({
 	                  source: updatedPage,
 	                  lookFor: '..',
-	                  skip: ['components'],
+	                  skip: ['update', 'save', 'check', 'components'],
 	                  locations: [this.root[pageName]]
 	                });
 	                populatedUpdatedPageWithFns = attachFns({
@@ -85715,21 +86124,21 @@
 	                _context2.next = 20;
 	                break;
 
-	              case 74:
+	              case 76:
 	                //FOR COMPONENTS
 	                //process components
 	                processedComponents = this.processPopulate({
 	                  source: processedPage,
-	                  lookFor: ['.', '..', '=', '_', '~'],
-	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
+	                  lookFor: ['.', '..', '_', '~'],
+	                  skip: ['update', 'save', 'check', 'init', 'formData', 'dataIn'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
 	                }); //process components again to fill in new values
 
 	                processedComponentsAgain = this.processPopulate({
 	                  source: processedComponents,
-	                  lookFor: ['.', '..', '=', '_', '~'],
-	                  skip: ['update', 'formData'].concat(toConsumableArray(skip)),
+	                  lookFor: ['.', '..', '_', '~'],
+	                  skip: ['update', 'save', 'check', 'init', 'formData', 'dataIn'].concat(toConsumableArray(skip)),
 	                  withFns: true,
 	                  pageName: pageName
 	                });
@@ -85751,12 +86160,12 @@
 	                  newVal: this.root
 	                });
 
-	              case 79:
+	              case 81:
 	              case "end":
 	                return _context2.stop();
 	            }
 	          }
-	        }, _callee2, this, [[24, 29], [58, 63]]);
+	        }, _callee2, this, [[24, 29], [60, 65]]);
 	      }));
 
 	      function initPage(_x) {
@@ -85781,6 +86190,9 @@
 	          while (1) {
 	            switch (_context3.prev = _context3.next) {
 	              case 0:
+	                //TODO: remove after testing
+	                //TODO used for local testing
+	                // if (pageName === 'SignIn') return SignIn
 	                if (pageName.startsWith('~')) {
 	                  pageUrl = this.myBaseUrl;
 	                  pageName = pageName.substring(2);
@@ -85977,383 +86389,280 @@
 
 	  }, {
 	    key: "dispatch",
-	    value: function dispatch(action) {
-	      var _this2 = this;
+	    value: function () {
+	      var _dispatch = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(action) {
+	        var _this2 = this;
 
-	      switch (action.type) {
-	        case 'populate':
-	          {
-	            var pageName = action.payload.pageName;
+	        var pageName, pageObjectCopy, boundDispatch, populateWithRoot, populateWithSelf, populateMyBaseUrl, withFNs, _action$payload, _pageName, object, populatedObject, _action$payload2, _pageName2, dataKey, rawData, data, firstCharacter, pathArr, currentVal, mergedVal, _currentVal, _mergedVal, _action$payload3, _pageName3, _dataKey, _pathArr, _currentVal2, _action$payload4, _pageName4, updateObject, command, objectKeys, _this$root, _action$payload5, _pageName5, fn, _action$payload6, _pageName6, _dataKey2, newVal;
 
-	            var pageObjectCopy = cloneDeep_1(this.root[pageName]);
+	        return regenerator.wrap(function _callee8$(_context8) {
+	          while (1) {
+	            switch (_context8.prev = _context8.next) {
+	              case 0:
+	                _context8.t0 = action.type;
+	                _context8.next = _context8.t0 === 'populate' ? 3 : _context8.t0 === 'populate-object' ? 14 : _context8.t0 === 'update-data' ? 17 : _context8.t0 === 'get-data' ? 33 : _context8.t0 === 'eval-object' ? 39 : _context8.t0 === 'update-localStorage' ? 54 : _context8.t0 === 'add-fn' ? 56 : _context8.t0 === 'emit-update' ? 59 : 61;
+	                break;
 
-	            var boundDispatch = this.dispatch.bind(this);
-	            var populateWithRoot = populateObject({
-	              source: pageObjectCopy,
-	              lookFor: '.',
-	              locations: [this.root, this.root[pageName]]
-	            });
-	            var populateWithSelf = populateObject({
-	              source: populateWithRoot,
-	              lookFor: '..',
-	              locations: [this.root, this.root[pageName]]
-	            });
-	            var populateAfterInheriting = populateObject({
-	              source: populateWithSelf,
-	              lookFor: '=',
-	              locations: [this.root, this.root[pageName]]
-	            });
-	            var populateMyBaseUrl = populateObject({
-	              source: populateAfterInheriting,
-	              lookFor: '~',
-	              locations: [this]
-	            });
-	            var withFNs = attachFns({
-	              cadlObject: populateMyBaseUrl,
-	              dispatch: boundDispatch
-	            });
-	            this.newDispatch({
-	              type: 'SET_ROOT_PROPERTIES',
-	              payload: {
-	                properties: defineProperty({}, pageName, withFNs)
-	              }
-	            });
-	            this.dispatch({
-	              type: 'update-localStorage'
-	            });
-	            break;
-	          }
+	              case 3:
+	                pageName = action.payload.pageName;
+	                pageObjectCopy = cloneDeep_1(this.root[pageName]);
+	                boundDispatch = this.dispatch.bind(this);
+	                populateWithRoot = populateObject({
+	                  source: pageObjectCopy,
+	                  lookFor: '.',
+	                  locations: [this.root, this.root[pageName]]
+	                });
+	                populateWithSelf = populateObject({
+	                  source: populateWithRoot,
+	                  lookFor: '..',
+	                  locations: [this.root, this.root[pageName]]
+	                }); // const populateAfterInheriting = populateObject({
+	                //   source: populateWithSelf,
+	                //   lookFor: '=',
+	                //   locations: [this.root, this.root[pageName]],
+	                // })
 
-	        case 'update-data':
-	          {
-	            var _action$payload = action.payload,
-	                _pageName = _action$payload.pageName,
-	                dataKey = _action$payload.dataKey,
-	                rawData = _action$payload.data;
-	            var data = replaceUint8ArrayWithBase64(rawData);
-	            var firstCharacter = dataKey ? dataKey[0] : '';
-	            var pathArr = dataKey ? dataKey.split('.') : '';
+	                populateMyBaseUrl = populateObject({
+	                  source: populateWithSelf,
+	                  lookFor: '~',
+	                  locations: [this]
+	                });
+	                withFNs = attachFns({
+	                  cadlObject: populateMyBaseUrl,
+	                  dispatch: boundDispatch
+	                });
+	                this.newDispatch({
+	                  type: 'SET_ROOT_PROPERTIES',
+	                  payload: {
+	                    properties: defineProperty({}, pageName, withFNs)
+	                  }
+	                });
+	                _context8.next = 13;
+	                return this.dispatch({
+	                  type: 'update-localStorage'
+	                });
 
-	            if (_pageName === 'builtIn') {
-	              this.newDispatch({
-	                type: 'SET_VALUE',
-	                payload: {
-	                  dataKey: pathArr,
-	                  value: data
+	              case 13:
+	                return _context8.abrupt("break", 62);
+
+	              case 14:
+	                _action$payload = action.payload, _pageName = _action$payload.pageName, object = _action$payload.object;
+	                populatedObject = populateObject({
+	                  source: object,
+	                  lookFor: '=',
+	                  locations: [this.root, this.root[_pageName]]
+	                });
+	                return _context8.abrupt("return", populatedObject);
+
+	              case 17:
+	                _action$payload2 = action.payload, _pageName2 = _action$payload2.pageName, dataKey = _action$payload2.dataKey, rawData = _action$payload2.data;
+	                data = replaceUint8ArrayWithBase64(rawData);
+	                firstCharacter = dataKey ? dataKey[0] : '';
+	                pathArr = dataKey ? dataKey.split('.') : '';
+
+	                if (!(_pageName2 === 'builtIn')) {
+	                  _context8.next = 25;
+	                  break;
 	                }
-	              });
-	            } else if (!dataKey) {
-	              return;
-	            } else if (firstCharacter === firstCharacter.toUpperCase()) {
-	              var currentVal = get_1(this.root, pathArr);
 
-	              var mergedVal;
+	                this.newDispatch({
+	                  type: 'SET_VALUE',
+	                  payload: {
+	                    dataKey: pathArr,
+	                    value: data
+	                  }
+	                });
+	                _context8.next = 30;
+	                break;
 
-	              if (Array.isArray(currentVal)) {
-	                if (Array.isArray(data)) {
-	                  mergedVal = data;
-	                } else {
-	                  mergedVal = [data];
+	              case 25:
+	                if (dataKey) {
+	                  _context8.next = 29;
+	                  break;
 	                }
-	              } else {
-	                if (Array.isArray(data)) {
-	                  mergedVal = data[0];
-	                } else {
-	                  mergedVal = data;
-	                }
-	              }
 
-	              this.newDispatch({
-	                type: 'SET_VALUE',
-	                payload: {
-	                  dataKey: pathArr,
-	                  value: mergedVal
-	                }
-	              });
-	            } else {
-	              var _currentVal = get_1(this.root[_pageName], pathArr);
+	                return _context8.abrupt("return");
 
-	              var _mergedVal; //TODO:unit test for data response shape
+	              case 29:
+	                if (firstCharacter === firstCharacter.toUpperCase()) {
+	                  currentVal = get_1(this.root, pathArr);
 
-
-	              if (Array.isArray(_currentVal)) {
-	                if (Array.isArray(data)) {
-	                  _mergedVal = data;
-	                } else {
-	                  _mergedVal = [data];
-	                }
-	              } else if (isObject$5(_currentVal) && Array.isArray(data)) {
-	                if (!data.length) {
-	                  _mergedVal = _currentVal;
-	                } else if (data.length === 1) {
-	                  _mergedVal = data[0];
-	                }
-	              } else {
-	                _mergedVal = data;
-	              }
-
-	              this.newDispatch({
-	                type: 'SET_VALUE',
-	                payload: {
-	                  pageName: _pageName,
-	                  dataKey: pathArr,
-	                  value: _mergedVal
-	                }
-	              });
-	            }
-
-	            this.dispatch({
-	              type: 'update-localStorage'
-	            });
-	            break;
-	          }
-
-	        case 'get-data':
-	          {
-	            var _action$payload2 = action.payload,
-	                _pageName2 = _action$payload2.pageName,
-	                _dataKey = _action$payload2.dataKey;
-	            if (!_dataKey) return;
-
-	            var _pathArr = _dataKey.split('.');
-
-	            var _currentVal2 = get_1(this.root[_pageName2], _pathArr) || get_1(this.root, _pathArr);
-
-	            return _currentVal2;
-	          }
-
-	        case 'eval-object':
-	          {
-	            var _action$payload3 = action.payload,
-	                _pageName3 = _action$payload3.pageName,
-	                updateObject = _action$payload3.updateObject;
-
-	            var _populateWithRoot = populateObject({
-	              source: updateObject,
-	              lookFor: '.',
-	              locations: [this.root, this.root[_pageName3]]
-	            });
-
-	            var _populateWithSelf = populateObject({
-	              source: _populateWithRoot,
-	              lookFor: '..',
-	              locations: [this.root, this.root[_pageName3]]
-	            });
-
-	            var _populateAfterInheriting = populateObject({
-	              source: _populateWithSelf,
-	              lookFor: '=',
-	              locations: [this, this.root, this.root[_pageName3]]
-	            });
-
-	            var populateAfterAttachingMyBaseUrl = populateObject({
-	              source: _populateAfterInheriting,
-	              lookFor: '~',
-	              locations: [this]
-	            });
-
-	            if (isObject$5(populateAfterAttachingMyBaseUrl)) {
-	              var command = _populateAfterInheriting;
-	              var objectKeys = Object.keys(command);
-	              asyncForEach(objectKeys, /*#__PURE__*/function () {
-	                var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
-	                  var trimPath, val, _pathArr2, _pathArr3, _trimPath, _pathArr4, _val, _populateWithRoot2, _populateWithSelf2, _populateAfterInheriting2, _populateAfterAttachingMyBaseUrl, _boundDispatch;
-
-	                  return regenerator.wrap(function _callee5$(_context5) {
-	                    while (1) {
-	                      switch (_context5.prev = _context5.next) {
-	                        case 0:
-	                          if (!(key === 'if')) {
-	                            _context5.next = 5;
-	                            break;
-	                          }
-
-	                          _context5.next = 3;
-	                          return _this2.handleIfCommand({
-	                            pageName: _pageName3,
-	                            ifCommand: command[key]
-	                          });
-
-	                        case 3:
-	                          _context5.next = 28;
-	                          break;
-
-	                        case 5:
-	                          if (key.startsWith('=')) {
-	                            _context5.next = 10;
-	                            break;
-	                          }
-
-	                          val = command[key];
-
-	                          if (key.startsWith('..')) {
-	                            trimPath = key.substring(2, key.length - 1);
-	                            _pathArr2 = trimPath.split('.');
-
-	                            _this2.newDispatch({
-	                              type: 'SET_VALUE',
-	                              payload: {
-	                                pageName: _pageName3,
-	                                dataKey: _pathArr2,
-	                                value: val
-	                              }
-	                            });
-
-	                            _this2.emit('stateChanged', {
-	                              name: 'update',
-	                              path: "".concat(_pageName3, ".").concat(trimPath),
-	                              newVal: val
-	                            });
-	                          } else if (key.startsWith('.')) {
-	                            trimPath = key.substring(1, key.length - 1);
-	                            _pathArr3 = trimPath.split('.');
-
-	                            _this2.newDispatch({
-	                              type: 'SET_VALUE',
-	                              payload: {
-	                                dataKey: _pathArr3,
-	                                value: val
-	                              }
-	                            });
-
-	                            _this2.emit('stateChanged', {
-	                              name: 'update',
-	                              path: "".concat(trimPath),
-	                              newVal: val
-	                            });
-	                          }
-
-	                          _context5.next = 28;
-	                          break;
-
-	                        case 10:
-	                          if (!key.startsWith('=')) {
-	                            _context5.next = 28;
-	                            break;
-	                          }
-
-	                          _trimPath = key.substring(2, key.length);
-	                          _pathArr4 = _trimPath.split('.');
-	                          _val = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName3], _pathArr4);
-
-	                          if (!isObject$5(_val)) {
-	                            _context5.next = 25;
-	                            break;
-	                          }
-
-	                          _populateWithRoot2 = populateObject({
-	                            source: _val,
-	                            lookFor: '.',
-	                            locations: [_this2.root, _this2.root[_pageName3]]
-	                          });
-	                          _populateWithSelf2 = populateObject({
-	                            source: _populateWithRoot2,
-	                            lookFor: '..',
-	                            locations: [_this2.root, _this2.root[_pageName3]]
-	                          });
-	                          _populateAfterInheriting2 = populateObject({
-	                            source: _populateWithSelf2,
-	                            lookFor: '=',
-	                            locations: [_this2.root, _this2.root[_pageName3]]
-	                          });
-	                          _populateAfterAttachingMyBaseUrl = populateObject({
-	                            source: _populateAfterInheriting2,
-	                            lookFor: '~',
-	                            locations: [_this2]
-	                          });
-	                          _boundDispatch = _this2.dispatch.bind(_this2);
-	                          _val = attachFns({
-	                            cadlObject: _populateAfterAttachingMyBaseUrl,
-	                            dispatch: _boundDispatch
-	                          });
-	                          _context5.next = 23;
-	                          return _val();
-
-	                        case 23:
-	                          _context5.next = 28;
-	                          break;
-
-	                        case 25:
-	                          if (!(typeof _val === 'function')) {
-	                            _context5.next = 28;
-	                            break;
-	                          }
-
-	                          _context5.next = 28;
-	                          return _val();
-
-	                        case 28:
-	                        case "end":
-	                          return _context5.stop();
-	                      }
+	                  if (Array.isArray(currentVal)) {
+	                    if (Array.isArray(data)) {
+	                      mergedVal = data;
+	                    } else {
+	                      mergedVal = [data];
 	                    }
-	                  }, _callee5);
-	                }));
+	                  } else {
+	                    if (Array.isArray(data)) {
+	                      mergedVal = data[0];
+	                    } else {
+	                      mergedVal = data;
+	                    }
+	                  }
 
-	                return function (_x4) {
-	                  return _ref4.apply(this, arguments);
-	                };
-	              }());
-	            } else if (Array.isArray(_populateAfterInheriting)) {
-	              _populateAfterInheriting.map(function (command) {
-	                var objectKeys = Object.keys(command);
+	                  this.newDispatch({
+	                    type: 'SET_VALUE',
+	                    payload: {
+	                      dataKey: pathArr,
+	                      value: mergedVal
+	                    }
+	                  });
+	                } else {
+	                  _currentVal = get_1(this.root[_pageName2], pathArr);
+
+	                  //TODO:unit test for data response shape
+	                  if (Array.isArray(_currentVal)) {
+	                    if (Array.isArray(data)) {
+	                      _mergedVal = data;
+	                    } else {
+	                      _mergedVal = [data];
+	                    }
+	                  } else if (isObject$5(_currentVal) && Array.isArray(data)) {
+	                    if (!data.length) {
+	                      _mergedVal = _currentVal;
+	                    } else if (data.length === 1) {
+	                      _mergedVal = data[0];
+	                    }
+	                  } else {
+	                    _mergedVal = data;
+	                  }
+
+	                  this.newDispatch({
+	                    type: 'SET_VALUE',
+	                    payload: {
+	                      pageName: _pageName2,
+	                      dataKey: pathArr,
+	                      value: _mergedVal
+	                    }
+	                  });
+	                }
+
+	              case 30:
+	                _context8.next = 32;
+	                return this.dispatch({
+	                  type: 'update-localStorage'
+	                });
+
+	              case 32:
+	                return _context8.abrupt("break", 62);
+
+	              case 33:
+	                _action$payload3 = action.payload, _pageName3 = _action$payload3.pageName, _dataKey = _action$payload3.dataKey;
+
+	                if (_dataKey) {
+	                  _context8.next = 36;
+	                  break;
+	                }
+
+	                return _context8.abrupt("return");
+
+	              case 36:
+	                _pathArr = _dataKey.split('.');
+	                _currentVal2 = get_1(this.root[_pageName3], _pathArr) || get_1(this.root, _pathArr);
+	                return _context8.abrupt("return", _currentVal2);
+
+	              case 39:
+	                _action$payload4 = action.payload, _pageName4 = _action$payload4.pageName, updateObject = _action$payload4.updateObject;
+
+	                if (!isObject$5(updateObject)) {
+	                  _context8.next = 46;
+	                  break;
+	                }
+
+	                command = updateObject;
+	                objectKeys = Object.keys(command);
 	                asyncForEach(objectKeys, /*#__PURE__*/function () {
-	                  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(key) {
-	                    var trimPath, val, _pathArr5, _pathArr6, _trimPath2, _pathArr7, _val2, _populateWithRoot3, _populateWithSelf3, _populateAfterInheriting3, _populateAfterAttachingMyBaseUrl2, _boundDispatch2;
+	                  var _ref4 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee5(key) {
+	                    var populatedCommand, result, trimPath, val, _pathArr2, currValue, _pathArr3, _currValue, _trimPath, _pathArr4, func, _populateWithRoot, _populateWithSelf, populateAfterInheriting, populateAfterAttachingMyBaseUrl, _boundDispatch, _populatedCommand$key, dataIn, dataOut, _result, _pathArr5;
 
-	                    return regenerator.wrap(function _callee6$(_context6) {
+	                    return regenerator.wrap(function _callee5$(_context5) {
 	                      while (1) {
-	                        switch (_context6.prev = _context6.next) {
+	                        switch (_context5.prev = _context5.next) {
 	                          case 0:
-	                            if (!(key === 'if')) {
-	                              _context6.next = 5;
-	                              break;
-	                            }
-
-	                            _context6.next = 3;
-	                            return _this2.handleIfCommand({
-	                              pageName: _pageName3,
-	                              ifCommand: command
+	                            _context5.next = 2;
+	                            return _this2.dispatch({
+	                              type: 'populate-object',
+	                              payload: {
+	                                pageName: _pageName4,
+	                                object: command
+	                              }
 	                            });
 
-	                          case 3:
-	                            _context6.next = 28;
-	                            break;
+	                          case 2:
+	                            populatedCommand = _context5.sent;
 
-	                          case 5:
-	                            if (key.startsWith('=')) {
-	                              _context6.next = 10;
+	                            if (!(key === 'if')) {
+	                              _context5.next = 11;
 	                              break;
 	                            }
 
-	                            val = command[key];
+	                            _context5.next = 6;
+	                            return _this2.handleIfCommand({
+	                              pageName: _pageName4,
+	                              ifCommand: populatedCommand[key]
+	                            });
+
+	                          case 6:
+	                            result = _context5.sent;
+
+	                            if (!isObject$5(result)) {
+	                              _context5.next = 9;
+	                              break;
+	                            }
+
+	                            return _context5.abrupt("return", result);
+
+	                          case 9:
+	                            _context5.next = 40;
+	                            break;
+
+	                          case 11:
+	                            if (key.startsWith('=')) {
+	                              _context5.next = 16;
+	                              break;
+	                            }
+
+	                            val = populatedCommand[key];
 
 	                            if (key.startsWith('..')) {
 	                              trimPath = key.substring(2, key.length - 1);
-	                              _pathArr5 = trimPath.split('.');
+	                              _pathArr2 = trimPath.split('.');
+	                              currValue = get_1(_this2.root, [_pageName4].concat(toConsumableArray(_pathArr2))) || '';
+	                              debugger;
+
+	                              if (isObject$5(currValue)) {
+	                                val = mergeDeep(currValue, val);
+	                              }
 
 	                              _this2.newDispatch({
 	                                type: 'SET_VALUE',
 	                                payload: {
-	                                  pageName: _pageName3,
-	                                  dataKey: _pathArr5,
+	                                  pageName: _pageName4,
+	                                  dataKey: _pathArr2,
 	                                  value: val
 	                                }
 	                              });
 
 	                              _this2.emit('stateChanged', {
 	                                name: 'update',
-	                                path: "".concat(_pageName3, ".").concat(trimPath),
+	                                path: "".concat(_pageName4, ".").concat(trimPath),
 	                                newVal: val
 	                              });
 	                            } else if (key.startsWith('.')) {
 	                              trimPath = key.substring(1, key.length - 1);
-	                              _pathArr6 = trimPath.split('.');
+	                              _pathArr3 = trimPath.split('.');
+	                              _currValue = get_1(_this2.root, toConsumableArray(_pathArr3)) || '';
+	                              debugger;
+
+	                              if (isObject$5(_currValue)) {
+	                                val = mergeDeep(_currValue, val);
+	                              }
 
 	                              _this2.newDispatch({
 	                                type: 'SET_VALUE',
 	                                payload: {
-	                                  dataKey: _pathArr6,
+	                                  dataKey: _pathArr3,
 	                                  value: val
 	                                }
 	                              });
@@ -86365,182 +86674,456 @@
 	                              });
 	                            }
 
-	                            _context6.next = 28;
+	                            _context5.next = 40;
 	                            break;
 
-	                          case 10:
+	                          case 16:
 	                            if (!key.startsWith('=')) {
-	                              _context6.next = 28;
+	                              _context5.next = 40;
 	                              break;
 	                            }
 
-	                            _trimPath2 = key.substring(2, key.length);
-	                            _pathArr7 = _trimPath2.split('.');
-	                            _val2 = get_1(_this2.root, _pathArr7) || get_1(_this2.root[_pageName3], _pathArr7);
+	                            _trimPath = key.substring(2, key.length);
+	                            _pathArr4 = _trimPath.split('.');
+	                            func = get_1(_this2.root, _pathArr4) || get_1(_this2.root[_pageName4], _pathArr4);
 
-	                            if (!isObject$5(_val2)) {
-	                              _context6.next = 25;
+	                            if (isObject$5(func)) {
+	                              _populateWithRoot = populateObject({
+	                                source: func,
+	                                lookFor: '.',
+	                                locations: [_this2.root, _this2.root[_pageName4]]
+	                              });
+	                              _populateWithSelf = populateObject({
+	                                source: _populateWithRoot,
+	                                lookFor: '..',
+	                                locations: [_this2.root, _this2.root[_pageName4]]
+	                              });
+	                              populateAfterInheriting = populateObject({
+	                                source: _populateWithSelf,
+	                                lookFor: '=',
+	                                locations: [_this2.root, _this2.root[_pageName4]]
+	                              });
+	                              populateAfterAttachingMyBaseUrl = populateObject({
+	                                source: populateAfterInheriting,
+	                                lookFor: '~',
+	                                locations: [_this2]
+	                              });
+	                              _boundDispatch = _this2.dispatch.bind(_this2);
+	                              func = attachFns({
+	                                cadlObject: populateAfterAttachingMyBaseUrl,
+	                                dispatch: _boundDispatch
+	                              });
+	                            }
+
+	                            if (!(typeof func === 'function')) {
+	                              _context5.next = 36;
 	                              break;
 	                            }
 
-	                            _populateWithRoot3 = populateObject({
-	                              source: _val2,
-	                              lookFor: '.',
-	                              locations: [_this2.root, _this2.root[_pageName3]]
-	                            });
-	                            _populateWithSelf3 = populateObject({
-	                              source: _populateWithRoot3,
-	                              lookFor: '..',
-	                              locations: [_this2.root, _this2.root[_pageName3]]
-	                            });
-	                            _populateAfterInheriting3 = populateObject({
-	                              source: _populateWithSelf3,
-	                              lookFor: '=',
-	                              locations: [_this2.root, _this2.root[_pageName3]]
-	                            });
-	                            _populateAfterAttachingMyBaseUrl2 = populateObject({
-	                              source: _populateAfterInheriting3,
-	                              lookFor: '~',
-	                              locations: [_this2]
-	                            });
-	                            _boundDispatch2 = _this2.dispatch.bind(_this2);
-	                            _val2 = attachFns({
-	                              cadlObject: _populateAfterAttachingMyBaseUrl2,
-	                              dispatch: _boundDispatch2
-	                            });
-	                            _context6.next = 23;
-	                            return _val2();
+	                            if (!isObject$5(populatedCommand[key])) {
+	                              _context5.next = 32;
+	                              break;
+	                            }
 
-	                          case 23:
-	                            _context6.next = 28;
+	                            _populatedCommand$key = populatedCommand[key], dataIn = _populatedCommand$key.dataIn, dataOut = _populatedCommand$key.dataOut;
+	                            _context5.next = 26;
+	                            return func(dataIn);
+
+	                          case 26:
+	                            _result = _context5.sent;
+	                            _pathArr5 = dataOut.split('.');
+
+	                            _this2.newDispatch({
+	                              type: 'SET_VALUE',
+	                              payload: {
+	                                dataKey: _pathArr5,
+	                                value: _result
+	                              }
+	                            });
+
+	                            _this2.emit('stateChanged', {
+	                              name: 'update',
+	                              path: "".concat(dataOut),
+	                              newVal: _result
+	                            });
+
+	                            _context5.next = 34;
 	                            break;
 
-	                          case 25:
-	                            if (!(typeof _val2 === 'function')) {
-	                              _context6.next = 28;
+	                          case 32:
+	                            _context5.next = 34;
+	                            return func();
+
+	                          case 34:
+	                            _context5.next = 40;
+	                            break;
+
+	                          case 36:
+	                            if (!Array.isArray(func)) {
+	                              _context5.next = 40;
 	                              break;
 	                            }
 
-	                            _context6.next = 28;
-	                            return _val2();
+	                            func = func[1];
+	                            _context5.next = 40;
+	                            return func();
 
-	                          case 28:
+	                          case 40:
 	                          case "end":
-	                            return _context6.stop();
+	                            return _context5.stop();
 	                        }
 	                      }
-	                    }, _callee6);
+	                    }, _callee5);
 	                  }));
 
 	                  return function (_x5) {
-	                    return _ref5.apply(this, arguments);
+	                    return _ref4.apply(this, arguments);
 	                  };
 	                }());
-	              });
-	            } //populates Global because this object is instantiated once
-	            //unlike pages that are instantiated multiple times and can be repopulated
-	            //when they are loaded again
+	                _context8.next = 49;
+	                break;
 
-
-	            this.dispatch({
-	              type: 'populate',
-	              payload: {
-	                pageName: 'Global'
-	              }
-	            }); //update the localStorage root
-
-	            this.dispatch({
-	              type: 'update-localStorage'
-	            });
-	            break;
-	          }
-
-	        case 'update-localStorage':
-	          {
-	            var _this$root;
-
-	            localStorage.setItem('Global', JSON.stringify((_this$root = this.root) === null || _this$root === void 0 ? void 0 : _this$root.Global));
-	            break;
-	          }
-
-	        case 'add-fn':
-	          {
-	            //actions for page currently used for signIn
-	            var _action$payload4 = action.payload,
-	                _pageName4 = _action$payload4.pageName,
-	                fn = _action$payload4.fn;
-
-	            if (this.root.actions[_pageName4]) {
-	              this.newDispatch({
-	                type: 'SET_VALUE',
-	                payload: {
-	                  dataKey: "actions.".concat(_pageName4, ".update"),
-	                  value: fn
-	                }
-	              });
-	            } else {
-	              this.newDispatch({
-	                type: 'SET_VALUE',
-	                payload: {
-	                  dataKey: "actions.".concat(_pageName4),
-	                  value: {
-	                    update: fn
-	                  }
-	                }
-	              });
-	            }
-
-	            break;
-	          }
-
-	        case 'emit-update':
-	          {
-	            var _action$payload5 = action.payload,
-	                _pageName5 = _action$payload5.pageName,
-	                _dataKey2 = _action$payload5.dataKey,
-	                newVal = _action$payload5.newVal;
-	            this.emit('stateChanged', {
-	              name: 'update',
-	              path: "".concat(_pageName5, ".").concat(_dataKey2),
-	              newVal: newVal
-	            });
-	          }
-
-	        default:
-	          {
-	            return;
-	          }
-	      }
-	    }
-	  }, {
-	    key: "handleIfCommand",
-	    value: function () {
-	      var _handleIfCommand = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(_ref6) {
-	        var pageName, ifCommand, _ifCommand$if, condExpression, ifTrueEffect, ifFalseEffect, condResult, lookFor, res, _Object$keys, _Object$keys$, _lookFor, _res, boundDispatch, withFns, _Object$keys2, _Object$keys2$, _lookFor2, _res2, _boundDispatch3, _withFns;
-
-	        return regenerator.wrap(function _callee7$(_context7) {
-	          while (1) {
-	            switch (_context7.prev = _context7.next) {
-	              case 0:
-	                pageName = _ref6.pageName, ifCommand = _ref6.ifCommand;
-	                _ifCommand$if = slicedToArray(ifCommand['if'], 3), condExpression = _ifCommand$if[0], ifTrueEffect = _ifCommand$if[1], ifFalseEffect = _ifCommand$if[2];
-
-	                if (!(typeof condExpression === 'function')) {
-	                  _context7.next = 8;
+	              case 46:
+	                if (!Array.isArray(updateObject)) {
+	                  _context8.next = 49;
 	                  break;
 	                }
 
-	                _context7.next = 5;
+	                _context8.next = 49;
+	                return asyncForEach(updateObject, /*#__PURE__*/function () {
+	                  var _ref5 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee7(command) {
+	                    var populatedCommand, commandKeys;
+	                    return regenerator.wrap(function _callee7$(_context7) {
+	                      while (1) {
+	                        switch (_context7.prev = _context7.next) {
+	                          case 0:
+	                            _context7.next = 2;
+	                            return _this2.dispatch({
+	                              type: 'populate-object',
+	                              payload: {
+	                                pageName: _pageName4,
+	                                object: command
+	                              }
+	                            });
+
+	                          case 2:
+	                            populatedCommand = _context7.sent;
+	                            commandKeys = Object.keys(populatedCommand);
+	                            _context7.next = 6;
+	                            return asyncForEach(commandKeys, /*#__PURE__*/function () {
+	                              var _ref6 = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee6(key) {
+	                                var result, trimPath, val, _pathArr6, currValue, _pathArr7, _currValue2, _trimPath2, _pathArr8, func, _populateWithRoot2, _populateWithSelf2, populateAfterInheriting, populateAfterAttachingMyBaseUrl, _boundDispatch2, _populatedCommand$key2, dataIn, dataOut, _result2, _pathArr9;
+
+	                                return regenerator.wrap(function _callee6$(_context6) {
+	                                  while (1) {
+	                                    switch (_context6.prev = _context6.next) {
+	                                      case 0:
+	                                        if (!(key === 'if')) {
+	                                          _context6.next = 8;
+	                                          break;
+	                                        }
+
+	                                        _context6.next = 3;
+	                                        return _this2.handleIfCommand({
+	                                          pageName: _pageName4,
+	                                          ifCommand: populatedCommand
+	                                        });
+
+	                                      case 3:
+	                                        result = _context6.sent;
+
+	                                        if (!isObject$5(result)) {
+	                                          _context6.next = 6;
+	                                          break;
+	                                        }
+
+	                                        return _context6.abrupt("return", result);
+
+	                                      case 6:
+	                                        _context6.next = 39;
+	                                        break;
+
+	                                      case 8:
+	                                        if (key.startsWith('=')) {
+	                                          _context6.next = 13;
+	                                          break;
+	                                        }
+
+	                                        val = populatedCommand[key];
+
+	                                        if (key.startsWith('..')) {
+	                                          trimPath = key.substring(2, key.length - 1);
+	                                          _pathArr6 = trimPath.split('.');
+	                                          currValue = get_1(_this2.root, [_pageName4].concat(toConsumableArray(_pathArr6))) || '';
+	                                          debugger;
+
+	                                          if (isObject$5(currValue)) {
+	                                            val = mergeDeep(currValue, val);
+	                                          }
+
+	                                          _this2.newDispatch({
+	                                            type: 'SET_VALUE',
+	                                            payload: {
+	                                              pageName: _pageName4,
+	                                              dataKey: _pathArr6,
+	                                              value: val
+	                                            }
+	                                          });
+
+	                                          _this2.emit('stateChanged', {
+	                                            name: 'update',
+	                                            path: "".concat(_pageName4, ".").concat(trimPath),
+	                                            newVal: val
+	                                          });
+	                                        } else if (key.startsWith('.')) {
+	                                          trimPath = key.substring(1, key.length - 1);
+	                                          _pathArr7 = trimPath.split('.');
+	                                          _currValue2 = get_1(_this2.root, toConsumableArray(_pathArr7)) || '';
+	                                          debugger;
+
+	                                          if (isObject$5(_currValue2)) {
+	                                            val = mergeDeep(_currValue2, val);
+	                                          }
+
+	                                          _this2.newDispatch({
+	                                            type: 'SET_VALUE',
+	                                            payload: {
+	                                              dataKey: _pathArr7,
+	                                              value: val
+	                                            }
+	                                          });
+
+	                                          _this2.emit('stateChanged', {
+	                                            name: 'update',
+	                                            path: "".concat(trimPath),
+	                                            newVal: val
+	                                          });
+	                                        }
+
+	                                        _context6.next = 39;
+	                                        break;
+
+	                                      case 13:
+	                                        if (!key.startsWith('=')) {
+	                                          _context6.next = 39;
+	                                          break;
+	                                        }
+
+	                                        _trimPath2 = key.substring(2, key.length);
+	                                        _pathArr8 = _trimPath2.split('.');
+	                                        func = get_1(_this2.root, _pathArr8) || get_1(_this2.root[_pageName4], _pathArr8);
+
+	                                        if (isObject$5(func)) {
+	                                          _populateWithRoot2 = populateObject({
+	                                            source: func,
+	                                            lookFor: '.',
+	                                            locations: [_this2.root, _this2.root[_pageName4]]
+	                                          });
+	                                          _populateWithSelf2 = populateObject({
+	                                            source: _populateWithRoot2,
+	                                            lookFor: '..',
+	                                            locations: [_this2.root, _this2.root[_pageName4]]
+	                                          });
+	                                          populateAfterInheriting = populateObject({
+	                                            source: _populateWithSelf2,
+	                                            lookFor: '=',
+	                                            locations: [_this2.root, _this2.root[_pageName4]]
+	                                          });
+	                                          populateAfterAttachingMyBaseUrl = populateObject({
+	                                            source: populateAfterInheriting,
+	                                            lookFor: '~',
+	                                            locations: [_this2]
+	                                          });
+	                                          _boundDispatch2 = _this2.dispatch.bind(_this2);
+	                                          func = attachFns({
+	                                            cadlObject: populateAfterAttachingMyBaseUrl,
+	                                            dispatch: _boundDispatch2
+	                                          });
+	                                        }
+
+	                                        if (!(typeof func === 'function')) {
+	                                          _context6.next = 34;
+	                                          break;
+	                                        }
+
+	                                        if (!isObject$5(populatedCommand[key])) {
+	                                          _context6.next = 29;
+	                                          break;
+	                                        }
+
+	                                        _populatedCommand$key2 = populatedCommand[key], dataIn = _populatedCommand$key2.dataIn, dataOut = _populatedCommand$key2.dataOut;
+	                                        _context6.next = 23;
+	                                        return func(dataIn);
+
+	                                      case 23:
+	                                        _result2 = _context6.sent;
+	                                        _pathArr9 = dataOut.split('.');
+
+	                                        _this2.newDispatch({
+	                                          type: 'SET_VALUE',
+	                                          payload: {
+	                                            dataKey: _pathArr9,
+	                                            value: _result2
+	                                          }
+	                                        });
+
+	                                        _this2.emit('stateChanged', {
+	                                          name: 'update',
+	                                          path: "".concat(dataOut),
+	                                          newVal: _result2
+	                                        });
+
+	                                        _context6.next = 32;
+	                                        break;
+
+	                                      case 29:
+	                                        debugger;
+	                                        _context6.next = 32;
+	                                        return func();
+
+	                                      case 32:
+	                                        _context6.next = 39;
+	                                        break;
+
+	                                      case 34:
+	                                        if (!Array.isArray(func)) {
+	                                          _context6.next = 39;
+	                                          break;
+	                                        }
+
+	                                        debugger;
+	                                        func = func[1];
+	                                        _context6.next = 39;
+	                                        return func();
+
+	                                      case 39:
+	                                      case "end":
+	                                        return _context6.stop();
+	                                    }
+	                                  }
+	                                }, _callee6);
+	                              }));
+
+	                              return function (_x7) {
+	                                return _ref6.apply(this, arguments);
+	                              };
+	                            }());
+
+	                          case 6:
+	                          case "end":
+	                            return _context7.stop();
+	                        }
+	                      }
+	                    }, _callee7);
+	                  }));
+
+	                  return function (_x6) {
+	                    return _ref5.apply(this, arguments);
+	                  };
+	                }());
+
+	              case 49:
+	                _context8.next = 51;
+	                return this.dispatch({
+	                  type: 'populate',
+	                  payload: {
+	                    pageName: 'Global'
+	                  }
+	                });
+
+	              case 51:
+	                _context8.next = 53;
+	                return this.dispatch({
+	                  type: 'update-localStorage'
+	                });
+
+	              case 53:
+	                return _context8.abrupt("break", 62);
+
+	              case 54:
+	                localStorage.setItem('Global', JSON.stringify((_this$root = this.root) === null || _this$root === void 0 ? void 0 : _this$root.Global));
+	                return _context8.abrupt("break", 62);
+
+	              case 56:
+	                //actions for page currently used for signIn
+	                _action$payload5 = action.payload, _pageName5 = _action$payload5.pageName, fn = _action$payload5.fn;
+
+	                if (this.root.actions[_pageName5]) {
+	                  this.newDispatch({
+	                    type: 'SET_VALUE',
+	                    payload: {
+	                      dataKey: "actions.".concat(_pageName5, ".update"),
+	                      value: fn
+	                    }
+	                  });
+	                } else {
+	                  this.newDispatch({
+	                    type: 'SET_VALUE',
+	                    payload: {
+	                      dataKey: "actions.".concat(_pageName5),
+	                      value: {
+	                        update: fn
+	                      }
+	                    }
+	                  });
+	                }
+
+	                return _context8.abrupt("break", 62);
+
+	              case 59:
+	                _action$payload6 = action.payload, _pageName6 = _action$payload6.pageName, _dataKey2 = _action$payload6.dataKey, newVal = _action$payload6.newVal;
+	                this.emit('stateChanged', {
+	                  name: 'update',
+	                  path: "".concat(_pageName6, ".").concat(_dataKey2),
+	                  newVal: newVal
+	                });
+
+	              case 61:
+	                return _context8.abrupt("return");
+
+	              case 62:
+	              case "end":
+	                return _context8.stop();
+	            }
+	          }
+	        }, _callee8, this);
+	      }));
+
+	      function dispatch(_x4) {
+	        return _dispatch.apply(this, arguments);
+	      }
+
+	      return dispatch;
+	    }()
+	  }, {
+	    key: "handleIfCommand",
+	    value: function () {
+	      var _handleIfCommand = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee9(_ref7) {
+	        var pageName, ifCommand, _ifCommand$if, condExpression, ifTrueEffect, ifFalseEffect, condResult, lookFor, res, _Object$keys, _Object$keys$, _lookFor, _res, boundDispatch, withFns, _Object$keys2, _Object$keys2$, _lookFor2, _res2, _boundDispatch3, _withFns;
+
+	        return regenerator.wrap(function _callee9$(_context9) {
+	          while (1) {
+	            switch (_context9.prev = _context9.next) {
+	              case 0:
+	                pageName = _ref7.pageName, ifCommand = _ref7.ifCommand;
+	                _ifCommand$if = slicedToArray(ifCommand['if'], 3), condExpression = _ifCommand$if[0], ifTrueEffect = _ifCommand$if[1], ifFalseEffect = _ifCommand$if[2];
+
+	                if (!(typeof condExpression === 'function')) {
+	                  _context9.next = 8;
+	                  break;
+	                }
+
+	                _context9.next = 5;
 	                return condExpression();
 
 	              case 5:
-	                condResult = _context7.sent;
-	                _context7.next = 18;
+	                condResult = _context9.sent;
+	                _context9.next = 18;
 	                break;
 
 	              case 8:
 	                if (!(condExpression.startsWith('.') || condExpression.startsWith('=') || condExpression.startsWith('..'))) {
-	                  _context7.next = 18;
+	                  _context9.next = 18;
 	                  break;
 	                }
 
@@ -86559,16 +87142,16 @@
 	                });
 
 	                if (!(typeof res === 'function')) {
-	                  _context7.next = 17;
+	                  _context9.next = 17;
 	                  break;
 	                }
 
-	                _context7.next = 14;
+	                _context9.next = 14;
 	                return res();
 
 	              case 14:
-	                condResult = _context7.sent;
-	                _context7.next = 18;
+	                condResult = _context9.sent;
+	                _context9.next = 18;
 	                break;
 
 	              case 17:
@@ -86580,37 +87163,48 @@
 
 	              case 18:
 	                if (!(condResult === true)) {
-	                  _context7.next = 56;
+	                  _context9.next = 61;
 	                  break;
 	                }
 
 	                if (!(isObject$5(ifTrueEffect) && 'goto' in ifTrueEffect && typeof ifTrueEffect['goto'] === 'string')) {
-	                  _context7.next = 25;
+	                  _context9.next = 25;
 	                  break;
 	                }
 
-	                _context7.next = 22;
+	                _context9.next = 22;
 	                return this.root.builtIn['goto'](ifTrueEffect['goto']);
 
 	              case 22:
-	                return _context7.abrupt("return");
+	                return _context9.abrupt("return");
 
 	              case 25:
 	                if (!(isObject$5(ifTrueEffect) && ((_Object$keys = Object.keys(ifTrueEffect)) === null || _Object$keys === void 0 ? void 0 : (_Object$keys$ = _Object$keys[0]) === null || _Object$keys$ === void 0 ? void 0 : _Object$keys$.includes('@')))) {
-	                  _context7.next = 30;
+	                  _context9.next = 31;
 	                  break;
 	                }
 
-	                this.dispatch({
+	                _context9.next = 28;
+	                return this.dispatch({
 	                  type: 'eval-object',
 	                  payload: {
 	                    pageName: pageName,
 	                    updateObject: _objectSpread$i({}, ifTrueEffect)
 	                  }
 	                });
-	                return _context7.abrupt("return");
 
-	              case 30:
+	              case 28:
+	                return _context9.abrupt("return");
+
+	              case 31:
+	                if (!(isObject$5(ifTrueEffect) && 'actionType' in ifTrueEffect)) {
+	                  _context9.next = 35;
+	                  break;
+	                }
+
+	                return _context9.abrupt("return", ifTrueEffect);
+
+	              case 35:
 	                if (ifTrueEffect.startsWith('..')) {
 	                  _lookFor = '..';
 	                } else if (ifTrueEffect.startsWith('.')) {
@@ -86619,9 +87213,9 @@
 	                  _lookFor = '=';
 	                }
 
-	              case 31:
+	              case 36:
 	                if (!_lookFor) {
-	                  _context7.next = 54;
+	                  _context9.next = 59;
 	                  break;
 	                }
 
@@ -86632,20 +87226,20 @@
 	                });
 
 	                if (!(typeof _res === 'function')) {
-	                  _context7.next = 38;
+	                  _context9.next = 43;
 	                  break;
 	                }
 
-	                _context7.next = 36;
+	                _context9.next = 41;
 	                return _res();
 
-	              case 36:
-	                _context7.next = 54;
+	              case 41:
+	                _context9.next = 59;
 	                break;
 
-	              case 38:
+	              case 43:
 	                if (!isObject$5(_res)) {
-	                  _context7.next = 51;
+	                  _context9.next = 56;
 	                  break;
 	                }
 
@@ -86656,97 +87250,108 @@
 	                });
 
 	                if (!(typeof withFns === 'function')) {
-	                  _context7.next = 46;
+	                  _context9.next = 51;
 	                  break;
 	                }
 
-	                _context7.next = 44;
+	                _context9.next = 49;
 	                return withFns();
 
-	              case 44:
-	                _context7.next = 49;
-	                break;
-
-	              case 46:
-	                if (!(Array.isArray(withFns) && typeof withFns[1] === 'function')) {
-	                  _context7.next = 49;
-	                  break;
-	                }
-
-	                _context7.next = 49;
-	                return withFns[1]();
-
 	              case 49:
-	                _context7.next = 54;
+	                _context9.next = 54;
 	                break;
 
 	              case 51:
-	                if (!(Array.isArray(_res) && typeof (_res === null || _res === void 0 ? void 0 : _res[1]) === 'function')) {
-	                  _context7.next = 54;
+	                if (!(Array.isArray(withFns) && typeof withFns[1] === 'function')) {
+	                  _context9.next = 54;
 	                  break;
 	                }
 
-	                _context7.next = 54;
-	                return _res[1]();
+	                _context9.next = 54;
+	                return withFns[1]();
 
 	              case 54:
-	                _context7.next = 99;
+	                _context9.next = 59;
 	                break;
 
 	              case 56:
+	                if (!(Array.isArray(_res) && typeof (_res === null || _res === void 0 ? void 0 : _res[1]) === 'function')) {
+	                  _context9.next = 59;
+	                  break;
+	                }
+
+	                _context9.next = 59;
+	                return _res[1]();
+
+	              case 59:
+	                _context9.next = 109;
+	                break;
+
+	              case 61:
 	                if (!(condResult === false)) {
-	                  _context7.next = 99;
+	                  _context9.next = 109;
 	                  break;
 	                }
 
 	                if (!(isObject$5(ifFalseEffect) && 'goto' in ifFalseEffect && typeof ifFalseEffect['goto'] === 'string')) {
-	                  _context7.next = 64;
+	                  _context9.next = 69;
 	                  break;
 	                }
 
 	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context7.next = 62;
+	                  _context9.next = 67;
 	                  break;
 	                }
 
-	                _context7.next = 61;
+	                _context9.next = 66;
 	                return this.root.builtIn['goto'](ifFalseEffect['goto']);
 
-	              case 61:
-	                return _context7.abrupt("return");
-
-	              case 62:
-	                _context7.next = 76;
-	                break;
-
-	              case 64:
-	                if (!(typeof ifFalseEffect === 'function')) {
-	                  _context7.next = 70;
-	                  break;
-	                }
-
-	                _context7.next = 67;
-	                return ifFalseEffect();
+	              case 66:
+	                return _context9.abrupt("return");
 
 	              case 67:
-	                return _context7.abrupt("return");
+	                _context9.next = 86;
+	                break;
 
-	              case 70:
-	                if (!(isObject$5(ifFalseEffect) && ((_Object$keys2 = Object.keys(ifFalseEffect)) === null || _Object$keys2 === void 0 ? void 0 : (_Object$keys2$ = _Object$keys2[0]) === null || _Object$keys2$ === void 0 ? void 0 : _Object$keys2$.includes('@')))) {
-	                  _context7.next = 75;
+	              case 69:
+	                if (!(typeof ifFalseEffect === 'function')) {
+	                  _context9.next = 75;
 	                  break;
 	                }
 
-	                this.dispatch({
+	                _context9.next = 72;
+	                return ifFalseEffect();
+
+	              case 72:
+	                return _context9.abrupt("return");
+
+	              case 75:
+	                if (!(isObject$5(ifFalseEffect) && ((_Object$keys2 = Object.keys(ifFalseEffect)) === null || _Object$keys2 === void 0 ? void 0 : (_Object$keys2$ = _Object$keys2[0]) === null || _Object$keys2$ === void 0 ? void 0 : _Object$keys2$.includes('@')))) {
+	                  _context9.next = 81;
+	                  break;
+	                }
+
+	                _context9.next = 78;
+	                return this.dispatch({
 	                  type: 'eval-object',
 	                  payload: {
 	                    pageName: pageName,
 	                    updateObject: _objectSpread$i({}, ifFalseEffect)
 	                  }
 	                });
-	                return _context7.abrupt("return");
 
-	              case 75:
+	              case 78:
+	                return _context9.abrupt("return");
+
+	              case 81:
+	                if (!(isObject$5(ifFalseEffect) && 'actionType' in ifFalseEffect)) {
+	                  _context9.next = 85;
+	                  break;
+	                }
+
+	                return _context9.abrupt("return", ifFalseEffect);
+
+	              case 85:
 	                if (ifFalseEffect.startsWith('..')) {
 	                  _lookFor2 = '..';
 	                } else if (ifFalseEffect.startsWith('.')) {
@@ -86755,9 +87360,9 @@
 	                  _lookFor2 = '=';
 	                }
 
-	              case 76:
+	              case 86:
 	                if (!_lookFor2) {
-	                  _context7.next = 99;
+	                  _context9.next = 109;
 	                  break;
 	                }
 
@@ -86768,20 +87373,20 @@
 	                });
 
 	                if (!(typeof _res2 === 'function')) {
-	                  _context7.next = 83;
+	                  _context9.next = 93;
 	                  break;
 	                }
 
-	                _context7.next = 81;
+	                _context9.next = 91;
 	                return _res2();
 
-	              case 81:
-	                _context7.next = 99;
+	              case 91:
+	                _context9.next = 109;
 	                break;
 
-	              case 83:
+	              case 93:
 	                if (!isObject$5(_res2)) {
-	                  _context7.next = 96;
+	                  _context9.next = 106;
 	                  break;
 	                }
 
@@ -86792,48 +87397,48 @@
 	                });
 
 	                if (!(typeof _withFns === 'function')) {
-	                  _context7.next = 91;
+	                  _context9.next = 101;
 	                  break;
 	                }
 
-	                _context7.next = 89;
+	                _context9.next = 99;
 	                return _withFns();
 
-	              case 89:
-	                _context7.next = 94;
+	              case 99:
+	                _context9.next = 104;
 	                break;
 
-	              case 91:
+	              case 101:
 	                if (!(Array.isArray(_withFns) && typeof _withFns[1] === 'function')) {
-	                  _context7.next = 94;
+	                  _context9.next = 104;
 	                  break;
 	                }
 
-	                _context7.next = 94;
+	                _context9.next = 104;
 	                return _withFns[1]();
 
-	              case 94:
-	                _context7.next = 99;
+	              case 104:
+	                _context9.next = 109;
 	                break;
 
-	              case 96:
+	              case 106:
 	                if (!(Array.isArray(_res2) && typeof (_res2 === null || _res2 === void 0 ? void 0 : _res2[1]) === 'function')) {
-	                  _context7.next = 99;
+	                  _context9.next = 109;
 	                  break;
 	                }
 
-	                _context7.next = 99;
+	                _context9.next = 109;
 	                return _res2[1]();
 
-	              case 99:
+	              case 109:
 	              case "end":
-	                return _context7.stop();
+	                return _context9.stop();
 	            }
 	          }
-	        }, _callee7, this);
+	        }, _callee9, this);
 	      }));
 
-	      function handleIfCommand(_x6) {
+	      function handleIfCommand(_x8) {
 	        return _handleIfCommand.apply(this, arguments);
 	      }
 
@@ -86852,36 +87457,56 @@
 
 	  }, {
 	    key: "updateObject",
-	    value: function updateObject(_ref7) {
-	      var dataKey = _ref7.dataKey,
-	          dataObject = _ref7.dataObject,
-	          dataObjectKey = _ref7.dataObjectKey;
-	      var path;
+	    value: function () {
+	      var _updateObject = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee10(_ref8) {
+	        var dataKey, dataObject, dataObjectKey, path, pathArr, newVal;
+	        return regenerator.wrap(function _callee10$(_context10) {
+	          while (1) {
+	            switch (_context10.prev = _context10.next) {
+	              case 0:
+	                dataKey = _ref8.dataKey, dataObject = _ref8.dataObject, dataObjectKey = _ref8.dataObjectKey;
 
-	      if (dataKey.startsWith('.')) {
-	        path = dataKey.substring(1, dataKey.length);
-	      } else {
-	        path = dataKey;
+	                if (dataKey.startsWith('.')) {
+	                  path = dataKey.substring(1, dataKey.length);
+	                } else {
+	                  path = dataKey;
+	                }
+
+	                pathArr = path.split('.');
+	                newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject;
+	                this.newDispatch({
+	                  type: 'SET_VALUE',
+	                  payload: {
+	                    dataKey: pathArr,
+	                    value: newVal
+	                  }
+	                });
+	                _context10.next = 7;
+	                return this.dispatch({
+	                  type: 'update-localStorage'
+	                });
+
+	              case 7:
+	                this.emit('stateChanged', {
+	                  name: 'update',
+	                  path: dataKey,
+	                  newVal: dataObject
+	                });
+
+	              case 8:
+	              case "end":
+	                return _context10.stop();
+	            }
+	          }
+	        }, _callee10, this);
+	      }));
+
+	      function updateObject(_x9) {
+	        return _updateObject.apply(this, arguments);
 	      }
 
-	      var pathArr = path.split('.');
-	      var newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject;
-	      this.newDispatch({
-	        type: 'SET_VALUE',
-	        payload: {
-	          dataKey: pathArr,
-	          value: newVal
-	        }
-	      });
-	      this.dispatch({
-	        type: 'update-localStorage'
-	      });
-	      this.emit('stateChanged', {
-	        name: 'update',
-	        path: dataKey,
-	        newVal: dataObject
-	      });
-	    }
+	      return updateObject;
+	    }()
 	    /**
 	     * Runs the init functions of the page matching the pageName.
 	     *
@@ -86891,12 +87516,12 @@
 	  }, {
 	    key: "runInit",
 	    value: function () {
-	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee8(pageName) {
+	      var _runInit = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee11(pageName) {
 	        var boundDispatch, page, init, currIndex, command, actionType, dataKey, dataObject, funcName, _command$if, condExpression, elseEffect, condResult, updatedPage, populatedUpdatedPage, populatedUpdatedPageWithFns;
 
-	        return regenerator.wrap(function _callee8$(_context8) {
+	        return regenerator.wrap(function _callee11$(_context11) {
 	          while (1) {
-	            switch (_context8.prev = _context8.next) {
+	            switch (_context11.prev = _context11.next) {
 	              case 0:
 	                boundDispatch = this.dispatch.bind(this); //run init commands if any
 
@@ -86904,7 +87529,7 @@
 	                init = page.init;
 
 	                if (!init) {
-	                  _context8.next = 65;
+	                  _context11.next = 66;
 	                  break;
 	                }
 
@@ -86914,7 +87539,7 @@
 
 	              case 5:
 	                if (!(this.initCallQueue.length > 0)) {
-	                  _context8.next = 65;
+	                  _context11.next = 66;
 	                  break;
 	                }
 
@@ -86922,72 +87547,75 @@
 	                command = init[currIndex];
 
 	                if (!(typeof command === 'function')) {
-	                  _context8.next = 19;
+	                  _context11.next = 19;
 	                  break;
 	                }
 
-	                _context8.prev = 9;
-	                _context8.next = 12;
+	                _context11.prev = 9;
+	                _context11.next = 12;
 	                return command();
 
 	              case 12:
-	                _context8.next = 17;
+	                _context11.next = 17;
 	                break;
 
 	              case 14:
-	                _context8.prev = 14;
-	                _context8.t0 = _context8["catch"](9);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context8.t0);
+	                _context11.prev = 14;
+	                _context11.t0 = _context11["catch"](9);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context11.t0);
 
 	              case 17:
-	                _context8.next = 57;
+	                _context11.next = 58;
 	                break;
 
 	              case 19:
 	                if (!(isObject$5(command) && 'actionType' in command)) {
-	                  _context8.next = 34;
+	                  _context11.next = 35;
 	                  break;
 	                }
 
 	                actionType = command.actionType, dataKey = command.dataKey, dataObject = command.dataObject, funcName = command.funcName;
-	                _context8.t1 = actionType;
-	                _context8.next = _context8.t1 === 'updateObject' ? 24 : _context8.t1 === 'builtIn' ? 26 : 31;
+	                _context11.t1 = actionType;
+	                _context11.next = _context11.t1 === 'updateObject' ? 24 : _context11.t1 === 'builtIn' ? 27 : 32;
 	                break;
 
 	              case 24:
-	                this.updateObject({
+	                _context11.next = 26;
+	                return this.updateObject({
 	                  dataKey: dataKey,
 	                  dataObject: dataObject
 	                });
-	                return _context8.abrupt("break", 32);
 
 	              case 26:
+	                return _context11.abrupt("break", 33);
+
+	              case 27:
 	                if (!(funcName === 'videoChat')) {
-	                  _context8.next = 30;
+	                  _context11.next = 31;
 	                  break;
 	                }
 
 	                if (!(funcName in this.root.builtIn && typeof this.root.builtIn[funcName] === 'function')) {
-	                  _context8.next = 30;
+	                  _context11.next = 31;
 	                  break;
 	                }
 
-	                _context8.next = 30;
+	                _context11.next = 31;
 	                return this.root.builtIn[funcName](command);
 
-	              case 30:
-	                return _context8.abrupt("break", 32);
-
 	              case 31:
-	                return _context8.abrupt("return");
+	                return _context11.abrupt("break", 33);
 
 	              case 32:
-	                _context8.next = 57;
+	                return _context11.abrupt("return");
+
+	              case 33:
+	                _context11.next = 58;
 	                break;
 
-	              case 34:
+	              case 35:
 	                if (!(isObject$5(command) && 'if' in command)) {
-	                  _context8.next = 47;
+	                  _context11.next = 48;
 	                  break;
 	                }
 
@@ -86995,61 +87623,61 @@
 	                _command$if = slicedToArray(command['if'], 3), condExpression = _command$if[0], elseEffect = _command$if[2];
 
 	                if (!(typeof condExpression === 'function')) {
-	                  _context8.next = 45;
+	                  _context11.next = 46;
 	                  break;
 	                }
 
-	                _context8.next = 39;
+	                _context11.next = 40;
 	                return condExpression();
 
-	              case 39:
-	                condResult = _context8.sent;
+	              case 40:
+	                condResult = _context11.sent;
 
 	                if (!(!condResult && isObject$5(elseEffect) && 'goto' in elseEffect && typeof elseEffect['goto'] === 'string')) {
-	                  _context8.next = 45;
+	                  _context11.next = 46;
 	                  break;
 	                }
 
 	                if (!('goto' in this.root.builtIn && typeof this.root.builtIn['goto'] === 'function')) {
-	                  _context8.next = 45;
+	                  _context11.next = 46;
 	                  break;
 	                }
 
-	                _context8.next = 44;
+	                _context11.next = 45;
 	                return this.root.builtIn['goto'](elseEffect['goto']);
 
-	              case 44:
-	                return _context8.abrupt("return");
-
 	              case 45:
-	                _context8.next = 57;
+	                return _context11.abrupt("return");
+
+	              case 46:
+	                _context11.next = 58;
 	                break;
 
-	              case 47:
+	              case 48:
 	                if (!Array.isArray(command)) {
-	                  _context8.next = 57;
+	                  _context11.next = 58;
 	                  break;
 	                }
 
 	                if (!(typeof command[0][1] === 'function')) {
-	                  _context8.next = 57;
+	                  _context11.next = 58;
 	                  break;
 	                }
 
-	                _context8.prev = 49;
-	                _context8.next = 52;
+	                _context11.prev = 50;
+	                _context11.next = 53;
 	                return command[0][1]();
 
-	              case 52:
-	                _context8.next = 57;
+	              case 53:
+	                _context11.next = 58;
 	                break;
 
-	              case 54:
-	                _context8.prev = 54;
-	                _context8.t2 = _context8["catch"](49);
-	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context8.t2);
+	              case 55:
+	                _context11.prev = 55;
+	                _context11.t2 = _context11["catch"](50);
+	                throw new UnableToExecuteFn("An error occured while executing ".concat(pageName, ".init"), _context11.t2);
 
-	              case 57:
+	              case 58:
 	                //updating page after command has been called
 	                updatedPage = this.root[pageName]; //populateObject again to populate any data that was dependant on the command call
 
@@ -87072,18 +87700,18 @@
 	                    pageName: pageName
 	                  }
 	                });
-	                _context8.next = 5;
+	                _context11.next = 5;
 	                break;
 
-	              case 65:
+	              case 66:
 	              case "end":
-	                return _context8.stop();
+	                return _context11.stop();
 	            }
 	          }
-	        }, _callee8, this, [[9, 14], [49, 54]]);
+	        }, _callee11, this, [[9, 14], [50, 55]]);
 	      }));
 
-	      function runInit(_x7) {
+	      function runInit(_x10) {
 	        return _runInit.apply(this, arguments);
 	      }
 
@@ -87158,9 +87786,9 @@
 
 	  }, {
 	    key: "setValue",
-	    value: function setValue(_ref8) {
-	      var path = _ref8.path,
-	          value = _ref8.value;
+	    value: function setValue(_ref9) {
+	      var path = _ref9.path,
+	          value = _ref9.value;
 	      var pathArr = path.split('.');
 	      this.newDispatch({
 	        type: 'SET_VALUE',
@@ -87182,9 +87810,9 @@
 
 	  }, {
 	    key: "addValue",
-	    value: function addValue(_ref9) {
-	      var path = _ref9.path,
-	          value = _ref9.value;
+	    value: function addValue(_ref10) {
+	      var path = _ref10.path,
+	          value = _ref10.value;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -87215,9 +87843,9 @@
 
 	  }, {
 	    key: "removeValue",
-	    value: function removeValue(_ref10) {
-	      var path = _ref10.path,
-	          predicate = _ref10.predicate;
+	    value: function removeValue(_ref11) {
+	      var path = _ref11.path,
+	          predicate = _ref11.predicate;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -87259,10 +87887,10 @@
 
 	  }, {
 	    key: "replaceValue",
-	    value: function replaceValue(_ref11) {
-	      var path = _ref11.path,
-	          predicate = _ref11.predicate,
-	          value = _ref11.value;
+	    value: function replaceValue(_ref12) {
+	      var path = _ref12.path,
+	          predicate = _ref12.predicate,
+	          value = _ref12.value;
 	      var pathArr = path.split('.');
 
 	      var currVal = get_1(this.root, pathArr);
@@ -87353,10 +87981,10 @@
 	        switch (action.type) {
 	          case 'SET_VALUE':
 	            {
-	              var _action$payload6 = action.payload,
-	                  pageName = _action$payload6.pageName,
-	                  dataKey = _action$payload6.dataKey,
-	                  value = _action$payload6.value;
+	              var _action$payload7 = action.payload,
+	                  pageName = _action$payload7.pageName,
+	                  dataKey = _action$payload7.dataKey,
+	                  value = _action$payload7.value;
 
 	              if (typeof pageName === 'undefined') {
 	                set_1(draft, dataKey, value);
@@ -87384,16 +88012,16 @@
 
 	          case 'SET_LOCAL_PROPERTIES':
 	            {
-	              var _action$payload7 = action.payload,
-	                  _properties2 = _action$payload7.properties,
-	                  _pageName6 = _action$payload7.pageName;
+	              var _action$payload8 = action.payload,
+	                  _properties2 = _action$payload8.properties,
+	                  _pageName7 = _action$payload8.pageName;
 
 	              for (var _i4 = 0, _Object$entries4 = Object.entries(_properties2); _i4 < _Object$entries4.length; _i4++) {
 	                var _Object$entries4$_i = slicedToArray(_Object$entries4[_i4], 2),
 	                    _key = _Object$entries4$_i[0],
-	                    _val3 = _Object$entries4$_i[1];
+	                    _val = _Object$entries4$_i[1];
 
-	                set_1(draft[_pageName6], _key, _val3);
+	                set_1(draft[_pageName7], _key, _val);
 	              }
 
 	              break;
@@ -87406,9 +88034,9 @@
 	              for (var _i5 = 0, _Object$entries5 = Object.entries(_builtInFns); _i5 < _Object$entries5.length; _i5++) {
 	                var _Object$entries5$_i = slicedToArray(_Object$entries5[_i5], 2),
 	                    _key2 = _Object$entries5$_i[0],
-	                    _val4 = _Object$entries5$_i[1];
+	                    _val2 = _Object$entries5$_i[1];
 
-	                set_1(draft['builtIn'], _key2, _val4);
+	                set_1(draft['builtIn'], _key2, _val2);
 	              }
 
 	              break;
@@ -87416,8 +88044,8 @@
 
 	          case 'DELETE_PAGE':
 	            {
-	              var _pageName7 = action.payload.pageName;
-	              delete draft[_pageName7];
+	              var _pageName8 = action.payload.pageName;
+	              delete draft[_pageName8];
 	              break;
 	            }
 
@@ -87561,7 +88189,7 @@
 
 	function _objectSpread$j(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$j(Object(source), true).forEach(function (key) { defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$j(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 	var testingPlayground = asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee2() {
-	  var cadl, vc;
+	  var cadl, vc, red;
 	  return regenerator.wrap(function _callee2$(_context2) {
 	    while (1) {
 	      switch (_context2.prev = _context2.next) {
@@ -87569,7 +88197,7 @@
 	          // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
 	          // await test_login({ password: 'letmein12' })
 	          cadl = new CADL(_objectSpread$j(_objectSpread$j({}, defaultConfig$1), {}, {
-	            configUrl: 'https://public.aitmed.com/config/meet2.yml',
+	            configUrl: 'https://public.aitmed.com/config/meet11.yml',
 	            aspectRatio: 3
 	          }));
 	          _context2.next = 3;
@@ -87582,7 +88210,7 @@
 	        case 5:
 	          vc = _context2.sent;
 	          _context2.next = 8;
-	          return cadl.initPage('CreateNewAccount', [], {
+	          return cadl.initPage('SignIn', [], {
 	            builtIn: {
 	              "goto": function _goto() {
 	                return console.log('lolo');
@@ -87591,6 +88219,10 @@
 	          });
 
 	        case 8:
+	          red = cadl.root.builtIn.eccNaCl.decryptAES({
+	            key: 'letmein12',
+	            message: 'HJFpLPj1NST7MCaeWRryW5lGEjRdWXrU9PhGHExfekIoaahgvyD2Gk4R4noli7JQMBpkhMWH3MYN/I5PBS4Ks/oo4aOUT4Bh'
+	          });
 	          debugger; // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
 	          // await cadl.initPage('CreateNewAccount')
 	          // await cadl.root['CreateNewAccount'].formData.vertexAPI.store({
@@ -87603,19 +88235,19 @@
 	          // })
 	          // debugger
 
-	          _context2.next = 11;
+	          _context2.next = 12;
 	          return cadl.root.builtIn['signIn']({
 	            password: 'letmein123',
 	            phoneNumber: '+1 8889997654',
 	            verificationCode: vc
 	          });
 
-	        case 11:
+	        case 12:
 	          debugger;
-	          _context2.next = 14;
+	          _context2.next = 15;
 	          return cadl.root.actions['SignIn'].update();
 
-	        case 14:
+	        case 15:
 	          setTimeout( /*#__PURE__*/asyncToGenerator( /*#__PURE__*/regenerator.mark(function _callee() {
 	            var testDoc;
 	            return regenerator.wrap(function _callee$(_context) {
@@ -87752,7 +88384,7 @@
 	          //     }
 	          // }
 
-	        case 15:
+	        case 16:
 	        case "end":
 	          return _context2.stop();
 	      }

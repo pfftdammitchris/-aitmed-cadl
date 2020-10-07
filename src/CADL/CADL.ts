@@ -21,8 +21,9 @@ import {
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
 } from './utils'
-import { isObject, asyncForEach } from '../utils'
+import { isObject, asyncForEach, mergeDeep } from '../utils'
 import builtInFns from './services/builtIn'
+// import SignIn from './__mocks__/SignIn'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -228,7 +229,7 @@ export default class CADL extends EventEmitter {
             },
           },
         })
-        this.dispatch({
+        await this.dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
           payload: {
@@ -286,8 +287,8 @@ export default class CADL extends EventEmitter {
     }
     const processedFormData = this.processPopulate({
       source: pageCADL,
-      lookFor: ['.', '..', '=', '~'],
-      skip: ['update', 'components', 'init', ...skip],
+      lookFor: ['.', '..', '~'],
+      skip: ['update', 'save', 'check', 'init', 'components', ...skip],
       withFns: true,
       pageName,
     })
@@ -296,8 +297,16 @@ export default class CADL extends EventEmitter {
     //process components
     const processedWithFns = this.processPopulate({
       source: processedFormData,
-      lookFor: ['.', '..', '=', '_', '~'],
-      skip: ['update', 'formData', 'components', ...skip],
+      lookFor: ['.', '..', '_', '~'],
+      skip: [
+        'update',
+        'save',
+        'check',
+        'init',
+        'formData',
+        'components',
+        ...skip,
+      ],
       withFns: true,
       pageName,
     })
@@ -338,7 +347,7 @@ export default class CADL extends EventEmitter {
           }: any = command
           switch (actionType) {
             case 'updateObject': {
-              this.updateObject({ dataKey, dataObject })
+              await this.updateObject({ dataKey, dataObject })
               break
             }
             case 'builtIn': {
@@ -353,7 +362,7 @@ export default class CADL extends EventEmitter {
               break
             }
             case 'evalObject': {
-              this.dispatch({
+              await this.dispatch({
                 type: 'eval-object',
                 payload: { pageName, updateObject: object },
               })
@@ -385,7 +394,7 @@ export default class CADL extends EventEmitter {
         let populatedUpdatedPage = populateObject({
           source: updatedPage,
           lookFor: '..',
-          skip: ['components'],
+          skip: ['update', 'save', 'check', 'components'],
           locations: [this.root[pageName]],
         })
 
@@ -412,16 +421,16 @@ export default class CADL extends EventEmitter {
     //process components
     const processedComponents = this.processPopulate({
       source: processedPage,
-      lookFor: ['.', '..', '=', '_', '~'],
-      skip: ['update', 'formData', ...skip],
+      lookFor: ['.', '..', '_', '~'],
+      skip: ['update', 'save', 'check', 'init', 'formData', 'dataIn', ...skip],
       withFns: true,
       pageName,
     })
     //process components again to fill in new values
     const processedComponentsAgain = this.processPopulate({
       source: processedComponents,
-      lookFor: ['.', '..', '=', '_', '~'],
-      skip: ['update', 'formData', ...skip],
+      lookFor: ['.', '..', '_', '~'],
+      skip: ['update', 'save', 'check', 'init', 'formData', 'dataIn', ...skip],
       withFns: true,
       pageName,
     })
@@ -451,6 +460,10 @@ export default class CADL extends EventEmitter {
    * @throws {UnableToParseYAML} -When unable to parse yaml file
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
+    //TODO: remove after testing
+    //TODO used for local testing
+    // if (pageName === 'SignIn') return SignIn
+
     let pageCADL
     let pageUrl
     if (pageName.startsWith('~')) {
@@ -589,7 +602,7 @@ export default class CADL extends EventEmitter {
    *
    * @param action
    */
-  private dispatch(action: { type: string; payload?: any }) {
+  private async dispatch(action: { type: string; payload?: any }) {
     switch (action.type) {
       case 'populate': {
         const { pageName } = action.payload
@@ -606,13 +619,13 @@ export default class CADL extends EventEmitter {
           lookFor: '..',
           locations: [this.root, this.root[pageName]],
         })
-        const populateAfterInheriting = populateObject({
-          source: populateWithSelf,
-          lookFor: '=',
-          locations: [this.root, this.root[pageName]],
-        })
+        // const populateAfterInheriting = populateObject({
+        //   source: populateWithSelf,
+        //   lookFor: '=',
+        //   locations: [this.root, this.root[pageName]],
+        // })
         const populateMyBaseUrl = populateObject({
-          source: populateAfterInheriting,
+          source: populateWithSelf,
           lookFor: '~',
           locations: [this],
         })
@@ -626,8 +639,17 @@ export default class CADL extends EventEmitter {
           type: 'SET_ROOT_PROPERTIES',
           payload: { properties: { [pageName]: withFNs } },
         })
-        this.dispatch({ type: 'update-localStorage' })
+        await this.dispatch({ type: 'update-localStorage' })
         break
+      }
+      case 'populate-object': {
+        const { pageName, object } = action.payload
+        const populatedObject = populateObject({
+          source: object,
+          lookFor: '=',
+          locations: [this.root, this.root[pageName]],
+        })
+        return populatedObject
       }
       case 'update-data': {
         const { pageName, dataKey, data: rawData } = action.payload
@@ -697,7 +719,7 @@ export default class CADL extends EventEmitter {
           })
         }
 
-        this.dispatch({ type: 'update-localStorage' })
+        await this.dispatch({ type: 'update-localStorage' })
 
         break
       }
@@ -711,40 +733,36 @@ export default class CADL extends EventEmitter {
       }
       case 'eval-object': {
         const { pageName, updateObject } = action.payload
-        const populateWithRoot = populateObject({
-          source: updateObject,
-          lookFor: '.',
-          locations: [this.root, this.root[pageName]],
-        })
-        const populateWithSelf = populateObject({
-          source: populateWithRoot,
-          lookFor: '..',
-          locations: [this.root, this.root[pageName]],
-        })
-        const populateAfterInheriting = populateObject({
-          source: populateWithSelf,
-          lookFor: '=',
-          locations: [this, this.root, this.root[pageName]],
-        })
-        const populateAfterAttachingMyBaseUrl = populateObject({
-          source: populateAfterInheriting,
-          lookFor: '~',
-          locations: [this],
-        })
 
-        if (isObject(populateAfterAttachingMyBaseUrl)) {
-          const command = populateAfterInheriting
+        if (isObject(updateObject)) {
+          const command = updateObject
+
           const objectKeys = Object.keys(command)
           asyncForEach(objectKeys, async (key) => {
+            const populatedCommand = await this.dispatch({
+              type: 'populate-object',
+              payload: {
+                pageName,
+                object: command,
+              },
+            })
             if (key === 'if') {
-              await this.handleIfCommand({ pageName, ifCommand: command[key] })
+              const result = await this.handleIfCommand({
+                pageName,
+                ifCommand: populatedCommand[key],
+              })
+              if (isObject(result)) return result
             } else if (!key.startsWith('=')) {
               let trimPath, val
-              val = command[key]
+              val = populatedCommand[key]
               if (key.startsWith('..')) {
                 trimPath = key.substring(2, key.length - 1)
                 const pathArr = trimPath.split('.')
 
+                const currValue = _.get(this.root, [pageName, ...pathArr]) || ''
+                if (isObject(currValue)) {
+                  val = mergeDeep(currValue, val)
+                }
                 this.newDispatch({
                   type: 'SET_VALUE',
                   payload: {
@@ -762,6 +780,10 @@ export default class CADL extends EventEmitter {
                 trimPath = key.substring(1, key.length - 1)
                 const pathArr = trimPath.split('.')
 
+                const currValue = _.get(this.root, [...pathArr]) || ''
+                if (isObject(currValue)) {
+                  val = mergeDeep(currValue, val)
+                }
                 this.newDispatch({
                   type: 'SET_VALUE',
                   payload: {
@@ -778,12 +800,12 @@ export default class CADL extends EventEmitter {
             } else if (key.startsWith('=')) {
               const trimPath = key.substring(2, key.length)
               const pathArr = trimPath.split('.')
-              let val =
+              let func =
                 _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
 
-              if (isObject(val)) {
+              if (isObject(func)) {
                 const populateWithRoot = populateObject({
-                  source: val,
+                  source: func,
                   lookFor: '.',
                   locations: [this.root, this.root[pageName]],
                 })
@@ -806,29 +828,67 @@ export default class CADL extends EventEmitter {
                 })
 
                 const boundDispatch = this.dispatch.bind(this)
-                val = attachFns({
+                func = attachFns({
                   cadlObject: populateAfterAttachingMyBaseUrl,
                   dispatch: boundDispatch,
                 })
-                await val()
-              } else if (typeof val === 'function') {
-                await val()
+              }
+              if (typeof func === 'function') {
+                if (isObject(populatedCommand[key])) {
+                  const { dataIn, dataOut } = populatedCommand[key]
+
+                  const result = await func(dataIn)
+                  const pathArr = dataOut.split('.')
+                  this.newDispatch({
+                    type: 'SET_VALUE',
+                    payload: {
+                      dataKey: pathArr,
+                      value: result,
+                    },
+                  })
+                  this.emit('stateChanged', {
+                    name: 'update',
+                    path: `${dataOut}`,
+                    newVal: result,
+                  })
+                } else {
+                  await func()
+                }
+              } else if (Array.isArray(func)) {
+                func = func[1]
+                await func()
               }
             }
           })
-        } else if (Array.isArray(populateAfterInheriting)) {
-          populateAfterInheriting.map((command) => {
-            const objectKeys = Object.keys(command)
-            asyncForEach(objectKeys, async (key) => {
+        } else if (Array.isArray(updateObject)) {
+          await asyncForEach(updateObject, async (command) => {
+            const populatedCommand = await this.dispatch({
+              type: 'populate-object',
+              payload: {
+                pageName,
+                object: command,
+              },
+            })
+            const commandKeys = Object.keys(populatedCommand)
+            await asyncForEach(commandKeys, async (key) => {
               if (key === 'if') {
-                await this.handleIfCommand({ pageName, ifCommand: command })
+                const result = await this.handleIfCommand({
+                  pageName,
+                  ifCommand: populatedCommand,
+                })
+                if (isObject(result)) return result
               } else if (!key.startsWith('=')) {
                 let trimPath, val
-                val = command[key]
+                val = populatedCommand[key]
                 if (key.startsWith('..')) {
                   trimPath = key.substring(2, key.length - 1)
                   const pathArr = trimPath.split('.')
 
+                  const currValue =
+                    _.get(this.root, [pageName, ...pathArr]) || ''
+                  if (isObject(currValue)) {
+                    val = mergeDeep(currValue, val)
+                  }
                   this.newDispatch({
                     type: 'SET_VALUE',
                     payload: {
@@ -846,6 +906,10 @@ export default class CADL extends EventEmitter {
                   trimPath = key.substring(1, key.length - 1)
                   const pathArr = trimPath.split('.')
 
+                  const currValue = _.get(this.root, [...pathArr]) || ''
+                  if (isObject(currValue)) {
+                    val = mergeDeep(currValue, val)
+                  }
                   this.newDispatch({
                     type: 'SET_VALUE',
                     payload: {
@@ -862,13 +926,13 @@ export default class CADL extends EventEmitter {
               } else if (key.startsWith('=')) {
                 const trimPath = key.substring(2, key.length)
                 const pathArr = trimPath.split('.')
-                let val =
+                let func =
                   _.get(this.root, pathArr) ||
                   _.get(this.root[pageName], pathArr)
 
-                if (isObject(val)) {
+                if (isObject(func)) {
                   const populateWithRoot = populateObject({
-                    source: val,
+                    source: func,
                     lookFor: '.',
                     locations: [this.root, this.root[pageName]],
                   })
@@ -891,13 +955,35 @@ export default class CADL extends EventEmitter {
                   })
 
                   const boundDispatch = this.dispatch.bind(this)
-                  val = attachFns({
+                  func = attachFns({
                     cadlObject: populateAfterAttachingMyBaseUrl,
                     dispatch: boundDispatch,
                   })
-                  await val()
-                } else if (typeof val === 'function') {
-                  await val()
+                }
+                if (typeof func === 'function') {
+                  if (isObject(populatedCommand[key])) {
+                    const { dataIn, dataOut } = populatedCommand[key]
+                    const result = await func(dataIn)
+
+                    const pathArr = dataOut.split('.')
+                    this.newDispatch({
+                      type: 'SET_VALUE',
+                      payload: {
+                        dataKey: pathArr,
+                        value: result,
+                      },
+                    })
+                    this.emit('stateChanged', {
+                      name: 'update',
+                      path: `${dataOut}`,
+                      newVal: result,
+                    })
+                  } else {
+                    await func()
+                  }
+                } else if (Array.isArray(func)) {
+                  func = func[1]
+                  await func()
                 }
               }
             })
@@ -906,13 +992,13 @@ export default class CADL extends EventEmitter {
         //populates Global because this object is instantiated once
         //unlike pages that are instantiated multiple times and can be repopulated
         //when they are loaded again
-        this.dispatch({
+        await this.dispatch({
           type: 'populate',
           payload: { pageName: 'Global' },
         })
 
         //update the localStorage root
-        this.dispatch({
+        await this.dispatch({
           type: 'update-localStorage',
         })
         break
@@ -1002,11 +1088,13 @@ export default class CADL extends EventEmitter {
         isObject(ifTrueEffect) &&
         Object.keys(ifTrueEffect)?.[0]?.includes('@')
       ) {
-        this.dispatch({
+        await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: { ...ifTrueEffect } },
         })
         return
+      } else if (isObject(ifTrueEffect) && 'actionType' in ifTrueEffect) {
+        return ifTrueEffect
       } else if (ifTrueEffect.startsWith('..')) {
         lookFor = '..'
       } else if (ifTrueEffect.startsWith('.')) {
@@ -1061,11 +1149,13 @@ export default class CADL extends EventEmitter {
         isObject(ifFalseEffect) &&
         Object.keys(ifFalseEffect)?.[0]?.includes('@')
       ) {
-        this.dispatch({
+        await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: { ...ifFalseEffect } },
         })
         return
+      } else if (isObject(ifFalseEffect) && 'actionType' in ifFalseEffect) {
+        return ifFalseEffect
       } else if (ifFalseEffect.startsWith('..')) {
         lookFor = '..'
       } else if (ifFalseEffect.startsWith('.')) {
@@ -1112,7 +1202,7 @@ export default class CADL extends EventEmitter {
    * @emits CADL#stateChanged
    *
    */
-  public updateObject({
+  public async updateObject({
     dataKey,
     dataObject,
     dataObjectKey,
@@ -1138,7 +1228,7 @@ export default class CADL extends EventEmitter {
       },
     })
 
-    this.dispatch({
+    await this.dispatch({
       type: 'update-localStorage',
     })
 
@@ -1179,7 +1269,7 @@ export default class CADL extends EventEmitter {
           const { actionType, dataKey, dataObject, funcName }: any = command
           switch (actionType) {
             case 'updateObject': {
-              this.updateObject({ dataKey, dataObject })
+              await this.updateObject({ dataKey, dataObject })
               break
             }
             case 'builtIn': {

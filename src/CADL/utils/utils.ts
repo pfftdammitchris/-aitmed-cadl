@@ -333,7 +333,7 @@ function replaceEvalObject({
   dispatch: Function
 }): Record<string, any> {
   const cadlCopy = _.cloneDeep(cadlObject || {})
-  Object.keys(cadlCopy).forEach((key) => {
+  Object.keys(cadlCopy).forEach(async (key) => {
     if (
       key === 'object' &&
       cadlCopy.actionType === 'evalObject' &&
@@ -348,7 +348,7 @@ function replaceEvalObject({
         pageName === 'CreateNewAccount' ||
         pageName === 'SignUp'
       ) {
-        dispatch({
+        await dispatch({
           type: 'add-fn',
           payload: {
             pageName,

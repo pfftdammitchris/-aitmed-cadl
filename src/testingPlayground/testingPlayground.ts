@@ -16,17 +16,22 @@ export default (async function () {
 
   const cadl = new CADL({
     ...defaultConfig,
-    configUrl: 'https://public.aitmed.com/config/meet2.yml',
+    configUrl: 'https://public.aitmed.com/config/meet11.yml',
     aspectRatio: 3,
   })
 
   await cadl.init()
 
   const vc = await Account.requestVerificationCode('+1 8889997654')
-  await cadl.initPage('CreateNewAccount', [], {
+  await cadl.initPage('SignIn', [], {
     builtIn: { goto: () => console.log('lolo') },
   })
 
+  const red = cadl.root.builtIn.eccNaCl.decryptAES({
+    key: 'letmein12',
+    message:
+      'HJFpLPj1NST7MCaeWRryW5lGEjRdWXrU9PhGHExfekIoaahgvyD2Gk4R4noli7JQMBpkhMWH3MYN/I5PBS4Ks/oo4aOUT4Bh',
+  })
   debugger
   // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
 

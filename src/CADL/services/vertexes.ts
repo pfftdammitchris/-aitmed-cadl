@@ -9,8 +9,19 @@ function get({ pageName, apiObject, dispatch }) {
     const { api, dataKey, dataIn, dataOut, ...options } = _.cloneDeep(
       apiObject || {}
     )
+    //get current object name value
+    const { deat, ...currentVal } = await dispatch({
+      type: 'get-data',
+      payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
+    })
 
-    let res: any[] = []
+    let populatedCurrentVal = await dispatch({
+      type: 'populate-object',
+      payload: { object: currentVal, pageName },
+    })
+
+    let id = populatedCurrentVal?.id
+    let res: Record<string, any> = {}
     try {
       if (store.env === 'test') {
         console.log(
@@ -20,7 +31,7 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
       const { data } = await store.level2SDK.vertexServices.retrieveVertex({
-        idList: [],
+        idList: [id],
         options,
       })
       res = data
@@ -34,25 +45,24 @@ function get({ pageName, apiObject, dispatch }) {
     } catch (error) {
       throw error
     }
-    if (res.length > 0) {
-      dispatch({
-        type: 'update-data',
-        //TODO: handle case for data is an array or an object
-        payload: {
-          pageName,
-          dataKey: dataOut ? dataOut : dataKey,
-          data: res,
-        },
-      })
-      dispatch({
-        type: 'emit-update',
-        payload: {
-          pageName,
-          newVal: res,
-          dataKey: dataOut ? dataOut : dataKey,
-        },
-      })
-    }
+
+    await dispatch({
+      type: 'update-data',
+      //TODO: handle case for data is an array or an object
+      payload: {
+        pageName,
+        dataKey: dataOut ? dataOut : dataKey,
+        data: res,
+      },
+    })
+    await dispatch({
+      type: 'emit-update',
+      payload: {
+        pageName,
+        newVal: res,
+        dataKey: dataOut ? dataOut : dataKey,
+      },
+    })
     return res
   }
 }
@@ -63,7 +73,7 @@ function create({ pageName, apiObject, dispatch }) {
       apiObject || {}
     )
 
-    const currentVal = dispatch({
+    const currentVal = await dispatch({
       type: 'get-data',
       payload: {
         dataKey: dataIn ? dataIn : dataKey,
@@ -127,7 +137,7 @@ function create({ pageName, apiObject, dispatch }) {
       }
     }
     if (res) {
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -136,7 +146,7 @@ function create({ pageName, apiObject, dispatch }) {
           data: res,
         },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,

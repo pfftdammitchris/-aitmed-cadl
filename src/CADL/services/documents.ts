@@ -62,17 +62,17 @@ function get({ pageName, apiObject, dispatch }) {
       throw error
     }
     if (res) {
-      if (Array.isArray(res) && res.length && applicationDataType) {
-        const filteredRes = res.filter((doc) => {
+      if (
+        Array.isArray(res?.document) &&
+        res?.document.length &&
+        applicationDataType
+      ) {
+        const filteredRes = res?.document.filter((doc) => {
           return doc.type.applicationDataType === parseInt(applicationDataType)
         })
-        if (filteredRes.length && parseInt(maxcount) === 1) {
-          res = filteredRes[0]
-        } else {
-          res = filteredRes
-        }
+        res.document = filteredRes
       }
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -81,7 +81,7 @@ function get({ pageName, apiObject, dispatch }) {
           data: res,
         },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,
@@ -100,7 +100,7 @@ function create({ pageName, apiObject, dispatch }) {
     //@ts-ignore
     const { dataKey, dataIn, dataOut, id } = _.cloneDeep(apiObject || {})
 
-    const currentVal = dispatch({
+    const currentVal = await dispatch({
       type: 'get-data',
       payload: {
         dataKey: dataIn ? dataIn : dataKey,
@@ -175,7 +175,7 @@ function create({ pageName, apiObject, dispatch }) {
       }
     }
     if (res) {
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -184,7 +184,7 @@ function create({ pageName, apiObject, dispatch }) {
           data: res,
         },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,

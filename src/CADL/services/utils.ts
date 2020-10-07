@@ -7,7 +7,7 @@ function localSearch({ pageName, apiObject, dispatch }) {
     const { dataKey, filter, source: sourcePath } = _.cloneDeep(apiObject || {})
     let res: any
     try {
-      const source = dispatch({
+      const source = await dispatch({
         type: 'get-data',
         payload: {
           pageName,
@@ -30,7 +30,7 @@ function localSearch({ pageName, apiObject, dispatch }) {
       throw error
     }
     if (Array.isArray(res) && res.length > 0) {
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -39,7 +39,7 @@ function localSearch({ pageName, apiObject, dispatch }) {
           data: res[0],
         },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,

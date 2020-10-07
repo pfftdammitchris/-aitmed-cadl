@@ -1,10 +1,11 @@
 import _ from 'lodash'
-import moment from 'moment'
-import humanizeDuration from 'humanize-duration'
+
 import { Account } from '../../services'
 import { isObject } from '../../utils'
 import store from '../../common/store'
 import Document from '../../services/Document'
+import encryptionServices from './ecc'
+import stringServices from './string'
 
 export { builtIn }
 
@@ -16,7 +17,7 @@ function builtIn({ pageName, apiObject, dispatch }) {
   return async (input?: any) => {
     //@ts-ignore
     const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
-    const currentVal = dispatch({
+    const currentVal = await dispatch({
       type: 'get-data',
       payload: {
         dataKey: dataIn ? dataIn : dataKey,
@@ -47,7 +48,7 @@ function builtIn({ pageName, apiObject, dispatch }) {
       throw error
     }
     if ((Array.isArray(res) && res.length > 0) || isObject(res)) {
-      dispatch({
+      await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
         payload: {
@@ -56,7 +57,7 @@ function builtIn({ pageName, apiObject, dispatch }) {
           data: res,
         },
       })
-      dispatch({
+      await dispatch({
         type: 'emit-update',
         payload: {
           pageName,
@@ -96,7 +97,7 @@ export default function builtInFns(dispatch?: Function) {
       )
       let sk = localStorage.getItem('sk')
       if (dispatch) {
-        dispatch({
+        await dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
           payload: {
@@ -122,7 +123,7 @@ export default function builtInFns(dispatch?: Function) {
       )
       let sk = localStorage.getItem('sk')
       if (dispatch) {
-        dispatch({
+        await dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
           payload: {
@@ -138,7 +139,7 @@ export default function builtInFns(dispatch?: Function) {
       const data = await Account.loginByPassword(password)
       let sk = localStorage.getItem('sk')
       if (dispatch) {
-        dispatch({
+        await dispatch({
           type: 'update-data',
           //TODO: handle case for data is an array or an object
           payload: {
@@ -150,14 +151,7 @@ export default function builtInFns(dispatch?: Function) {
       }
     },
     currentDateTime: (() => Date.now())(),
-    string: {
-      formatUnixtime_en(unixTime: number) {
-        return moment(unixTime * 1000).format('lll')
-      },
-      formatDurationInSecond(unixTime: number) {
-        return humanizeDuration(unixTime * 1000)
-      },
-    },
+    string: stringServices,
     async SignInOk(): Promise<boolean> {
       const status = await Account.getStatus()
       if (status.code !== 0) {
@@ -207,16 +201,9 @@ export default function builtInFns(dispatch?: Function) {
       }
       return false
     },
-    signature(message: string): string {
-      const sig = store.level2SDK.utilServices.signature(message)
-      return sig
+    stringCompare(string1: string, string2: string) {
+      return string1 === string2
     },
-    verifySignature(signature: string, pkSign: string): boolean {
-      const isValid = store.level2SDK.utilServices.verifySignature(
-        signature,
-        pkSign
-      )
-      return isValid
-    },
+    eccNaCl: encryptionServices,
   }
 }
