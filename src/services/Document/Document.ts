@@ -11,7 +11,7 @@ import {
   contentToBlob,
   produceEncryptData,
   produceGzipData,
-  CONTENT_SIZE_LIMIT,
+  // CONTENT_SIZE_LIMIT,
 } from '../Note'
 import { documentToNote } from './utils'
 
