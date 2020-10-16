@@ -28,7 +28,6 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       name: 'UNKNOW_ERROR',
       message: 'Note -> documentToNote -> retrieveEdge -> edge is null',
     })
-
   //TODO
   //currently commented since does not allow comparison between shared notebook
   //and docs from root notebook
@@ -105,7 +104,6 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
         throw 'deat.url is missing'
       }
     }
-
     // Decryption
     const edgeHasBesak = edge.besak && edge.besak !== ''
     const edgeHasEesak = edge.eesak && edge.eesak !== ''
@@ -181,6 +179,10 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     }
     content = null
     isBroken = true
+  }
+  if (content instanceof Blob) {
+    const blobUrl = URL.createObjectURL(content)
+    content = blobUrl
   }
   return {
     ...document,

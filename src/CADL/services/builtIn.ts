@@ -150,6 +150,12 @@ export default function builtInFns(dispatch?: Function) {
         })
       }
     },
+    storeCredentials({ pk, sk, userId }) {
+      localStorage.setItem('sk', sk)
+      localStorage.setItem('pk', pk)
+      localStorage.setItem('user_vid', userId)
+      return
+    },
     currentDateTime: (() => Date.now())(),
     string: stringServices,
     async SignInOk(): Promise<boolean> {
@@ -205,5 +211,18 @@ export default function builtInFns(dispatch?: Function) {
       return string1 === string2
     },
     eccNaCl: encryptionServices,
+    async downloadFromS3(url) {
+      const response = await store.level2SDK.documentServices.downloadDocumentFromS3(
+        { url }
+      )
+      return response?.data
+    },
+    utils: {
+      base64ToBlob({ data }: { data: string }) {
+        const blob = store.level2SDK.utilServices.base64ToBlob(data)
+        const blobUrl = URL.createObjectURL(blob)
+        return blobUrl
+      },
+    },
   }
 }

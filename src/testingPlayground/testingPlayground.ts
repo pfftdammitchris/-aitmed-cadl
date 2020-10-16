@@ -16,7 +16,7 @@ export default (async function () {
 
   const cadl = new CADL({
     ...defaultConfig,
-    configUrl: 'https://public.aitmed.com/config/meet11.yml',
+    configUrl: 'https://public.aitmed.com/config/meet2.yml',
     aspectRatio: 3,
   })
 
@@ -26,13 +26,32 @@ export default (async function () {
   await cadl.initPage('SignIn', [], {
     builtIn: { goto: () => console.log('lolo') },
   })
-
-  const red = cadl.root.builtIn.eccNaCl.decryptAES({
-    key: 'letmein12',
-    message:
-      'HJFpLPj1NST7MCaeWRryW5lGEjRdWXrU9PhGHExfekIoaahgvyD2Gk4R4noli7JQMBpkhMWH3MYN/I5PBS4Ks/oo4aOUT4Bh',
-  })
-  debugger
+  // const { data } = await store.level2SDK.edgeServices.createEdge({
+  //   type: 1010,
+  //   name: {
+  //     phone_number: '+1 8889997654',
+  //   },
+  // })
+  // const { data: fsdfsd } = await store.level2SDK.edgeServices.createEdge({
+  //   type: 1040,
+  //   name: {
+  //     phone_number: '+1 8889997654',
+  //     verification_code: '2121',
+  //   },
+  // })
+  // debugger
+  // const { data: redws } = await store.level2SDK.edgeServices.createEdge({
+  //   type: 1030,
+  //   stime: Date.now(),
+  //   bvid: edge?.deat?.user_id,
+  // })
+  // debugger
+  // const red = cadl.root.builtIn.eccNaCl.decryptAES({
+  //   key: 'letmein12',
+  //   message:
+  //     'HJFpLPj1NST7MCaeWRryW5lGEjRdWXrU9PhGHExfekIoaahgvyD2Gk4R4noli7JQMBpkhMWH3MYN/I5PBS4Ks/oo4aOUT4Bh',
+  // })
+  // debugger
   // cadl.newDispatch({ type: 'SET_VALUE', payload: { pageName: 'SignIn', dataKey: 'formData.password', value: 'ghost' } })
 
   // await cadl.initPage('CreateNewAccount')
@@ -46,7 +65,7 @@ export default (async function () {
   //     verificationCode: vc
   // })
   // debugger
-
+  debugger
   await cadl.root.builtIn['signIn']({
     password: 'letmein123',
     phoneNumber: '+1 8889997654',

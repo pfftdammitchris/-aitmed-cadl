@@ -300,7 +300,7 @@ export default class CADL extends EventEmitter {
       lookFor: ['.', '..', '_', '~'],
       skip: [
         'update',
-        'save',
+        // 'save',
         'check',
         'init',
         'formData',
@@ -394,7 +394,7 @@ export default class CADL extends EventEmitter {
         let populatedUpdatedPage = populateObject({
           source: updatedPage,
           lookFor: '..',
-          skip: ['update', 'save', 'check', 'components'],
+          skip: ['update', 'check', 'components'],
           locations: [this.root[pageName]],
         })
 
@@ -422,19 +422,28 @@ export default class CADL extends EventEmitter {
     const processedComponents = this.processPopulate({
       source: processedPage,
       lookFor: ['.', '..', '_', '~'],
-      skip: ['update', 'save', 'check', 'init', 'formData', 'dataIn', ...skip],
+      skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
       withFns: true,
       pageName,
     })
     //process components again to fill in new values
     const processedComponentsAgain = this.processPopulate({
       source: processedComponents,
-      lookFor: ['.', '..', '_', '~'],
-      skip: ['update', 'save', 'check', 'init', 'formData', 'dataIn', ...skip],
+      lookFor: ['.', '..', '_', '~', '='],
+      skip: [
+        'update',
+        'check',
+        'edge',
+        'document',
+        'vertex',
+        'init',
+        'formData',
+        'dataIn',
+        ...skip,
+      ],
       withFns: true,
       pageName,
     })
-
     let replaceUpdateJob2 = replaceEvalObject({
       pageName,
       cadlObject: processedComponentsAgain,
@@ -733,7 +742,6 @@ export default class CADL extends EventEmitter {
       }
       case 'eval-object': {
         const { pageName, updateObject } = action.payload
-
         if (isObject(updateObject)) {
           const command = updateObject
 
@@ -836,21 +844,22 @@ export default class CADL extends EventEmitter {
               if (typeof func === 'function') {
                 if (isObject(populatedCommand[key])) {
                   const { dataIn, dataOut } = populatedCommand[key]
-
                   const result = await func(dataIn)
-                  const pathArr = dataOut.split('.')
-                  this.newDispatch({
-                    type: 'SET_VALUE',
-                    payload: {
-                      dataKey: pathArr,
-                      value: result,
-                    },
-                  })
-                  this.emit('stateChanged', {
-                    name: 'update',
-                    path: `${dataOut}`,
-                    newVal: result,
-                  })
+                  if (dataOut) {
+                    const pathArr = dataOut.split('.')
+                    this.newDispatch({
+                      type: 'SET_VALUE',
+                      payload: {
+                        dataKey: pathArr,
+                        value: result,
+                      },
+                    })
+                    this.emit('stateChanged', {
+                      name: 'update',
+                      path: `${dataOut}`,
+                      newVal: result,
+                    })
+                  }
                 } else {
                   await func()
                 }
@@ -965,19 +974,21 @@ export default class CADL extends EventEmitter {
                     const { dataIn, dataOut } = populatedCommand[key]
                     const result = await func(dataIn)
 
-                    const pathArr = dataOut.split('.')
-                    this.newDispatch({
-                      type: 'SET_VALUE',
-                      payload: {
-                        dataKey: pathArr,
-                        value: result,
-                      },
-                    })
-                    this.emit('stateChanged', {
-                      name: 'update',
-                      path: `${dataOut}`,
-                      newVal: result,
-                    })
+                    if (dataOut) {
+                      const pathArr = dataOut.split('.')
+                      this.newDispatch({
+                        type: 'SET_VALUE',
+                        payload: {
+                          dataKey: pathArr,
+                          value: result,
+                        },
+                      })
+                      this.emit('stateChanged', {
+                        name: 'update',
+                        path: `${dataOut}`,
+                        newVal: result,
+                      })
+                    }
                   } else {
                     await func()
                   }

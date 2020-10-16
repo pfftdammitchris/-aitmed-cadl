@@ -47,7 +47,10 @@ export const create: NoteTypes.Create = async ({
   // Gzip
   const { data: gzipData, isGzip } = await produceGzipData(blob)
   dType.isGzip = isGzip
-  dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
+
+  // all documents will be on S3 since we cannot save files in memory
+  dType.isOnServer = false
+  // dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
 
   // Encryption
   let esak: Uint8Array | string = ''
@@ -89,7 +92,9 @@ export const create: NoteTypes.Create = async ({
   }
 
   // data must be base64 in name field
-  if (dType.isOnServer) name.data = bs64Data
+  if (dType.isOnServer) {
+    name.data = bs64Data
+  }
   const response = await store.level2SDK.documentServices
     .createDocument({
       eid: edge.eid,
@@ -105,8 +110,7 @@ export const create: NoteTypes.Create = async ({
       message: 'Note -> create -> createDocument -> no response',
     })
   }
-
-  const document: CommonTypes.Doc = response.data
+  const document: CommonTypes.Doc = response.data?.document
   const { deat } = document
 
   if (!dType.isOnServer && deat !== null && deat && deat.url && deat.sig) {

@@ -520,10 +520,11 @@ function populateArray({
     } else if (isObject(elem)) {
       if (
         !(
-          'actionType' in elem &&
-          elem.actionType === 'evalObject' &&
-          elem.object &&
-          isObject(elem.object)
+          ('actionType' in elem &&
+            elem.actionType === 'evalObject' &&
+            elem.object &&
+            isObject(elem.object)) ||
+          Array.isArray(elem.object)
         )
       ) {
         return populateObject({
@@ -591,10 +592,11 @@ function populateObject({
       if (isObject(sourceCopy[key])) {
         if (
           !(
-            'actionType' in sourceCopy[key] &&
-            sourceCopy[key].actionType === 'evalObject' &&
-            sourceCopy[key].object &&
-            isObject(sourceCopy[key].object)
+            ('actionType' in sourceCopy[key] &&
+              sourceCopy[key].actionType === 'evalObject' &&
+              sourceCopy[key].object &&
+              isObject(sourceCopy[key].object)) ||
+            Array.isArray(sourceCopy[key].object)
           )
         ) {
           sourceCopy[key] = populateObject({

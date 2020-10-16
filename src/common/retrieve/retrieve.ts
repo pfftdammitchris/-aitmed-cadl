@@ -25,8 +25,11 @@ const retrieveEdge = async (
     })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
-  return response && Array.isArray(response.data) && response.data.length > 0
-    ? response.data[0]
+  return response &&
+    response.data.edge &&
+    Array.isArray(response.data.edge) &&
+    response.data.edge.length > 0
+    ? response.data.edge[0]
     : null
 }
 

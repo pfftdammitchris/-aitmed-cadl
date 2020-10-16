@@ -1,7 +1,6 @@
 export default {
   SignIn: {
-    module: 'meetingRoom',
-    pageNumber: '3',
+    pageNumber: '30',
     init: [
       {
         if: [
@@ -37,7 +36,7 @@ export default {
           '..loginNewDevice.response.code',
           {
             actionType: 'popUp',
-            'popUpMessage@': '=..loginNewDevice.response.error',
+            '.Global.popUpMessage@': '=..loginNewDevice.response.error',
             popUpView: 'inputVerificationCode',
           },
           'continue',
@@ -52,27 +51,55 @@ export default {
         '=.SignIn.retrieveVertex.vertexAPI.get': '',
       },
       {
-        '.Global.currentUser.vertex@': '=..retrieveVertex.response.vertex[0]',
+        '.Global.currentUser.vertex@': '=..retrieveVertex.response.vertex.0',
       },
       {
         '.Global.currentUser.JWT@': '=..loginUser.response.jwt',
       },
       {
-        '=.Global.contactList.get': '',
-      },
-      {
-        '.Global.contactList.dataCache.loadingDateTime@':
-          '=.Global.currentDateTime',
+        '=.builtIn.storeCredentials': {
+          dataIn: {
+            sk: '=.Global.currentUser.vertex.sk',
+            pk: '=.Global.currentUser.vertex.pk',
+            userId: '=.Global.currentUser.vertex.id',
+          },
+        },
       },
       {
         '.Global.currentUser.dataCache.loadingDateTime@':
           '=.Global.currentDateTime',
       },
+      {
+        '=.Global.rootNotebook.edgeAPI.get': '',
+      },
+      {
+        '.Global.rootNotebook.response.edge@':
+          '=.Global.rootNotebook.response.edge.0',
+      },
+
+      {
+        '.Global.currentUser.dataCache.loadingDateTime@':
+          '=.Global.currentDateTime',
+      },
+      {
+        if: [
+          '=.Global.rootNotebook.response.edge.id',
+          'continue',
+          '=.Global.rootNotebook.edgeAPI.store',
+        ],
+      },
+      {
+        if: [
+          '=.Global.shareNotebook.edge.id',
+          'continue',
+          '=.Global.shareNotebook.edgeAPI.store',
+        ],
+      },
     ],
     formData: {
       countryCode: '+1',
-      phoneNumber: '000-000-0002',
-      password: 'password',
+      phoneNumber: '',
+      password: '',
       code: '',
       sk: '',
       pass: '',
@@ -154,6 +181,9 @@ export default {
     },
     components: [
       {
+        '.BaseCheckView': null,
+      },
+      {
         type: 'view',
         style: {
           left: '0',
@@ -162,7 +192,15 @@ export default {
           height: '1',
         },
         children: [
-          '.LogoSign',
+          {
+            type: 'image',
+            path: 'aitmedLogo.png',
+            style: {
+              left: '0.1',
+              top: '0.05',
+              width: '0.25',
+            },
+          },
           {
             type: 'label',
             text: 'Welcome back',
@@ -274,8 +312,9 @@ export default {
               {
                 type: 'textField',
                 contentType: 'phoneNumber',
-                placeholder: '..formData.phoneNumber',
+                placeholder: 'your phone number',
                 dataKey: 'formData.phoneNumber',
+                required: 'true',
                 style: {
                   textAlign: {
                     x: 'left',
@@ -297,7 +336,7 @@ export default {
           {
             type: 'textField',
             contentType: 'password',
-            placeholder: '..formData.password',
+            placeholder: 'your password',
             dataKey: 'formData.password',
             required: 'true',
             style: {
@@ -305,9 +344,9 @@ export default {
                 x: 'left',
               },
               fontSize: '14',
-              left: '0.134',
+              left: '0.121',
               top: '0.554',
-              width: '0.747',
+              width: '0.76',
               height: '0.041',
               borderWidth: '1',
               border: {
@@ -321,7 +360,7 @@ export default {
             style: {
               color: '0x00000058',
               left: '0.134',
-              top: '0.6',
+              top: '0.62',
               width: '0.747',
               height: '0.041',
               fontSize: '14',
@@ -367,121 +406,6 @@ export default {
           },
           {
             type: 'popUp',
-            viewTag: 'okView',
-            style: {
-              left: '0',
-              top: '0',
-              width: '1',
-              height: '1',
-              backgroundColor: '0x00000066',
-            },
-            children: [
-              {
-                type: 'label',
-                text: 'Please re-input the password',
-                style: {
-                  '.LabelStyle': {
-                    left: '0',
-                    top: '0.04',
-                    width: '0.89333',
-                    height: '0.05',
-                    color: '0x00000088',
-                    fontSize: '20',
-                    fontStyle: 'bold',
-                    display: 'inline',
-                    textAlign: {
-                      x: 'center',
-                      y: 'center',
-                    },
-                  },
-                },
-              },
-              {
-                type: 'divider',
-                style: {
-                  '.DividerStyle': {
-                    left: '0',
-                    top: '0.25436',
-                    width: '0.89333',
-                    height: '0.001',
-                    backgroundColor: '0x00000088',
-                  },
-                },
-              },
-              {
-                type: 'button',
-                onClick: [
-                  {
-                    actionType: 'popUpDismiss',
-                    popUpView: 'okView',
-                  },
-                ],
-                text: 'CANCEL',
-                style: {
-                  '.LabelStyle': {
-                    left: '0',
-                    top: '0.275',
-                    width: '0.42',
-                    height: '0.06812',
-                    color: '0x007affff',
-                    fontSize: '17',
-                    display: 'inline',
-                    textAlign: {
-                      x: 'center',
-                      y: 'center',
-                    },
-                    border: {
-                      style: '5',
-                    },
-                    borderRadius: '15',
-                  },
-                },
-              },
-              {
-                type: 'button',
-                onClick: [
-                  {
-                    actionType: 'popUpDismiss',
-                    popUpView: 'okView',
-                  },
-                ],
-                text: 'OK',
-                style: {
-                  '.LabelStyle': {
-                    left: '0.45',
-                    top: '0.275',
-                    width: '0.42',
-                    height: '0.06812',
-                    color: '0x007affff',
-                    fontSize: '17',
-                    display: 'inline',
-                    textAlign: {
-                      x: 'center',
-                      y: 'center',
-                    },
-                    border: {
-                      style: '5',
-                    },
-                    borderRadius: '15',
-                  },
-                },
-              },
-              {
-                type: 'divider',
-                style: {
-                  '.DividerStyle': {
-                    left: '0.45',
-                    top: '0.26',
-                    width: '0.001',
-                    height: '0.07',
-                    backgroundColor: '0x00000088',
-                  },
-                },
-              },
-            ],
-          },
-          {
-            type: 'popUp',
             viewTag: 'inputVerificationCode',
             style: {
               left: '0',
@@ -511,7 +435,7 @@ export default {
                     style: {
                       '.LabelStyle': {
                         left: '0',
-                        top: '0.04',
+                        top: '0.05',
                         width: '0.89333',
                         height: '0.05',
                         color: '0x00000088',
@@ -538,6 +462,26 @@ export default {
                         height: '0.05',
                         color: '0x00000088',
                         fontSize: '20',
+                        display: 'inline',
+                        textAlign: {
+                          x: 'center',
+                          y: 'center',
+                        },
+                      },
+                    },
+                  },
+                  {
+                    type: 'label',
+                    dataKey: 'Global.popUpMessage',
+                    style: {
+                      '.LabelStyle': {
+                        left: '0',
+                        top: '0.20',
+                        width: '0.89333',
+                        height: '0.05',
+                        color: '0x00000088',
+                        fontSize: '20',
+                        fontStyle: 'bold',
                         display: 'inline',
                         textAlign: {
                           x: 'center',
@@ -582,8 +526,8 @@ export default {
                         },
                         border: {
                           style: '5',
+                          borderRadius: '15',
                         },
-                        borderRadius: '15',
                       },
                     },
                   },
@@ -623,6 +567,7 @@ export default {
                           },
                         },
                       },
+
                       {
                         actionType: 'evalObject',
                         object: [
@@ -635,7 +580,9 @@ export default {
                               },
                               {
                                 actionType: 'popUp',
-                                popUpView: 'okView',
+                                '.Global.popUpMessage@':
+                                  'please re-input password',
+                                popUpView: 'BaseCheckView',
                               },
                             ],
                           },
@@ -646,8 +593,18 @@ export default {
                         object: '..update',
                       },
                       {
-                        actionType: 'pageJump',
-                        destination: 'MeetingRoomInvited',
+                        actionType: 'evalObject',
+                        object: [
+                          {
+                            if: [
+                              '=.Global.currentUser.vertex.sk',
+                              {
+                                goto: 'MeetingRoomInvited',
+                              },
+                              'continue',
+                            ],
+                          },
+                        ],
                       },
                     ],
                     text: 'SUBMIT',
@@ -666,8 +623,8 @@ export default {
                         },
                         border: {
                           style: '5',
+                          borderRadius: '15',
                         },
-                        borderRadius: '15',
                       },
                     },
                   },
@@ -700,18 +657,15 @@ export default {
                 type: 'label',
                 text: 'New user?',
                 style: {
-                  '.LabelStyle': {
-                    color: '0x00000088',
-                    fontSize: '14',
-                    left: '0',
-                    top: '0',
-                    width: '0.4',
-                    height: '0.054',
-                    display: 'inline',
-                    textAlign: {
-                      x: 'right',
-                      y: 'center',
-                    },
+                  color: '0xb1b1b1',
+                  fontSize: '15',
+                  left: '0.2',
+                  top: '0',
+                  width: '0.4',
+                  height: '0.054',
+                  textAlign: {
+                    x: 'center',
+                    y: 'center',
                   },
                 },
               },
@@ -720,7 +674,7 @@ export default {
                 text: 'Sign Up',
                 style: {
                   color: '0x3185c7ff',
-                  fontSize: '14',
+                  fontSize: '15',
                   fontStyle: 'bold',
                   left: '0.41',
                   top: '0',
@@ -733,8 +687,7 @@ export default {
                 },
                 onClick: [
                   {
-                    actionType: 'pageJump',
-                    destination: 'SignUp',
+                    goto: 'SignUp',
                   },
                 ],
               },

@@ -37,7 +37,7 @@ function get({ pageName, apiObject, dispatch }) {
         })
         .then(({ data }) => {
           return Promise.all(
-            data.map(async (document) => {
+            data?.document.map(async (document) => {
               const note = await documentToNote({ document })
               return note
             })
