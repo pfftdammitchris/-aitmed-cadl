@@ -62,6 +62,7 @@ export default {
             sk: '=.Global.currentUser.vertex.sk',
             pk: '=.Global.currentUser.vertex.pk',
             userId: '=.Global.currentUser.vertex.id',
+            esk: '=.Global.currentUser.vertex.esk',
           },
         },
       },

@@ -181,8 +181,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     isBroken = true
   }
   if (content instanceof Blob) {
-    const blobUrl = URL.createObjectURL(content)
-    content = blobUrl
+    content = await store.level2SDK.utilServices.blobToBase64(content)
   }
   return {
     ...document,

@@ -150,9 +150,10 @@ export default function builtInFns(dispatch?: Function) {
         })
       }
     },
-    storeCredentials({ pk, sk, userId }) {
+    storeCredentials({ pk, sk, esk, userId }) {
       localStorage.setItem('sk', sk)
       localStorage.setItem('pk', pk)
+      localStorage.setItem('esk', esk)
       localStorage.setItem('user_vid', userId)
       return
     },
