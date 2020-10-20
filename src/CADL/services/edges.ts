@@ -184,7 +184,7 @@ function create({ pageName, apiObject, dispatch }) {
       }
     }
     if (res) {
-      res = replaceEidWithId(res)
+      res.edge = replaceEidWithId(res.edge)
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
