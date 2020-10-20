@@ -3,6 +3,7 @@ import axios from 'axios'
 import YAML from 'yaml'
 import { EventEmitter } from 'events'
 import produce, { setAutoFreeze } from 'immer'
+setAutoFreeze(false)
 
 import store from '../common/store'
 import {
@@ -1576,7 +1577,6 @@ export default class CADL extends EventEmitter {
     return produce(root, (draft) => {
       draft.actions = {}
       draft.builtIn = builtInFns(this.dispatch.bind(this))
-      setAutoFreeze(false)
     })
   }
 
@@ -1597,7 +1597,6 @@ export default class CADL extends EventEmitter {
 
   private reducer(state = this.root, action) {
     return produce(state, (draft) => {
-      setAutoFreeze(false)
       switch (action.type) {
         case 'SET_VALUE': {
           const { pageName, dataKey, value } = action.payload

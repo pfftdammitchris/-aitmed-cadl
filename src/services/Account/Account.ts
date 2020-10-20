@@ -71,6 +71,7 @@ export const create: AccountTypes.Create = async (
   } else {
     // Create User
 
+    debugger
     const { data } = await store.level2SDK.Account.createUser({
       phone_number,
       password,
