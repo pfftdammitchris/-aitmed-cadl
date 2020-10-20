@@ -80,7 +80,7 @@ export default function builtInFns(dispatch?: Function) {
     async createNewAccount({
       phoneNumber,
       password,
-      verificationCode,
+      // verificationCode,
       userName,
       name,
     }) {

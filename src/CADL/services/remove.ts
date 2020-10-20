@@ -5,7 +5,7 @@ export { remove }
 
 function remove({ pageName, apiObject, dispatch }) {
   return async () => {
-    const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
+    const { dataKey, dataIn } = _.cloneDeep(apiObject || {})
     const currentVal = await dispatch({
       type: 'get-data',
       payload: {
