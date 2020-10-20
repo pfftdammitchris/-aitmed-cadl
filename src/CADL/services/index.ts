@@ -1,8 +1,9 @@
-import * as edgeServices from '../services/edges'
-import * as vertexServices from '../services/vertexes'
-import * as documentServices from '../services/documents'
-import * as builtInServices from '../services/builtIn'
-import * as utils from '../services/utils'
+import * as edgeServices from './edges'
+import * as vertexServices from './vertexes'
+import * as documentServices from './documents'
+import * as builtInServices from './builtIn'
+import * as utils from './utils'
+import * as remove from './remove'
 
 export default function (key) {
   const fns = {
@@ -12,6 +13,7 @@ export default function (key) {
     rv: vertexServices.get,
     cd: documentServices.create,
     rd: documentServices.get,
+    dx: remove.remove,
     builtIn: builtInServices.builtIn,
     localSearch: utils.localSearch,
   }

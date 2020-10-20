@@ -17,6 +17,7 @@ export {
   populateVals,
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
+  replaceIfObject,
 }
 
 /**
@@ -366,6 +367,75 @@ function replaceEvalObject({
       cadlCopy[key] = cadlCopy[key].map((elem) => {
         if (isObject(elem)) {
           return replaceEvalObject({ pageName, cadlObject: elem, dispatch })
+        }
+        return elem
+      })
+    }
+  })
+  return cadlCopy
+}
+
+/**
+ * Returns a function that is used to evalutate if block.
+ *
+ * @param RunIfArgs
+ * @param RunIfArgs.pageName
+ * @param RunIfArgs.updateObject
+ * @param RunIfArgs.dispatch
+ * @returns Function that runs the series of operations detailed in the IfObject.
+ *
+ */
+function runIf({
+  pageName,
+  updateObject,
+  dispatch,
+}: {
+  pageName: string
+  updateObject: Record<string, any>
+  dispatch: Function
+}): Function {
+  return async (): Promise<void> => {
+    await dispatch({
+      type: 'if-object',
+      payload: { pageName, updateObject },
+    })
+    return
+  }
+}
+/**
+ * Replaces the if object, if any, with a function that performs the the actions detailed in the if block
+ *
+ * @param ReplaceIfObjectArgs
+ * @param ReplaceIfObjectArgs.cadlObject
+ * @param ReplaceIfObjectArgs.dispatch
+ * @returns Object with IfObject replaced by a function.
+ *
+ */
+function replaceIfObject({
+  pageName,
+  cadlObject,
+  dispatch,
+}: {
+  pageName: string
+  cadlObject: Record<string, any>
+  dispatch: Function
+}): Record<string, any> {
+  const cadlCopy = _.cloneDeep(cadlObject || {})
+  Object.keys(cadlCopy).forEach(async (key) => {
+    if (key === 'if' && Array.isArray(cadlCopy[key])) {
+      const updateObject = _.cloneDeep(cadlCopy[key])
+
+      cadlCopy[key] = runIf({ pageName, updateObject, dispatch })
+    } else if (isObject(cadlCopy[key])) {
+      cadlCopy[key] = replaceIfObject({
+        pageName,
+        cadlObject: cadlCopy[key],
+        dispatch,
+      })
+    } else if (Array.isArray(cadlCopy[key])) {
+      cadlCopy[key] = cadlCopy[key].map((elem) => {
+        if (isObject(elem)) {
+          return replaceIfObject({ pageName, cadlObject: elem, dispatch })
         }
         return elem
       })

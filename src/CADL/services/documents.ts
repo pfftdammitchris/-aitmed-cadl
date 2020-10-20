@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import store from '../../common/store'
-import { mergeDeep } from '../../utils'
 import { documentToNote } from '../../services/document/utils'
 import Document from '../../services/document'
 
@@ -96,9 +95,9 @@ function get({ pageName, apiObject, dispatch }) {
 
 function create({ pageName, apiObject, dispatch }) {
   //@ts-ignore
-  return async ({ data, type: typeForStringData, title }) => {
+  return async () => {
     //@ts-ignore
-    const { dataKey, dataIn, dataOut, id } = _.cloneDeep(apiObject || {})
+    const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
 
     const currentVal = await dispatch({
       type: 'get-data',
@@ -108,10 +107,7 @@ function create({ pageName, apiObject, dispatch }) {
       },
     })
 
-    const mergedVal = mergeDeep(currentVal, {
-      name: { data, type: typeForStringData, title },
-    })
-    const { api, ...options } = mergedVal
+    const { api, id, ...options } = currentVal
     let res
     //If id is in apiObject then it is an updateRequest
     if (id) {
@@ -123,8 +119,11 @@ function create({ pageName, apiObject, dispatch }) {
             { ...options, id }
           )
         }
+        // const { deat, type } = options
         const { data } = await store.level2SDK.documentServices.updateDocument({
-          ...options,
+          // ...options,
+          name: options?.name,
+          tage: options?.name?.tage ? parseInt(options.name.tage) : undefined,
           id,
         })
         res = data
@@ -149,18 +148,19 @@ function create({ pageName, apiObject, dispatch }) {
             {
               edge_id: eid,
               dataType: parseInt(appDataType.applicationDataType),
-              content: data,
-              type: typeForStringData,
-              title: name.title,
+              content: name?.data,
+              type: name?.tile,
+              title: name?.title,
             }
           )
         }
         const response = await Document.create({
           edge_id: eid,
           dataType: parseInt(appDataType.applicationDataType),
-          content: data,
-          type: typeForStringData,
-          title: name.title,
+          content: name?.data,
+          type: name?.type,
+          title: name?.title,
+          tage: name?.tage,
         })
         res = response
         if (store.env === 'test') {

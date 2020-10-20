@@ -82,6 +82,7 @@ export default function builtInFns(dispatch?: Function) {
       password,
       verificationCode,
       userName,
+      name,
     }) {
       let validPhoneNumber
       if (phoneNumber.includes('-')) {
@@ -89,10 +90,11 @@ export default function builtInFns(dispatch?: Function) {
       } else {
         validPhoneNumber = phoneNumber
       }
+      validPhoneNumber += name.countryCode
       const data = await Account.create(
         validPhoneNumber,
         password,
-        verificationCode,
+        name?.verificationCode,
         userName
       )
       let sk = localStorage.getItem('sk')

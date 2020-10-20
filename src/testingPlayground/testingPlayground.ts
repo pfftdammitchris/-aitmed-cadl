@@ -6,9 +6,7 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import { Account } from '../'
-import services from '../CADL/services'
-import Document from '../services/document'
-import store from '../common/store'
+import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default (async function () {
   // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
@@ -26,6 +24,15 @@ export default (async function () {
   await cadl.initPage('SignIn', [], {
     builtIn: { goto: () => console.log('lolo') },
   })
+  const tree = [{ hat: '3' }]
+  cadl.editListDraft({
+    list: cadl.root.SignIn.update,
+    index: 0,
+    dataKey: '.Global.currentUser.vertex@',
+    value: 8,
+  })
+  debugger
+  console.log(tree)
   // const { data } = await store.level2SDK.edgeServices.createEdge({
   //   type: 1010,
   //   name: {

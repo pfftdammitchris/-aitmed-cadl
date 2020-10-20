@@ -32,6 +32,7 @@ export const create: NoteTypes.Create = async ({
   content,
   type,
   dataType = 0,
+  tage = 0,
 }) => {
   const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
@@ -101,6 +102,7 @@ export const create: NoteTypes.Create = async ({
       type: dType.value,
       name,
       size: blob.size,
+      tage,
     })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)

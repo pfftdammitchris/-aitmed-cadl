@@ -2,7 +2,7 @@ import _ from 'lodash'
 import axios from 'axios'
 import YAML from 'yaml'
 import { EventEmitter } from 'events'
-import produce from 'immer'
+import produce, { setAutoFreeze } from 'immer'
 
 import store from '../common/store'
 import {
@@ -24,6 +24,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import builtInFns from './services/builtIn'
 // import SignIn from './__mocks__/SignIn'
+// import SignUp from './__mocks__/SignUp'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -472,6 +473,7 @@ export default class CADL extends EventEmitter {
     //TODO: remove after testing
     //TODO used for local testing
     // if (pageName === 'SignIn') return SignIn
+    // if (pageName === 'CreateNewAccount') return SignUp
 
     let pageCADL
     let pageUrl
@@ -739,6 +741,15 @@ export default class CADL extends EventEmitter {
         const currentVal =
           _.get(this.root[pageName], pathArr) || _.get(this.root, pathArr)
         return currentVal
+      }
+      case 'if-object': {
+        const { pageName, updateObject } = action.payload
+        const res = await this.handleIfCommand({
+          pageName,
+          ifCommand: updateObject,
+        })
+        if (res) return res
+        break
       }
       case 'eval-object': {
         const { pageName, updateObject } = action.payload
@@ -1137,7 +1148,11 @@ export default class CADL extends EventEmitter {
           }
         } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
           await res[1]()
+        } else {
+          return res
         }
+      } else {
+        return ifTrueEffect
       }
     } else if (condResult === false) {
       let lookFor
@@ -1199,7 +1214,11 @@ export default class CADL extends EventEmitter {
           }
         } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
           await res[1]()
+        } else {
+          return res
         }
+      } else {
+        return ifFalseEffect
       }
     }
   }
@@ -1283,6 +1302,7 @@ export default class CADL extends EventEmitter {
               await this.updateObject({ dataKey, dataObject })
               break
             }
+
             case 'builtIn': {
               if (funcName === 'videoChat') {
                 if (
@@ -1548,10 +1568,15 @@ export default class CADL extends EventEmitter {
     })
   }
 
+  public editListDraft({ list, index, dataKey, value }) {
+    list[index][dataKey] = value
+  }
+
   private initRoot(root) {
     return produce(root, (draft) => {
       draft.actions = {}
       draft.builtIn = builtInFns(this.dispatch.bind(this))
+      setAutoFreeze(false)
     })
   }
 
@@ -1572,6 +1597,7 @@ export default class CADL extends EventEmitter {
 
   private reducer(state = this.root, action) {
     return produce(state, (draft) => {
+      setAutoFreeze(false)
       switch (action.type) {
         case 'SET_VALUE': {
           const { pageName, dataKey, value } = action.payload

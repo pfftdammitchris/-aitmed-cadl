@@ -57,6 +57,7 @@ export const create: AccountTypes.Create = async (
 ) => {
   const { code: statusCode, ...rest } = await getStatus()
   let userVertex
+
   if (statusCode === 3) {
     const { data } = await store.level2SDK.Account.createInvitedUser({
       id: rest?.data.user_id,
@@ -69,6 +70,7 @@ export const create: AccountTypes.Create = async (
     userVertex = data
   } else {
     // Create User
+
     const { data } = await store.level2SDK.Account.createUser({
       phone_number,
       password,
