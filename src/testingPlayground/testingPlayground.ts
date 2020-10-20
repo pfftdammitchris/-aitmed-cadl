@@ -6,6 +6,7 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import { Account } from '../'
+import store from '../common/store'
 import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default (async function () {
@@ -21,6 +22,7 @@ export default (async function () {
   await cadl.init()
 
   const vc = await Account.requestVerificationCode('+1 8889997654')
+  debugger
   await cadl.initPage('SignIn', [], {
     builtIn: { goto: () => console.log('lolo') },
   })
@@ -32,7 +34,9 @@ export default (async function () {
     value: 8,
   })
   debugger
+  cadl.root.SignIn.update[0].islist = 5
   console.log(tree)
+  debugger
   // const { data } = await store.level2SDK.edgeServices.createEdge({
   //   type: 1010,
   //   name: {
@@ -43,9 +47,10 @@ export default (async function () {
   //   type: 1040,
   //   name: {
   //     phone_number: '+1 8889997654',
-  //     verification_code: '2121',
+  //     verification_code: vc,
   //   },
   // })
+  // fsdfsd.edge.list = 909
   // debugger
   // const { data: redws } = await store.level2SDK.edgeServices.createEdge({
   //   type: 1030,
