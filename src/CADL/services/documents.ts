@@ -61,15 +61,11 @@ function get({ pageName, apiObject, dispatch }) {
       throw error
     }
     if (res) {
-      if (
-        Array.isArray(res?.document) &&
-        res?.document.length &&
-        applicationDataType
-      ) {
-        const filteredRes = res?.document.filter((doc) => {
+      if (Array.isArray(res) && res.length && applicationDataType) {
+        const filteredRes = res.filter((doc) => {
           return doc.type.applicationDataType === parseInt(applicationDataType)
         })
-        res.document = filteredRes
+        res = filteredRes
       }
       await dispatch({
         type: 'update-data',

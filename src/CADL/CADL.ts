@@ -296,7 +296,6 @@ export default class CADL extends EventEmitter {
     })
 
     //FOR FNS
-    //process components
     const processedWithFns = this.processPopulate({
       source: processedFormData,
       lookFor: ['.', '..', '_', '~'],
@@ -418,7 +417,6 @@ export default class CADL extends EventEmitter {
         })
       }
     }
-
     //FOR COMPONENTS
     //process components
     const processedComponents = this.processPopulate({
