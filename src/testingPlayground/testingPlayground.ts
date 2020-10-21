@@ -21,7 +21,11 @@ export default (async function () {
 
   await cadl.init()
 
-  const vc = await Account.requestVerificationCode('+1 8889997654')
+  const vc = await Account.requestVerificationCode('+1 8881907654')
+  debugger
+
+  const re = await Account.create('+1 8881907654', 'letmein123', vc, 'goog')
+
   debugger
   await cadl.initPage('SignIn', [], {
     builtIn: { goto: () => console.log('lolo') },

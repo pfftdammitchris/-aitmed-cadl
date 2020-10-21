@@ -77,13 +77,13 @@ function builtIn({ pageName, apiObject, dispatch }) {
 //TODO: consider returning an interface instead
 export default function builtInFns(dispatch?: Function) {
   return {
-    async createNewAccount({
-      phoneNumber,
-      password,
-      // verificationCode,
-      userName,
-      name,
-    }) {
+    async createNewAccount({ name }) {
+      const {
+        phoneNumber,
+        password,
+        // verificationCode,
+        userName,
+      } = name
       let validPhoneNumber
       if (phoneNumber.includes('-')) {
         validPhoneNumber = phoneNumber.replace(/-/g, '')
