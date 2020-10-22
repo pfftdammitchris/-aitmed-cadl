@@ -50,13 +50,6 @@ function get({ pageName, apiObject, dispatch }) {
         })
 
       res = data
-      if (store.env === 'test') {
-        console.log(
-          '%cGet Document Response',
-          'background: purple; color: white; display: block;',
-          res
-        )
-      }
     } catch (error) {
       throw error
     }
@@ -66,6 +59,13 @@ function get({ pageName, apiObject, dispatch }) {
           return doc.type.applicationDataType === parseInt(applicationDataType)
         })
         res = filteredRes
+        if (store.env === 'test') {
+          console.log(
+            '%cGet Document Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
+        }
       }
       await dispatch({
         type: 'update-data',

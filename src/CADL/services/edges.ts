@@ -10,31 +10,41 @@ export { get, create }
  */
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
-    const {
-      api,
-      dataKey,
-      dataIn,
-      dataOut,
-      id,
-      maxcount,
-      type,
-      sCondition,
-      ...options
-    } = _.cloneDeep(apiObject || {})
-
     let res: Record<string, any> = {}
     let idList: string[] | Uint8Array[] = []
-    if (id) {
+
+    const { api, dataKey, dataIn, dataOut, ...options } = _.cloneDeep(
+      apiObject || {}
+    )
+
+    let requestOptions = {
+      ...options,
+    }
+    let maxcount = options?.maxcount
+    let type = options?.type
+    let sCondition = options?.sCondition
+    if (dataIn) {
+      //get current object name value
+      const { deat, id, ...currentVal } = await dispatch({
+        type: 'get-data',
+        payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
+      })
       idList = Array.isArray(id) ? [...id] : [id]
+      requestOptions = { ...requestOptions, ...currentVal }
+      maxcount = currentVal?.maxcount
+      type = currentVal?.type
+      sCondition = currentVal?.sCondition
+    } else if (options.id) {
+      idList = Array.isArray(options.id) ? [...options.id] : [options.id]
     }
     if (maxcount) {
-      options.maxcount = parseInt(maxcount)
+      requestOptions.maxcount = parseInt(maxcount)
     }
     if (type) {
-      options.type = parseInt(type)
+      requestOptions.type = parseInt(type)
     }
     if (sCondition) {
-      options.scondition = sCondition
+      requestOptions.scondition = sCondition
     }
     try {
       if (store.env === 'test') {
@@ -43,14 +53,14 @@ function get({ pageName, apiObject, dispatch }) {
           'background: purple; color: white; display: block;',
           {
             idList,
-            options: { ...options },
+            options: requestOptions,
           }
         )
       }
 
       const { data } = await store.level2SDK.edgeServices.retrieveEdge({
         idList,
-        options: { ...options },
+        options: requestOptions,
       })
       res = data
     } catch (error) {
@@ -70,7 +80,6 @@ function get({ pageName, apiObject, dispatch }) {
         return replaceEidWithId(edge)
       })
       res.edge = listOfEdgesWithId
-
       if (store.env === 'test') {
         console.log(
           '%cGet Edge Response',

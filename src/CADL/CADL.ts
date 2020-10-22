@@ -26,6 +26,7 @@ import { isObject, asyncForEach, mergeDeep } from '../utils'
 import builtInFns from './services/builtIn'
 // import SignIn from './__mocks__/SignIn'
 // import SignUp from './__mocks__/SignUp'
+// import MeetingLobby from './__mocks__/MeetingLobby'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -324,142 +325,112 @@ export default class CADL extends EventEmitter {
     //run init commands if any
     let init = Object.values(processedPage)[0].init
     if (init) {
-      this.initCallQueue = init.map((_command, index) => index)
-      while (this.initCallQueue.length > 0) {
-        const currIndex = this.initCallQueue.shift()
-        const command: any = init[currIndex]
-        if (typeof command === 'function') {
-          try {
-            //TODO: check dispatch function/ side effects work accordingly
-            await command()
-          } catch (error) {
-            throw new UnableToExecuteFn(
-              `An error occured while executing ${pageName}.init`,
-              error
-            )
-          }
-        } else if (isObject(command) && 'actionType' in command) {
-          const {
-            actionType,
-            dataKey,
-            dataObject,
-            object,
-            funcName,
-          }: any = command
-          switch (actionType) {
-            case 'updateObject': {
-              await this.updateObject({ dataKey, dataObject })
-              break
-            }
-            case 'builtIn': {
-              if (funcName === 'videoChat') {
-                if (
-                  funcName in this.root.builtIn &&
-                  typeof this.root.builtIn[funcName] === 'function'
-                ) {
-                  await this.root.builtIn[funcName](command)
-                }
-              }
-              break
-            }
-            case 'evalObject': {
-              await this.dispatch({
-                type: 'eval-object',
-                payload: { pageName, updateObject: object },
-              })
-              break
-            }
-            default: {
-              return
-            }
-          }
-        } else if (isObject(command) && 'if' in command) {
-          //TODO: add the then condition
-          await this.handleIfCommand({ pageName, ifCommand: command })
-        } else if (Array.isArray(command)) {
-          if (typeof command[0][1] === 'function') {
-            try {
-              await command[0][1]()
-            } catch (error) {
-              throw new UnableToExecuteFn(
-                `An error occured while executing ${pageName}.init`,
-                error
-              )
-            }
-          }
-        }
-        //updating page after command has been called
-        const updatedPage = this.root[pageName]
-
-        //populateObject again to populate any data that was dependant on the command call
-        let populatedUpdatedPage = populateObject({
-          source: updatedPage,
-          lookFor: '..',
-          skip: ['update', 'check', 'components'],
-          locations: [this.root[pageName]],
+      await this.runInit(processedPage).then((page) => {
+        //FOR COMPONENTS
+        //process components
+        const processedComponents = this.processPopulate({
+          source: page,
+          lookFor: ['.', '..', '_', '~'],
+          skip: [
+            'update',
+            'check',
+            'init',
+            // 'listObject',
+            'formData',
+            'dataIn',
+            ...skip,
+          ],
+          withFns: true,
+          pageName,
         })
-
-        const populatedUpdatedPageWithFns = attachFns({
-          cadlObject: { [pageName]: populatedUpdatedPage },
+        //process components again to fill in new values
+        const processedComponentsAgain = this.processPopulate({
+          source: processedComponents,
+          lookFor: ['.', '..', '_', '~', '='],
+          skip: [
+            'update',
+            'check',
+            'edge',
+            'document',
+            'vertex',
+            'init',
+            'formData',
+            'dataIn',
+            ...skip,
+          ],
+          withFns: true,
+          pageName,
+        })
+        let replaceUpdateJob2 = replaceEvalObject({
+          pageName,
+          cadlObject: processedComponentsAgain,
           dispatch: boundDispatch,
         })
 
-        processedPage = populatedUpdatedPageWithFns
-
-        init = Object.values(populatedUpdatedPageWithFns)[0].init
-
         this.newDispatch({
-          type: 'SET_LOCAL_PROPERTIES',
-          payload: {
-            pageName,
-            properties: Object.values(populatedUpdatedPageWithFns)[0],
-          },
+          type: 'SET_ROOT_PROPERTIES',
+          payload: { properties: replaceUpdateJob2 },
         })
-      }
-    }
-    //FOR COMPONENTS
-    //process components
-    const processedComponents = this.processPopulate({
-      source: processedPage,
-      lookFor: ['.', '..', '_', '~'],
-      skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
-      withFns: true,
-      pageName,
-    })
-    //process components again to fill in new values
-    const processedComponentsAgain = this.processPopulate({
-      source: processedComponents,
-      lookFor: ['.', '..', '_', '~', '='],
-      skip: [
-        'update',
-        'check',
-        'edge',
-        'document',
-        'vertex',
-        'init',
-        'formData',
-        'dataIn',
-        ...skip,
-      ],
-      withFns: true,
-      pageName,
-    })
-    let replaceUpdateJob2 = replaceEvalObject({
-      pageName,
-      cadlObject: processedComponentsAgain,
-      dispatch: boundDispatch,
-    })
+        this.emit('stateChanged', {
+          name: 'update',
+          path: `${pageName}`,
+          prevVal,
+          newVal: this.root,
+        })
+      })
+    } else {
+      //FOR COMPONENTS
+      //process components
+      const processedComponents = this.processPopulate({
+        source: processedPage,
+        lookFor: ['.', '..', '_', '~'],
+        skip: [
+          'update',
+          'check',
+          'init',
+          // 'listObject',
+          'formData',
+          'dataIn',
+          ...skip,
+        ],
+        withFns: true,
+        pageName,
+      })
+      //process components again to fill in new values
+      const processedComponentsAgain = this.processPopulate({
+        source: processedComponents,
+        lookFor: ['.', '..', '_', '~', '='],
+        skip: [
+          'update',
+          'check',
+          'edge',
+          'document',
+          'vertex',
+          'init',
+          'formData',
+          'dataIn',
+          ...skip,
+        ],
+        withFns: true,
+        pageName,
+      })
+      let replaceUpdateJob2 = replaceEvalObject({
+        pageName,
+        cadlObject: processedComponentsAgain,
+        dispatch: boundDispatch,
+      })
 
-    this.newDispatch({
-      type: 'SET_ROOT_PROPERTIES',
-      payload: { properties: replaceUpdateJob2 },
-    })
-    this.emit('stateChanged', {
-      name: 'update',
-      path: `${pageName}`,
-      prevVal,
-      newVal: this.root,
-    })
+      this.newDispatch({
+        type: 'SET_ROOT_PROPERTIES',
+        payload: { properties: replaceUpdateJob2 },
+      })
+      this.emit('stateChanged', {
+        name: 'update',
+        path: `${pageName}`,
+        prevVal,
+        newVal: this.root,
+      })
+    }
   }
 
   /**
@@ -473,6 +444,7 @@ export default class CADL extends EventEmitter {
     //TODO used for local testing
     // if (pageName === 'SignIn') return SignIn
     // if (pageName === 'CreateNewAccount') return SignUp
+    // if (pageName === 'MeetingLobby') return MeetingLobby
 
     let pageCADL
     let pageUrl
@@ -1271,113 +1243,121 @@ export default class CADL extends EventEmitter {
   /**
    * Runs the init functions of the page matching the pageName.
    *
-   * @param pageName
+   * @param pageObject
    */
-  public async runInit(pageName: string): Promise<void> {
-    const boundDispatch = this.dispatch.bind(this)
+  public async runInit(
+    pageObject: Record<string, any>
+  ): Promise<Record<string, any>> {
+    return new Promise(async (resolve, reject) => {
+      const boundDispatch = this.dispatch.bind(this)
 
-    //run init commands if any
-    let page: Record<string, any> = this.root[pageName]
-    let init = page.init
-    if (init) {
-      this.initCallQueue = init.map((_command, index) => index)
-      while (this.initCallQueue.length > 0) {
-        const currIndex = this.initCallQueue.shift()
-        const command: any = init[currIndex]
-        if (typeof command === 'function') {
-          try {
-            //TODO: check dispatch function/ side effects work accordingly
-            await command()
-          } catch (error) {
-            throw new UnableToExecuteFn(
-              `An error occured while executing ${pageName}.init`,
-              error
-            )
-          }
-        } else if (isObject(command) && 'actionType' in command) {
-          const { actionType, dataKey, dataObject, funcName }: any = command
-          switch (actionType) {
-            case 'updateObject': {
-              await this.updateObject({ dataKey, dataObject })
-              break
-            }
+      let page = { ...pageObject }
+      const pageName = Object.keys(page)[0]
+      let init = Object.values(page)[0].init
 
-            case 'builtIn': {
-              if (funcName === 'videoChat') {
-                if (
-                  funcName in this.root.builtIn &&
-                  typeof this.root.builtIn[funcName] === 'function'
-                ) {
-                  await this.root.builtIn[funcName](command)
-                }
-              }
-              break
-            }
-            default: {
-              return
-            }
-          }
-        } else if (isObject(command) && 'if' in command) {
-          //TODO: add the then condition
-          const [condExpression, , elseEffect] = command['if']
-          if (typeof condExpression === 'function') {
-            const condResult = await condExpression()
-            if (
-              !condResult &&
-              isObject(elseEffect) &&
-              'goto' in elseEffect &&
-              typeof elseEffect['goto'] === 'string'
-            ) {
-              if (
-                'goto' in this.root.builtIn &&
-                typeof this.root.builtIn['goto'] === 'function'
-              ) {
-                await this.root.builtIn['goto'](elseEffect['goto'])
-                return
-              }
-            }
-          }
-        } else if (Array.isArray(command)) {
-          if (typeof command[0][1] === 'function') {
+      if (init) {
+        this.initCallQueue = init.map((_command, index) => index)
+        while (this.initCallQueue.length > 0) {
+          const currIndex = this.initCallQueue.shift()
+          const command: any = init[currIndex]
+          if (typeof command === 'function') {
             try {
-              await command[0][1]()
+              //TODO: check dispatch function/ side effects work accordingly
+              await command()
             } catch (error) {
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init`,
                 error
               )
             }
+          } else if (isObject(command) && 'actionType' in command) {
+            const {
+              actionType,
+              dataKey,
+              dataObject,
+              object,
+              funcName,
+            }: any = command
+            switch (actionType) {
+              case 'updateObject': {
+                await this.updateObject({ dataKey, dataObject })
+                break
+              }
+              case 'builtIn': {
+                if (funcName === 'videoChat') {
+                  if (
+                    funcName in this.root.builtIn &&
+                    typeof this.root.builtIn[funcName] === 'function'
+                  ) {
+                    await this.root.builtIn[funcName](command)
+                  }
+                }
+                break
+              }
+              case 'evalObject': {
+                await this.dispatch({
+                  type: 'eval-object',
+                  payload: { pageName, updateObject: object },
+                })
+                break
+              }
+              default: {
+                return
+              }
+            }
+          } else if (isObject(command) && 'if' in command) {
+            //TODO: add the then condition
+            await this.handleIfCommand({ pageName, ifCommand: command })
+          } else if (Array.isArray(command)) {
+            if (typeof command[0][1] === 'function') {
+              try {
+                await command[0][1]()
+              } catch (error) {
+                throw new UnableToExecuteFn(
+                  `An error occured while executing ${pageName}.init`,
+                  error
+                )
+              }
+            }
           }
+          //updating page after command has been called
+          const updatedPage = this.root[pageName]
+
+          //populateObject again to populate any data that was dependant on the command call
+          let populatedUpdatedPage = populateObject({
+            source: updatedPage,
+            lookFor: '..',
+            skip: ['update', 'check', 'components'],
+            locations: [this.root[pageName]],
+          })
+          //populateObject again to populate any data that was dependant on the command call
+          let populatedUpdatedPage2 = populateObject({
+            source: populatedUpdatedPage,
+            lookFor: '.',
+            skip: ['update', 'check', 'components'],
+            locations: [this.root],
+          })
+
+          const populatedUpdatedPageWithFns = attachFns({
+            cadlObject: { [pageName]: populatedUpdatedPage2 },
+            dispatch: boundDispatch,
+          })
+
+          page = populatedUpdatedPageWithFns
+
+          init = Object.values(populatedUpdatedPageWithFns)[0].init
+
+          this.newDispatch({
+            type: 'SET_LOCAL_PROPERTIES',
+            payload: {
+              pageName,
+              properties: Object.values(populatedUpdatedPageWithFns)[0],
+            },
+          })
         }
-        //updating page after command has been called
-        const updatedPage = this.root[pageName]
-
-        //populateObject again to populate any data that was dependant on the command call
-        let populatedUpdatedPage = populateObject({
-          source: updatedPage,
-          lookFor: '..',
-          skip: ['components'],
-          locations: [this.root[pageName]],
-        })
-
-        const populatedUpdatedPageWithFns = attachFns({
-          cadlObject: { [pageName]: populatedUpdatedPage },
-          dispatch: boundDispatch,
-        })
-
-        page = populatedUpdatedPageWithFns
-
-        init = Object.values(populatedUpdatedPageWithFns)[0].init
-
-        this.newDispatch({
-          type: 'SET_LOCAL_PROPERTIES',
-          payload: {
-            properties: Object.values(populatedUpdatedPageWithFns)[0],
-            pageName,
-          },
-        })
+        resolve(page)
       }
-    }
+    })
   }
 
   /**
