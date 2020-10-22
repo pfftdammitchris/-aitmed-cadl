@@ -1248,7 +1248,7 @@ export default class CADL extends EventEmitter {
   public async runInit(
     pageObject: Record<string, any>
   ): Promise<Record<string, any>> {
-    return new Promise(async (resolve, reject) => {
+    return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
 
       let page = { ...pageObject }
