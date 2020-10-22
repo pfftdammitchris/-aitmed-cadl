@@ -90,7 +90,7 @@ export default function builtInFns(dispatch?: Function) {
       } else {
         validPhoneNumber = phoneNumber
       }
-      validPhoneNumber += name.countryCode
+      validPhoneNumber = name.countryCode + ' ' + validPhoneNumber
       const data = await Account.create(
         validPhoneNumber,
         password,
