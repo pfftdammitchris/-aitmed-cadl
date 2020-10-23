@@ -43,8 +43,8 @@ export type CreateParams = {
   edge_id: string | Uint8Array
   title: string
   tags?: string[]
+  type?: number
   dataType?: number
-  tage?: number
 } & NoteUtilsTypes.ContentParams
 export interface Create {
   (params: CreateParams): Promise<CommonTypes.Doc>

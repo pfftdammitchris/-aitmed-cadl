@@ -52,7 +52,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     typeof name.isEncrypt !== 'undefined' ||
     typeof name.edit_mode !== 'undefined'
 
-  const dType = isOldDataStructure ? new DType() : new DType(document.type)
+  const dType = isOldDataStructure ? new DType() : new DType(document.subtype)
 
   if (isOldDataStructure) {
     if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3
@@ -194,7 +194,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
 
     created_at: document.ctime * 1000,
     modified_at: document.mtime * 1000,
-    type: {
+    subtype: {
       isOnServer: dType.isOnServer,
       isZipped: dType.isGzip,
       isBinary: dType.isBinary,

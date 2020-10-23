@@ -31,8 +31,8 @@ export const create: NoteTypes.Create = async ({
   tags = [],
   content,
   type,
+  mediaType,
   dataType = 0,
-  tage = 0,
 }) => {
   const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
@@ -43,7 +43,7 @@ export const create: NoteTypes.Create = async ({
 
   // Content to Blob
   const blob = await contentToBlob(content, type)
-  dType.setMediaType(blob.type)
+  dType.setMediaType(mediaType || blob.type)
 
   // Gzip
   const { data: gzipData, isGzip } = await produceGzipData(blob)
@@ -99,10 +99,10 @@ export const create: NoteTypes.Create = async ({
   const response = await store.level2SDK.documentServices
     .createDocument({
       eid: edge.eid,
-      type: dType.value,
+      type,
+      subtype: dType.value,
       name,
       size: blob.size,
-      tage,
     })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)

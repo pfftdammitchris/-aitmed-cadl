@@ -16,7 +16,7 @@ function get({ pageName, apiObject, dispatch }) {
       id,
       ids,
       filter: { applicationDataType = '' },
-      type,
+      subtype,
       maxcount,
       ...rest
     } = _.cloneDeep(apiObject || {})
@@ -56,7 +56,9 @@ function get({ pageName, apiObject, dispatch }) {
     if (res) {
       if (Array.isArray(res) && res.length && applicationDataType) {
         const filteredRes = res.filter((doc) => {
-          return doc.type.applicationDataType === parseInt(applicationDataType)
+          return (
+            doc.subtype.applicationDataType === parseInt(applicationDataType)
+          )
         })
         res = filteredRes
         if (store.env === 'test') {
@@ -119,7 +121,7 @@ function create({ pageName, apiObject, dispatch }) {
         const { data } = await store.level2SDK.documentServices.updateDocument({
           // ...options,
           name: options?.name,
-          tage: options?.name?.tage ? parseInt(options.name.tage) : undefined,
+
           id,
         })
         res = data
@@ -136,7 +138,7 @@ function create({ pageName, apiObject, dispatch }) {
     } else {
       //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
       try {
-        const { type: appDataType, eid, name } = options
+        const { subtype: appDataType, eid, name, ...restOfDocOptions } = options
         if (store.env === 'test') {
           console.log(
             '%cCreate Document Request',
@@ -145,8 +147,9 @@ function create({ pageName, apiObject, dispatch }) {
               edge_id: eid,
               dataType: parseInt(appDataType.applicationDataType),
               content: name?.data,
-              type: name?.tile,
+              mediaType: name?.type,
               title: name?.title,
+              type: restOfDocOptions?.type,
             }
           )
         }
@@ -154,9 +157,9 @@ function create({ pageName, apiObject, dispatch }) {
           edge_id: eid,
           dataType: parseInt(appDataType.applicationDataType),
           content: name?.data,
-          type: name?.type,
+          mediaType: name?.type,
           title: name?.title,
-          tage: name?.tage,
+          type: restOfDocOptions?.type,
         })
         res = response
         if (store.env === 'test') {
