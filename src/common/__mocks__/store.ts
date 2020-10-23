@@ -37,6 +37,7 @@ export const mockDoc: CommonTypes.Doc = {
   size: 0,
   tage: 0,
   type: 0,
+  subtype: 0,
 }
 
 const mockStore = {

@@ -33,7 +33,7 @@ export const create: NoteTypes.Create = async ({
   title,
   tags = [],
   content,
-  type,
+  mediaType,
   dataType = 0,
 }) => {
   const edge = await retrieveEdge(notebook_id)
@@ -45,7 +45,7 @@ export const create: NoteTypes.Create = async ({
   dType.isEditable = true
 
   // Content to Blob
-  const blob = await contentToBlob(content, type)
+  const blob = await contentToBlob(content, mediaType)
   dType.setMediaType(blob.type)
 
   // Gzip
@@ -60,20 +60,28 @@ export const create: NoteTypes.Create = async ({
   if (edge.besak && edge.sig) {
     esak = edge.besak
     if (edge.sig instanceof Uint8Array) {
-      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
+      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
+        edge.sig
+      )
     } else {
       publicKeyOfReceiver = edge.sig
     }
   } else if (edge.eesak && edge.sig) {
     esak = edge.eesak
     if (edge.sig instanceof Uint8Array) {
-      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
+      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
+        edge.sig
+      )
     } else {
       publicKeyOfReceiver = edge.sig
     }
   }
 
-  const { data, isEncrypt } = await produceEncryptData(gzipData, esak, publicKeyOfReceiver)
+  const { data, isEncrypt } = await produceEncryptData(
+    gzipData,
+    esak,
+    publicKeyOfReceiver
+  )
   dType.isEncrypted = isEncrypt
 
   const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(data)
@@ -91,7 +99,7 @@ export const create: NoteTypes.Create = async ({
   const response = await store.level2SDK.documentServices
     .createDocument({
       eid: edge.eid,
-      type: dType.value,
+      subtype: dType.value,
       name,
       size: blob.size,
     })
@@ -198,18 +206,21 @@ export const list: NoteTypes.List = async (notebook_id, options) => {
  * @param options.edit_mode?: number
  * @param options.sort_by?: 0 | 1 | 2
  */
-export const listSharedNotes: NoteTypes.ListSharedNotes = async (rootNotebookId, options) => {
+export const listSharedNotes: NoteTypes.ListSharedNotes = async (
+  rootNotebookId,
+  options
+) => {
   const { data: edges } = await store.level2SDK.edgeServices.retrieveEdge({
-    idList: [rootNotebookId], options: {
+    idList: [rootNotebookId],
+    options: {
       ...options,
       type: 10001,
-      xfname: 'refid'
-    }
+      xfname: 'refid',
+    },
   })
   const { data: rootEdge } = await store.level2SDK.edgeServices.retrieveEdge({
-    idList: [rootNotebookId]
+    idList: [rootNotebookId],
   })
-
 
   if (!edges) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
 
@@ -218,24 +229,37 @@ export const listSharedNotes: NoteTypes.ListSharedNotes = async (rootNotebookId,
   const mapper: Record<string, NoteTypes.Note> = {}
   if (sharedNotebooksWithRootNoteBook.length) {
     const vidOfCurrentUserB64 = localStorage.getItem('user_vid')
-    const esakOfCurrentUser = sharedNotebooksWithRootNoteBook.filter((edge) => {
-      let vidOfCurrentUserUint8Array = store.level2SDK.utilServices.uint8ArrayToBase64(edge.evid)
-      return vidOfCurrentUserB64 === vidOfCurrentUserUint8Array
-    }).map(edge => edge.eesak).pop()
+    const esakOfCurrentUser = sharedNotebooksWithRootNoteBook
+      .filter((edge) => {
+        let vidOfCurrentUserUint8Array = store.level2SDK.utilServices.uint8ArrayToBase64(
+          edge.evid
+        )
+        return vidOfCurrentUserB64 === vidOfCurrentUserUint8Array
+      })
+      .map((edge) => edge.eesak)
+      .pop()
 
-    await Promise.all(sharedNotebooksWithRootNoteBook.map(async (edge) => {
-      const documents = await listDocs(edge, options)
-      for (const document of documents) {
-        const note = await documentToNote({ document, edge, esakOfCurrentUser })
-        ids.push(note.id)
-        mapper[note.id] = note
-      }
-      return documents
-    })).then(() => {
-      return { ids, mapper }
-    }).catch(() => {
-      throw new AiTmedError({ name: 'DECRYPTING_NOTES_FAIL' })
-    })
+    await Promise.all(
+      sharedNotebooksWithRootNoteBook.map(async (edge) => {
+        const documents = await listDocs(edge, options)
+        for (const document of documents) {
+          const note = await documentToNote({
+            document,
+            edge,
+            esakOfCurrentUser,
+          })
+          ids.push(note.id)
+          mapper[note.id] = note
+        }
+        return documents
+      })
+    )
+      .then(() => {
+        return { ids, mapper }
+      })
+      .catch(() => {
+        throw new AiTmedError({ name: 'DECRYPTING_NOTES_FAIL' })
+      })
   }
   return { ids, mapper }
 }

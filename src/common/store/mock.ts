@@ -23,6 +23,7 @@ export const mockEdge: CommonTypes.Edge = {
 }
 
 export const mockDoc: CommonTypes.Doc = {
+  subtype: 0,
   atime: 1575338814,
   atimes: 1,
   bsig: '',

@@ -42,7 +42,7 @@ export const create: NoteTypes.Create = async ({
   dType.isEditable = true
 
   // Content to Blob
-  const blob = await contentToBlob(content, type)
+  const blob = await contentToBlob(content, mediaType)
   dType.setMediaType(mediaType || blob.type)
 
   // Gzip
