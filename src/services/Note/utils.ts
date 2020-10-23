@@ -1,4 +1,4 @@
-import {  CommonTypes, DocumentTypes } from '../../common/types'
+import { CommonTypes, DocumentTypes } from '../../common/types'
 
 import AiTmedError from '../../common/AiTmedError'
 import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
@@ -17,10 +17,7 @@ export const CONTENT_SIZE_LIMIT = 32768
  * @param type: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
  * @returns Blob
  */
-export const contentToBlob: NoteUtilsTypes.ContentToBlob = (
-  content,
-  type = 'text/plain',
-) => {
+export const contentToBlob: NoteUtilsTypes.ContentToBlob = (content, type) => {
   /* Convert content to be blob */
   let blob
   if (typeof content === 'string') {
@@ -52,22 +49,24 @@ export const contentToBlob: NoteUtilsTypes.ContentToBlob = (
 export const produceEncryptData: NoteUtilsTypes.ProduceEncryptData = async (
   _data,
   esak,
-  publicKeyOfReceiver,
+  publicKeyOfReceiver
 ) => {
   // Make sure data is Uint8Array
   let data: Uint8Array =
-    _data instanceof Blob
-      ? await store.level2SDK.utilServices.blobToUint8Array(_data)
-      : _data,
+      _data instanceof Blob
+        ? await store.level2SDK.utilServices.blobToUint8Array(_data)
+        : _data,
     isEncrypt = false
   if (typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver) {
     /* Encryption */
     try {
-
-      data = await store.level2SDK.commonServices.encryptData(esak, publicKeyOfReceiver, data)
+      data = await store.level2SDK.commonServices.encryptData(
+        esak,
+        publicKeyOfReceiver,
+        data
+      )
       isEncrypt = true
-    } catch (error) {
-    }
+    } catch (error) {}
   }
   return { data, isEncrypt }
 }
@@ -80,7 +79,7 @@ export const produceEncryptData: NoteUtilsTypes.ProduceEncryptData = async (
  * @returns obj.isGzip: boolean
  */
 export const produceGzipData: NoteUtilsTypes.ProduceGzipData = async (
-  _data,
+  _data
 ) => {
   // Make sure data is Uint8Array
   let u8a =
@@ -99,11 +98,11 @@ export const produceGzipData: NoteUtilsTypes.ProduceGzipData = async (
  * @param edge?: Edge
  * @returns Promise<Note>
  */
-export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
-  { document,
-    _edge,
-    esakOfCurrentUser }
-) => {
+export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
+  document,
+  _edge,
+  esakOfCurrentUser,
+}) => {
   // Validate Edge
   const edge =
     typeof _edge === 'undefined' ? await retrieveEdge(document.eid) : _edge
@@ -181,8 +180,8 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
         data = dType.isBinary
           ? (response.data as Uint8Array)
           : await store.level2SDK.utilServices.base64ToUint8Array(
-            response.data as string,
-          )
+              response.data as string
+            )
       } else {
         throw 'deat.url is missing'
       }
@@ -201,26 +200,40 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async (
       let publicKeyOfReceiver: string
       if (edge.sig) {
         if (edge.sig instanceof Uint8Array) {
-          publicKeyOfReceiver = store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
+          publicKeyOfReceiver = store.level2SDK.utilServices.uint8ArrayToBase64(
+            edge.sig
+          )
         } else {
           publicKeyOfReceiver = edge.sig
         }
-        data = await store.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data)
+        data = await store.level2SDK.commonServices.decryptData(
+          esak,
+          publicKeyOfReceiver,
+          data
+        )
       } else if (!edge.sig && edge.type === 10001) {
         const pkLocalStorage = localStorage.getItem('pk')
         publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : ''
-        data = await store.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data)
+        data = await store.level2SDK.commonServices.decryptData(
+          esak,
+          publicKeyOfReceiver,
+          data
+        )
       } else if (edge.type === 10000) {
         const pkLocalStorage = localStorage.getItem('pk')
         publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : ''
-        data = await store.level2SDK.commonServices.decryptData(esak, publicKeyOfReceiver, data)
+        data = await store.level2SDK.commonServices.decryptData(
+          esak,
+          publicKeyOfReceiver,
+          data
+        )
       }
     }
     // Ungzip
     if (dType.isGzip) data = ungzip(data)
     const blob = await store.level2SDK.utilServices.uint8ArrayToBlob(
       data,
-      contentType,
+      contentType
     )
 
     if (/^text\//.test(blob.type)) {
@@ -306,8 +319,8 @@ export const retrieveNote: NoteUtilsTypes.RetrieveNote = async (id, _edge) => {
  */
 export const updateNote: NoteUtilsTypes.UpdateNote = async (
   id,
-  { notebook_id, title, content, type, tags },
-  save = false,
+  { notebook_id, title, content, mediaType, tags },
+  save = false
 ) => {
   // Get original document
   const document = await retrieveDocument(id)
@@ -326,7 +339,7 @@ export const updateNote: NoteUtilsTypes.UpdateNote = async (
   if (
     !store.utils.compareUint8Arrays(
       <Uint8Array>edge.eid,
-      <Uint8Array>document.eid,
+      <Uint8Array>document.eid
     )
   ) {
     throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
@@ -403,7 +416,7 @@ export const updateNote: NoteUtilsTypes.UpdateNote = async (
     // Need to update content
 
     // Content to Blob
-    const blob = await contentToBlob(content, type)
+    const blob = await contentToBlob(content, mediaType)
 
     // Gzip
     const { data: gzipData, isGzip } = await produceGzipData(blob)
@@ -466,7 +479,7 @@ export const updateNote: NoteUtilsTypes.UpdateNote = async (
 
 const listDocsFilter = (
   document: CommonTypes.Doc,
-  { dataType, mediaType, ...options }: NoteUtilsTypes.ListDocsOptions,
+  { dataType, mediaType, ...options }: NoteUtilsTypes.ListDocsOptions
 ) => {
   const dType = new DType(document.type)
   if (dataType !== undefined) {
@@ -532,7 +545,10 @@ export const listDocs: NoteUtilsTypes.ListDocs = async (edge, options = {}) => {
     idOfRootNotebook = edge.eid
   }
   const response = await store.level2SDK.documentServices
-    .retrieveDocument({ idList: [idOfRootNotebook], options: { xfname: 'eid' } })
+    .retrieveDocument({
+      idList: [idOfRootNotebook],
+      options: { xfname: 'eid' },
+    })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
 
@@ -544,7 +560,7 @@ export const listDocs: NoteUtilsTypes.ListDocs = async (edge, options = {}) => {
   }
 
   const documents = (response.data as CommonTypes.Doc[]).filter((document) =>
-    listDocsFilter(document, otherOptions),
+    listDocsFilter(document, otherOptions)
   )
 
   return documents

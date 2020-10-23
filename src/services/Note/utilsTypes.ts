@@ -13,10 +13,7 @@ export type ContentParams = XOR<
 
 // ContentToBlob
 export interface ContentToBlob {
-  (
-    content: string | Blob | Record<any, any>,
-    type?: 'text/plain' | 'text/html' | 'text/markdown'
-  ): Blob
+  (content: string | Blob | Record<any, any>, type?: string): Blob
 }
 
 // EncryptData
