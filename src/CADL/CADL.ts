@@ -267,11 +267,13 @@ export default class CADL extends EventEmitter {
   async initPage(
     pageName: string,
     skip: string[] = [],
-    options: { evolve: boolean; builtIn?: Record<string, any> } = {
-      evolve: true,
-    }
+    options: { evolve?: boolean; builtIn?: Record<string, any> } = {}
   ): Promise<void> {
     if (!this.cadlEndpoint) await this.init()
+    if (options.evolve === undefined) {
+      options.evolve = true
+    }
+    if (options.evolve === false) return
 
     const { builtIn } = options
     if (builtIn && isObject(builtIn)) {
