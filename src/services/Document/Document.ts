@@ -143,3 +143,174 @@ export const retrieve = async (id, _edge) => {
   const note = await documentToNote({ document, _edge })
   return note
 }
+
+/**
+ * @param id: string | Uint8Array
+ * @param fields
+ * @param fields.notebook_id?: string
+ * @param fields.title?: string
+ * @param fields.content?: string | Blob
+ * @param type?: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
+ * @param fields.tags?: string[]
+ * @param save?: boolean
+ * @returns Promise<Note>
+ */
+export const update: any = async (
+  id,
+  { edge_id, title, content, mediaType, tags, type }
+) => {
+  // Get original document
+  const document = await retrieveDocument(id)
+  if (!document) {
+    throw new AiTmedError({ name: 'NOT_A_NOTE' })
+  }
+
+  // Get edge
+  let edge
+  if (typeof edge_id !== 'undefined') {
+    edge = await retrieveEdge(edge_id)
+  } else {
+    edge = await retrieveEdge(document.eid)
+  }
+  if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+  if (
+    !store.utils.compareUint8Arrays(
+      <Uint8Array>edge.eid,
+      <Uint8Array>document.eid
+    )
+  ) {
+    throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
+  }
+
+  // Update Params
+  const params: any = {
+    id: document.id,
+    eid: edge.eid,
+  }
+
+  // Update name
+  const name: NoteTypes.NoteDocumentName = document.name
+  if (typeof title !== 'undefined') name.title = title
+  if (typeof tags !== 'undefined') {
+    const tagsSet = new Set([...name.tags, ...tags])
+    name.tags = Array.from(tagsSet)
+  }
+
+  // DType
+  const isOldDataStructure =
+    typeof name.isOnS3 !== 'undefined' ||
+    typeof name.isGzip !== 'undefined' ||
+    typeof name.isBinary !== 'undefined' ||
+    typeof name.isEncrypt !== 'undefined' ||
+    typeof name.edit_mode !== 'undefined'
+
+  const dType = isOldDataStructure ? new DType() : new DType(document.type)
+
+  if (isOldDataStructure) {
+    if (typeof name.isOnS3 !== 'undefined') {
+      dType.isOnServer = !name.isOnS3
+      delete name.isOnS3
+    }
+    if (typeof name.isGzip !== 'undefined') {
+      dType.isGzip = name.isGzip
+      delete name.isGzip
+    }
+    if (typeof name.isBinary !== 'undefined') {
+      dType.isBinary = name.isBinary
+      delete name.isBinary
+    }
+    if (typeof name.isEncrypt !== 'undefined') {
+      dType.isEncrypted = name.isEncrypt
+      delete name.isEncrypt
+    }
+
+    if (typeof name.edit_mode !== 'undefined') {
+      dType.isEditable = !!name.edit_mode
+      delete name.edit_mode
+    }
+
+    dType.setMediaType(name.type)
+  }
+
+  let note: any
+  // Update document
+  if (typeof content === 'undefined') {
+    // Does not need to update content
+    params.name = name
+    const response = await store.level2SDK.documentServices
+      .updateDocument({ ...params, subtype: dType.value })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+    if (!response || response.code !== 0) {
+      throw new AiTmedError({
+        name: 'UNKNOW_ERROR',
+        message: 'Note -> update -> updateDocument -> no response',
+      })
+    }
+    const doc = await retrieveDocument(id)
+    note = await documentToNote({ document: doc })
+  } else {
+    // Need to update content
+    // Content to Blob
+    const blob = await contentToBlob(content, mediaType)
+
+    // Gzip
+    const { data: gzipData, isGzip } = await produceGzipData(blob)
+    dType.isGzip = isGzip
+    dType.isOnServer = true
+
+    // Encryption
+    const { data, isEncrypt } = await produceEncryptData(gzipData, edge.besak)
+    dType.isEncrypted = isEncrypt
+
+    const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(data)
+    dType.isBinary = false
+
+    name.type = blob.type
+    params.size = blob.size
+
+    if (dType.isOnServer) {
+      name.data = bs64Data
+    } else {
+      if (typeof name.data !== 'undefined') delete name.data
+    }
+
+    params.name = name
+
+    // Create new DOC
+    const response = await store.level2SDK.documentServices.createDocument({
+      eid: edge_id,
+      subtype: dType.value,
+      name,
+      size: blob.size,
+      type,
+    })
+    if (!response || response.code !== 0) {
+      throw new AiTmedError({
+        name: 'UNKNOW_ERROR',
+        message: 'Note -> update -> updateDocument -> no response',
+      })
+    }
+
+    const document: CommonTypes.Doc = response.data?.document
+    const { deat } = document
+    if (deat !== null && deat && deat.url && deat.sig) {
+      await store.level2SDK.documentServices
+        .uploadDocumentToS3({ url: deat.url, sig: deat.sig, data: bs64Data })
+        .then(store.responseCatcher)
+        .catch(store.errorCatcher)
+    }
+
+    // Delete old DOC
+    await store.level2SDK.documentServices
+      .deleteDocument([document.id])
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+
+    const doc = await retrieveDocument(document.id)
+    note = await documentToNote({ document: doc })
+  }
+
+  // return new note
+  return note
+}

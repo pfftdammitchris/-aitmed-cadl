@@ -27,6 +27,7 @@ import builtInFns from './services/builtIn'
 // import SignIn from './__mocks__/SignIn'
 // import SignUp from './__mocks__/SignUp'
 // import MeetingLobby from './__mocks__/MeetingLobby'
+import EditProfile from './__mocks__/EditProfile'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -449,6 +450,7 @@ export default class CADL extends EventEmitter {
     // if (pageName === 'SignIn') return SignIn
     // if (pageName === 'CreateNewAccount') return SignUp
     // if (pageName === 'MeetingLobby') return MeetingLobby
+    if (pageName === 'EditProfile') return EditProfile
 
     let pageCADL
     let pageUrl
@@ -1113,16 +1115,51 @@ export default class CADL extends EventEmitter {
             cadlObject: res,
             dispatch: boundDispatch,
           })
+          const { dataIn, dataOut } = Object.values(ifTrueEffect)[0]
           if (typeof withFns === 'function') {
-            await withFns()
+            let result
+            if (dataIn) {
+              result = await withFns(dataIn)
+            } else {
+              result = await withFns()
+            }
+            if (dataOut) {
+              const pathArr = dataOut.split('.')
+              this.newDispatch({
+                type: 'SET_VALUE',
+                payload: {
+                  dataKey: pathArr,
+                  value: result,
+                },
+              })
+            }
+            return result
           } else if (
             Array.isArray(withFns) &&
             typeof withFns[1] === 'function'
           ) {
-            await withFns[1]()
+            let result
+            if (dataIn) {
+              result = await withFns[1](dataIn)
+            } else {
+              result = await withFns[1]()
+            }
+            if (dataOut) {
+              const pathArr = dataOut.split('.')
+              this.newDispatch({
+                type: 'SET_VALUE',
+                payload: {
+                  dataKey: pathArr,
+                  value: result,
+                },
+              })
+            }
+            return result
           }
         } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
-          await res[1]()
+          let result
+          result = await res[1]()
+          return result
         } else {
           return res
         }
@@ -1179,16 +1216,51 @@ export default class CADL extends EventEmitter {
             cadlObject: res,
             dispatch: boundDispatch,
           })
+          const { dataIn, dataOut } = Object.values(ifFalseEffect)[0]
           if (typeof withFns === 'function') {
-            await withFns()
+            let result
+            if (dataIn) {
+              result = await withFns(dataIn)
+            } else {
+              result = await withFns()
+            }
+            if (dataOut) {
+              const pathArr = dataOut.split('.')
+              this.newDispatch({
+                type: 'SET_VALUE',
+                payload: {
+                  dataKey: pathArr,
+                  value: result,
+                },
+              })
+            }
+            return result
           } else if (
             Array.isArray(withFns) &&
             typeof withFns[1] === 'function'
           ) {
-            await withFns[1]()
+            let result
+            if (dataIn) {
+              result = await withFns[1](dataIn)
+            } else {
+              result = await withFns[1]()
+            }
+            if (dataOut) {
+              const pathArr = dataOut.split('.')
+              this.newDispatch({
+                type: 'SET_VALUE',
+                payload: {
+                  dataKey: pathArr,
+                  value: result,
+                },
+              })
+            }
+            return result
           }
         } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
-          await res[1]()
+          let result
+          result = await res[1]()
+          return result
         } else {
           return res
         }

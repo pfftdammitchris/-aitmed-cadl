@@ -40,9 +40,10 @@ const retrieveDocument = async (
     .retrieveDocument({ idList: [id] })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
-
-  return response && Array.isArray(response.data) && response.data.length > 0
-    ? response.data[0]
+  return response &&
+    Array.isArray(response.data.document) &&
+    response.data.document.length > 0
+    ? response.data.document[0]
     : null
 }
 
