@@ -1115,6 +1115,7 @@ export default class CADL extends EventEmitter {
             cadlObject: res,
             dispatch: boundDispatch,
           })
+          //@ts-ignore
           const { dataIn, dataOut } = Object.values(ifTrueEffect)[0]
           if (typeof withFns === 'function') {
             let result
@@ -1216,6 +1217,8 @@ export default class CADL extends EventEmitter {
             cadlObject: res,
             dispatch: boundDispatch,
           })
+          //@ts-ignore
+
           const { dataIn, dataOut } = Object.values(ifFalseEffect)[0]
           if (typeof withFns === 'function') {
             let result
