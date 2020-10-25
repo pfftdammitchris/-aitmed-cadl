@@ -55,21 +55,21 @@ function get({ pageName, apiObject, dispatch }) {
       throw error
     }
     if (res) {
-      if (Array.isArray(res) && res.length && applicationDataType) {
-        const filteredRes = res.filter((doc) => {
-          return (
-            doc.subtype.applicationDataType === parseInt(applicationDataType)
-          )
-        })
-        res = filteredRes
-        if (store.env === 'test') {
-          console.log(
-            '%cGet Document Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
-        }
+      // if (Array.isArray(res) && res.length && applicationDataType) {
+      //   const filteredRes = res.filter((doc) => {
+      //     return (
+      //       doc.subtype.applicationDataType === parseInt(applicationDataType)
+      //     )
+      //   })
+      //   res = filteredRes
+      if (store.env === 'test') {
+        console.log(
+          '%cGet Document Response',
+          'background: purple; color: white; display: block;',
+          res
+        )
       }
+      // }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
