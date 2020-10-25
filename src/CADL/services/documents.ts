@@ -15,6 +15,7 @@ function get({ pageName, apiObject, dispatch }) {
       dataOut,
       id,
       ids,
+      //@ts-ignore
       filter: { applicationDataType = '' },
       subtype,
       maxcount,
