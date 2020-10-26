@@ -55,6 +55,8 @@ export function mergeDeep(target, source) {
         } else {
           output[key] = source[key]
         }
+      } else if (source[key] === null && target[key] !== null) {
+        output[key] = target[key]
       } else {
         Object.assign(output, { [key]: source[key] })
       }

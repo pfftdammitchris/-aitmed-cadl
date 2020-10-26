@@ -777,6 +777,7 @@ export default class CADL extends EventEmitter {
                 const pathArr = trimPath.split('.')
 
                 const currValue = _.get(this.root, [...pathArr]) || ''
+
                 if (isObject(currValue)) {
                   val = mergeDeep(currValue, val)
                 }

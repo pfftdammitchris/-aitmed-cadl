@@ -16,13 +16,13 @@ function get({ pageName, apiObject, dispatch }) {
       id,
       ids,
       //@ts-ignore
-      filter: { applicationDataType = '' },
+      // filter: { applicationDataType = '' },
       subtype,
       maxcount,
       type,
       ...rest
     } = _.cloneDeep(apiObject || {})
-    let idList = [ids ? ids : id ? id : '']
+    let idList = ids ? ids : id ? [id] : ['']
     try {
       if (store.env === 'test') {
         console.log(
@@ -31,27 +31,30 @@ function get({ pageName, apiObject, dispatch }) {
           { idList, options: { ...rest, maxcount } }
         )
       }
-      const data = await store.level2SDK.documentServices
+      let rawResponse
+      await store.level2SDK.documentServices
         .retrieveDocument({
           idList,
           options: { ...rest },
         })
-        .then(({ data }) => {
+        .then((res) => {
+          rawResponse = res.data
           return Promise.all(
-            data?.document.map(async (document) => {
+            res?.data?.document.map(async (document) => {
               const note = await documentToNote({ document })
               return note
             })
           )
         })
         .then((res) => {
-          return res
+          rawResponse.doc = res
+          delete rawResponse.document
         })
         .catch((err) => {
           console.log(err)
         })
 
-      res = data
+      res = rawResponse
     } catch (error) {
       throw error
     }
@@ -98,7 +101,6 @@ function create({ pageName, apiObject, dispatch }) {
   return async () => {
     //@ts-ignore
     const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
-
     const currentVal = await dispatch({
       type: 'get-data',
       payload: {
@@ -152,14 +154,13 @@ function create({ pageName, apiObject, dispatch }) {
     } else {
       //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
       try {
-        const { subtype: appDataType, eid, name, ...restOfDocOptions } = options
+        const { subtype: dTypeProps, eid, name, ...restOfDocOptions } = options
         if (store.env === 'test') {
           console.log(
             '%cCreate Document Request',
             'background: purple; color: white; display: block;',
             {
               edge_id: eid,
-              dataType: parseInt(appDataType.applicationDataType),
               content: name?.data,
               mediaType: name?.type,
               title: name?.title,
@@ -169,11 +170,11 @@ function create({ pageName, apiObject, dispatch }) {
         }
         const response = await Document.create({
           edge_id: eid,
-          dataType: parseInt(appDataType.applicationDataType),
           content: name?.data,
           mediaType: name?.type,
           title: name?.title,
           type: restOfDocOptions?.type,
+          dTypeProps,
         })
         res = response
         if (store.env === 'test') {

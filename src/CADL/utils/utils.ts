@@ -149,15 +149,18 @@ function isPopulated(item: string | Record<string, any>): boolean {
       if (isObject(itemCopy[key])) {
         isPop = isPopulated(itemCopy[key])
       } else if (Array.isArray(itemCopy[key])) {
-        isPop = itemCopy[key].forEach((elem) => {
+        for (let elem of itemCopy[key]) {
           if (isObject(elem)) {
             isPop = isPopulated(elem)
           } else if (typeof elem === 'string') {
             if (elem.startsWith('.') || elem.startsWith('..')) {
               isPop = false
             }
+            isPop = true
+          } else {
+            isPop = true
           }
-        })
+        }
       } else if (typeof itemCopy[key] === 'string') {
         const currVal = itemCopy[key].toString()
         if (currVal.startsWith('.') || currVal.startsWith('..')) {

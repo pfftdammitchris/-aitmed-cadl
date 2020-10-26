@@ -46,5 +46,4 @@ const retrieveDocument = async (
     ? response.data.document[0]
     : null
 }
-
 export { retrieveVertex, retrieveEdge, retrieveDocument }

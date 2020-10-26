@@ -72,6 +72,7 @@ export type CreateParams = {
   tags?: string[]
   dataType?: number
 } & NoteUtilsTypes.ContentParams
+
 export interface Create {
   (params: CreateParams): Promise<Note>
 }
@@ -119,5 +120,7 @@ export interface ListSharedNotesReturn {
   mapper: Record<string, Note>
 }
 export interface ListSharedNotes {
-  (notebook_id: string | Uint8Array, options?: ListSharedNotesOptions): Promise<ListSharedNotesReturn>
+  (notebook_id: string | Uint8Array, options?: ListSharedNotesOptions): Promise<
+    ListSharedNotesReturn
+  >
 }

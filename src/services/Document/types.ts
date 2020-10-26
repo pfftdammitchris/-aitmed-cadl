@@ -45,7 +45,9 @@ export type CreateParams = {
   tags?: string[]
   type?: number
   dataType?: number
+  dTypeProps?: Record<string, any>
 } & NoteUtilsTypes.ContentParams
+
 export interface Create {
   (params: CreateParams): Promise<CommonTypes.Doc>
 }

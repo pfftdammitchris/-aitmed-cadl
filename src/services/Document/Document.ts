@@ -11,7 +11,7 @@ import {
   contentToBlob,
   produceEncryptData,
   produceGzipData,
-  // CONTENT_SIZE_LIMIT,
+  CONTENT_SIZE_LIMIT,
 } from '../Note'
 import { documentToNote } from './utils'
 
@@ -33,13 +33,14 @@ export const create: NoteTypes.Create = async ({
   type,
   mediaType,
   dataType = 0,
+  dTypeProps,
 }) => {
   const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
   const dType = new DType()
-  dType.dataType = dataType
+  dType.dataType = dTypeProps?.dataType || dataType
   // Permission
-  dType.isEditable = true
+  dType.isEditable = dTypeProps?.isEditable || true
 
   // Content to Blob
   const blob = await contentToBlob(content, mediaType)
@@ -47,11 +48,11 @@ export const create: NoteTypes.Create = async ({
 
   // Gzip
   const { data: gzipData, isGzip } = await produceGzipData(blob)
-  dType.isGzip = isGzip
+  dType.isGzip = dTypeProps?.isGzip || isGzip
 
   // all documents will be on S3 since we cannot save files in memory
-  dType.isOnServer = false
-  // dType.isOnServer = gzipData.length < CONTENT_SIZE_LIMIT
+  dType.isOnServer =
+    dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
 
   // Encryption
   let esak: Uint8Array | string = ''
@@ -292,8 +293,8 @@ export const update: any = async (
       })
     }
 
-    const document: CommonTypes.Doc = response.data?.document
-    const { deat } = document
+    const updatedDocument: CommonTypes.Doc = response.data?.document
+    const { deat } = updatedDocument
     if (deat !== null && deat && deat.url && deat.sig) {
       await store.level2SDK.documentServices
         .uploadDocumentToS3({ url: deat.url, sig: deat.sig, data: bs64Data })
@@ -307,7 +308,7 @@ export const update: any = async (
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
 
-    const doc = await retrieveDocument(document.id)
+    const doc = await retrieveDocument(updatedDocument.id)
     note = await documentToNote({ document: doc })
   }
 
