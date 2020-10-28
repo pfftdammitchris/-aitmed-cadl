@@ -19,7 +19,6 @@ function get({ pageName, apiObject, dispatch }) {
       // filter: { applicationDataType = '' },
       subtype,
       maxcount,
-      type,
       ...rest
     } = _.cloneDeep(apiObject || {})
     let idList = ids ? ids : id ? [id] : ['']
@@ -114,7 +113,7 @@ function create({ pageName, apiObject, dispatch }) {
     //If id is in apiObject then it is an updateRequest
     if (id) {
       try {
-        const { eid, name, ...restOfDocOptions } = options
+        const { eid, name, subtype: dTypeProps, ...restOfDocOptions } = options
         if (store.env === 'test') {
           console.log(
             '%cUpdate Document Request',
@@ -139,6 +138,7 @@ function create({ pageName, apiObject, dispatch }) {
           title: name?.title,
           tags: name?.tags,
           type: restOfDocOptions?.type,
+          dTypeProps,
         })
         res = response
         if (store.env === 'test') {

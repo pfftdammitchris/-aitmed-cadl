@@ -158,14 +158,13 @@ export const retrieve = async (id, _edge) => {
  */
 export const update: any = async (
   id,
-  { edge_id, title, content, mediaType, tags, type }
+  { edge_id, title, content, mediaType, tags, type, dTypeProps }
 ) => {
   // Get original document
   const document = await retrieveDocument(id)
   if (!document) {
     throw new AiTmedError({ name: 'NOT_A_NOTE' })
   }
-
   // Get edge
   let edge
   if (typeof edge_id !== 'undefined') {
@@ -258,7 +257,8 @@ export const update: any = async (
     // Gzip
     const { data: gzipData, isGzip } = await produceGzipData(blob)
     dType.isGzip = isGzip
-    dType.isOnServer = true
+    dType.isOnServer =
+      dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
 
     // Encryption
     const { data, isEncrypt } = await produceEncryptData(gzipData, edge.besak)
@@ -270,19 +270,19 @@ export const update: any = async (
     name.type = blob.type
     params.size = blob.size
 
+    let response
     if (dType.isOnServer) {
       name.data = bs64Data
+      params.name = name
     } else {
       if (typeof name.data !== 'undefined') delete name.data
     }
 
-    params.name = name
-
-    // Create new DOC
-    const response = await store.level2SDK.documentServices.createDocument({
+    response = await store.level2SDK.documentServices.updateDocument({
+      id: document.id,
       eid: edge_id,
       subtype: dType.value,
-      name,
+      name: params.name,
       size: blob.size,
       type,
     })
@@ -295,18 +295,12 @@ export const update: any = async (
 
     const updatedDocument: CommonTypes.Doc = response.data?.document
     const { deat } = updatedDocument
-    if (deat !== null && deat && deat.url && deat.sig) {
+    if (deat !== null && deat && deat.url && deat.sig && !dType.isOnServer) {
       await store.level2SDK.documentServices
         .uploadDocumentToS3({ url: deat.url, sig: deat.sig, data: bs64Data })
         .then(store.responseCatcher)
         .catch(store.errorCatcher)
     }
-
-    // Delete old DOC
-    await store.level2SDK.documentServices
-      .deleteDocument([document.id])
-      .then(store.responseCatcher)
-      .catch(store.errorCatcher)
 
     const doc = await retrieveDocument(updatedDocument.id)
     note = await documentToNote({ document: doc })

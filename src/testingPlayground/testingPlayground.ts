@@ -6,13 +6,10 @@
 import CADL from '../'
 import { defaultConfig } from '../config'
 import { Account } from '../'
+import Document from '../services/Document'
 import store from '../common/store'
-import nodeResolve from 'rollup-plugin-node-resolve'
 
 export default (async function () {
-  // await test_LoginNewDevice({ phone_number: '+1 3238677306' }) // okMH+/8WSAgARxTuV7xqpA==
-  // await test_login({ password: 'letmein12' })
-
   const cadl = new CADL({
     ...defaultConfig,
     configUrl: 'https://public.aitmed.com/config/meet2.yml',
@@ -21,26 +18,31 @@ export default (async function () {
 
   await cadl.init()
 
-  const vc = await Account.requestVerificationCode('+1 8881907654')
-  debugger
+  // const vc = await Account.requestVerificationCode('+1 8881907654')
+  // debugger
 
-  const re = await Account.create('+1 8881907654', 'letmein123', vc, 'goog')
+  await test_LoginNewDevice({ phone_number: '+1 8889094543' })
+  await test_login({ password: 'letmein123' })
 
-  debugger
-  await cadl.initPage('SignIn', [], {
-    builtIn: { goto: () => console.log('lolo') },
-  })
-  const tree = [{ hat: '3' }]
-  cadl.editListDraft({
-    list: cadl.root.SignIn.update,
-    index: 0,
-    dataKey: '.Global.currentUser.vertex@',
-    value: 8,
-  })
-  debugger
-  cadl.root.SignIn.update[0].islist = 5
-  console.log(tree)
-  debugger
+  await test_UpdateDocument()
+
+  // const re = await Account.create('+1 8881907654', 'letmein123', vc, 'goog')
+
+  // debugger
+  // await cadl.initPage('SignIn', [], {
+  //   builtIn: { goto: () => console.log('lolo') },
+  // })
+  // const tree = [{ hat: '3' }]
+  // cadl.editListDraft({
+  //   list: cadl.root.SignIn.update,
+  //   index: 0,
+  //   dataKey: '.Global.currentUser.vertex@',
+  //   value: 8,
+  // })
+  // debugger
+  // cadl.root.SignIn.update[0].islist = 5
+  // console.log(tree)
+  // debugger
   // const { data } = await store.level2SDK.edgeServices.createEdge({
   //   type: 1010,
   //   name: {
@@ -81,25 +83,25 @@ export default (async function () {
   //     verificationCode: vc
   // })
   // debugger
-  debugger
-  await cadl.root.builtIn['signIn']({
-    password: 'letmein123',
-    phoneNumber: '+1 8889997654',
-    verificationCode: vc,
-  })
-  debugger
-  await cadl.root.actions['SignIn'].update()
+  // debugger
+  // await cadl.root.builtIn['signIn']({
+  //   password: 'letmein123',
+  //   phoneNumber: '+1 8889997654',
+  //   verificationCode: vc,
+  // })
+  // debugger
+  // await cadl.root.actions['SignIn'].update()
 
-  setTimeout(async () => {
-    debugger
-    const testDoc = await cadl.root.builtIn.uploadDocument({
-      dataType: 0,
-      content: 'hello this is a test',
-      type: 'text/plain',
-      title: 'test document',
-    })
-    debugger
-  }, 5000)
+  // setTimeout(async () => {
+  //   debugger
+  //   const testDoc = await cadl.root.builtIn.uploadDocument({
+  //     dataType: 0,
+  //     content: 'hello this is a test',
+  //     type: 'text/plain',
+  //     title: 'test document',
+  //   })
+  //   debugger
+  // }, 5000)
   // const { data: { eid } } = await store.level2SDK.edgeServices.createEdge({ type: 10000 })
   // // cadl.root['CreateNewAccount'].update()
   // debugger
@@ -177,43 +179,97 @@ export default (async function () {
   // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
   // debugger
 
-  // async function test_LoginNewDevice({ phone_number }) {
-  //     console.log('Testing loginNewDevice')
-  //     let verification_code
-  //     try {
-  //         verification_code = await Account.requestVerificationCode(
-  //             phone_number,
-  //         )
-  //     } catch (err) {
-  //         debugger
-  //         console.log(err)
-  //     }
-  //     try {
-  //         const loginResult = await Account.loginByVerificationCode(
-  //             phone_number,
-  //             verification_code,
-  //         ).catch((err) => {
-  //             console.log(err)
-  //             debugger
-  //         })
-  //         console.log(loginResult)
-  //     } catch (err) {
-  //         // debugger
-  //         console.log(err)
-  //     }
-  // }
+  async function test_LoginNewDevice({ phone_number }) {
+    console.log('Testing loginNewDevice')
+    let verification_code
+    try {
+      verification_code = await Account.requestVerificationCode(phone_number)
+    } catch (err) {
+      debugger
+      console.log(err)
+    }
+    try {
+      const loginResult = await Account.loginByVerificationCode(
+        phone_number,
+        verification_code
+      ).catch((err) => {
+        console.log(err)
+        debugger
+      })
+      console.log(loginResult)
+    } catch (err) {
+      // debugger
+      console.log(err)
+    }
+  }
   //**************************** */
   //**************************** */
   //**************************** */
-  // async function test_login({ password }) {
-  //     console.log('Testing login')
-  //     try {
-  //         const loginResult = await Account.loginByPassword(
-  //             password,
-  //         )
-  //         console.log(loginResult)
-  //     } catch (err) {
-  //         console.log(err)
-  //     }
-  // }
+  async function test_login({ password }) {
+    console.log('Testing login')
+    try {
+      const loginResult = await Account.loginByPassword(password)
+      console.log(loginResult)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async function test_UpdateDocument() {
+    try {
+      var {
+        data: {
+          edge: { eid },
+        },
+      } = await store.level2SDK.edgeServices.createEdge({ type: 10001 })
+    } catch (err) {
+      console.log(err)
+    }
+    var b64Id = store.level2SDK.utilServices.uint8ArrayToBase64(eid)
+
+    debugger
+    try {
+      var {
+        data: {
+          document: { id, name: oldName, deat },
+        },
+      } = await store.level2SDK.documentServices.createDocument({
+        type: 10001,
+        eid: b64Id,
+        name: {
+          data: { hello: 'goodbye' },
+        },
+      })
+      debugger
+      console.log(deat)
+    } catch (err) {
+      console.log(err)
+    }
+    debugger
+    try {
+      var b64DocId = store.level2SDK.utilServices.uint8ArrayToBase64(id)
+
+      const updateDocumentResponse = await Document.update(b64DocId, {
+        content: { ...oldName, data: { george: 'jungle' } },
+        type: 2,
+        subtype: 3,
+        size: 154,
+      })
+      console.log('This is the result of updating the document')
+      console.log(updateDocumentResponse)
+    } catch (err) {
+      console.log(err)
+    }
+    debugger
+    try {
+      const retrieveDocument = await store.level2SDK.documentServices.retrieveDocument(
+        {
+          idList: [id],
+        }
+      )
+      console.log(retrieveDocument)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 })()
