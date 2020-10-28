@@ -40,7 +40,7 @@ export const create: NoteTypes.Create = async ({
   const dType = new DType()
   dType.dataType = dTypeProps?.dataType || dataType
   // Permission
-  dType.isEditable = dTypeProps?.isEditable || true
+  dType.isEditable = !!+dTypeProps?.isEditable || true
 
   // Content to Blob
   const blob = await contentToBlob(content, mediaType)
@@ -48,11 +48,11 @@ export const create: NoteTypes.Create = async ({
 
   // Gzip
   const { data: gzipData, isGzip } = await produceGzipData(blob)
-  dType.isGzip = dTypeProps?.isGzip || isGzip
+  dType.isGzip = !!+dTypeProps?.isGzip || isGzip
 
   // all documents will be on S3 since we cannot save files in memory
   dType.isOnServer =
-    dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
+    !!+dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
 
   // Encryption
   let esak: Uint8Array | string = ''
@@ -258,8 +258,7 @@ export const update: any = async (
     const { data: gzipData, isGzip } = await produceGzipData(blob)
     dType.isGzip = isGzip
     dType.isOnServer =
-      dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
-
+      !!+dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
     // Encryption
     const { data, isEncrypt } = await produceEncryptData(gzipData, edge.besak)
     dType.isEncrypted = isEncrypt

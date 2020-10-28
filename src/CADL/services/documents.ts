@@ -15,26 +15,53 @@ function get({ pageName, apiObject, dispatch }) {
       dataOut,
       id,
       ids,
-      //@ts-ignore
-      // filter: { applicationDataType = '' },
       subtype,
-      maxcount,
-      ...rest
+      ...options
     } = _.cloneDeep(apiObject || {})
     let idList = ids ? ids : id ? [id] : ['']
+
+    let requestOptions = {
+      ...options,
+    }
+    let maxcount = options?.maxcount
+    let type = options?.type
+    let sCondition = options?.sCondition
+    if (dataIn) {
+      //get current object name value
+      const { deat, id, ...currentVal } = await dispatch({
+        type: 'get-data',
+        payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
+      })
+      idList = Array.isArray(id) ? [...id] : [id]
+      requestOptions = { ...requestOptions, ...currentVal }
+      maxcount = currentVal?.maxcount
+      type = currentVal?.type
+      sCondition = currentVal?.sCondition
+    } else if (options.id) {
+      idList = Array.isArray(options.id) ? [...options.id] : [options.id]
+    }
+    if (maxcount) {
+      requestOptions.maxcount = parseInt(maxcount)
+    }
+    if (type) {
+      requestOptions.type = parseInt(type)
+    }
+    if (sCondition) {
+      requestOptions.scondition = sCondition
+    }
     try {
       if (store.env === 'test') {
         console.log(
           '%cGet Document Request',
           'background: purple; color: white; display: block;',
-          { idList, options: { ...rest, maxcount } }
+          { idList, options: requestOptions }
         )
       }
       let rawResponse
       await store.level2SDK.documentServices
         .retrieveDocument({
           idList,
-          options: { ...rest },
+          options: requestOptions,
         })
         .then((res) => {
           rawResponse = res.data
@@ -58,13 +85,6 @@ function get({ pageName, apiObject, dispatch }) {
       throw error
     }
     if (res) {
-      // if (Array.isArray(res) && res.length && applicationDataType) {
-      //   const filteredRes = res.filter((doc) => {
-      //     return (
-      //       doc.subtype.applicationDataType === parseInt(applicationDataType)
-      //     )
-      //   })
-      //   res = filteredRes
       if (store.env === 'test') {
         console.log(
           '%cGet Document Response',
@@ -72,7 +92,6 @@ function get({ pageName, apiObject, dispatch }) {
           res
         )
       }
-      // }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
