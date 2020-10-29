@@ -5,9 +5,9 @@ import { isObject } from '../../utils'
 import store from '../../common/store'
 import encryptionServices from './ecc'
 import stringServices from './string'
-import { retrieveDocument } from '../../common/retrieve'
+import ecos from './ecos'
+
 import Document from '../../services/Document'
-import { documentToNote } from '../../services/Document'
 export { builtIn }
 
 function builtIn({ pageName, apiObject, dispatch }) {
@@ -78,6 +78,9 @@ function builtIn({ pageName, apiObject, dispatch }) {
 //TODO: consider returning an interface instead
 export default function builtInFns(dispatch?: Function) {
   return {
+    string: stringServices,
+    eccNaCl: encryptionServices,
+    ecos,
     async createNewAccount({ name }) {
       const {
         phoneNumber,
@@ -161,7 +164,6 @@ export default function builtInFns(dispatch?: Function) {
       return
     },
     currentDateTime: (() => Date.now())(),
-    string: stringServices,
     async SignInOk(): Promise<boolean> {
       const status = await Account.getStatus()
       if (status.code !== 0) {
@@ -214,7 +216,6 @@ export default function builtInFns(dispatch?: Function) {
     stringCompare(string1: string, string2: string) {
       return string1 === string2
     },
-    eccNaCl: encryptionServices,
     async downloadFromS3(url) {
       const response = await store.level2SDK.documentServices.downloadDocumentFromS3(
         { url }
@@ -226,24 +227,6 @@ export default function builtInFns(dispatch?: Function) {
         const blob = store.level2SDK.utilServices.base64ToBlob(data)
         const blobUrl = URL.createObjectURL(blob)
         return blobUrl
-      },
-    },
-    ecos: {
-      async shareDoc({ sourceDoc, targetEdgeID }) {
-        const document = await retrieveDocument(sourceDoc.id)
-        const note = await documentToNote({ document })
-
-        const base64ToBlobData = await store.level2SDK.utilServices.base64ToBlob(
-          note?.name?.data
-        )
-        const sharedDoc = await Document.create({
-          content: base64ToBlobData,
-          title: note?.name?.title,
-          type: note?.type,
-          edge_id: targetEdgeID,
-          mediaType: note?.name?.type,
-        })
-        return sharedDoc
       },
     },
   }

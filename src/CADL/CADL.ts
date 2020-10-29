@@ -28,7 +28,7 @@ import builtInFns from './services/builtIn'
 // import SignUp from './__mocks__/SignUp'
 // import MeetingLobby from './__mocks__/MeetingLobby'
 // import EditProfile from './__mocks__/EditProfile'
-import UploadDocuments from './__mocks__/UploadDocuments'
+// import UploadDocuments from './__mocks__/UploadDocuments'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -452,7 +452,7 @@ export default class CADL extends EventEmitter {
     // if (pageName === 'CreateNewAccount') return SignUp
     // if (pageName === 'MeetingLobby') return MeetingLobby
     // if (pageName === 'EditProfile') return EditProfile
-    if (pageName === 'UploadDocuments') return UploadDocuments
+    // if (pageName === 'UploadDocuments') return UploadDocuments
 
     let pageCADL
     let pageUrl
