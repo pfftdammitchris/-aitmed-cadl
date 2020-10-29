@@ -1,3 +1,6 @@
+README  [English](#En)| [中文](#中文)
+---
+# En
 # CADL class and utilities
 
 This package contains the CADL class used to process CADL objects in addition to utility functions used to validate the CADL YAML files.
@@ -40,3 +43,7 @@ then navigate to http://localhost:5000/
 ```
     npm run publish:public
 ```
+
+# 中文
+http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107CEA22149F38DB5A36E619F71C9
+密码：UP4M
