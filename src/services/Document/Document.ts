@@ -173,14 +173,6 @@ export const update: any = async (
     edge = await retrieveEdge(document.eid)
   }
   if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
-  if (
-    !store.utils.compareUint8Arrays(
-      <Uint8Array>edge.eid,
-      <Uint8Array>document.eid
-    )
-  ) {
-    throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
-  }
 
   // Update Params
   const params: any = {

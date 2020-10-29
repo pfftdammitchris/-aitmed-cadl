@@ -112,18 +112,6 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       message: 'Note -> documentToNote -> retrieveEdge -> edge is null',
     })
 
-  //TODO
-  //currently commented since does not allow comparison between shared notebook
-  //and docs from root notebook
-  // if (
-  //   !store.utils.compareUint8Arrays(
-  //     <Uint8Array>edge.eid,
-  //     <Uint8Array>document.eid,
-  //   )
-  // ) {
-  //   throw new AiTmedError({ name: 'NOTEBOOK_ID_NOT_MATCH' })
-  // }
-
   const name: NoteTypes.NoteDocumentName = document.name
   const contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type
   const deat: NoteTypes.NoteDocumentDeat | null = document.deat
