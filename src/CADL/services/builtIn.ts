@@ -3,10 +3,11 @@ import _ from 'lodash'
 import { Account } from '../../services'
 import { isObject } from '../../utils'
 import store from '../../common/store'
-import Document from '../../services/Document'
 import encryptionServices from './ecc'
 import stringServices from './string'
-
+import { retrieveDocument } from '../../common/retrieve'
+import Document from '../../services/Document'
+import { documentToNote } from '../../services/Document'
 export { builtIn }
 
 function builtIn({ pageName, apiObject, dispatch }) {
@@ -225,6 +226,24 @@ export default function builtInFns(dispatch?: Function) {
         const blob = store.level2SDK.utilServices.base64ToBlob(data)
         const blobUrl = URL.createObjectURL(blob)
         return blobUrl
+      },
+    },
+    ecos: {
+      async shareDoc({ sourceDoc, targetEdgeID }) {
+        const document = await retrieveDocument(sourceDoc.id)
+        const note = await documentToNote({ document })
+
+        const base64ToBlobData = await store.level2SDK.utilServices.base64ToBlob(
+          note?.name?.data
+        )
+        const sharedDoc = await Document.create({
+          content: base64ToBlobData,
+          title: note?.name?.title,
+          type: note?.type,
+          edge_id: targetEdgeID,
+          mediaType: note?.name?.type,
+        })
+        return sharedDoc
       },
     },
   }
