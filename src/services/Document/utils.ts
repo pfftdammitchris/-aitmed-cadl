@@ -94,6 +94,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
           .downloadDocumentFromS3({ url: deat.url })
           .then(store.responseCatcher)
           .catch(store.errorCatcher)
+        debugger
         if (!response) throw 'no response'
         data = dType.isBinary
           ? (response.data as Uint8Array)
@@ -181,8 +182,10 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     isBroken = true
   }
   if (content instanceof Blob) {
+    debugger
     content = await store.level2SDK.utilServices.blobToBase64(content)
   }
+  debugger
   return {
     ...document,
     name: {
