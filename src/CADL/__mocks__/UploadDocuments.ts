@@ -248,6 +248,7 @@ export default {
           {
             actionType: 'evalObject',
             object: {
+              '.UploadDocuments.selectedDoc.type@': 4,
               '=.builtIn.ecos.shareDoc': {
                 dataIn: {
                   sourceDoc: '=.UploadDocuments.selectedDoc',
@@ -257,10 +258,10 @@ export default {
               },
             },
           },
-          {
-            actionType: 'evalObject',
-            object: '..save',
-          },
+          // {
+          //   actionType: 'evalObject',
+          //   object: '..save',
+          // },
           {
             goto: 'MeetingLobby',
           },

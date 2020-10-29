@@ -223,26 +223,26 @@ export default function builtInFns(dispatch?: Function) {
     },
     utils: {
       base64ToBlob({ data }: { data: string }) {
-        debugger
         const blob = store.level2SDK.utilServices.base64ToBlob(data)
-        debugger
         const blobUrl = URL.createObjectURL(blob)
         return blobUrl
       },
     },
     ecos: {
       async shareDoc({ sourceDoc, targetEdgeID }) {
-        debugger
         const document = await retrieveDocument(sourceDoc.id)
         const note = await documentToNote({ document })
+
+        const base64ToBlobData = await store.level2SDK.utilServices.base64ToBlob(
+          note?.name?.data
+        )
         const sharedDoc = await Document.create({
-          content: note?.name?.data,
+          content: base64ToBlobData,
           title: note?.name?.title,
           type: note?.type,
           edge_id: targetEdgeID,
           mediaType: note?.name?.type,
         })
-        debugger
         return sharedDoc
       },
     },
