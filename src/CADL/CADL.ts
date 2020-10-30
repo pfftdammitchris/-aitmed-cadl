@@ -29,6 +29,7 @@ import builtInFns from './services/builtIn'
 // import MeetingLobby from './__mocks__/MeetingLobby'
 // import EditProfile from './__mocks__/EditProfile'
 // import UploadDocuments from './__mocks__/UploadDocuments'
+// import MeetingDocumentsNotes from './__mocks__/MeetingDocumentsNotes'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -453,6 +454,7 @@ export default class CADL extends EventEmitter {
     // if (pageName === 'MeetingLobby') return MeetingLobby
     // if (pageName === 'EditProfile') return EditProfile
     // if (pageName === 'UploadDocuments') return UploadDocuments
+    // if (pageName === 'MeetingDocumentsNotes') return MeetingDocumentsNotes
 
     let pageCADL
     let pageUrl

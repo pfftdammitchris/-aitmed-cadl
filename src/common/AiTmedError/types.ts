@@ -16,6 +16,7 @@ export enum ErrorCodes {
   PROFILE_NOT_FOUND,
   UID_INVALID,
   PROFILE_PHOTO_INVALID,
+  LOGIN_REQUIRED,
 
   /* Notebook */
   NOTEBOOK_NOT_EXIST = 2000,
@@ -54,6 +55,9 @@ export enum ErrorCodes {
   NOT_AN_INBOX = 6000,
   ROOT_INBOX_EXISTS,
   ROOT_INBOX_DOES_NOT_EXIST,
+
+  /**Encrypt/Decrypt */
+  ERROR_CREATING_ESAK = 7000,
 }
 
 export const defaultErrorMessages: Record<string, string> = {
@@ -74,6 +78,8 @@ export const defaultErrorMessages: Record<string, string> = {
   PROFILE_NOT_FOUND: 'profile note found',
   UID_INVALID: 'uid is invalid',
   PROFILE_PHOTO_INVALID: 'profile photo is invalid',
+  LOGIN_REQUIRED:
+    'There is no secretKey present in localStorage. Please log In.',
 
   /* Notebook */
   NOTEBOOK_NOT_EXIST: 'notebook is not exist',
@@ -112,6 +118,10 @@ export const defaultErrorMessages: Record<string, string> = {
   INVALID_DATAMODEL_KEY: 'Please provide a valid dataModel key',
   ERROR_RETRIEVING_UIDL_DATA: 'Could not retrieve data for UIDL dataModel.',
   INVALID_ROOT_TYPE: 'The root type provided is invalid',
+
+  /** Encrypt/Decrypt */
+
+  ERROR_CREATING_ESAK: 'Error happened while creating an esak',
 }
 
 export interface ConfigArgs {

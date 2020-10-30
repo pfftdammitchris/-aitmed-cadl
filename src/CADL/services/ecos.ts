@@ -9,7 +9,8 @@ export default {
     const note = await documentToNote({ document })
 
     const base64ToBlobData = await store.level2SDK.utilServices.base64ToBlob(
-      note?.name?.data
+      note?.name?.data,
+      note?.name?.type
     )
     const sharedDoc = await Document.create({
       content: base64ToBlobData,

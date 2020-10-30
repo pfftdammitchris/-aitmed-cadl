@@ -76,7 +76,9 @@
     "moment": "^2.27.0",
     "pako": "^1.0.11",
     "rollup-plugin-node-resolve": "^5.2.0",
-    "rollup-plugin-replace": "^2.2.0"
+    "rollup-plugin-replace": "^2.2.0",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1"
   },
   "peerDependencies": {
     "@aitmed/ecos-lvl2-sdk": "1.x"

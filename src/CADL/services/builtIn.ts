@@ -223,8 +223,14 @@ export default function builtInFns(dispatch?: Function) {
       return response?.data
     },
     utils: {
-      base64ToBlob({ data }: { data: string }) {
-        const blob = store.level2SDK.utilServices.base64ToBlob(data)
+      base64ToBlob({
+        data,
+        type = 'application/pdf',
+      }: {
+        data: string
+        type: string
+      }) {
+        const blob = store.level2SDK.utilServices.base64ToBlob(data, type)
         const blobUrl = URL.createObjectURL(blob)
         return blobUrl
       },
