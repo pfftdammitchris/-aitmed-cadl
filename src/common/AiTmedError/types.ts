@@ -58,6 +58,7 @@ export enum ErrorCodes {
 
   /**Encrypt/Decrypt */
   ERROR_CREATING_ESAK = 7000,
+  ERROR_DECRYPTING_DATA,
 }
 
 export const defaultErrorMessages: Record<string, string> = {
@@ -122,6 +123,7 @@ export const defaultErrorMessages: Record<string, string> = {
   /** Encrypt/Decrypt */
 
   ERROR_CREATING_ESAK: 'Error happened while creating an esak',
+  ERROR_DECRYPTING_DATA: 'Error happened while decrypting data.',
 }
 
 export interface ConfigArgs {
