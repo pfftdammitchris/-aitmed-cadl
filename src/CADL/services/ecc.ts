@@ -1,7 +1,7 @@
 import store from '../../common/store'
 import AiTmedError from '../../common/AiTmedError'
 import { sha256 } from 'hash.js'
-import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
+import { retrieveEdge } from '../../common/retrieve'
 
 export default {
   signature(message: string): string {
