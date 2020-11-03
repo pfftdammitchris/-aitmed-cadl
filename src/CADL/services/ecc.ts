@@ -1,6 +1,7 @@
 import store from '../../common/store'
 import AiTmedError from '../../common/AiTmedError'
-import { box } from 'tweetnacl'
+import { sha256 } from 'hash.js'
+import { retrieveEdge } from '../../common/retrieve'
 
 export default {
   signature(message: string): string {
@@ -36,23 +37,42 @@ export default {
   skCheck({ pk, sk }) {
     let pkUInt8Array = pk
     let skDataUInt8Array = sk
+    let isValid
 
     if (typeof pk === 'string') {
-      pkUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(pk)
+      try {
+        pkUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(pk)
+      } catch (error) {
+        isValid = false
+      }
     }
     if (typeof sk === 'string') {
-      skDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(sk)
+      try {
+        skDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(sk)
+      } catch (error) {
+        isValid = false
+      }
     }
-
-    const isValid = store.level2SDK.utilServices.aKeyCheck(
-      pkUInt8Array,
-      skDataUInt8Array
-    )
+    try {
+      isValid = store.level2SDK.utilServices.aKeyCheck(
+        pkUInt8Array,
+        skDataUInt8Array
+      )
+    } catch (error) {
+      isValid = false
+    }
 
     return isValid
   },
 
-  generateESAK({ pk }) {
+  /**
+   *
+   * @param sk
+   *
+   * Generates an esak that can be used as the besak or eesak 
+   of an edge
+   */
+  generateESAK({ pk }: { pk: string }): string {
     const secretKey = localStorage.getItem('sk')
     if (pk === null) {
       throw new AiTmedError({
@@ -84,34 +104,145 @@ export default {
       skToUint8Array,
       partialKey
     )
-    return esak
+    const esakBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(esak)
+    return esakBase64
   },
 
-  decryptEESAK({
-    sendPublicKey,
-    recvSecretKey,
-    eData,
-    extraKey,
+  /**
+   *
+   * @param {esak, publicKey, data}
+   *
+   * Decrypts data using assymetric decryption and the esak provided
+   */
+  decryptData({
+    esak,
+    publicKey,
+    secretKey,
+    data,
   }: {
-    sendPublicKey: Uint8Array
-    recvSecretKey: Uint8Array
-    eData: Uint8Array
-    extraKey?: Uint8Array
-  }): Uint8Array | null {
-    const sharedKey = box.before(sendPublicKey, recvSecretKey)
-    const nonce = eData.slice(0, box.nonceLength)
-    const message = eData.slice(box.nonceLength, eData.length)
-
-    const decrypted = extraKey
-      ? box.open(message, nonce, extraKey, sharedKey)
-      : box.open.after(message, nonce, sharedKey)
-
-    if (!decrypted) {
-      console.log('fail to decrypt!')
-      return decrypted
+    esak: Uint8Array | string
+    publicKey: string
+    secretKey: string
+    data: Uint8Array
+  }): Uint8Array {
+    if (publicKey === null) {
+      throw new AiTmedError({
+        name: 'LOGIN_REQUIRED',
+        message:
+          'There is no publicKey present in localStorage. Please log In.',
+      })
     }
-    return decrypted
+    if (secretKey === null) {
+      throw new AiTmedError({
+        name: 'LOGIN_REQUIRED',
+        message:
+          'There is no secretKey present in localStorage. Please log In.',
+      })
+    }
+    let esakUint8Array: Uint8Array
+    if (typeof esak === 'string') {
+      esakUint8Array = store.level2SDK.utilServices.base64ToUint8Array(esak)
+    } else {
+      esakUint8Array = esak
+    }
+    const pkToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+      publicKey
+    )
+    const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+      secretKey
+    )
+    const partialKey = store.level2SDK.utilServices.aKeyDecrypt(
+      pkToUint8Array,
+      skToUint8Array,
+      esakUint8Array
+    )
+    const sak = sha256().update(partialKey).digest()
+    const sakUint8Array = new Uint8Array(sak)
+    const decryptedDataUint8Array = store.level2SDK.utilServices.sKeyDecrypt(
+      sakUint8Array,
+      data
+    )
+    if (decryptedDataUint8Array !== null) {
+      return decryptedDataUint8Array
+    } else {
+      throw new AiTmedError({ name: 'ERROR_DECRYPTING_DATA' })
+    }
   },
 
-  // decryptBESAK({ sk }) {},
+  /**
+   *
+   * @param {esak, publicKey, secretKey}
+   *
+   * Assymetrically decrypts the besak || eesak
+   */
+  decryptESAK({
+    esak,
+    publicKey,
+    secretKey,
+  }: {
+    esak: Uint8Array | string
+    publicKey: string
+    secretKey: string
+  }): string {
+    if (publicKey === null) {
+      throw new AiTmedError({
+        name: 'LOGIN_REQUIRED',
+        message:
+          'There is no publicKey present in localStorage. Please log In.',
+      })
+    }
+    if (secretKey === null) {
+      throw new AiTmedError({
+        name: 'LOGIN_REQUIRED',
+        message:
+          'There is no secretKey present in localStorage. Please log In.',
+      })
+    }
+    let esakUint8Array: Uint8Array
+    if (typeof esak === 'string') {
+      esakUint8Array = store.level2SDK.utilServices.base64ToUint8Array(esak)
+    } else {
+      esakUint8Array = esak
+    }
+    const pkToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+      publicKey
+    )
+    const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+      secretKey
+    )
+    const partialKey = store.level2SDK.utilServices.aKeyDecrypt(
+      pkToUint8Array,
+      skToUint8Array,
+      esakUint8Array
+    )
+    const sak = sha256().update(partialKey).digest()
+    const sakUint8Array = new Uint8Array(sak)
+    const sakBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
+      sakUint8Array
+    )
+    return sakBase64
+  },
+  /**
+   *
+   * @param {id}
+   *
+   * Checks whether an edge is encrypted or not.
+   */
+  async isEdgeEncrypted({ id }: { id: string }): Promise<boolean> {
+    const edge = await retrieveEdge(id)
+    if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+
+    if (edge?.besak || edge?.eesak) return true
+    return false
+  },
+
+  async getSAKFromEdge({ id }: { id: string }): Promise<string> {
+    const edge = await retrieveEdge(id)
+    if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+
+    //WIP:
+    //Should return the sak from the edge associated with the given id.
+
+    return ''
+  },
 }

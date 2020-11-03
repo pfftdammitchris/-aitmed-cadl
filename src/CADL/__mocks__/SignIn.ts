@@ -14,17 +14,46 @@ export default {
     ],
     save: [
       {
-        '=.builtIn.string.concat': {
-          dataIn: [
-            '=.SignIn.formData.countryCode',
-            ' ',
-            '=.SignIn.formData.phoneNumber',
-          ],
-          dataOut: 'SignIn.apiData.phoneNumber',
+        actionType: 'evalObject',
+        object: {
+          '=.builtIn.eccNaCl.decryptAES': {
+            dataIn: {
+              key: '=..formData.password',
+              message: '=.Global.currentUser.vertex.esk',
+            },
+            dataOut: 'SignIn.formData.sk',
+          },
         },
       },
       {
-        '=.SignIn.verificationCode.edgeAPI.store': '',
+        actionType: 'evalObject',
+        object: {
+          '=.builtIn.eccNaCl.skCheck': {
+            dataIn: {
+              pk: '=.Global.currentUser.vertex.pk',
+              sk: '=..formData.sk',
+            },
+            dataOut: 'SignIn.formData.pass',
+          },
+        },
+      },
+      {
+        actionType: 'evalObject',
+        object: [
+          {
+            if: [
+              '..formData.pass',
+              {
+                '.Global.currentUser.vertex.sk@': '=..formData.sk',
+              },
+              {
+                actionType: 'popUp',
+                '.Global.popUpMessage@': 'please re-input password',
+                popUpView: 'BaseCheckView',
+              },
+            ],
+          },
+        ],
       },
     ],
     check: [
@@ -71,23 +100,11 @@ export default {
           '=.Global.currentDateTime',
       },
       {
-        '=.Global.rootNotebook.edgeAPI.get': '',
+        '.Global.rootNotebookID@': '=.Global.currentUser.vertex.deat.rnb64ID',
       },
-      {
-        '.Global.rootNotebook.response.edge@':
-          '=.Global.rootNotebook.response.edge.0',
-      },
-
       {
         '.Global.currentUser.dataCache.loadingDateTime@':
           '=.Global.currentDateTime',
-      },
-      {
-        if: [
-          '=.Global.rootNotebook.response.edge.id',
-          'continue',
-          '=.Global.rootNotebook.edgeAPI.store',
-        ],
       },
       {
         if: [
@@ -349,6 +366,7 @@ export default {
               top: '0.554',
               width: '0.76',
               height: '0.041',
+              backgroundColor: '0x388ecc00',
               borderWidth: '1',
               border: {
                 style: '2',
@@ -397,7 +415,53 @@ export default {
             onClick: [
               {
                 actionType: 'evalObject',
-                object: '..save',
+                object: {
+                  '=.builtIn.string.concat': {
+                    dataIn: [
+                      '=.SignIn.formData.countryCode',
+                      ' ',
+                      '=.SignIn.formData.phoneNumber',
+                    ],
+                    dataOut: 'SignIn.apiData.phoneNumber',
+                  },
+                },
+              },
+              {
+                actionType: 'evalObject',
+                object: [
+                  {
+                    if: [
+                      '=.Global.currentUser.vertex.esk',
+                      {
+                        actionType: 'evalObject',
+                        object: {},
+                      },
+                      'continue',
+                    ],
+                  },
+                ],
+              },
+              {
+                actionType: 'evalObject',
+                object: [
+                  {
+                    if: [
+                      '=.Global.currentUser.vertex.sk',
+                      {
+                        goto: 'MeetingRoomInvited',
+                      },
+                      'continue',
+                    ],
+                  },
+                ],
+              },
+              {
+                actionType: 'evalObject',
+                object: [
+                  {
+                    '=.SignIn.verificationCode.edgeAPI.store': '',
+                  },
+                ],
               },
               {
                 actionType: 'popUp',
@@ -420,10 +484,11 @@ export default {
                 type: 'view',
                 style: {
                   left: '0.05',
-                  top: '0.15',
+                  top: '0.3',
                   width: '0.89333',
                   height: '0.35',
-                  backgroundColor: '0xeeeeeeff',
+                  zIndex: '100',
+                  backgroundColor: '0xeaeaea',
                   border: {
                     style: '5',
                   },
@@ -436,13 +501,13 @@ export default {
                     style: {
                       '.LabelStyle': {
                         left: '0',
-                        top: '0.05',
+                        top: '0.08',
                         width: '0.89333',
                         height: '0.05',
-                        color: '0x00000088',
-                        fontSize: '20',
-                        fontStyle: 'bold',
+                        color: '0x000000',
+                        fontSize: '19',
                         display: 'inline',
+                        fontFamily: 'sans-serif',
                         textAlign: {
                           x: 'center',
                           y: 'center',
@@ -457,13 +522,18 @@ export default {
                     required: 'true',
                     style: {
                       '.LabelStyle': {
-                        left: '0',
-                        top: '0.13',
-                        width: '0.89333',
+                        left: '0.02',
+                        top: '0.15',
+                        width: '0.84',
                         height: '0.05',
                         color: '0x00000088',
                         fontSize: '20',
                         display: 'inline',
+                        border: {
+                          style: '3',
+                          color: '0xb5b5b8',
+                        },
+                        borderWidth: '1',
                         textAlign: {
                           x: 'center',
                           y: 'center',
@@ -519,8 +589,9 @@ export default {
                         width: '0.42',
                         height: '0.06812',
                         color: '0x007affff',
-                        fontSize: '17',
+                        fontSize: '19',
                         display: 'inline',
+                        backgroundColor: '0xeeeeee',
                         textAlign: {
                           x: 'center',
                           y: 'center',
@@ -568,7 +639,6 @@ export default {
                           },
                         },
                       },
-
                       {
                         actionType: 'evalObject',
                         object: [
@@ -616,8 +686,9 @@ export default {
                         width: '0.42',
                         height: '0.06812',
                         color: '0x007affff',
-                        fontSize: '17',
+                        fontSize: '19',
                         display: 'inline',
+                        backgroundColor: '0xeeeeee',
                         textAlign: {
                           x: 'center',
                           y: 'center',
@@ -634,9 +705,9 @@ export default {
                     style: {
                       '.DividerStyle': {
                         left: '0.45',
-                        top: '0.26',
+                        top: '0.255',
                         width: '0.001',
-                        height: '0.07',
+                        height: '0.08',
                         backgroundColor: '0x00000088',
                       },
                     },
@@ -681,7 +752,7 @@ export default {
                   top: '0',
                   width: '0.25',
                   height: '0.054',
-                  backgroundColor: '0xffffffff',
+                  backgroundColor: '0xffffff00',
                   border: {
                     style: '1',
                   },

@@ -733,12 +733,40 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'eval-object': {
-        const { pageName, updateObject } = action.payload
+        let { pageName, updateObject } = action.payload
+        let results
+        if (typeof updateObject === 'string') {
+          if (updateObject.startsWith('..')) {
+            updateObject = populateString({
+              source: updateObject,
+              lookFor: '..',
+              locations: [this.root, this.root[pageName]],
+            })
+          } else if (updateObject.startsWith('.')) {
+            updateObject = populateString({
+              source: updateObject,
+              lookFor: '.',
+              locations: [this.root, this.root[pageName]],
+            })
+          } else if (updateObject.startsWith('=')) {
+            updateObject = populateString({
+              source: updateObject,
+              lookFor: '=',
+              locations: [this.root, this.root[pageName]],
+            })
+          } else if (updateObject.startsWith('~')) {
+            updateObject = populateString({
+              source: updateObject,
+              lookFor: '~',
+              locations: [this],
+            })
+          }
+        }
         if (isObject(updateObject)) {
           const command = updateObject
 
           const objectKeys = Object.keys(command)
-          asyncForEach(objectKeys, async (key) => {
+          await asyncForEach(objectKeys, async (key) => {
             const populatedCommand = await this.dispatch({
               type: 'populate-object',
               payload: {
@@ -751,7 +779,9 @@ export default class CADL extends EventEmitter {
                 pageName,
                 ifCommand: populatedCommand[key],
               })
-              if (isObject(result)) return result
+              if (isObject(result)) {
+                results = result
+              }
             } else if (!key.startsWith('=')) {
               let trimPath, val
               val = populatedCommand[key]
@@ -878,7 +908,10 @@ export default class CADL extends EventEmitter {
                   pageName,
                   ifCommand: populatedCommand,
                 })
-                if (isObject(result)) return result
+
+                if (isObject(result)) {
+                  results = result
+                }
               } else if (!key.startsWith('=')) {
                 let trimPath, val
                 val = populatedCommand[key]
@@ -1005,7 +1038,7 @@ export default class CADL extends EventEmitter {
         await this.dispatch({
           type: 'update-localStorage',
         })
-        break
+        return results
       }
       case 'update-localStorage': {
         localStorage.setItem('Global', JSON.stringify(this.root?.Global))
@@ -1094,10 +1127,23 @@ export default class CADL extends EventEmitter {
       ) {
         await this.dispatch({
           type: 'eval-object',
-          payload: { pageName, updateObject: { ...ifTrueEffect } },
+          payload: { pageName, updateObject: ifTrueEffect },
         })
         return
-      } else if (isObject(ifTrueEffect) && 'actionType' in ifTrueEffect) {
+      } else if (
+        isObject(ifTrueEffect) &&
+        'actionType' in ifTrueEffect &&
+        ifTrueEffect?.actionType === 'evalObject'
+      ) {
+        const res = await this.dispatch({
+          type: 'eval-object',
+          payload: { pageName, updateObject: ifTrueEffect?.object },
+        })
+        return res
+      } else if (
+        (isObject(ifTrueEffect) && 'actionType' in ifTrueEffect) ||
+        Array.isArray(ifTrueEffect)
+      ) {
         return ifTrueEffect
       } else if (ifTrueEffect.startsWith('..')) {
         lookFor = '..'
@@ -1195,9 +1241,19 @@ export default class CADL extends EventEmitter {
       ) {
         await this.dispatch({
           type: 'eval-object',
-          payload: { pageName, updateObject: { ...ifFalseEffect } },
+          payload: { pageName, updateObject: ifFalseEffect },
         })
         return
+      } else if (
+        isObject(ifFalseEffect) &&
+        'actionType' in ifFalseEffect &&
+        ifFalseEffect?.actionType === 'evalObject'
+      ) {
+        const res = await this.dispatch({
+          type: 'eval-object',
+          payload: { pageName, updateObject: ifFalseEffect?.object },
+        })
+        return res
       } else if (isObject(ifFalseEffect) && 'actionType' in ifFalseEffect) {
         return ifFalseEffect
       } else if (ifFalseEffect.startsWith('..')) {
