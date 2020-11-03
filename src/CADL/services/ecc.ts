@@ -37,18 +37,30 @@ export default {
   skCheck({ pk, sk }) {
     let pkUInt8Array = pk
     let skDataUInt8Array = sk
+    let isValid
 
     if (typeof pk === 'string') {
-      pkUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(pk)
+      try {
+        pkUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(pk)
+      } catch (error) {
+        isValid = false
+      }
     }
     if (typeof sk === 'string') {
-      skDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(sk)
+      try {
+        skDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(sk)
+      } catch (error) {
+        isValid = false
+      }
     }
-
-    const isValid = store.level2SDK.utilServices.aKeyCheck(
-      pkUInt8Array,
-      skDataUInt8Array
-    )
+    try {
+      isValid = store.level2SDK.utilServices.aKeyCheck(
+        pkUInt8Array,
+        skDataUInt8Array
+      )
+    } catch (error) {
+      isValid = false
+    }
 
     return isValid
   },

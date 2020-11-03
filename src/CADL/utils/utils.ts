@@ -310,11 +310,11 @@ function evalState({
   dispatch: Function
 }): Function {
   return async (): Promise<void> => {
-    await dispatch({
+    const res = await dispatch({
       type: 'eval-object',
       payload: { pageName, updateObject },
     })
-    return
+    return res
   }
 }
 
