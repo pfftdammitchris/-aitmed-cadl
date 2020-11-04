@@ -23,6 +23,7 @@ import {
   replaceEvalObject,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
+import dot from 'dot-object'
 import builtInFns from './services/builtIn'
 // import SignIn from './__mocks__/SignIn'
 // import SignUp from './__mocks__/SignUp'
@@ -42,6 +43,7 @@ export default class CADL extends EventEmitter {
   private _initCallQueue: any[]
   private _designSuffix: Record<string, any>
   private _aspectRatio: number
+  private _map: Record<string, any>
   public verificationRequest = {
     timer: 0,
     phoneNumber: '',
@@ -252,6 +254,7 @@ export default class CADL extends EventEmitter {
       prevVal: {},
       newVal: this.root,
     })
+    this.dispatch({ type: 'update-map' })
   }
 
   /**
@@ -438,6 +441,7 @@ export default class CADL extends EventEmitter {
         newVal: this.root,
       })
     }
+    this.dispatch({ type: 'update-map' })
   }
 
   /**
@@ -454,7 +458,6 @@ export default class CADL extends EventEmitter {
     // if (pageName === 'MeetingLobby') return MeetingLobby
     // if (pageName === 'EditProfile') return EditProfile
     // if (pageName === 'UploadDocuments') return UploadDocuments
-    // if (pageName === 'MeetingDocumentsNotes') return MeetingDocumentsNotes
 
     let pageCADL
     let pageUrl
@@ -596,6 +599,11 @@ export default class CADL extends EventEmitter {
    */
   private async dispatch(action: { type: string; payload?: any }) {
     switch (action.type) {
+      case 'update-map': {
+        //TODO: consider adding update-page-map
+        this.map = dot.dot(this.root)
+        break
+      }
       case 'populate': {
         const { pageName } = action.payload
         const pageObjectCopy = _.cloneDeep(this.root[pageName])
@@ -1099,15 +1107,31 @@ export default class CADL extends EventEmitter {
       } else if (condExpression.startsWith('=')) {
         lookFor = '='
       }
-      let res = populateString({
-        source: condExpression,
-        locations: [this.root, this.root[pageName]],
-        lookFor,
-      })
+      let res
+      if (condExpression.startsWith('..')) {
+        res = populateString({
+          source: condExpression,
+          locations: [this.root[pageName]],
+          lookFor,
+        })
+      } else if (
+        condExpression.startsWith('.') ||
+        condExpression.startsWith('=.')
+      ) {
+        res = populateString({
+          source: condExpression,
+          locations: [this.root],
+          lookFor,
+        })
+      }
       if (typeof res === 'function') {
         condResult = await res()
       } else if (res && res !== condExpression) {
-        condResult = true
+        if (condResult === 'false') {
+          condResult = false
+        } else {
+          condResult = true
+        }
       } else {
         condResult = false
       }
@@ -1861,5 +1885,12 @@ export default class CADL extends EventEmitter {
 
   public getConfig() {
     return store.getConfig()
+  }
+  set map(map) {
+    this._map = map
+  }
+
+  get map() {
+    return this._map
   }
 }
