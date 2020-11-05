@@ -5,6 +5,7 @@ import { isObject } from '../../utils'
 import store from '../../common/store'
 import encryptionServices from './ecc'
 import stringServices from './string'
+import objectServices from './object'
 import ecos from './ecos'
 
 import Document from '../../services/Document'
@@ -80,6 +81,7 @@ export default function builtInFns(dispatch?: Function) {
   return {
     string: stringServices,
     eccNaCl: encryptionServices,
+    object: objectServices,
     ecos,
     async createNewAccount({ name }) {
       const {
