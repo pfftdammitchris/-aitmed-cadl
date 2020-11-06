@@ -18,6 +18,7 @@ export {
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
   replaceIfObject,
+  replaceVars,
 }
 
 /**
@@ -507,6 +508,9 @@ function populateString({
   if (currVal.startsWith('.')) {
     currVal = currVal.slice(1)
   }
+  if (currVal.startsWith('$')) {
+    currVal = currVal.slice(1)
+  }
   for (let location of locations) {
     try {
       replacement = dot.pick(currVal, location)
@@ -783,4 +787,10 @@ function replaceUint8ArrayWithBase64(
     sourceCopy = source.map((elem) => replaceUint8ArrayWithBase64(elem))
   }
   return sourceCopy
+}
+
+function replaceVars({ vars, source }) {
+  const withVals = populateObject({ source, lookFor: '$', locations: [vars] })
+  debugger
+  return withVals
 }

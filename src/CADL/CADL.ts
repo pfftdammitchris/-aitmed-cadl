@@ -21,6 +21,7 @@ import {
   populateVals,
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
+  replaceVars,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
@@ -30,7 +31,6 @@ import builtInFns from './services/builtIn'
 // import MeetingLobby from './__mocks__/MeetingLobby'
 // import EditProfile from './__mocks__/EditProfile'
 // import UploadDocuments from './__mocks__/UploadDocuments'
-// import MeetingDocumentsNotes from './__mocks__/MeetingDocumentsNotes'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -457,11 +457,15 @@ export default class CADL extends EventEmitter {
     // if (pageName === 'CreateNewAccount') return SignUp
     // if (pageName === 'MeetingLobby') return MeetingLobby
     // if (pageName === 'EditProfile') return EditProfile
-    // if (pageName === 'UploadDocuments') return UploadDocuments
+    // if (pageName === 'BasePage') return BasePage
 
     let pageCADL
     let pageUrl
     if (pageName.startsWith('~')) {
+      if (!this.myBaseUrl) {
+        console.log('BaseUrl is not present')
+        return { error: 'BaseUrl is not present.' }
+      }
       pageUrl = this.myBaseUrl
       pageName = pageName.substring(2)
     } else {
@@ -1782,6 +1786,25 @@ export default class CADL extends EventEmitter {
       }
     })
   }
+
+  public async emitCall({ dataKey, actions, pageName }) {
+    const actionsWithVals = replaceVars({ vars: dataKey, source: actions })
+    await asyncForEach(actionsWithVals, async (action) => {
+      if ('actionType' in action && action?.actionType === 'evalObject') {
+        action
+        await this.dispatch({
+          type: 'eval-Object',
+          payload: {
+            pageName,
+            updateObject: action?.object,
+          },
+        })
+      } else if ('if' in action) {
+        await this.handleIfCommand({ pageName, ifCommand: action })
+      }
+    })
+  }
+
   public get cadlVersion() {
     return this._cadlVersion
   }

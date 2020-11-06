@@ -235,5 +235,8 @@ export default function builtInFns(dispatch?: Function) {
         return blobUrl
       },
     },
+    cleanLocalStorage() {
+      return store.level2SDK.Account.logoutClean()
+    },
   }
 }

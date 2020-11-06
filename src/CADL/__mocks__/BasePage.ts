@@ -493,7 +493,6 @@ export default {
         text2: '_.text3',
         text3: 'v',
         text4: '__.children.1.text',
-        text5: '__.message',
         style: {
           '.LabelStyle': {
             left: '0',
@@ -530,7 +529,7 @@ export default {
         onClick: [
           {
             actionType: 'popUpDismiss',
-            popUpView: 'baseCheckView',
+            popUpView: '___.viewTag',
           },
         ],
       },
