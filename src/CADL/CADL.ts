@@ -1795,7 +1795,7 @@ export default class CADL extends EventEmitter {
     dataKey: Record<string, any>
     actions: any[]
     pageName: string
-  }) {
+  }): Promise<void> {
     const actionsWithVals = replaceVars({ vars: dataKey, source: actions })
     await asyncForEach(actionsWithVals, async (action) => {
       if ('actionType' in action && action?.actionType === 'evalObject') {
