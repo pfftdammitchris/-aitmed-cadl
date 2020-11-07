@@ -571,17 +571,21 @@ function populateArray({
   path,
   dispatch,
   pageName,
+  skipIf = true,
 }: {
   source: any[]
   lookFor: string
   skip?: string[]
   locations: Record<string, any>[]
-  path: string[]
+  path?: string[]
   dispatch?: Function
   pageName?: string
+  skipIf?: boolean
 }): any[] {
   let sourceCopy = _.cloneDeep(source || [])
-  var previousKey = path[path.length - 1] || ''
+  if (path) {
+    var previousKey = path[path.length - 1] || ''
+  }
   let replacement = sourceCopy.map((elem, i) => {
     let index = '[' + i + ']'
     if (Array.isArray(elem)) {
@@ -590,9 +594,10 @@ function populateArray({
         skip,
         lookFor,
         locations,
-        path: path.slice(0, -1).concat(previousKey + index),
+        path: path?.slice(0, -1).concat(previousKey + index),
         dispatch,
         pageName,
+        skipIf,
       })
     } else if (isObject(elem)) {
       if (
@@ -609,9 +614,10 @@ function populateArray({
           skip,
           lookFor,
           locations,
-          path: path.slice(0, -1).concat(previousKey + index),
+          path: path?.slice(0, -1).concat(previousKey + index),
           dispatch,
           pageName,
+          skipIf,
         })
       }
     } else if (typeof elem === 'string') {
@@ -620,7 +626,7 @@ function populateArray({
         skip,
         lookFor,
         locations,
-        path: path.slice(0, -1).concat(previousKey + index),
+        path: path?.slice(0, -1).concat(previousKey + index),
         dispatch,
         pageName,
       })
@@ -653,6 +659,7 @@ function populateObject({
   path = [],
   dispatch,
   pageName,
+  skipIf = true,
 }: {
   source: Record<string, any>
   lookFor: string
@@ -661,11 +668,16 @@ function populateObject({
   path?: string[]
   dispatch?: Function
   pageName?: string
+  skipIf?: boolean
 }): Record<string, any> {
   let sourceCopy = _.cloneDeep(source || {})
   Object.keys(sourceCopy).forEach((key) => {
     let index = key
-    if (!skip.includes(key) && key !== 'dataKey' && key !== 'if') {
+    let shouldSkipIf
+    if (key === 'if' && skipIf) {
+      shouldSkipIf = true
+    }
+    if (!skip.includes(key) && key !== 'dataKey' && !shouldSkipIf) {
       if (isObject(sourceCopy[key])) {
         if (
           !(
@@ -684,6 +696,7 @@ function populateObject({
             path: path.concat(index),
             dispatch,
             pageName,
+            skipIf,
           })
         }
       } else if (Array.isArray(sourceCopy[key])) {
@@ -695,6 +708,7 @@ function populateObject({
           path: path.concat(index),
           dispatch,
           pageName,
+          skipIf,
         })
       } else if (typeof sourceCopy[key] === 'string') {
         sourceCopy[key] = populateString({
@@ -790,7 +804,11 @@ function replaceUint8ArrayWithBase64(
 }
 
 function replaceVars({ vars, source }) {
-  const withVals = populateObject({ source, lookFor: '$', locations: [vars] })
-  debugger
+  const withVals = populateArray({
+    source,
+    lookFor: '$',
+    locations: [vars],
+    skipIf: false,
+  })
   return withVals
 }

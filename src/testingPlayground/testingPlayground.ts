@@ -16,8 +16,47 @@ export default (async function () {
     aspectRatio: 3,
   })
 
-  await cadl.init()
+  // await cadl.init()
 
+  const obj = {
+    emit: {
+      dataKey: {
+        var1: { value: 4, key: 'red' },
+        var2: { value: 6, key: 'green' },
+      },
+      actions: [
+        {
+          if: [
+            {
+              '=.builtIn.string.equal': null,
+            },
+            '$var1.value',
+            'Male',
+          ],
+        },
+        {
+          '=.builtIn.object.remove': {
+            object: '..GeneralInfo.Radio',
+            key: '$var1.key',
+          },
+        },
+        {
+          '=.builtIn.object.set': {
+            object: '..GeneralInfo.Radio',
+            key: '$var2.key',
+            value: 'Male',
+          },
+        },
+      ],
+    },
+  }
+
+  const newObj = await cadl.emitCall({
+    dataKey: obj.emit.dataKey,
+    actions: obj.emit.actions,
+    pageName: 'SignIn',
+  })
+  debugger
   // const vc = await Account.requestVerificationCode('+1 8881907654')
   // debugger
 

@@ -1787,7 +1787,15 @@ export default class CADL extends EventEmitter {
     })
   }
 
-  public async emitCall({ dataKey, actions, pageName }) {
+  public async emitCall({
+    dataKey,
+    actions,
+    pageName,
+  }: {
+    dataKey: Record<string, any>
+    actions: any[]
+    pageName: string
+  }) {
     const actionsWithVals = replaceVars({ vars: dataKey, source: actions })
     await asyncForEach(actionsWithVals, async (action) => {
       if ('actionType' in action && action?.actionType === 'evalObject') {
