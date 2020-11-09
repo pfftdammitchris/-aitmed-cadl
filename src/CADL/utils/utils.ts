@@ -164,7 +164,12 @@ function isPopulated(item: string | Record<string, any>): boolean {
         }
       } else if (typeof itemCopy[key] === 'string') {
         const currVal = itemCopy[key].toString()
-        if (currVal.startsWith('.') || currVal.startsWith('..')) {
+        if (
+          currVal.startsWith('.') ||
+          currVal.startsWith('..') ||
+          currVal.startsWith('=') ||
+          currVal.startsWith('~')
+        ) {
           isPop = false
         }
       }
@@ -542,6 +547,17 @@ function populateString({
       } else {
         throw error
       }
+    }
+  }
+  if (!!isPopulated(source)) {
+    if (store.env === 'test' && path) {
+      console.log(
+        `%cReference Not Found in ${pageName}`,
+        'background: orange; color: black; display: block;',
+        {
+          [path.join('.')]: source,
+        }
+      )
     }
   }
   if (replacement !== undefined && replacement !== source) {
