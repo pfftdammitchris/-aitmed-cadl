@@ -4,6 +4,35 @@ export default {
     init: [
       {
         if: [
+          '.builtIn.isIOS',
+          {
+            actionType: 'evalObject',
+            object: '..setIOS',
+          },
+          'continue',
+        ],
+      },
+      {
+        if: [
+          '.builtIn.isAndroid',
+          {
+            actionType: 'evalObject',
+            object: '..setAndroid',
+          },
+          'continue',
+        ],
+      },
+      {
+        if: [
+          '..appLink.url',
+          {
+            goto: '..appLink.url',
+          },
+          'continue',
+        ],
+      },
+      {
+        if: [
           '=.Global.currentUser.vertex.sk',
           {
             goto: 'MeetingRoomInvited',
@@ -12,46 +41,58 @@ export default {
         ],
       },
     ],
+    setIOS: [
+      {
+        '..appLink.url@': 'https://apps.apple.com/us/app/aitcom/id1526258312',
+      },
+      {
+        '..appLink.img@':
+          'https://public.aitmed.com/commonRes/aitmed/appstore.png',
+      },
+    ],
+    setAndroid: [
+      {
+        '..appLink.url@':
+          'https://play.google.com/store/apps/details?id=com.aitmed.aitcom',
+      },
+      {
+        '..appLink.img@':
+          'https://public.aitmed.com/commonRes/aitmed/google-play.png',
+      },
+    ],
+    appLink: {
+      url: '',
+      img: '',
+    },
     save: [
       {
-        actionType: 'evalObject',
-        object: {
-          '=.builtIn.eccNaCl.decryptAES': {
-            dataIn: {
-              key: '=..formData.password',
-              message: '=.Global.currentUser.vertex.esk',
-            },
-            dataOut: 'SignIn.formData.sk',
+        '=.builtIn.eccNaCl.decryptAES': {
+          dataIn: {
+            key: '=..formData.password',
+            message: '=.Global.currentUser.vertex.esk',
           },
+          dataOut: 'SignIn.formData.sk',
         },
       },
       {
-        actionType: 'evalObject',
-        object: {
-          '=.builtIn.eccNaCl.skCheck': {
-            dataIn: {
-              pk: '=.Global.currentUser.vertex.pk',
-              sk: '=..formData.sk',
-            },
-            dataOut: 'SignIn.formData.pass',
+        '=.builtIn.eccNaCl.skCheck': {
+          dataIn: {
+            pk: '=.Global.currentUser.vertex.pk',
+            sk: '=..formData.sk',
           },
+          dataOut: 'SignIn.formData.pass',
         },
       },
       {
-        actionType: 'evalObject',
-        object: [
+        if: [
+          '..formData.pass',
           {
-            if: [
-              '..formData.pass',
-              {
-                '.Global.currentUser.vertex.sk@': '=..formData.sk',
-              },
-              {
-                actionType: 'popUp',
-                '.Global.popUpMessage@': 'please re-input password',
-                popUpView: 'BaseCheckView',
-              },
-            ],
+            '.Global.currentUser.vertex.sk@': '=..formData.sk',
+          },
+          {
+            actionType: 'popUp',
+            popUpView: 'wrongPassword',
+            wait: true,
           },
         ],
       },
@@ -62,13 +103,12 @@ export default {
       },
       {
         if: [
-          '..loginNewDevice.response.code',
+          '..loginNewDevice.response.edge',
+          'continue',
           {
             actionType: 'popUp',
-            '.Global.popUpMessage@': '=..loginNewDevice.response.error',
-            popUpView: 'inputVerificationCode',
+            popUpView: 'wrongCode',
           },
-          'continue',
         ],
       },
     ],
@@ -199,7 +239,14 @@ export default {
     },
     components: [
       {
-        '.BaseCheckView': null,
+        '.BaseCheckView': '',
+        message: 'Incorrect Password',
+        viewTag: 'wrongPassword',
+      },
+      {
+        '.BaseCheckView': '',
+        message: 'Incorrect verificationCode',
+        viewTag: 'wrongCode',
       },
       {
         type: 'view',
@@ -212,7 +259,7 @@ export default {
         children: [
           {
             type: 'image',
-            path: 'aitmedLogo.png',
+            path: '~/assets/mLogo.png',
             style: {
               left: '0.1',
               top: '0.05',
@@ -285,7 +332,7 @@ export default {
                 contentType: 'countryCode',
                 placeholder: '..formData.countryCode',
                 dataKey: 'formData.countryCode',
-                options: ['+1', '+52', '+86', '+965'],
+                options: '.CountryCode',
                 required: 'true',
                 style: {
                   left: '0',
@@ -434,7 +481,7 @@ export default {
                       '=.Global.currentUser.vertex.esk',
                       {
                         actionType: 'evalObject',
-                        object: {},
+                        object: '..save',
                       },
                       'continue',
                     ],
@@ -542,26 +589,6 @@ export default {
                     },
                   },
                   {
-                    type: 'label',
-                    dataKey: 'Global.popUpMessage',
-                    style: {
-                      '.LabelStyle': {
-                        left: '0',
-                        top: '0.20',
-                        width: '0.89333',
-                        height: '0.05',
-                        color: '0x00000088',
-                        fontSize: '20',
-                        fontStyle: 'bold',
-                        display: 'inline',
-                        textAlign: {
-                          x: 'center',
-                          y: 'center',
-                        },
-                      },
-                    },
-                  },
-                  {
                     type: 'divider',
                     style: {
                       '.DividerStyle': {
@@ -635,7 +662,7 @@ export default {
                               pk: '=..loginNewDevice.response.edge.deat.pk',
                               sk: '=..formData.sk',
                             },
-                            dataOut: 'formData.pass',
+                            dataOut: 'SignIn.formData.pass',
                           },
                         },
                       },
@@ -651,9 +678,8 @@ export default {
                               },
                               {
                                 actionType: 'popUp',
-                                '.Global.popUpMessage@':
-                                  'please re-input password',
-                                popUpView: 'BaseCheckView',
+                                popUpView: 'wrongPassword',
+                                wait: true,
                               },
                             ],
                           },
@@ -713,6 +739,21 @@ export default {
                     },
                   },
                 ],
+              },
+            ],
+          },
+          {
+            type: 'image',
+            path: '..appLink.img',
+            style: {
+              width: '0.3',
+              top: '0.8',
+              left: '0.5',
+              height: '0.07',
+            },
+            onClick: [
+              {
+                goto: '..appLink.url',
               },
             ],
           },

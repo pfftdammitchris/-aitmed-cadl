@@ -26,7 +26,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SignIn from './__mocks__/SignIn'
+import SignIn from './__mocks__/SignIn'
 // import SignUp from './__mocks__/SignUp'
 // import MeetingLobby from './__mocks__/MeetingLobby'
 // import EditProfile from './__mocks__/EditProfile'
@@ -453,7 +453,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'SignIn') return SignIn
+    if (pageName === 'SignIn') return SignIn
     // if (pageName === 'CreateNewAccount') return SignUp
     // if (pageName === 'MeetingLobby') return MeetingLobby
     // if (pageName === 'EditProfile') return EditProfile
@@ -1147,7 +1147,13 @@ export default class CADL extends EventEmitter {
         'goto' in ifTrueEffect &&
         typeof ifTrueEffect['goto'] === 'string'
       ) {
-        await this.root.builtIn['goto'](ifTrueEffect['goto'])
+        const populatedTrueEffect = populateVals({
+          source: ifTrueEffect,
+          pageName,
+          lookFor: ['..', '.'],
+          locations: [this.root, this.root[pageName]],
+        })
+        await this.root.builtIn['goto'](populatedTrueEffect['goto'])
         return
       } else if (
         isObject(ifTrueEffect) &&
@@ -1257,7 +1263,13 @@ export default class CADL extends EventEmitter {
           'goto' in this.root.builtIn &&
           typeof this.root.builtIn['goto'] === 'function'
         ) {
-          await this.root.builtIn['goto'](ifFalseEffect['goto'])
+          const populatedFalseEffect = populateVals({
+            source: ifFalseEffect,
+            pageName,
+            lookFor: ['..', '.'],
+            locations: [this.root, this.root[pageName]],
+          })
+          await this.root.builtIn['goto'](populatedFalseEffect['goto'])
           return
         }
       } else if (typeof ifFalseEffect === 'function') {
