@@ -26,11 +26,12 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-import SignIn from './__mocks__/SignIn'
+// import SignIn from './__mocks__/SignIn'
 // import SignUp from './__mocks__/SignUp'
 // import MeetingLobby from './__mocks__/MeetingLobby'
 // import EditProfile from './__mocks__/EditProfile'
 // import UploadDocuments from './__mocks__/UploadDocuments'
+// import LogOut from './__mocks__/LogOut'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -453,11 +454,12 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    if (pageName === 'SignIn') return SignIn
+    // if (pageName === 'SignIn') return SignIn
     // if (pageName === 'CreateNewAccount') return SignUp
     // if (pageName === 'MeetingLobby') return MeetingLobby
     // if (pageName === 'EditProfile') return EditProfile
     // if (pageName === 'BasePage') return BasePage
+    // if (pageName === 'Logout') return LogOut
 
     let pageCADL
     let pageUrl
@@ -1112,7 +1114,7 @@ export default class CADL extends EventEmitter {
         lookFor = '='
       }
       let res
-      if (condExpression.startsWith('..')) {
+      if (condExpression.startsWith('..') || condExpression.startsWith('=..')) {
         res = populateString({
           source: condExpression,
           locations: [this.root[pageName]],

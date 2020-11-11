@@ -238,7 +238,8 @@ export default function builtInFns(dispatch?: Function) {
       },
     },
     cleanLocalStorage() {
-      return store.level2SDK.Account.logoutClean()
+      store.level2SDK.Account.logoutClean()
+      return
     },
   }
 }
