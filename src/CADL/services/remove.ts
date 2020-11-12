@@ -14,7 +14,12 @@ function remove({ pageName, apiObject, dispatch }) {
       },
     })
 
-    const { api, id, ...options } = currentVal
+    let populatedCurrentVal = await dispatch({
+      type: 'populate-object',
+      payload: { object: currentVal, pageName },
+    })
+
+    const { api, id, ...options } = populatedCurrentVal
     let res
     //delete request must have have an id
     if (id) {
