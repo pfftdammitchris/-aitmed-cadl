@@ -80,7 +80,11 @@ function create({ pageName, apiObject, dispatch }) {
         pageName,
       },
     })
-    const mergedVal = mergeDeep(currentVal, cloneOutput)
+    let populatedCurrentVal = await dispatch({
+      type: 'populate-object',
+      payload: { object: currentVal, pageName },
+    })
+    const mergedVal = mergeDeep(populatedCurrentVal, cloneOutput)
     const mergedName = mergeDeep({ name: mergedVal }, name)
     const { api, store: storeProp, get, ...options } = mergedVal
     let res
