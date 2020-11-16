@@ -150,6 +150,7 @@ export default class CADL extends EventEmitter {
         payload: { properties: processedBaseCSS },
       })
     }
+
     if (BasePage) {
       const processedBasePage = this.processPopulate({
         source: BasePage,
@@ -1809,22 +1810,50 @@ export default class CADL extends EventEmitter {
     dataKey: Record<string, any>
     actions: any[]
     pageName: string
-  }): Promise<void> {
+  }): Promise<any[]> {
     const actionsWithVals = replaceVars({ vars: dataKey, source: actions })
-    await asyncForEach(actionsWithVals, async (action) => {
+    const returnValues = {}
+    await asyncForEach(actionsWithVals, async (action, index) => {
       if ('actionType' in action && action?.actionType === 'evalObject') {
-        action
-        await this.dispatch({
+        const response = await this.dispatch({
           type: 'eval-Object',
           payload: {
             pageName,
             updateObject: action?.object,
           },
         })
+        if (response) {
+          returnValues[index] = response
+        } else {
+          returnValues[index] = ''
+        }
+      } else if (Object.keys(action)[0].includes('@')) {
+        const response = await this.dispatch({
+          type: 'eval-Object',
+          payload: {
+            pageName,
+            updateObject: action,
+          },
+        })
+        if (response) {
+          returnValues[index] = response
+        } else {
+          returnValues[index] = ''
+        }
       } else if ('if' in action) {
-        await this.handleIfCommand({ pageName, ifCommand: action })
+        const response = await this.handleIfCommand({
+          pageName,
+          ifCommand: action,
+        })
+        if (response) {
+          returnValues[index] = response
+        } else {
+          returnValues[index] = ''
+        }
       }
     })
+
+    return Object.values(returnValues)
   }
 
   public get cadlVersion() {
@@ -1902,6 +1931,9 @@ export default class CADL extends EventEmitter {
   }
   public set aspectRatio(aspectRatio) {
     this._aspectRatio = aspectRatio
+    if (this.cadlBaseUrl) {
+      this._baseUrl = this.cadlBaseUrl
+    }
   }
 
   public get root() {
