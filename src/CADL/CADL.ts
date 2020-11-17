@@ -848,7 +848,6 @@ export default class CADL extends EventEmitter {
               const pathArr = trimPath.split('.')
               let func =
                 _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
-
               if (isObject(func)) {
                 const populateWithRoot = populateObject({
                   source: func,
@@ -897,6 +896,8 @@ export default class CADL extends EventEmitter {
                       path: `${dataOut}`,
                       newVal: result,
                     })
+                  } else if (dataIn && dataOut === undefined) {
+                    results = result
                   }
                 } else {
                   await func()
@@ -1029,6 +1030,8 @@ export default class CADL extends EventEmitter {
                         path: `${dataOut}`,
                         newVal: result,
                       })
+                    } else if (dataIn && dataOut === undefined) {
+                      results = result
                     }
                   } else {
                     await func()
@@ -1102,9 +1105,10 @@ export default class CADL extends EventEmitter {
     if (typeof condExpression === 'function') {
       condResult = await condExpression()
     } else if (
-      condExpression.startsWith('.') ||
-      condExpression.startsWith('=') ||
-      condExpression.startsWith('..')
+      typeof condExpression === 'string' &&
+      (condExpression.startsWith('.') ||
+        condExpression.startsWith('=') ||
+        condExpression.startsWith('..'))
     ) {
       let lookFor
       if (condExpression.startsWith('..')) {
@@ -1142,6 +1146,14 @@ export default class CADL extends EventEmitter {
       } else {
         condResult = false
       }
+    } else if (
+      isObject(condExpression) &&
+      Object.keys(condExpression)?.[0]?.startsWith('=')
+    ) {
+      condResult = await this.dispatch({
+        type: 'eval-object',
+        payload: { pageName, updateObject: condExpression },
+      })
     }
     if (condResult === true) {
       let lookFor
@@ -1827,7 +1839,10 @@ export default class CADL extends EventEmitter {
         } else {
           returnValues[index] = ''
         }
-      } else if (Object.keys(action)[0].includes('@')) {
+      } else if (
+        Object.keys(action)[0].includes('@') ||
+        Object.keys(action)[0].startsWith('=')
+      ) {
         const response = await this.dispatch({
           type: 'eval-Object',
           payload: {
@@ -1852,7 +1867,6 @@ export default class CADL extends EventEmitter {
         }
       }
     })
-
     return Object.values(returnValues)
   }
 

@@ -19,12 +19,6 @@ export default [
 	{
 		input: 'src/index.ts',
 		output: [
-			// {
-			// 	dir: 'dist',
-			// 	format: 'umd',
-			// 	sourcemap: true,
-			// 	name: 'aitmedCadl',
-			// },
 			{
 				file: pkg.main,
 				format: 'cjs', // CommonJS output
@@ -81,26 +75,28 @@ export default [
 		],
 	},
 	{
-		input: 'src/testingPlayground',
+		input: 'src/testingPlayground/testingPlayground.ts',
 		output: {
 			file: 'test_public/bundle.js',
 			format: 'iife', // immediately-invoked function expression — suitable for <script> tags
-			sourcemap: true
+			name: "aitmedNoodlSDK"
 		},
+
 		plugins: [
 			resolve({
 				extensions,
 				preferBuiltins: true,
 				browser: true,
 			}), // so Rollup can find `ms`
-			commonjs(), // so Rollup can convert `ms` to an ES module
+			commonjs({
+				CADL: ['default']
+			}), // so Rollup can convert `ms` to an ES module
 			babel({
 				include: ['src/**/*'],
 				exclude: 'node_modules/**',
 				runtimeHelpers: true,
 				extensions,
 			}),
-			json(),
 			nodePolyfills(),
 		],
 	}

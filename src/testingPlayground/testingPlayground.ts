@@ -11,59 +11,68 @@ import store from '../common/store'
 import ecc from '../CADL/services/ecc'
 import stringServices from '../CADL/services/string'
 
+// export default (async function () {
+//   console.log('red')
+// })()
 export default (async function () {
   console.log(stringServices.formatUnixtimeLT_en(Date.now()))
   const cadl = new CADL({
     ...defaultConfig,
-    configUrl: 'https://public.aitmed.com/config/meet2.yml',
+    configUrl: 'https://public.aitmed.com/config/meet2d.yml',
     aspectRatio: 3,
   })
 
-  // await cadl.init()
+  await cadl.init()
 
-  // const obj = {
-  //   emit: {
-  //     dataKey: {
-  //       var1: { value: 4, key: 'red' },
-  //       var2: { value: 6, key: 'green' },
-  //     },
-  //     actions: [
-  //       {
-  //         if: [
-  //           {
-  //             '=.builtIn.string.equal': null,
-  //           },
-  //           '$var1.value',
-  //           'Male',
-  //         ],
-  //       },
-  //       {
-  //         '=.builtIn.object.remove': {
-  //           object: '..GeneralInfo.Radio',
-  //           key: '$var1.key',
-  //         },
-  //       },
-  //       {
-  //         '=.builtIn.object.set': {
-  //           object: '..GeneralInfo.Radio',
-  //           key: '$var2.key',
-  //           value: 'Male',
-  //         },
-  //       },
-  //     ],
-  //   },
-  // }
+  const obj = {
+    emit: {
+      dataKey: {
+        var1: { value: 4, key: 'red' },
+        var2: { value: 6, key: 'green' },
+      },
+      actions: [
+        {
+          if: [
+            {
+              '=.builtIn.string.equal': {
+                dataIn: {
+                  string1: 'fred',
+                  string2: 'ted',
+                },
+              },
+            },
+            '$var1.value',
+            'Male',
+          ],
+        },
+        {
+          '=.builtIn.object.remove': {
+            object: '..GeneralInfo.Radio',
+            key: '$var1.key',
+          },
+        },
+        {
+          '=.builtIn.object.set': {
+            object: '..GeneralInfo.Radio',
+            key: '$var2.key',
+            value: 'Male',
+          },
+        },
+      ],
+    },
+  }
 
-  // const newObj = await cadl.emitCall({
-  //   dataKey: obj.emit.dataKey,
-  //   actions: obj.emit.actions,
-  //   pageName: 'SignIn',
-  // })
+  const newObj = await cadl.emitCall({
+    dataKey: obj.emit.dataKey,
+    actions: obj.emit.actions,
+    pageName: 'SignIn',
+  })
+  debugger
   // const vc = await Account.requestVerificationCode('+1 8881907654')
   // debugger
 
-  await test_LoginNewDevice({ phone_number: '+1 8889997654' })
-  await test_login({ password: 'letmein123' })
+  // await test_LoginNewDevice({ phone_number: '+1 8889997654' })
+  // await test_login({ password: 'letmein123' })
 
   // const re = await Account.create('+1 8881907654', 'letmein123', vc, 'goog')
 
@@ -82,15 +91,15 @@ export default (async function () {
   // cadl.root.SignIn.update[0].islist = 5
   // console.log(tree)
   // debugger
-  const pk = localStorage.getItem('pk')
-  debugger
-  const esak = ecc.generateESAK({ pk })
-  const rootInbox2 = await store.level2SDK.edgeServices.createEdge({
-    type: 10002,
-    besak: esak,
-    name: { title: 'root' },
-  })
-  debugger
+  // const pk = localStorage.getItem('pk')
+  // debugger
+  // const esak = ecc.generateESAK({ pk })
+  // const rootInbox2 = await store.level2SDK.edgeServices.createEdge({
+  //   type: 10002,
+  //   besak: esak,
+  //   name: { title: 'root' },
+  // })
+  // debugger
   // const { data: fsdfsd } = await store.level2SDK.edgeServices.createEdge({
   //   type: 1040,
   //   name: {
