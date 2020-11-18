@@ -52,7 +52,19 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 
 | Method                                                             | Returns                                             | Description                                                                         |
 | ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| Encryption/Decryption                                              |                                                     |                                                                                     |
+| builtInFns.string                                              |                                                     |                                                                                     |
+| `.generateAKey()`                                                  | `{sk:Uint8Array, pk:Uint8Array}`                    | Generates a keyPair for assymetric encryption/decryption                            |
+| `.aKeyCheck(publicKey:Uint8Array,secretKey:Uint8Array)`            | `boolean`                                           | Checks if the keyPair is a valid one                                                |
+| `.aKeyEncrypt(secretKey:Uint8Array, data:Uint8Array)`              | `Uint8Array`                                        | Assymetrically encrypts the given data using a secret key from a valid keyPair      |
+| `.aKeyDecrypt: (publicKey: Uint8Array, encryptedData: Uint8Array)` | `Uint8Array`                                        | Decrypts the assymetrically encrypted data using the publicKey from a valid keyPair |
+| `.generateSKey()`                                                  | `Uint8Array`                                        | Generates a secretKey for symetrical encryption/decryption                          |
+| `.sKeyEncrypt(secretKey: Uint8Array, data: Uint8Array)`            | `Uint8Array`                                        | Symetrically encrypts data using a secretKey                                        |
+| `.sKeyDecrypt(secretKey: Uint8Array, encryptedData: Uint8Array)`   | `Uint8Array`                                        | Decrypts the symetrically encrypted data using the secretKey it was encrypted with  |
+| `.uint8ArrayToBase64(data: Uint8Array)`                            | `string`                                            | Encodes Uint8Array value to base64 string                                           |
+| `.base64ToUint8Array(data: string)`                                | `Uint8Array`                                        | Decodes string value to Uint8Array                                                  |
+| `.uTF8ToUint8Array(data: string)`                                  | `Uint8Array`                                        | Decodes string and returns Uint8Array                                               |
+| `.uint8ArrayToUTF8(data: Uint8Array)`                              | `string`                                            | Encodes Uint8Array or Array of bytes into string                                    |                                                               |
+| builtInFns.object                                              |                                                     |                                                                                     |
 | `.generateAKey()`                                                  | `{sk:Uint8Array, pk:Uint8Array}`                    | Generates a keyPair for assymetric encryption/decryption                            |
 | `.aKeyCheck(publicKey:Uint8Array,secretKey:Uint8Array)`            | `boolean`                                           | Checks if the keyPair is a valid one                                                |
 | `.aKeyEncrypt(secretKey:Uint8Array, data:Uint8Array)`              | `Uint8Array`                                        | Assymetrically encrypts the given data using a secret key from a valid keyPair      |
