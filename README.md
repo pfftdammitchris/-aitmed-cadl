@@ -66,4 +66,4 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.uint8ArrayToUTF8(data: Uint8Array)`                              | `string`                                            | Encodes Uint8Array or Array of bytes into string                                    |                                                               |
 | builtInFns.object                                              |                                                     |                                                                                     |
 | `.remove({ object, key })`                                                  | `{sk:Uint8Array, pk:Uint8Array}`                    | Generates a keyPair for assymetric encryption/decryption                            |
-| `.set({ object: any, key: any, value: any })`                                                  | `{sk:Uint8Array, pk:Uint8Array}`                    | Generates a keyPair for assymetric encryption/decryption                            |
+| `.set({ object: any, key: any, value: any })` | `{sk:Uint8Array, pk:Uint8Array}` | Generates a keyPair for assymetric encryption/decryption |
