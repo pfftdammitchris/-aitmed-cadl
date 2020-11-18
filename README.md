@@ -67,4 +67,4 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.decryptAES({ key, message })` | `string` | Compare the two input strings and returns true if they are equal, otherwise returns false |
 | `.skCheck({ pk, sk })` | `boolean` | Compare the two input strings and returns true if they are equal, otherwise returns false |
 | `.generateESAK({ pk: string })` | `string` | Compare the two input strings and returns true if they are equal, otherwise returns false |
-| `.decryptData({ esak: Uint8Array \vert string, publicKey: string, secretKey: string, data: Uint8Array})` | `Uint8Array` | Compare the two input strings and returns true if they are equal, otherwise returns false |
+| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array})` | `Uint8Array` | Compare the two input strings and returns true if they are equal, otherwise returns false |
