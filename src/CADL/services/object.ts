@@ -1,4 +1,4 @@
-import _, { has, isObject } from 'lodash'
+import _, { isObject } from 'lodash'
 
 // Points from talk with Ray:
 // Original plan is to modify the object in place, but the object could be referenced in multiple locations
