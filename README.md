@@ -62,13 +62,13 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.remove({ object, key })` | `object` | Creates a deep clone of the object, and removes the value in the deep clone at location specified by key |
 | `.set({ object: any, key: any, value: any })` | `object` | Creates a deep clone of the object, and updates the deep clone at location specified by key with value |
 | **builtInFns.eccNaCl** | | |
-| `signature(message: string)` | `string` | Uses level2SDK.utilServices.signature to encrypt the input string and generate an encrypted signature |
-| `verifySignature(signature: string, pkSign: string)` | `boolean` | Uses level2SDK.utilServices.verifySignature to verify if the signature is valid |
-| `.decryptAES({ key, message })` | `string` | RRR |
-| `.skCheck({ pk, sk })` | `boolean` | RRR |
-| `.generateESAK({ pk: string })` | `string` | RRR |
-| `.decryptESAK({ esak: Uint8Array \| string, publicKey: string, secretKey: string })` | `string` | RRR |
+| `.signature(message: string)` | `string` | Uses level2SDK.utilServices.signature to encrypt the input string and generate an encrypted signature |
+| `.verifySignature(signature: string, pkSign: string)` | `boolean` | Uses level2SDK.utilServices.verifySignature to verify if the signature is valid |
+| `.decryptAES({ key, message })` | `string` | ??? Decrypts message with the provided key through level2SDK.utilServices.sKeyDecrypt |
+| `.skCheck({ pk, sk })` | `boolean` | Uses level2SDK.utilServices.aKeyCheck to check if the provided secret key is valid |
+| `.generateESAK({ pk: string })` | `string` | Generates a symmetric key through level2SDK.utilServices.generateSKey and encrypts the key with level2SDK.utilServices.aKeyEncrypt |
+| `.decryptESAK({ esak: Uint8Array \| string, publicKey: string, secretKey: string })` | `string` | Decrypt the encrypted session access key with public key and secret key |
 | `.isEdgeEncrypted({ id: string })` | `boolean` | Checks if an edge is encrypted, i.e. it has a besak or eesak |
-| `.getSAKFromEdge({ pk, sk })` | `string` | RRR |
-| `.encryptData({ esak: Uint8Array \| string, publicKey: string, data: Uint8Array})` | `Uint8Array` | RRR |
-| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array})` | `Uint8Array` | RRR |
+| `.getSAKFromEdge({ id: string })` | `string` | Retrieves the edge by id, decrypts and returns its attached besak or eesak, if it exists, otherwise returns an empty string  |
+| `.encryptData({ esak: Uint8Array \| string, publicKey: string, data: Uint8Array })` | `Uint8Array` | Encrypts data with esak and returns encrypted data in Uint8Array format |
+| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string })` | `Uint8Array` | Decrypts the esak with provided public key and secret key |
