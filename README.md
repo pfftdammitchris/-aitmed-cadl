@@ -53,11 +53,14 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | Method                                                             | Returns                                             | Description                                                                         |
 | ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **builtInFns.string** | | |
-| `.formatUnixtime_en(unixTime: number)` | `Time?` | Does something |
-| `.formatUnixtimeLT_en(unixTime: number)` | `Time?` | Does something |
-| `.formatDurationInSecond(unixTime: number)` | `Time?` | Does something |
+| `.formatUnixtime_en(unixTime: number)` | `string?` | Returns a date-time string associated with the given number. |
+| `.formatUnixtimeLT_en(unixTime: number)` | `string?` | Return a time string associated with the given number. |
+| `.formatDurationInSecond(unixTime: number)` | `string?` | Returns the amount of time that has elapsed since Dec 31, 1969, 4:00 PM as a string |
 | `.concat(stringArr: string[])` | `string` | Concatenate an array of strings into one string, and returns the string |
 | `.equal({ string1, string2 })` | `boolean` | Compare the two input strings and returns true if they are equal, otherwise returns false |
 | **builtInFns.object** | | |
 | `.remove({ object, key })` | `object` | Creates a deep clone of the object, and removes the value in the deep clone at location specified by key |
 | `.set({ object: any, key: any, value: any })` | `object` | Creates a deep clone of the object, and updates the deep clone at location specified by key with value |
+| **builtInFns.eccNaCl** | | |
+| `a` | `a` | Sth |
+| `a` | `a` | Sth |
