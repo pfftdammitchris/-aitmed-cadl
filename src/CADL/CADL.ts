@@ -1015,7 +1015,6 @@ export default class CADL extends EventEmitter {
                   if (isObject(populatedCommand[key])) {
                     const { dataIn, dataOut } = populatedCommand[key]
                     const result = await func(dataIn)
-
                     if (dataOut) {
                       const pathArr = dataOut.split('.')
                       this.newDispatch({
@@ -1311,11 +1310,20 @@ export default class CADL extends EventEmitter {
         return res
       } else if (isObject(ifFalseEffect) && 'actionType' in ifFalseEffect) {
         return ifFalseEffect
-      } else if (ifFalseEffect.startsWith('..')) {
+      } else if (
+        typeof ifFalseEffect === 'string' &&
+        ifFalseEffect.startsWith('..')
+      ) {
         lookFor = '..'
-      } else if (ifFalseEffect.startsWith('.')) {
+      } else if (
+        typeof ifFalseEffect === 'string' &&
+        ifFalseEffect.startsWith('.')
+      ) {
         lookFor = '.'
-      } else if (ifFalseEffect.startsWith('=')) {
+      } else if (
+        typeof ifFalseEffect === 'string' &&
+        ifFalseEffect.startsWith('=')
+      ) {
         lookFor = '='
       }
       if (lookFor) {

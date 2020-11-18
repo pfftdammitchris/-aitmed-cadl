@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { has, isObject } from 'lodash'
 
 // Points from talk with Ray:
 // Original plan is to modify the object in place, but the object could be referenced in multiple locations
@@ -6,52 +6,66 @@ import _ from 'lodash'
 // Alternatively, we can change the function to do both, if being told
 // I will include all three methods here, with two being commented out
 export default {
-    // Returns a deep copy
+  // Returns a deep copy
 
-    remove({ object, key }) {
-        var cloned = _.cloneDeep(object)
-        _.unset(cloned, key)
-        return cloned
-    },
-
-    set({ object, key, value }) {
-        var cloned = _.cloneDeep(object)
-        _.set(cloned, key, value)
-        return cloned
+  remove({ object, key }) {
+    if (isObject(object)) {
+      var cloned = _.cloneDeep(object)
+      _.unset(cloned, key)
+      return cloned
     }
+    return
+  },
 
-    // Modifies in place
+  set({ object, key, value }) {
+    if (isObject(object)) {
+      var cloned = _.cloneDeep(object)
+      _.set(cloned, key, value)
+      return cloned
+    }
+    return
+  },
+  has({ object, key }) {
+    if (isObject(object)) {
+      if (key in object) {
+        return true
+      }
+      return false
+    }
+    return
+  },
 
-    // remove({ object, key }) {
-    //     _.unset(object, key)
-    // },
+  // Modifies in place
 
-    // set({ object, key, value }) {
-    //     _.set(object, key, value)
-    // }
+  // remove({ object, key }) {
+  //     _.unset(object, key)
+  // },
 
-    // Checks for what to do, adds an extra parameter, should update noodl if going with this path
+  // set({ object, key, value }) {
+  //     _.set(object, key, value)
+  // }
 
-    // remove({ object, key, deep = false }) {
-    //     if(deep) {
-    //         var cloned = _.cloneDeep(object)
-    //         _.unset(cloned, key)
-    //         return cloned
-    //     }
-    //     else {
-    //         _.unset(object, key)
-    //     }
-    // },
+  // Checks for what to do, adds an extra parameter, should update noodl if going with this path
 
-    // set({ object, key, value, deep = false }) {
-    //     if(deep) {
-    //         var cloned = _.cloneDeep(object)
-    //         _.set(cloned, key, value)
-    //         return cloned
-    //     }
-    //     else {
-    //         _.set(object, key, value)
-    //     }
-    // }
+  // remove({ object, key, deep = false }) {
+  //     if(deep) {
+  //         var cloned = _.cloneDeep(object)
+  //         _.unset(cloned, key)
+  //         return cloned
+  //     }
+  //     else {
+  //         _.unset(object, key)
+  //     }
+  // },
+
+  // set({ object, key, value, deep = false }) {
+  //     if(deep) {
+  //         var cloned = _.cloneDeep(object)
+  //         _.set(cloned, key, value)
+  //         return cloned
+  //     }
+  //     else {
+  //         _.set(object, key, value)
+  //     }
+  // }
 }
-
