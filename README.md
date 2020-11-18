@@ -52,7 +52,7 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 
 | Method                                                             | Returns                                             | Description                                                                         |
 | ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **builtInFns.string** | | |
+| **builtInFns.string**   |
 | `.formatUnixtime_en(unixTime: number)` | `{sk:Uint8Array, pk:Uint8Array}` | Generates a keyPair for assymetric encryption/decryption |
 | **builtInFns.object** | | |
 | `.remove({ object, key })` | `object` | Creates a deep clone of the object, and removes the value in the deep clone at location specified by key |
