@@ -64,7 +64,5 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.base64ToUint8Array(data: string)`                                | `Uint8Array`                                        | Decodes string value to Uint8Array                                                  |
 | `.uTF8ToUint8Array(data: string)`                                  | `Uint8Array`                                        | Decodes string and returns Uint8Array                                               |
 | `.uint8ArrayToUTF8(data: Uint8Array)`                              | `string`                                            | Encodes Uint8Array or Array of bytes into string                                    |                                                               |
-
 | builtInFns.object                                              |                                                     |                                                                                     |
 | `.generateAKey()`                                                  | `{sk:Uint8Array, pk:Uint8Array}`                    | Generates a keyPair for assymetric encryption/decryption                            |
-                 |                                                               |
