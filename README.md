@@ -72,3 +72,5 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.getSAKFromEdge({ id: string })` | `string` | Retrieves the edge by id, decrypts its attached besak or eesak, and returns it if exists, otherwise returns an empty string  |
 | `.encryptData({ esak: Uint8Array \| string, publicKey: string, data: Uint8Array })` | `Uint8Array` | Encrypts data with esak and returns encrypted data in Uint8Array format |
 | `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array })` | `Uint8Array` | Decrypts the esak with provided public key and secret key |
+| **builtInFns.ecos** | | |
+| `.shareDoc({ sourceDoc, targetEdgeID })` | `object` | Share a document with a target edge by making a copy of the document as a Note object, then creating a new Document and pass in targetEdgeID as the document's edge_id |
