@@ -64,7 +64,11 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | **builtInFns.eccNaCl** | | |
 | `signature(message: string)` | `string` | Uses level2SDK.utilServices.signature to encrypt the input string and generate an encrypted signature |
 | `verifySignature(signature: string, pkSign: string)` | `boolean` | Uses level2SDK.utilServices.verifySignature to verify if the signature is valid |
-| `.decryptAES({ key, message })` | `string` | Compare the two input strings and returns true if they are equal, otherwise returns false |
-| `.skCheck({ pk, sk })` | `boolean` | Compare the two input strings and returns true if they are equal, otherwise returns false |
-| `.generateESAK({ pk: string })` | `string` | Compare the two input strings and returns true if they are equal, otherwise returns false |
-| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array})` | `Uint8Array` | Compare the two input strings and returns true if they are equal, otherwise returns false |
+| `.decryptAES({ key, message })` | `string` | RRR |
+| `.skCheck({ pk, sk })` | `boolean` | RRR |
+| `.generateESAK({ pk: string })` | `string` | RRR |
+| `.decryptESAK({ esak: Uint8Array \| string, publicKey: string, secretKey: string })` | `string` | RRR |
+| `.isEdgeEncrypted({ id: string })` | `boolean` | Checks if an edge is encrypted, i.e. it has a besak or eesak |
+| `.getSAKFromEdge({ pk, sk })` | `string` | RRR |
+| `.encryptData({ esak: Uint8Array \| string, publicKey: string, data: Uint8Array})` | `Uint8Array` | RRR |
+| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array})` | `Uint8Array` | RRR |
