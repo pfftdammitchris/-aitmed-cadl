@@ -69,6 +69,6 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.generateESAK({ pk: string })` | `string` | Generates a symmetric key through level2SDK.utilServices.generateSKey and encrypts the key with level2SDK.utilServices.aKeyEncrypt |
 | `.decryptESAK({ esak: Uint8Array \| string, publicKey: string, secretKey: string })` | `string` | Decrypt the encrypted session access key with public key and secret key |
 | `.isEdgeEncrypted({ id: string })` | `boolean` | Checks if an edge is encrypted, i.e. it has a besak or eesak |
-| `.getSAKFromEdge({ id: string })` | `string` | Retrieves the edge by id, decrypts and returns its attached besak or eesak, if it exists, otherwise returns an empty string  |
+| `.getSAKFromEdge({ id: string })` | `string` | Retrieves the edge by id, decrypts its attached besak or eesak, and returns it if exists, otherwise returns an empty string  |
 | `.encryptData({ esak: Uint8Array \| string, publicKey: string, data: Uint8Array })` | `Uint8Array` | Encrypts data with esak and returns encrypted data in Uint8Array format |
-| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string })` | `Uint8Array` | Decrypts the esak with provided public key and secret key |
+| `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array })` | `Uint8Array` | Decrypts the esak with provided public key and secret key |
