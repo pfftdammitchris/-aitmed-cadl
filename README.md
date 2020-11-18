@@ -62,5 +62,9 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | `.remove({ object, key })` | `object` | Creates a deep clone of the object, and removes the value in the deep clone at location specified by key |
 | `.set({ object: any, key: any, value: any })` | `object` | Creates a deep clone of the object, and updates the deep clone at location specified by key with value |
 | **builtInFns.eccNaCl** | | |
-| `signature(message: string)` | `a` | Sth |
-| `verifySignature(signature: string, pkSign: string)` | `boolean` | Sth |
+| `signature(message: string)` | `string` | Uses level2SDK.utilServices.signature to encrypt the input string and generate an encrypted signature |
+| `verifySignature(signature: string, pkSign: string)` | `boolean` | Uses level2SDK.utilServices.verifySignature to verify if the signature is valid |
+| `.decryptAES({ key, message })` | `string` | Compare the two input strings and returns true if they are equal, otherwise returns false |
+| `.skCheck({ pk, sk })` | `boolean` | Compare the two input strings and returns true if they are equal, otherwise returns false |
+| `.generateESAK({ pk: string })` | `string` | Compare the two input strings and returns true if they are equal, otherwise returns false |
+| `.decryptData({ esak: Uint8Array | string, publicKey: string, secretKey: string, data: Uint8Array})` | `Uint8Array` | Compare the two input strings and returns true if they are equal, otherwise returns false |
