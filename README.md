@@ -124,41 +124,8 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 | Method                                                             | Returns                                             | Description                                                                         |
 | ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **Account** | | |
-| `.requestVerificationCode(phone_number)` | `object` | Calls store.level2SDK.Account.requestVerificationCode and returns the response  |
-
-requestVerificationCode():
-	-Input: phone_number
-	-Output: Promise
-	-Checks for store.noodlInstance, which is CADL
-	-If true, then check if timer reaches 60 seconds
-	-Must wait for 60 seconds to make another request for same number
-	-If all goes well, will call store.level2SDK.Account.requestVerificationCode
-	-Returns a response
-
-create():
-	-Input:	phone_number, password, verification_code, userName
-	-Output: userVertex
-	-Calls store.level2SDK.Account.createUser to create a new account
-	-Saves the returned data as userVertex and returns it
-
-login():
-	-Input: phone_number, password, verification_code
-	-Output: userVertex, or just user
-	-Login is a two step process
-	-First logs in using phone number and verification code, loginByVerificationCode()
-	-If returned response is valid, then logs in by password, loginByPassword()
-
-loginByPassword():
-	-Calls store.level2SDK.Account.login()
-	-Use store.level2SDK.Account.getStatus() to fetch user_id, and retrieve userVertex
-	-Return userVertex to fetch user_vertex, and return it as user
-
-loginByVerificationCode():
-	-Calls store.level2SDK.Account.loginNewDevice()
-
-Other functions:
-logout(), updatePassword(), updatePasswordByVerificationCode(), updateProfile(), retrieve(), remove(), getStatus(), verifyUserPassword()
-
-==>Document 
-
-
+| `.requestVerificationCode(phone_number)` | `object` | Asynchronous function. Calls store.level2SDK.Account.requestVerificationCode and returns the response  |
+| `.create(phone_number, password, verification_code, userName)` | `object` | Asynchronous function. Calls store.level2SDK.Account.createInvitedUser or store.level2SDK.Account.createUser depending on statusCode. Returns a userVertex object. |
+| `.login(phone_number, password, verification_code)` | `object` | Asynchronous function. Calls loginByVerificationCode and loginByPassword. Returns a user or userVertex object |
+| `.loginByVerificationCode(phone_number, verification_code)` | `object` | Asynchronous function. Calls store.level2SDK.Account.loginNewDevice. Returns a Status. |
+| `.loginByPassword(password)` | `object` | Asynchronous function. Calls store.level2SDK.Account.login, then retrieves userVertex using user.id. Returns userVertex object. |
