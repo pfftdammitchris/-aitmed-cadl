@@ -135,3 +135,7 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 | `.retrieve()` | `AccountTypes.User` | Retrieves the user using information nested in the root |
 
 ### Document Services
+
+| Method                                                             | Returns                                             | Description                                                                 |
+| ----------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| `.create({ edge_id, title, tags = [], content, type, mediaType, dataType = 0, dTypeProps })` | `Note` | Asynchronous function. Creates an encrypted document, attaches it to an edge, and returns the document in Note format. Utilizes functions in store.level2SDK.utilServices |
