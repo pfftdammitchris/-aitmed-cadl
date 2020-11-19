@@ -119,11 +119,10 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 | `.uploadDocument({ title, tags = [], content, type, dataType = 0 })` | `<Record<string, any>>` | Calls Document.create and returns the response |
 
 
-### These are services functions that can be accessed through main CADL/NOODL
+### Account Services
 
 | Method                                                             | Returns                                             | Description                                                                 |
 | ----------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
-| **Account** | | |
 | `.requestVerificationCode(phone_number)` | `object` | Asynchronous function. Calls store.level2SDK.Account.requestVerificationCode and returns the response |
 | `.create(phone_number, password, verification_code, userName)` | `object` | Asynchronous function. Calls store.level2SDK.Account.createInvitedUser or store.level2SDK.Account. createUser depending on statusCode. Returns a userVertex object. |
 | `.login(phone_number, password, verification_code)` | `object` | Asynchronous function. Calls loginByVerificationCode and loginByPassword. Returns a user or userVertex object |
@@ -134,3 +133,5 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 | `.verifyUserPassword(password: string)` | `boolean` | Uses store.level2SDK.Account.verifyUserPassword to verify the password |
 | `.updateProfile(profile: AccountTypes.Profile)` | `AccountTypes.User` | Updates the profile by deleting old one and creating a new profile |
 | `.retrieve()` | `AccountTypes.User` | Retrieves the user using information nested in the root |
+
+### Document Services
