@@ -48,7 +48,42 @@ then navigate to http://localhost:5000/
 http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107CEA22149F38DB5A36E619F71C9
 密码：UP4M
 
+# MAIN CADL/NOODL Documentation
+
+### CADL - Lvl 2.5 SDK. 
+This layer is connected to Lvl 2 SDK and noodl-ui-dom. The primary function of CADL is to parse and translate a noodl yaml file. CADL can resolve references in noodl file by replacing short-handed variables (marked by ., .., etc.) with ful variables. It will then go through noodl file, parse it, and replace any functions with Lvl 2 API commands as appropriate.
+
+CADL is created in the frontend web layer. On creation, its constructor will be provided with aspectRation, cadlVersion, and configUrl as parameters. CADL will have access to a store, which is created using provided parameters of env and configUrl. This store will have access to Lvl 2 SDK, and implements Lvl 2 SDK's setters and getters. Inside of CADL constructor, several properties of store will be redirected, and store's noodlInstance will refer to the CADL.
+
+An integral part of CADL is the root. When CADL is created, initRoot() function is called, and two things are attached to the empty root: an empty actions {} object, and an array of builtIn functions, which include things like createNewAccount, signIn, uploadDocument, etc. This process is completed within the CADL layer. 
+
+Implementation of CADL relies on a few important functions, which are supported by an array of helper functions. The important ones are:
+
+#### CADL.init() 
+This function is called to initialize the CADL. This function can take three parameters (BaseDataModel, BaseCSS, and BasePage), but generally none are provided. A config variable is declared and assigned the variable retrieved from Lvl 2 SDK using loadConfig(), and config is destructured and assigned to the proper variables in CADL. From config, cadlBaseUrl is retrieved, and is used to locate cadlEndpointUrl. Using the cadlEndpointUrl we get cadlEndpoint, which contains baseUrl, assetsUrl, and preload. These are vital assets for parsing the noodl file.
+
+The variable preload can be destructured to receive BasePage, BaseCSS, and BaseDataModel. These are the base elements in a noodl file; there are separate 'pages' in noodl that needs processing as well, such as SignIn, SignUp, and DocumentDetails, but these are the big three ones. For each of these pages, they are first retrieved using this.getPage() method, then processed down using this.processPopulate() method, and finally set into state using this.newDispatch() method. The key here is the processPopulate() method, which translates variables that start with ['.', '..', '=', '~'] into their fully expanded values using a recurssive algorithm. Once this process completes, these fully parsed objects/functions/variables are updated into root through state control dispatches.
+
+After the above steps are completed, init() function checks for any items stored in local storage 'Global', and repeats the above parsing process. This process is not detected when the web first renders.
+
+#### CADL.initPage()
+This is another important method of CADL. Once the app starts, each page in noodl will need to be rendered separately, and that is the primary function of initPage(). This function is called in frontend code in src/index.js, and by createPreparePage() function. This function takes three parameters: pageName, an empty array denoted skip, and options. pageName variable is self-explanatory; I'm not sure what purpose skip[] does; the most notable thing about options is that once destructured, it contains a variable called evolve, and that must be true in order for the page to be rendered, otherwise the page will return. The evolve variable is invoked in frontend code, builtIn functions goto and goBack. 
+
+After the processing and evaluating are finished, initPage() then proceeds to process noodl page in a fashion similar to init(), using processPopulate(), but also dispatch method. 
+
+#### CADL.processPopulate()
+This function is the primary function that handles the resolution of noodl files by processing references of variables in noodl files and replacing them with their fully extended form. This is specifically being done with the populateKeys() method, which recursively goes through the noodl file, find any symbols that signifies a referencing variable, and replace that variable with its fully extended form.
+
+The function takes in five parameters: source, lookFor, skip, pageName, withFns. 
+-source: the source page of noodl, written in yml format
+-lookFor: an array of symbols to look out for, these symbols denote variables at current directory, parent directory, etc. that must be identified and have related variables resolved
+-skip: items to skip while parsing through yml file
+-withFns: a boolean true or false
+-pageName: name of the noodl page
+
 ## Methods That Can Be Accessed Through CADL/NOODL:
+
+### These functions can be accessed through builtInFns, which are attached to root as root.builtIn
 
 | Method                                                             | Returns                                             | Description                                                                         |
 | ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
@@ -76,50 +111,18 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 | **builtInFns.ecos** | | |
 | `.shareDoc({ sourceDoc, targetEdgeID })` | `object` | Share a document with a target edge by making a copy of the document as a Note object, then creating a new Document and pass in targetEdgeID as the document's edge_id |
 | **Access directly from builtInFns** | | |
-| `.shareDoc({ sourceDoc, targetEdgeID })` | `object` | RRR |
-| `.shareDoc({ sourceDoc, targetEdgeID })` | `object` | RRR |
-| `.shareDoc({ sourceDoc, targetEdgeID })` | `object` | RRR |
+| `.createNewAccount({ name })` | `object` | Asynchronous function. Name is destructured to include phoneNumber, password, and userName. These credentials will be verified, and the function then calls Account.create. Account.create data will be returned. |
+| `.signIn({ phoneNumber, password, verificationCode })` | `object` | Asynchronous function. Calls Account.login to complete login procedure. Account.login's returned data will be returned. |
+| `.loginByPassword(password)` | `None` | Asynchronous function. Calls Account.loginByPassword |
+| `.storeCredentials({ pk, sk, esk, userId })` | `None` | Stores provided credentials in local storage |
+| `.SignInOk()` | `boolean` | Calls Account.getStatus |
+| `.uploadDocument({ title, tags = [], content, type, dataType = 0 })` | `<Record<string, any>>` | Calls Document.create and returns the response |
 
-############################################ MAIN #############################################
 
-===>CADL - Lvl 2.5 SDK. This layer is connected to Lvl 2 SDK and noodl-ui-dom. The primary function of CADL is to parse and translate a noodl yaml file. CADL can resolve references in noodl file by replacing short-handed variables (marked by ., .., etc.) with ful variables. It will then go through noodl file, parse it, and replace any functions with Lvl 2 API commands as appropriate.
+### These are services functions that can be accessed through main CADL/NOODL
 
-CADL is created in the frontend web layer. On creation, its constructor will be provided with aspectRation, cadlVersion, and configUrl as parameters. CADL will have access to a store, which is created using provided parameters of env and configUrl. This store will have access to Lvl 2 SDK, and implements Lvl 2 SDK's setters and getters. Inside of CADL constructor, several properties of store will be redirected, and store's noodlInstance will refer to the CADL.
-
-An integral part of CADL is the root. When CADL is created, initRoot() function is called, and two things are attached to the empty root: an empty actions {} object, and an array of builtIn functions, which include things like createNewAccount, signIn, uploadDocument, etc. This process is completed within the CADL layer. 
-
-Implementation of CADL relies on a few important functions, which are supported by an array of helper functions. The important ones are:
-
-==>CADL.init() - This function is called to initialize the CADL. This function can take three parameters (BaseDataModel, BaseCSS, and BasePage), but generally none are provided. A config variable is declared and assigned the variable retrieved from Lvl 2 SDK using loadConfig(), and config is destructured and assigned to the proper variables in CADL. From config, cadlBaseUrl is retrieved, and is used to locate cadlEndpointUrl. Using the cadlEndpointUrl we get cadlEndpoint, which contains baseUrl, assetsUrl, and preload. These are vital assets for parsing the noodl file.
-
-The variable preload can be destructured to receive BasePage, BaseCSS, and BaseDataModel. These are the base elements in a noodl file; there are separate 'pages' in noodl that needs processing as well, such as SignIn, SignUp, and DocumentDetails, but these are the big three ones. For each of these pages, they are first retrieved using this.getPage() method, then processed down using this.processPopulate() method, and finally set into state using this.newDispatch() method. The key here is the processPopulate() method, which translates variables that start with ['.', '..', '=', '~'] into their fully expanded values using a recurssive algorithm. Once this process completes, these fully parsed objects/functions/variables are updated into root through state control dispatches.
-
-After the above steps are completed, init() function checks for any items stored in local storage 'Global', and repeats the above parsing process. This process is not detected when the web first renders.
-
-==>CADL.initPage() - This is another important method of CADL. Once the app starts, each page in noodl will need to be rendered separately, and that is the primary function of initPage(). This function is called in frontend code in src/index.js, and by createPreparePage() function. This function takes three parameters: pageName, an empty array denoted skip, and options. pageName variable is self-explanatory; I'm not sure what purpose skip[] does; the most notable thing about options is that once destructured, it contains a variable called evolve, and that must be true in order for the page to be rendered, otherwise the page will return. The evolve variable is invoked in frontend code, builtIn functions goto and goBack. 
-
-After the processing and evaluating are finished, initPage() then proceeds to process noodl page in a fashion similar to init(), using processPopulate(), but also dispatch method. 
-
-=>CADL.processPopulate() - This function is the primary function that handles the resolution of noodl files by processing references of variables in noodl files and replacing them with their fully extended form. This is specifically being done with the populateKeys() method, which recursively goes through the noodl file, find any symbols that signifies a referencing variable, and replace that variable with its fully extended form.
-
-The function takes in five parameters: source, lookFor, skip, pageName, withFns. 
--source: the source page of noodl, written in yml format
--lookFor: an array of symbols to look out for, these symbols denote variables at current directory, parent directory, etc. that must be identified and have related variables resolved
--skip: items to skip while parsing through yml file
--withFns: a boolean true or false
--pageName: name of the noodl page
-
-=>CADL.dispatch() - 
-
-=>CADL.newDispatch() - This function patches the action to reducer function, and updates the root of CADL
-
-=>CADL.reducer() - The reducer() method calls immerse's produce() function to return an updated state, based on the type of action being passed in
-
-## Services 
-
-CADL contains a lot of services; however, most of these are inherited from Lvl 2.5 SDK. These are under src/services
-
-==>Account 
+| **Account** | | |
+| `.requestVerificationCode()` | `string` | Returns a date-time string associated with the given number. |
 
 requestVerificationCode():
 	-Input: phone_number
