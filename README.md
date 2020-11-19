@@ -121,8 +121,10 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 
 ### These are services functions that can be accessed through main CADL/NOODL
 
+| Method                                                             | Returns                                             | Description                                                                         |
+| ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **Account** | | |
-| `.requestVerificationCode()` | `string` | Returns a date-time string associated with the given number. |
+| `.requestVerificationCode(phone_number)` | `object` | Calls store.level2SDK.Account.requestVerificationCode and returns the response  |
 
 requestVerificationCode():
 	-Input: phone_number
