@@ -124,8 +124,13 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 | Method                                                             | Returns                                             | Description                                                                         |
 | ------------------------------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **Account** | | |
-| `.requestVerificationCode(phone_number)` | `object` | Asynchronous function. Calls store.level2SDK.Account.requestVerificationCode and returns the response  |
-| `.create(phone_number, password, verification_code, userName)` | `object` | Asynchronous function. Calls store.level2SDK.Account.createInvitedUser or store.level2SDK.Account.createUser depending on statusCode. Returns a userVertex object. |
+| `.requestVerificationCode(phone_number)` | `object` | Asynchronous function. Calls store.level2SDK.Account.requestVerificationCode and returns the response |
+| `.create(phone_number, password, verification_code, userName)` | `object` | Asynchronous function. Calls store.level2SDK.Account.createInvitedUser or store.level2SDK.Account. createUser depending on statusCode. Returns a userVertex object. |
 | `.login(phone_number, password, verification_code)` | `object` | Asynchronous function. Calls loginByVerificationCode and loginByPassword. Returns a user or userVertex object |
-| `.loginByVerificationCode(phone_number, verification_code)` | `object` | Asynchronous function. Calls store.level2SDK.Account.loginNewDevice. Returns a Status. |
-| `.loginByPassword(password)` | `object` | Asynchronous function. Calls store.level2SDK.Account.login, then retrieves userVertex using user.id. Returns userVertex object. |
+| `.loginByVerificationCode(phone_number, verification_code)` | `object` | Asynchronous function. Calls store.level2SDK.Account.loginNewDevice. Returns a Status |
+| `.loginByPassword(password)` | `object` | Asynchronous function. Calls store.level2SDK.Account.login, then retrieves userVertex using user.id. Returns userVertex object |
+| `.updatePassword(old_password, new_password)` | `None` | Asynchronous function. Updates user password by calling store.level2SDK.Account.changePasswordWithOldPassword |
+| `.updatePasswordByVerificationCode(phone_number, verification_code, new_password)` | `None` | Asynchronous function. Updates user password by calling store.level2SDK.Account.changePasswordWithVerificationCode |
+| `.verifyUserPassword(password: string)` | `boolean` | Uses store.level2SDK.Account.verifyUserPassword to verify the password |
+| `.updateProfile(profile: AccountTypes.Profile)` | `AccountTypes.User` | Updates the profile by deleting old one and creating a new profile |
+| `.retrieve()` | `AccountTypes.User` | Retrieves the user using information nested in the root |
