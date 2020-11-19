@@ -121,8 +121,8 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 
 ### These are services functions that can be accessed through main CADL/NOODL
 
-| Method                                                             | Returns                                             | Description                                                                         |
-| ----------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Method                                                             | Returns                                             | Description                                                                 |
+| ----------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
 | **Account** | | |
 | `.requestVerificationCode(phone_number)` | `object` | Asynchronous function. Calls store.level2SDK.Account.requestVerificationCode and returns the response |
 | `.create(phone_number, password, verification_code, userName)` | `object` | Asynchronous function. Calls store.level2SDK.Account.createInvitedUser or store.level2SDK.Account. createUser depending on statusCode. Returns a userVertex object. |
