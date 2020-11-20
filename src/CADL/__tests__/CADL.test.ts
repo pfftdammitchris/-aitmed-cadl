@@ -71,7 +71,7 @@ describe('CADL', () => {
     })
   })
 
-  xdescribe('handleIfCommand', () => {
+  describe('handleIfCommand', () => {
     const cadl = new CADL({ ...defaultConfig })
 
     it('should handle evalObject assignment syntax', () => {
@@ -258,6 +258,12 @@ describe('CADL', () => {
                 'continue',
               ],
             },
+            {
+              '.TestPage.generalInfo.gender@': 'Other',
+            },
+            {
+              '.TestPage.generalInfo.gender@': 'Male',
+            },
           ],
         },
       }
@@ -268,8 +274,12 @@ describe('CADL', () => {
         pageName: 'TestPage',
       }).then((res) => {
         debugger
-        expect(cadl.root.TestPage.generalInfo.gender).toEqual('Female')
+        expect(cadl.root.TestPage.generalInfo.gender).toEqual('Male')
       })
     })
+  })
+
+  xdescribe('evalObject', () => {
+    it('should evaluate value assignment', () => {})
   })
 })
