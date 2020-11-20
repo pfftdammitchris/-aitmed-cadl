@@ -14,6 +14,12 @@ export default {
     }
     return
   },
+  clear({ object, key }) {
+    if (isObject(object)) {
+      object[key] = ''
+    }
+    return
+  },
 
   set({ object, key, value }) {
     if (isObject(object)) {
@@ -29,7 +35,7 @@ export default {
   },
   has({ object, key }) {
     if (isObject(object)) {
-      if (key in object) {
+      if (key in object && !!object[key]) {
         return true
       }
       return false

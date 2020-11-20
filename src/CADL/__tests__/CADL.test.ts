@@ -229,5 +229,47 @@ describe('CADL', () => {
         expect(cadl.root.TestPage.generalInfo.gender).toEqual('Male')
       })
     })
+    it('should handle evalObject assignment expressions', () => {
+      const TestPage = {
+        generalInfo: {
+          gender: '',
+        },
+        emit: {
+          dataKey: {
+            var: {
+              key: 'gender',
+              value: 'Male',
+            },
+          },
+          actions: [
+            {
+              if: [
+                {
+                  '=.builtIn.string.equal': {
+                    dataIn: {
+                      string1: '$var.value',
+                      string2: 'Male',
+                    },
+                  },
+                },
+                {
+                  '.TestPage.generalInfo.gender@': 'Female',
+                },
+                'continue',
+              ],
+            },
+          ],
+        },
+      }
+      cadl.root.TestPage = TestPage
+      return cadl['emitCall']({
+        actions: TestPage.emit.actions,
+        dataKey: TestPage.emit.dataKey,
+        pageName: 'TestPage',
+      }).then((res) => {
+        debugger
+        expect(cadl.root.TestPage.generalInfo.gender).toEqual('Female')
+      })
+    })
   })
 })
