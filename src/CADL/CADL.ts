@@ -26,11 +26,6 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SignIn from './__mocks__/SignIn'
-// import SignUp from './__mocks__/SignUp'
-// import MeetingLobby from './__mocks__/MeetingLobby'
-// import EditProfile from './__mocks__/EditProfile'
-// import UploadDocuments from './__mocks__/UploadDocuments'
 // import LogOut from './__mocks__/LogOut'
 
 export default class CADL extends EventEmitter {
@@ -455,11 +450,6 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'SignIn') return SignIn
-    // if (pageName === 'CreateNewAccount') return SignUp
-    // if (pageName === 'MeetingLobby') return MeetingLobby
-    // if (pageName === 'EditProfile') return EditProfile
-    // if (pageName === 'BasePage') return BasePage
     // if (pageName === 'Logout') return LogOut
 
     let pageCADL
@@ -748,9 +738,44 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'eval-object': {
+        /**
+         * handles the following cases
+         *
+         * case 1: assignment expression
+         * ----> {'.key@':3}
+         *
+         *  * the left-hand side ('.key@') denotes the path that will be updated with the corresponding value on the right (3)
+         *  * '@' must be present after the path for the expression to be evaluated successfully
+         *
+         * case 2: evaluating functions
+         * ----> {
+         *        '=.builtIn.add:{
+         *          dataIn:{
+         *            val1:1,
+         *            val2:3
+         *          },
+         *          dataOut:'.path'
+         *        }
+         *      }
+         *  * the program knows this is a function to be evaluated because of the '=' at the start of the key.
+         *  * it will will find the reference to the function at the given path, then apply the given arguments (dataIn)
+         *
+         * case 3: if blocks
+         * ---->{
+         *        if:[
+         *            '.pathCondExpression',
+         *            'isTrueEffect',
+         *            'isFalseEffect'
+         *          ]
+         *      }
+         *
+         *  * the program runs handleIfCommand if it notices that there is an 'if' key
+         *
+         */
         let { pageName, updateObject } = action.payload
         let results
         if (typeof updateObject === 'string') {
+          //handle possible missing references
           if (updateObject.startsWith('..')) {
             updateObject = populateString({
               source: updateObject,
@@ -778,10 +803,21 @@ export default class CADL extends EventEmitter {
           }
         }
         if (isObject(updateObject)) {
+          /**
+           * update object is in the following form
+           *
+           * {
+           *    '.path@':5,
+           *    '.path2@':6
+           * }
+           */
           const command = updateObject
 
           const objectKeys = Object.keys(command)
           await asyncForEach(objectKeys, async (key) => {
+            /**
+             * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+             */
             const populatedCommand = await this.dispatch({
               type: 'populate-object',
               payload: {
@@ -790,14 +826,17 @@ export default class CADL extends EventEmitter {
               },
             })
             if (key === 'if') {
+              //handle If command
               const result = await this.handleIfCommand({
                 pageName,
                 ifCommand: populatedCommand[key],
               })
+              //record result if any
               if (isObject(result)) {
                 results = result
               }
             } else if (!key.startsWith('=')) {
+              //handles assignment expressions
               let trimPath, val
               val = populatedCommand[key]
               if (key.startsWith('..')) {
@@ -844,6 +883,7 @@ export default class CADL extends EventEmitter {
                 })
               }
             } else if (key.startsWith('=')) {
+              //handles function evaluation
               const trimPath = key.substring(2, key.length)
               const pathArr = trimPath.split('.')
               let func =
@@ -909,7 +949,18 @@ export default class CADL extends EventEmitter {
             }
           })
         } else if (Array.isArray(updateObject)) {
+          /**
+           * handles the following format
+           * [
+           *  {'.path@':3},
+           *  {'path2@':5},
+           *  {if:['.condition', ifTrue, ifFalse]}
+           * ]
+           */
           await asyncForEach(updateObject, async (command) => {
+            /**
+             * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+             */
             const populatedCommand = await this.dispatch({
               type: 'populate-object',
               payload: {
@@ -917,18 +968,21 @@ export default class CADL extends EventEmitter {
                 object: command,
               },
             })
+
             const commandKeys = Object.keys(populatedCommand)
             await asyncForEach(commandKeys, async (key) => {
               if (key === 'if') {
+                //handle If command
                 const result = await this.handleIfCommand({
                   pageName,
                   ifCommand: populatedCommand,
                 })
-
+                //record result if any
                 if (isObject(result)) {
                   results = result
                 }
               } else if (!key.startsWith('=')) {
+                //handles assignment expressions
                 let trimPath, val
                 val = populatedCommand[key]
                 if (key.startsWith('..')) {
@@ -975,6 +1029,7 @@ export default class CADL extends EventEmitter {
                   })
                 }
               } else if (key.startsWith('=')) {
+                //handles function evaluation
                 const trimPath = key.substring(2, key.length)
                 const pathArr = trimPath.split('.')
                 let func =
@@ -1098,10 +1153,29 @@ export default class CADL extends EventEmitter {
     }
   }
 
+  /**
+   *
+   *  - evaluates if block of shape
+   * {
+   *  if:[
+   *      condition,
+   *      ifTrueEffect,
+   *      ifFalseEffect
+   *    ]
+   * }
+   */
   private async handleIfCommand({ pageName, ifCommand }) {
     const [condExpression, ifTrueEffect, ifFalseEffect] = ifCommand['if']
     let condResult
-    if (typeof condExpression === 'function') {
+    if (
+      condExpression === false ||
+      condExpression === 'false' ||
+      condExpression === true ||
+      condExpression === 'true'
+    ) {
+      condResult = condExpression
+    } else if (typeof condExpression === 'function') {
+      //condExpression is a function
       condResult = await condExpression()
     } else if (
       typeof condExpression === 'string' &&
@@ -1109,6 +1183,7 @@ export default class CADL extends EventEmitter {
         condExpression.startsWith('=') ||
         condExpression.startsWith('..'))
     ) {
+      //condExpression is a path pointing to a reference
       let lookFor
       if (condExpression.startsWith('..')) {
         lookFor = '..'
@@ -1149,18 +1224,20 @@ export default class CADL extends EventEmitter {
       isObject(condExpression) &&
       Object.keys(condExpression)?.[0]?.startsWith('=')
     ) {
+      //condExpression matches an evalObject function evaluation
       condResult = await this.dispatch({
         type: 'eval-object',
         payload: { pageName, updateObject: condExpression },
       })
     }
-    if (condResult === true) {
+    if (condResult === true || condResult === 'true') {
       let lookFor
       if (
         isObject(ifTrueEffect) &&
         'goto' in ifTrueEffect &&
         typeof ifTrueEffect['goto'] === 'string'
       ) {
+        //handles goto function logic
         const populatedTrueEffect = populateVals({
           source: ifTrueEffect,
           pageName,
@@ -1171,8 +1248,10 @@ export default class CADL extends EventEmitter {
         return
       } else if (
         isObject(ifTrueEffect) &&
-        Object.keys(ifTrueEffect)?.[0]?.includes('@')
+        (Object.keys(ifTrueEffect)?.[0]?.includes('@') ||
+          Object.keys(ifTrueEffect)?.[0]?.startsWith('='))
       ) {
+        //handles evalObject assignment expression
         await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: ifTrueEffect },
@@ -1183,6 +1262,7 @@ export default class CADL extends EventEmitter {
         'actionType' in ifTrueEffect &&
         ifTrueEffect?.actionType === 'evalObject'
       ) {
+        //ifTrueEffect matches an evalObject actionType
         const res = await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: ifTrueEffect?.object },
@@ -1192,23 +1272,37 @@ export default class CADL extends EventEmitter {
         (isObject(ifTrueEffect) && 'actionType' in ifTrueEffect) ||
         Array.isArray(ifTrueEffect)
       ) {
+        //this returns unhandled object expressions that will be handled by the UI
         return ifTrueEffect
-      } else if (ifTrueEffect.startsWith('..')) {
+      } else if (
+        typeof ifTrueEffect === 'string' &&
+        ifTrueEffect.startsWith('..')
+      ) {
         lookFor = '..'
-      } else if (ifTrueEffect.startsWith('.')) {
+      } else if (
+        typeof ifTrueEffect === 'string' &&
+        ifTrueEffect.startsWith('.')
+      ) {
         lookFor = '.'
-      } else if (ifTrueEffect.startsWith('=')) {
+      } else if (
+        typeof ifTrueEffect === 'string' &&
+        ifTrueEffect.startsWith('=')
+      ) {
         lookFor = '='
       }
       if (lookFor) {
+        //ifTrueEffect is a path that points to a reference
         let res = populateString({
           source: ifTrueEffect,
           locations: [this.root, this.root[pageName]],
           lookFor,
         })
         if (typeof res === 'function') {
+          //reference is a function
           await res()
         } else if (isObject(res)) {
+          //reference is an object
+          //assume that it is an evalObject object function evaluation type
           const boundDispatch = this.dispatch.bind(this)
           const withFns = attachFns({
             cadlObject: res,
@@ -1266,7 +1360,7 @@ export default class CADL extends EventEmitter {
       } else {
         return ifTrueEffect
       }
-    } else if (condResult === false) {
+    } else if (condResult === false || condResult === 'false') {
       let lookFor
       if (
         isObject(ifFalseEffect) &&
@@ -1277,6 +1371,7 @@ export default class CADL extends EventEmitter {
           'goto' in this.root.builtIn &&
           typeof this.root.builtIn['goto'] === 'function'
         ) {
+          //handles goto function logic
           const populatedFalseEffect = populateVals({
             source: ifFalseEffect,
             pageName,
@@ -1291,8 +1386,10 @@ export default class CADL extends EventEmitter {
         return
       } else if (
         isObject(ifFalseEffect) &&
-        Object.keys(ifFalseEffect)?.[0]?.includes('@')
+        (Object.keys(ifFalseEffect)?.[0]?.includes('@') ||
+          Object.keys(ifFalseEffect)?.[0]?.startsWith('='))
       ) {
+        //handles evalObject assignment expression
         await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: ifFalseEffect },
@@ -1303,12 +1400,17 @@ export default class CADL extends EventEmitter {
         'actionType' in ifFalseEffect &&
         ifFalseEffect?.actionType === 'evalObject'
       ) {
+        //ifTrueEffect matches an evalObject actionType
         const res = await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: ifFalseEffect?.object },
         })
         return res
-      } else if (isObject(ifFalseEffect) && 'actionType' in ifFalseEffect) {
+      } else if (
+        (isObject(ifFalseEffect) && 'actionType' in ifFalseEffect) ||
+        Array.isArray(ifFalseEffect)
+      ) {
+        //this returns unhandled object expressions that will be handled by the UI
         return ifFalseEffect
       } else if (
         typeof ifFalseEffect === 'string' &&
@@ -1327,6 +1429,7 @@ export default class CADL extends EventEmitter {
         lookFor = '='
       }
       if (lookFor) {
+        //ifFalseEffect is a path that points to a reference
         let res = populateString({
           source: ifFalseEffect,
           locations: [this.root, this.root[pageName]],
@@ -1334,8 +1437,11 @@ export default class CADL extends EventEmitter {
         })
 
         if (typeof res === 'function') {
+          //reference is a function
           await res()
         } else if (isObject(res)) {
+          //reference is an object
+          //assume that it is an evalObject object function evaluation type
           const boundDispatch = this.dispatch.bind(this)
           const withFns = attachFns({
             cadlObject: res,
@@ -1834,9 +1940,10 @@ export default class CADL extends EventEmitter {
     const actionsWithVals = replaceVars({ vars: dataKey, source: actions })
     const returnValues = {}
     await asyncForEach(actionsWithVals, async (action, index) => {
+      //handles explicit evalObject call
       if ('actionType' in action && action?.actionType === 'evalObject') {
         const response = await this.dispatch({
-          type: 'eval-Object',
+          type: 'eval-object',
           payload: {
             pageName,
             updateObject: action?.object,
@@ -1848,11 +1955,12 @@ export default class CADL extends EventEmitter {
           returnValues[index] = ''
         }
       } else if (
+        //handles eval expressions associated to evalObject
         Object.keys(action)[0].includes('@') ||
         Object.keys(action)[0].startsWith('=')
       ) {
         const response = await this.dispatch({
-          type: 'eval-Object',
+          type: 'eval-object',
           payload: {
             pageName,
             updateObject: action,
@@ -1864,6 +1972,7 @@ export default class CADL extends EventEmitter {
           returnValues[index] = ''
         }
       } else if ('if' in action) {
+        //handles if blocks
         const response = await this.handleIfCommand({
           pageName,
           ifCommand: action,
@@ -1875,6 +1984,7 @@ export default class CADL extends EventEmitter {
         }
       }
     })
+
     return Object.values(returnValues)
   }
 

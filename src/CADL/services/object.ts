@@ -10,18 +10,20 @@ export default {
 
   remove({ object, key }) {
     if (isObject(object)) {
-      var cloned = _.cloneDeep(object)
-      _.unset(cloned, key)
-      return cloned
+      _.unset(object, key)
     }
     return
   },
 
   set({ object, key, value }) {
     if (isObject(object)) {
-      var cloned = _.cloneDeep(object)
-      _.set(cloned, key, value)
-      return cloned
+      _.set(object, key, value)
+    }
+    return
+  },
+  get({ object, key }) {
+    if (isObject(object)) {
+      return object[key]
     }
     return
   },
