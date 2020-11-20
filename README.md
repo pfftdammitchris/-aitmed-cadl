@@ -141,3 +141,11 @@ The function takes in five parameters: source, lookFor, skip, pageName, withFns.
 | `.create({ edge_id, title, tags = [], content, type, mediaType, dataType = 0, dTypeProps })` | `Note` | Asynchronous function. Creates an encrypted document, attaches it to an edge, and returns the document in Note format. Utilizes functions in store.level2SDK.utilServices |
 | `.retrieve(id, _edge)` | `Note` | Asynchronous function. Retrieves the document specified by id and returns the returned document as a Note object |
 | `.update(id, { edge_id, title, content, mediaType, tags, type, dTypeProps })` | `Note` | Asynchronous function. Updates the document specified by id and returns the updated document as a Note object |
+
+### Note Services
+
+Note is analogous to Document. Any Note related functions are legacy code, with the exception of documentToNote, which is under src/services/Note/utils
+
+| Method                                                             | Returns                                             | Description                                                                 |
+| ----------------------------------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------------------- |
+| `.documentToNote(document, _edge, esakOfCurrentUser)` | `Note` | Asynchronous function. Generally, only document is needed for input parameter. This function normalizes the data after it retrieves the document from the server, and turns the ECOS document to a readable note/document |
