@@ -590,6 +590,36 @@ export default class CADL extends EventEmitter {
     return populatedResponse
   }
 
+  private async handleEvalString({ stringArg, pageName }) {
+    let response = ''
+    if (stringArg.startsWith('..')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '..',
+        locations: [this.root, this.root[pageName]],
+      })
+    } else if (stringArg.startsWith('.')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '.',
+        locations: [this.root, this.root[pageName]],
+      })
+    } else if (stringArg.startsWith('=')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '=',
+        locations: [this.root, this.root[pageName]],
+      })
+    } else if (stringArg.startsWith('~')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '~',
+        locations: [this],
+      })
+    }
+    return response
+  }
+
   /**
    *
    * @param action

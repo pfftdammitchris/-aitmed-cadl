@@ -4,6 +4,7 @@ import CADL from '../CADL'
 import { isObject } from '../../utils'
 import { UnableToRetrieveYAML } from '../errors'
 import { defaultConfig } from '../../config'
+import TestPage from '../__mocks__/TestPage'
 
 describe('CADL', () => {
   describe('defaultObject', () => {
@@ -73,99 +74,50 @@ describe('CADL', () => {
 
   describe('handleIfCommand', () => {
     const cadl = new CADL({ ...defaultConfig })
+    beforeEach(() => {
+      cadl.root.TestPage = TestPage
+    })
+    // afterEach(() => {
+    //   cadl.root.TestPage = TestPage
+    // })
 
     it('should handle evalObject assignment syntax', () => {
-      const TestPage = {
-        var: {
-          red: true,
-          green: 4,
-        },
-        actions: [
-          {
-            if: [
-              '.TestPage.var.red',
-              { '.TestPage.var.green@': 9 },
-              'continue',
-            ],
-          },
-        ],
-      }
-      cadl.root.TestPage = TestPage
-
       return cadl['handleIfCommand']({
         ifCommand: TestPage.actions[0],
         pageName: 'TestPage',
       }).then(() => {
-        debugger
         expect(cadl.root.TestPage.var.green).toEqual(9)
       })
     })
     it('should handle finding reference when path is given', () => {
-      const TestPage = {
-        var: {
-          red: true,
-          green: 4,
-        },
-        actions: [
-          {
-            if: [
-              '.TestPage.var.red',
-              { '.TestPage.var.green@': 9 },
-              'continue',
-            ],
-          },
-        ],
-      }
-      cadl.root.TestPage = TestPage
-
       return cadl['handleIfCommand']({
         ifCommand: TestPage.actions[0],
         pageName: 'TestPage',
       }).then(() => {
-        debugger
         expect(cadl.root.TestPage.var.green).toEqual(9)
       })
     })
     describe('should handle boolean condition values', () => {
+      // beforeEach(() => {
+      //   const cadl = new CADL({ ...defaultConfig })
+      //   cadl.root.TestPage = { ...TestPage }
+      // })
+      // afterEach(() => {
+      //   cadl.root.TestPage = TestPage
+      // })
       it('should handle false condition', () => {
-        const TestPage = {
-          var: {
-            red: true,
-            green: 4,
-          },
-          actions: [
-            { if: ['false', { '.TestPage.var.green@': 9 }, 'continue'] },
-          ],
-        }
-        cadl.root.TestPage = TestPage
-
         return cadl['handleIfCommand']({
-          ifCommand: TestPage.actions[0],
+          ifCommand: TestPage.actions1[0],
           pageName: 'TestPage',
         }).then(() => {
-          debugger
           expect(cadl.root.TestPage.var.green).toEqual(4)
         })
       })
       it('should handle true condition', () => {
-        const TestPage = {
-          var: {
-            red: true,
-            green: 4,
-          },
-          actions: [
-            {
-              if: ['true', { '.TestPage.var.green@': 9 }, 'continue'],
-            },
-          ],
-        }
-        cadl.root.TestPage = TestPage
-
         return cadl['handleIfCommand']({
           ifCommand: TestPage.actions[0],
           pageName: 'TestPage',
         }).then(() => {
-          debugger
           expect(cadl.root.TestPage.var.green).toEqual(9)
         })
       })
@@ -174,107 +126,34 @@ describe('CADL', () => {
 
   describe('emitCall', () => {
     const cadl = new CADL({ ...defaultConfig })
-    it('should handle evalObject function evaluations', () => {
-      const TestPage = {
-        generalInfo: {
-          gender: '',
-        },
-        emit: {
-          dataKey: {
-            var: {
-              key: 'gender',
-              value: 'Female',
-            },
-          },
-          actions: [
-            {
-              if: [
-                {
-                  '=.builtIn.string.equal': {
-                    dataIn: {
-                      string1: '$var.value',
-                      string2: 'Male',
-                    },
-                  },
-                },
-                {
-                  '=.builtIn.object.remove': {
-                    dataIn: {
-                      object: '=.TestPage.generalInfo',
-                      key: '$var.key',
-                    },
-                  },
-                },
-                {
-                  '=.builtIn.object.set': {
-                    dataIn: {
-                      object: '=.TestPage.generalInfo',
-                      key: '$var.key',
-                      value: 'Male',
-                    },
-                  },
-                },
-              ],
-            },
-          ],
-        },
-      }
+    beforeEach(() => {
       cadl.root.TestPage = TestPage
+    })
+    it('should handle evalObject function evaluations', () => {
       return cadl['emitCall']({
-        actions: TestPage.emit.actions,
-        dataKey: TestPage.emit.dataKey,
+        actions: TestPage.emit1.actions,
+        dataKey: TestPage.emit1.dataKey,
         pageName: 'TestPage',
       }).then((res) => {
-        debugger
         expect(cadl.root.TestPage.generalInfo.gender).toEqual('Male')
       })
     })
     it('should handle evalObject assignment expressions', () => {
-      const TestPage = {
-        generalInfo: {
-          gender: '',
-        },
-        emit: {
-          dataKey: {
-            var: {
-              key: 'gender',
-              value: 'Male',
-            },
-          },
-          actions: [
-            {
-              if: [
-                {
-                  '=.builtIn.string.equal': {
-                    dataIn: {
-                      string1: '$var.value',
-                      string2: 'Male',
-                    },
-                  },
-                },
-                {
-                  '.TestPage.generalInfo.gender@': 'Female',
-                },
-                'continue',
-              ],
-            },
-            {
-              '.TestPage.generalInfo.gender@': 'Other',
-            },
-            {
-              '.TestPage.generalInfo.gender@': 'Male',
-            },
-          ],
-        },
-      }
-      cadl.root.TestPage = TestPage
       return cadl['emitCall']({
-        actions: TestPage.emit.actions,
-        dataKey: TestPage.emit.dataKey,
+        actions: TestPage.emit1.actions,
+        dataKey: TestPage.emit1.dataKey,
         pageName: 'TestPage',
       }).then((res) => {
-        debugger
         expect(cadl.root.TestPage.generalInfo.gender).toEqual('Male')
+      })
+    })
+    it('should handle return values', () => {
+      return cadl['emitCall']({
+        actions: TestPage.emit1.actions,
+        dataKey: TestPage.emit1.dataKey,
+        pageName: 'TestPage',
+      }).then((res) => {
+        expect(res[0]).toEqual('selectOn.png')
       })
     })
   })
