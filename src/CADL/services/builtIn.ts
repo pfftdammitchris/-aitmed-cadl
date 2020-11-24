@@ -6,6 +6,7 @@ import store from '../../common/store'
 import encryptionServices from './ecc'
 import stringServices from './string'
 import objectServices from './object'
+import arrayServices from './array'
 import ecos from './ecos'
 
 import Document from '../../services/Document'
@@ -82,6 +83,7 @@ export default function builtInFns(dispatch?: Function) {
     string: stringServices,
     eccNaCl: encryptionServices,
     object: objectServices,
+    array: arrayServices,
     ecos,
     async createNewAccount({ name }) {
       const {
