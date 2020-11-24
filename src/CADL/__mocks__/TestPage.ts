@@ -99,15 +99,15 @@ export default {
       {
         if: [
           {
-            '=.builtIn.object.has': {
+            '=.builtIn.string.equal': {
               dataIn: {
-                object: '=.TestPage.generalInfo',
-                key: '$var.key',
+                string1: '=.TestPage.generalInfo.gender',
+                string2: '$var.key',
               },
             },
           },
-          'selectOn.png',
           'selectOff.png',
+          'selectOn.png',
         ],
       },
     ],

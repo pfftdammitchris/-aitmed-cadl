@@ -149,8 +149,8 @@ describe('CADL', () => {
     })
     it('should handle return values', () => {
       return cadl['emitCall']({
-        actions: TestPage.emit1.actions,
-        dataKey: TestPage.emit1.dataKey,
+        actions: TestPage.emit3.actions,
+        dataKey: TestPage.emit3.dataKey,
         pageName: 'TestPage',
       }).then((res) => {
         expect(res[0]).toEqual('selectOn.png')
