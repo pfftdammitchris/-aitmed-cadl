@@ -712,7 +712,7 @@ export default class CADL extends EventEmitter {
       //handle If command
       const result = await this.handleIfCommand({
         pageName,
-        ifCommand: commands[key],
+        ifCommand: { [key]: commands[key] },
       })
       //record result if any
       if (isObject(result)) {
