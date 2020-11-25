@@ -2,6 +2,15 @@ export default {
   generalInfo: {
     gender: '',
   },
+  edge: {
+    get: {
+      api: 're',
+    },
+  },
+  testObj: {
+    red: 9,
+    green: 12,
+  },
   var: {
     red: true,
     green: 4,

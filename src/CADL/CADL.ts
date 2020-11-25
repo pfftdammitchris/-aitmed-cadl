@@ -720,12 +720,19 @@ export default class CADL extends EventEmitter {
       }
     } else if (!key.startsWith('=')) {
       //handles assignment expressions
-      const command = commands[key]
-      await this.handleEvalAssignmentExpressions({ pageName, command, key })
+      await this.handleEvalAssignmentExpressions({
+        pageName,
+        command: { [key]: commands[key] },
+        key,
+      })
     } else if (key.startsWith('=')) {
       //handles function evaluation
-      const command = commands[key]
-      results = this.handleEvalFunction({ command, pageName, key })
+
+      results = this.handleEvalFunction({
+        command: { [key]: commands[key] },
+        pageName,
+        key,
+      })
     }
     return results
   }
@@ -740,7 +747,7 @@ export default class CADL extends EventEmitter {
   private async handleEvalAssignmentExpressions({ pageName, command, key }) {
     //handles assignment expressions
     let trimPath, val
-    val = command
+    val = command[key]
     if (key.startsWith('..')) {
       trimPath = key.substring(2, key.length - 1)
       const pathArr = trimPath.split('.')
@@ -830,8 +837,8 @@ export default class CADL extends EventEmitter {
       })
     }
     if (typeof func === 'function') {
-      if (isObject(command)) {
-        const { dataIn, dataOut } = command
+      if (isObject(command[key])) {
+        const { dataIn, dataOut } = command[key]
         const result = await func(dataIn)
         if (dataOut) {
           const pathArr = dataOut.split('.')
