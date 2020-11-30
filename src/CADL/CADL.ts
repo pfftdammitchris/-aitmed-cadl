@@ -26,7 +26,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-import PatientChart from './__mocks__/PatientChart'
+// import PatientChart from './__mocks__/PatientChart'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
