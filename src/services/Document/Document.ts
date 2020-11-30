@@ -6,6 +6,7 @@ import DType from '../../common/DType'
 import { CommonTypes } from '../../common/types'
 
 import * as NoteTypes from './types'
+import { UnableToLocateValue } from '../../CADL/errors'
 
 import {
   contentToBlob,
@@ -14,6 +15,7 @@ import {
   CONTENT_SIZE_LIMIT,
 } from '../Note'
 import { documentToNote } from './utils'
+import { isPopulated } from '../../CADL/utils'
 
 /**
  * @param params
@@ -35,6 +37,9 @@ export const create: NoteTypes.Create = async ({
   dataType = 0,
   dTypeProps,
 }) => {
+  if (!isPopulated(edge_id)) {
+    throw new UnableToLocateValue(`Missing reference ${edge_id}`)
+  }
   const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
   const dType = new DType()
