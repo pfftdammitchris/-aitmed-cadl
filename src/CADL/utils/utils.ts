@@ -174,6 +174,15 @@ function isPopulated(item: string | Record<string, any>): boolean {
         }
       }
     }
+  } else if (typeof item === 'string') {
+    if (
+      item.startsWith('.') ||
+      item.startsWith('..') ||
+      item.startsWith('=') ||
+      item.startsWith('~')
+    ) {
+      isPop = false
+    }
   }
   return isPop
 }

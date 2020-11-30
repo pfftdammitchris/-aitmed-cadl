@@ -2,6 +2,8 @@ import _ from 'lodash'
 import store from '../../common/store'
 import { documentToNote } from '../../services/document/utils'
 import Document from '../../services/document'
+import { isPopulated } from '../utils'
+import { UnableToLocateValue } from '../errors'
 
 export { get, create }
 
@@ -18,6 +20,11 @@ function get({ pageName, apiObject, dispatch }) {
       subtype,
       ...options
     } = _.cloneDeep(apiObject || {})
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
     let idList = ids ? ids : id ? [id] : ['']
 
     let requestOptions = {
@@ -128,6 +135,11 @@ function create({ pageName, apiObject, dispatch }) {
     })
 
     const { api, id, ...options } = currentVal
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
     let res
     //If id is in apiObject then it is an updateRequest
     if (id) {
