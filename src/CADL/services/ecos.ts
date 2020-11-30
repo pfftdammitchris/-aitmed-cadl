@@ -7,13 +7,15 @@ export default {
   async shareDoc({ sourceDoc, targetEdgeID }) {
     const document = await retrieveDocument(sourceDoc.id)
     const note = await documentToNote({ document })
-
-    const base64ToBlobData = await store.level2SDK.utilServices.base64ToBlob(
-      note?.name?.data,
-      note?.name?.type
-    )
+    let content = note?.name?.data
+    if (typeof content === 'string') {
+      content = await store.level2SDK.utilServices.base64ToBlob(
+        note?.name?.data,
+        note?.name?.type
+      )
+    }
     const sharedDoc = await Document.create({
-      content: base64ToBlobData,
+      content,
       title: note?.name?.title,
       type: note?.type,
       edge_id: targetEdgeID,
