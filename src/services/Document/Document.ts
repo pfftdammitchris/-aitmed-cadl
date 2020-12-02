@@ -6,6 +6,7 @@ import DType from '../../common/DType'
 import { CommonTypes } from '../../common/types'
 
 import * as NoteTypes from './types'
+import { UnableToLocateValue } from '../../CADL/errors'
 
 import {
   contentToBlob,
@@ -14,6 +15,7 @@ import {
   CONTENT_SIZE_LIMIT,
 } from '../Note'
 import { documentToNote } from './utils'
+import { isPopulated } from '../../CADL/utils'
 
 /**
  * @param params
@@ -35,6 +37,9 @@ export const create: NoteTypes.Create = async ({
   dataType = 0,
   dTypeProps,
 }) => {
+  if (!isPopulated(edge_id)) {
+    throw new UnableToLocateValue(`Missing reference ${edge_id}`)
+  }
   const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
   const dType = new DType()
@@ -126,7 +131,13 @@ export const create: NoteTypes.Create = async ({
   //TODO: convert document type to be read like documentToNote
   //type has to be converted in order to use filter
   const note = await documentToNote({ document })
-  return note
+
+  return {
+    jwt: response?.data?.jwt,
+    error: response?.data?.error,
+    doc: note,
+    code: response?.data?.code,
+  }
 }
 
 /**
@@ -225,11 +236,12 @@ export const update: any = async (
   }
 
   let note: any
+  let response
   // Update document
   if (typeof content === 'undefined') {
     // Does not need to update content
     params.name = name
-    const response = await store.level2SDK.documentServices
+    response = await store.level2SDK.documentServices
       .updateDocument({ ...params, subtype: dType.value })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
@@ -261,7 +273,6 @@ export const update: any = async (
     name.type = blob.type
     params.size = blob.size
 
-    let response
     if (dType.isOnServer) {
       name.data = bs64Data
       params.name = name
@@ -298,5 +309,10 @@ export const update: any = async (
   }
 
   // return new note
-  return note
+  return {
+    jwt: response?.data?.jwt,
+    error: response?.data?.error,
+    doc: note,
+    code: response?.data?.code,
+  }
 }

@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import store from '../../common/store'
 import { mergeDeep } from '../../utils'
+import { isPopulated } from '../utils'
+import { UnableToLocateValue } from '../errors'
 
 export { get, create }
 
@@ -21,6 +23,11 @@ function get({ pageName, apiObject, dispatch }) {
     })
 
     let id = populatedCurrentVal?.id
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
     let res: Record<string, any> = {}
     try {
       if (store.env === 'test') {
@@ -72,7 +79,11 @@ function create({ pageName, apiObject, dispatch }) {
     const { dataKey, dataIn, dataOut, id, ...cloneOutput } = _.cloneDeep(
       apiObject || {}
     )
-
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
     const currentVal = await dispatch({
       type: 'get-data',
       payload: {

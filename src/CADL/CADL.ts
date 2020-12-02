@@ -26,7 +26,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import EmitRedraw from './__mocks__/EmitRedraw'
+// import PatientChart from './__mocks__/PatientChart'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -450,7 +450,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'EmitRedraw') return EmitRedraw
+    // if (pageName === 'PatientChart') return PatientChart
 
     let pageCADL
     let pageUrl

@@ -1,6 +1,8 @@
 import _ from 'lodash'
 import store from '../../common/store'
 import { mergeDeep, replaceEidWithId } from '../../utils'
+import { isPopulated } from '../utils'
+import { UnableToLocateValue } from '../errors'
 
 export { get, create }
 
@@ -29,6 +31,11 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
+      if (!isPopulated(id)) {
+        throw new UnableToLocateValue(
+          `Missing reference ${id} at page ${pageName}`
+        )
+      }
       idList = Array.isArray(id) ? [...id] : [id]
       requestOptions = { ...requestOptions, ...currentVal }
       maxcount = currentVal?.maxcount
@@ -126,6 +133,11 @@ function create({ pageName, apiObject, dispatch }) {
       type: 'get-data',
       payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
     })
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
 
     let populatedCurrentVal = await dispatch({
       type: 'populate-object',

@@ -49,7 +49,7 @@ export type CreateParams = {
 } & NoteUtilsTypes.ContentParams
 
 export interface Create {
-  (params: CreateParams): Promise<CommonTypes.Doc>
+  (params: CreateParams): Promise<any>
 }
 
 // Retrieve
