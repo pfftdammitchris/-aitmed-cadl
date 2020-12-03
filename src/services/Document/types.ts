@@ -1,5 +1,4 @@
 import * as NoteUtilsTypes from '../Note/utilsTypes'
-import { CommonTypes } from '../../common/types'
 
 export interface NoteDocumentDeat {
   url: string
@@ -49,7 +48,7 @@ export type CreateParams = {
 } & NoteUtilsTypes.ContentParams
 
 export interface Create {
-  (params: CreateParams): Promise<CommonTypes.Doc>
+  (params: CreateParams): Promise<any>
 }
 
 // Retrieve

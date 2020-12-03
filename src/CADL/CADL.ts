@@ -26,7 +26,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import PatientChart from './__mocks__/PatientChart'
+// import MeetingLobby from './__mocks__/MeetingLobby'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -450,16 +450,16 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'PatientChart') return PatientChart
+    // if (pageName === 'MeetingLobby') return MeetingLobby
 
     let pageCADL
     let pageUrl
     if (pageName.startsWith('~')) {
       if (!this.myBaseUrl) {
-        console.log('BaseUrl is not present')
-        return { error: 'BaseUrl is not present.' }
+        pageUrl = this.baseUrl
+      } else {
+        pageUrl = this.myBaseUrl
       }
-      pageUrl = this.myBaseUrl
       pageName = pageName.substring(2)
     } else {
       pageUrl = this.baseUrl

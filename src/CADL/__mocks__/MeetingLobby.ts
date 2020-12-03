@@ -15,6 +15,7 @@ export default {
       },
     },
     inviteesInfo: {
+      response: '',
       edge: {
         '.Edge': '',
       },
@@ -22,44 +23,13 @@ export default {
         '.EdgeAPI': '',
         store: {
           api: 'ce',
-          dataKey: 'inviteesInfo.edge',
-        },
-      },
-    },
-    shareDocuments: {
-      document: {
-        '.UploadDocuments.shareDocument.document': '',
-        eid: '.Global.rootRoomInfo.edge.id',
-        type: {
-          applicationDataType: '.Const.share',
-        },
-      },
-      docAPI: {
-        '.DocAPI': '',
-        store: {
-          dataKey: 'shareDocuments.document',
-          api: 'cd',
-          type: {
-            mediaType: '',
-          },
-          condition: {
-            isPlain: 'text/plain',
-            isJpeg: 'image/jpeg',
-            isPng: 'image/png',
-          },
+          dataIn: 'inviteesInfo.edge',
+          dataOut: 'inviteesInfo.response',
         },
       },
     },
     init: [
-      {
-        if: [
-          '=.Global.currentUser.vertex.sk',
-          'continue',
-          {
-            goto: 'SignIn',
-          },
-        ],
-      },
+      '.SignInCheck',
       {
         actionType: 'evalObject',
         object: {
@@ -68,37 +38,10 @@ export default {
       },
       '..listData.get',
     ],
-    save: [
-      '..rootRoom.edgeAPI.store',
-      {
-        if: [
-          '=.UploadDocuments.shareDocument.document.id',
-          '=..shareDocument.docAPI.store',
-          'continue',
-        ],
-      },
-    ],
-    update: ['..inviteesInfo.edgeAPI.store', '..listData.get'],
+    save: ['..rootRoom.edgeAPI.store'],
     listData: {
       response: {
-        edge: [
-          {
-            '.Edge': {
-              name: {
-                firstName: 'test',
-                lastName: '1',
-              },
-            },
-          },
-          {
-            '.Edge': {
-              name: {
-                firstName: 'test',
-                lastName: '2',
-              },
-            },
-          },
-        ],
+        edge: null,
       },
       edge: {
         '.Edge': '',
@@ -110,6 +53,7 @@ export default {
       },
       get: {
         '.EdgeAPI.get': '',
+        api: 're',
         dataIn: 'listData.edge',
         dataOut: 'listData.response',
       },
@@ -167,7 +111,7 @@ export default {
                   left: '0.05',
                   top: '0.08',
                   width: '0.9',
-                  height: '0.041',
+                  height: '0.04',
                   color: '0x99C5E5',
                   backgroundColor: '0x00000000',
                   textAlign: {
@@ -182,6 +126,33 @@ export default {
                   },
                 },
               },
+              {
+                type: 'label',
+                text: 'Save',
+                style: {
+                  top: '0.08',
+                  left: '0.8',
+                  height: '0.04',
+                  textAlign: {
+                    y: 'center',
+                  },
+                  color: '0xffffff',
+                },
+                onClick: [
+                  {
+                    actionType: 'updateObject',
+                    dataKey: 'Global.rootRoomInfo.edge.name.roomName',
+                    dataObject: '..rootRoom.edge.name.roomName',
+                  },
+                  {
+                    actionType: 'saveObject',
+                    object: '..save',
+                  },
+                  {
+                    goto: 'MeetingRoomCreate',
+                  },
+                ],
+              },
             ],
           },
           {
@@ -189,8 +160,6 @@ export default {
             style: {
               top: '0.28',
               left: '0',
-              height: '0.2',
-              width: '0.2',
             },
             children: [
               {
@@ -207,7 +176,7 @@ export default {
                     path: 'add.file.png',
                     onClick: [
                       {
-                        goto: 'UploadDocuments',
+                        goto: 'UploadSharedDocuments',
                       },
                     ],
                     style: {
@@ -218,7 +187,7 @@ export default {
                   },
                   {
                     type: 'label',
-                    text: 'Uploaded Document',
+                    text: 'Meeting Documents',
                     style: {
                       top: '0.1',
                       left: '0.01',
@@ -282,32 +251,6 @@ export default {
                   height: '0.05',
                   fontSize: 13,
                 },
-                children: [
-                  {
-                    type: 'label',
-                    text: 1,
-                    dataKey: null,
-                    style: {
-                      width: '0.18',
-                      color: '0xeb3d38',
-                      fontSize: '16',
-                      textAlign: {
-                        x: 'right',
-                      },
-                    },
-                  },
-                  {
-                    type: 'label',
-                    text: 'Document(s) have been uploaded.',
-                    dataKey: null,
-                    style: {
-                      width: '0.8',
-                      left: '0.19',
-                      color: '0x000000',
-                      fontSize: '16',
-                    },
-                  },
-                ],
               },
               {
                 type: 'list',
@@ -378,12 +321,16 @@ export default {
                           {
                             actionType: 'evalObject',
                             object: {
-                              '..inviteesInfo.edge.tage@': -1,
+                              '.MeetingLobby.inviteesInfo.edge.tage@': 1,
                             },
                           },
                           {
-                            actionType: 'saveObject',
-                            object: '..update',
+                            actionType: 'evalObject',
+                            object: [
+                              {
+                                '=.MeetingLobby.inviteesInfo.edgeAPI.store': '',
+                              },
+                            ],
                           },
                           {
                             actionType: 'refresh',
@@ -430,13 +377,20 @@ export default {
                     },
                   },
                   {
+                    actionType: 'evalObject',
+                    object: {
+                      '.Global.VideoChatObjStore.reference.edge.refid@':
+                        '=.Global.rootRoomInfo.edge.id',
+                    },
+                  },
+                  {
                     goto: 'VideoChat',
                   },
                 ],
                 text: 'Enter Meeting Room',
                 style: {
                   left: '0.2',
-                  top: '0.8',
+                  top: '0.56',
                   width: '0.6',
                   height: '0.05',
                   fontSize: '18',
@@ -458,9 +412,9 @@ export default {
                 text: 'Close Meeting Room',
                 style: {
                   left: '0.2',
-                  top: '0.9',
+                  top: '0.63',
                   width: '0.6',
-                  height: '0.07',
+                  height: '0.05',
                   fontSize: '18',
                   fontWeight: 500,
                   borderRaduis: '3',

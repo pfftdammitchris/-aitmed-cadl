@@ -4,10 +4,13 @@ export default {
     title: 'Patient Chart',
     init: [
       '.SignInCheck',
-      '..Chart.docAPI.get',
       {
         actionType: 'evalObject',
         object: [
+          { '=.PatientChart.Chart.docAPI.store': '' },
+          {
+            '=.PatientChart.WaitingRoom.edgeAPI.store': '',
+          },
           {
             '.PatientChart.Chart.document@': '=..docResponse.doc.0',
           },
@@ -26,6 +29,19 @@ export default {
       },
     ],
     PatientChartObject: '',
+    WaitingRoom: {
+      edge: {
+        '.Edge': '',
+        type: '40000',
+      },
+      edgeAPI: {
+        store: {
+          '.EdgeAPI.store': '',
+          dataIn: 'WaitingRoom.edge',
+          dataOut: 'edgeResponse',
+        },
+      },
+    },
     Chart: {
       document: {
         '.Document': '',
@@ -38,7 +54,19 @@ export default {
         name: {
           title: '',
           type: 'application/json',
-          data: '',
+          data: {
+            generalInformation: 'hello',
+            pastMedicalHistory: 'hello',
+            allergies: 'hello',
+            currentMedications: 'hello',
+            immunizations: 'hello',
+            hospitalizations: 'hello',
+            surgicalHistory: 'hello',
+            familyHistory: 'hello',
+            obstetricalHistory: 'hello',
+            sexualHistory: 'hello',
+            socialHistory: 'hello',
+          },
         },
         deat: {
           sig: '',
@@ -55,16 +83,29 @@ export default {
           obfname: 'mtime',
           maxcount: '1',
         },
+        store: {
+          '.DocAPI.store': '',
+          dataIn: 'PatientChart.Chart.document',
+          dataOut: 'PatientChart.docResponse',
+        },
       },
     },
+    edgeResponse: {
+      edge: {
+        type: '',
+        eid: '',
+        name: '',
+      },
+      error: '',
+      jwt: '',
+    },
     docResponse: {
-      doc: [
-        {
-          type: '.DocType.PatientChart',
-          eid: '.Global.rootNotebookID',
-          name: '',
-        },
-      ],
+      document: {
+        type: '.DocType.PatientChart',
+        eid: '.Global.rootNotebookID',
+        name: '',
+      },
+
       error: '',
       jwt: '',
     },
@@ -2299,10 +2340,10 @@ export default {
                     object: {
                       '=.builtIn.ecos.shareDoc': {
                         dataIn: {
-                          sourceDoc: '=.PatientChart.PatientChartObject',
-                          targetEdgeID: '=.Global.waitingRoom.edge.id',
+                          sourceDoc: '=..docResponse.document',
+                          targetEdgeID: '=.PatientChart.edgeResponse.edge.id',
                         },
-                        dataOut: '=.PatientChart.sharedDoc',
+                        dataOut: 'PatientChart.sharedDoc',
                       },
                     },
                   },
