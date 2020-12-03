@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import store from '../../common/store'
+import setAPIBuffer from '../middleware/setAPIBuffer'
 
 export { remove }
 
@@ -31,6 +32,12 @@ function remove({ pageName, apiObject, dispatch }) {
             { ...options, id }
           )
         }
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          api: 'dx',
+          id,
+        })
+        if (!shouldPass) return
         const { data } = await store.level2SDK.commonServices.deleteRequest([
           id,
         ])

@@ -528,7 +528,11 @@ function populateString({
   for (let location of locations) {
     try {
       replacement = dot.pick(currVal, location)
-      // replacement = lookUp(currVal, location)
+
+      //default to baseUrl if myBaseUrl is not available
+      if (currVal === '.myBaseUrl' && !replacement) {
+        replacement = dot.pick('.baseUrl', location)
+      }
       if (replacement && lookFor == '~') {
         replacement = replacement + source.substring(2)
         break
