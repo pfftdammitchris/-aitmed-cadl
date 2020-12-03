@@ -42,6 +42,7 @@ export default function setAPIBuffer(apiObject) {
     }
     //remove old values
     for (let [key, val] of Object.entries(apiDispatchBufferObject)) {
+      //@ts-ignore
       const timeDiff = currentTimestamp.diff(val, 'seconds')
       if (timeDiff > limit) {
         delete apiDispatchBufferObject[key]

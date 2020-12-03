@@ -6,6 +6,7 @@ export default function applyMidleware(apiFn) {
       return apiFn({ ...args })
     } else {
       return ({ ...args }) => {
+        console.log(`rejected api request ${args}`)
         return
       }
     }
