@@ -3,6 +3,7 @@ import store from '../../common/store'
 import { mergeDeep, replaceEidWithId } from '../../utils'
 import { isPopulated } from '../utils'
 import { UnableToLocateValue } from '../errors'
+import setAPIBuffer from '../middleware/setAPIBuffer'
 
 export { get, create }
 
@@ -65,6 +66,12 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
+      //Buffer check
+      const shouldPass = setAPIBuffer({
+        idList,
+        options: requestOptions,
+      })
+      if (!shouldPass) return
       const { data } = await store.level2SDK.edgeServices.retrieveEdge({
         idList,
         options: requestOptions,
@@ -163,6 +170,12 @@ function create({ pageName, apiObject, dispatch }) {
             { ...mergedVal, id }
           )
         }
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          ...mergedVal,
+          id,
+        })
+        if (!shouldPass) return
         const { data } = await store.level2SDK.edgeServices.updateEdge({
           ...mergedVal,
           id,
@@ -188,6 +201,11 @@ function create({ pageName, apiObject, dispatch }) {
             { ...mergedVal, id }
           )
         }
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          ...mergedVal,
+        })
+        if (!shouldPass) return
         const { data } = await store.level2SDK.edgeServices.createEdge({
           ...mergedVal,
         })
