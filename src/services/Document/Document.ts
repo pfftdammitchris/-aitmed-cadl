@@ -37,6 +37,7 @@ export const create: NoteTypes.Create = async ({
   dataType = 0,
   dTypeProps,
 }) => {
+  debugger
   if (!isPopulated(edge_id)) {
     throw new UnableToLocateValue(`Missing reference ${edge_id}`)
   }
@@ -80,6 +81,8 @@ export const create: NoteTypes.Create = async ({
     } else {
       publicKeyOfReceiver = edge.sig
     }
+  } else if (!!+dTypeProps?.isEncrypted) {
+    //TODO: add condition for when isEncrypted prop is in document create noodl api
   }
 
   const { data, isEncrypt } = await produceEncryptData(
