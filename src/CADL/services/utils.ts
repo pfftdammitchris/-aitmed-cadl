@@ -1,53 +1,24 @@
 import _ from 'lodash'
+import store from '../../common/store'
 
-export { localSearch }
-
-function localSearch({ pageName, apiObject, dispatch }) {
-  return async () => {
-    const { dataKey, filter, source: sourcePath } = _.cloneDeep(apiObject || {})
-    let res: any
-    try {
-      const source = await dispatch({
-        type: 'get-data',
-        payload: {
-          pageName,
-          dataKey: sourcePath,
-        },
-      })
-      //TODO: make signature more generic
-      const data = source.filter((elem) => {
-        //TODO: make filter more universal
-        for (let [key, val] of Object.entries(filter)) {
-          //@ts-ignore
-          if (elem.type[key] !== parseInt(val)) {
-            return false
-          }
-        }
-        return true
-      })
-      res = data
-    } catch (error) {
-      throw error
+export default {
+  base64ToBlob({
+    data,
+    type = 'application/pdf',
+  }: {
+    data: string
+    type: string
+  }) {
+    const blob = store.level2SDK.utilServices.base64ToBlob(data, type)
+    const blobUrl = URL.createObjectURL(blob)
+    return blobUrl
+  },
+  exists(args: Record<any, any>) {
+    for (let val of Object.values(args)) {
+      if (val === '' || val === undefined || val === null) {
+        return false
+      }
     }
-    if (Array.isArray(res) && res.length > 0) {
-      await dispatch({
-        type: 'update-data',
-        //TODO: handle case for data is an array or an object
-        payload: {
-          pageName,
-          dataKey,
-          data: res[0],
-        },
-      })
-      await dispatch({
-        type: 'emit-update',
-        payload: {
-          pageName,
-          newVal: res,
-          dataKey,
-        },
-      })
-    }
-    return res
-  }
+    return true
+  },
 }

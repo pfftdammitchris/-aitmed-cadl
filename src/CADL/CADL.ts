@@ -40,6 +40,7 @@ export default class CADL extends EventEmitter {
   private _designSuffix: Record<string, any>
   private _aspectRatio: number
   private _map: Record<string, any>
+  private _config: Record<string, any>
   public verificationRequest = {
     timer: 0,
     phoneNumber: '',
@@ -122,6 +123,10 @@ export default class CADL extends EventEmitter {
     this.baseUrl = baseUrl
     this.assetsUrl = assetsUrl
 
+    this._config = this.processPopulate({
+      source: config,
+      lookFor: ['.', '..', '=', '~'],
+    })
     //set overrides of Base Objects
     if (BaseDataModel) {
       const processedBaseDataModel = this.processPopulate({
@@ -2076,7 +2081,7 @@ export default class CADL extends EventEmitter {
   }
 
   public getConfig() {
-    return store.getConfig()
+    return this._config
   }
   set map(map) {
     this._map = map
