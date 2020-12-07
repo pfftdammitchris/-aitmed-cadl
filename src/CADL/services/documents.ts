@@ -81,6 +81,7 @@ function get({ pageName, apiObject, dispatch }) {
           rawResponse = res.data
           return Promise.all(
             res?.data?.document.map(async (document) => {
+              //decrypt data
               const note = await documentToNote({ document })
               return note
             })
