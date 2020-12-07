@@ -597,6 +597,283 @@ export default class CADL extends EventEmitter {
 
   /**
    *
+   * @param HandleEvalStringArgs.stringArg The item being de-referenced
+   * @param HandleEvalStringArgs.pageName
+   *
+   * Used as a helper function for emitCall --> evalObject
+   */
+  private async handleEvalString({ stringArg, pageName }) {
+    let response = ''
+    if (stringArg.startsWith('..')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '..',
+        locations: [this.root, this.root[pageName]],
+      })
+    } else if (stringArg.startsWith('.')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '.',
+        locations: [this.root, this.root[pageName]],
+      })
+    } else if (stringArg.startsWith('=')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '=',
+        locations: [this.root, this.root[pageName]],
+      })
+    } else if (stringArg.startsWith('~')) {
+      response = populateString({
+        source: stringArg,
+        lookFor: '~',
+        locations: [this],
+      })
+    }
+    return response
+  }
+
+  /**
+   *
+   * @param HandleEvalObject.object series of commands in object {key:val} format
+   * @param HandleEvalObject.pageName
+   *
+   * Used as a helper function for emitCall --> evalObject
+   */
+  private async handleEvalObject({ object, pageName }) {
+    let results
+    const command = object
+
+    const objectKeys = Object.keys(command)
+    await asyncForEach(objectKeys, async (key) => {
+      /**
+       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+       */
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: command,
+        },
+      })
+      results = await this.handleEvalCommands({
+        commands: populatedCommand,
+        key,
+        pageName,
+      })
+    })
+    return results
+  }
+
+  /**
+   *
+   * @param HandleEvalArray.array series of commands in object[] [{key:val} ]format
+   * @param HandleEvalArray.pageName
+   *
+   * Used as a helper function for emitCall --> evalObject
+   */
+  private async handleEvalArray({ array, pageName }) {
+    /**
+     * handles the following format
+     * [
+     *  {'.path@':3},
+     *  {'path2@':5},
+     *  {if:['.condition', ifTrue, ifFalse]}
+     * ]
+     */
+    let results
+    await asyncForEach(array, async (command) => {
+      /**
+       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+       */
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: command,
+        },
+      })
+
+      const commandKeys = Object.keys(populatedCommand)
+      await asyncForEach(commandKeys, async (key) => {
+        results = await this.handleEvalCommands({
+          commands: populatedCommand,
+          key,
+          pageName,
+        })
+      })
+    })
+    return results
+  }
+
+  /**
+   * @param HandleEvalCommandsArgs.commands Series of commands to evaluate
+   * @param HandleEvalCommandsArgs.key Key to a specified command within commands
+   *
+   * Used as a helper function for emitCall --> evalObject
+   */
+  private async handleEvalCommands({ commands, key, pageName }) {
+    let results
+    if (key === 'if') {
+      //handle If command
+      const result = await this.handleIfCommand({
+        pageName,
+        ifCommand: { [key]: commands[key] },
+      })
+      //record result if any
+      if (isObject(result)) {
+        results = result
+      }
+    } else if (!key.startsWith('=')) {
+      //handles assignment expressions
+      await this.handleEvalAssignmentExpressions({
+        pageName,
+        command: { [key]: commands[key] },
+        key,
+      })
+    } else if (key.startsWith('=')) {
+      //handles function evaluation
+
+      results = this.handleEvalFunction({
+        command: { [key]: commands[key] },
+        pageName,
+        key,
+      })
+    }
+    return results
+  }
+
+  /**
+   *
+   * @param HandleEvalAssignmentExpressionsArgs.command Assigment command of shape {'.path@':4}
+   * @param HandleEvalAssignmentExpressionsArgs.pageName
+   *
+   * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
+   */
+  private async handleEvalAssignmentExpressions({ pageName, command, key }) {
+    //handles assignment expressions
+    let trimPath, val
+    val = command[key]
+    if (key.startsWith('..')) {
+      trimPath = key.substring(2, key.length - 1)
+      const pathArr = trimPath.split('.')
+
+      const currValue = _.get(this.root, [pageName, ...pathArr]) || ''
+      if (isObject(currValue)) {
+        val = mergeDeep(currValue, val)
+      }
+      this.newDispatch({
+        type: 'SET_VALUE',
+        payload: {
+          pageName,
+          dataKey: pathArr,
+          value: val,
+        },
+      })
+      this.emit('stateChanged', {
+        name: 'update',
+        path: `${pageName}.${trimPath}`,
+        newVal: val,
+      })
+    } else if (key.startsWith('.')) {
+      trimPath = key.substring(1, key.length - 1)
+      const pathArr = trimPath.split('.')
+
+      const currValue = _.get(this.root, [...pathArr]) || ''
+
+      if (isObject(currValue)) {
+        val = mergeDeep(currValue, val)
+      }
+      this.newDispatch({
+        type: 'SET_VALUE',
+        payload: {
+          dataKey: pathArr,
+          value: val,
+        },
+      })
+      this.emit('stateChanged', {
+        name: 'update',
+        path: `${trimPath}`,
+        newVal: val,
+      })
+    }
+  }
+
+  /**
+   *
+   * @param HandleEvalFunctionArgs.key
+   * @param HandleEvalFunctionArgs.pageName
+   * @param HandleEvalFunctionArgs.command
+   * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
+   */
+  private async handleEvalFunction({ key, pageName, command }) {
+    //handles function evaluation
+    let results
+    const trimPath = key.substring(2, key.length)
+    const pathArr = trimPath.split('.')
+    let func = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
+    if (isObject(func)) {
+      const populateWithRoot = populateObject({
+        source: func,
+        lookFor: '.',
+        locations: [this.root, this.root[pageName]],
+      })
+
+      const populateWithSelf = populateObject({
+        source: populateWithRoot,
+        lookFor: '..',
+        locations: [this.root, this.root[pageName]],
+      })
+
+      const populateAfterInheriting = populateObject({
+        source: populateWithSelf,
+        lookFor: '=',
+        locations: [this.root, this.root[pageName]],
+      })
+      const populateAfterAttachingMyBaseUrl = populateObject({
+        source: populateAfterInheriting,
+        lookFor: '~',
+        locations: [this],
+      })
+
+      const boundDispatch = this.dispatch.bind(this)
+      func = attachFns({
+        cadlObject: populateAfterAttachingMyBaseUrl,
+        dispatch: boundDispatch,
+      })
+    }
+    if (typeof func === 'function') {
+      if (isObject(command[key])) {
+        const { dataIn, dataOut } = command[key]
+        const result = await func(dataIn)
+        if (dataOut) {
+          const pathArr = dataOut.split('.')
+          this.newDispatch({
+            type: 'SET_VALUE',
+            payload: {
+              dataKey: pathArr,
+              value: result,
+            },
+          })
+          this.emit('stateChanged', {
+            name: 'update',
+            path: `${dataOut}`,
+            newVal: result,
+          })
+        } else if (dataIn && dataOut === undefined) {
+          results = result
+        }
+      } else {
+        await func()
+      }
+    } else if (Array.isArray(func)) {
+      func = func[1]
+      await func()
+    }
+    return results
+  }
+
+  /**
+   *
    * @param action
    */
   private async dispatch(action: { type: string; payload?: any }) {
@@ -621,11 +898,6 @@ export default class CADL extends EventEmitter {
           lookFor: '..',
           locations: [this.root, this.root[pageName]],
         })
-        // const populateAfterInheriting = populateObject({
-        //   source: populateWithSelf,
-        //   lookFor: '=',
-        //   locations: [this.root, this.root[pageName]],
-        // })
         const populateMyBaseUrl = populateObject({
           source: populateWithSelf,
           lookFor: '~',
@@ -781,31 +1053,10 @@ export default class CADL extends EventEmitter {
         let results
         if (typeof updateObject === 'string') {
           //handle possible missing references
-          if (updateObject.startsWith('..')) {
-            updateObject = populateString({
-              source: updateObject,
-              lookFor: '..',
-              locations: [this.root, this.root[pageName]],
-            })
-          } else if (updateObject.startsWith('.')) {
-            updateObject = populateString({
-              source: updateObject,
-              lookFor: '.',
-              locations: [this.root, this.root[pageName]],
-            })
-          } else if (updateObject.startsWith('=')) {
-            updateObject = populateString({
-              source: updateObject,
-              lookFor: '=',
-              locations: [this.root, this.root[pageName]],
-            })
-          } else if (updateObject.startsWith('~')) {
-            updateObject = populateString({
-              source: updateObject,
-              lookFor: '~',
-              locations: [this],
-            })
-          }
+          updateObject = await this.handleEvalString({
+            stringArg: updateObject,
+            pageName,
+          })
         }
         if (isObject(updateObject)) {
           /**
@@ -816,143 +1067,11 @@ export default class CADL extends EventEmitter {
            *    '.path2@':6
            * }
            */
-          const command = updateObject
-
-          const objectKeys = Object.keys(command)
-          await asyncForEach(objectKeys, async (key) => {
-            /**
-             * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
-             */
-            const populatedCommand = await this.dispatch({
-              type: 'populate-object',
-              payload: {
-                pageName,
-                object: command,
-              },
-            })
-            if (key === 'if') {
-              //handle If command
-              const result = await this.handleIfCommand({
-                pageName,
-                ifCommand: populatedCommand[key],
-              })
-              //record result if any
-              if (isObject(result)) {
-                results = result
-              }
-            } else if (!key.startsWith('=')) {
-              //handles assignment expressions
-              let trimPath, val
-              val = populatedCommand[key]
-              if (key.startsWith('..')) {
-                trimPath = key.substring(2, key.length - 1)
-                const pathArr = trimPath.split('.')
-
-                const currValue = _.get(this.root, [pageName, ...pathArr]) || ''
-                if (isObject(currValue)) {
-                  val = mergeDeep(currValue, val)
-                }
-                this.newDispatch({
-                  type: 'SET_VALUE',
-                  payload: {
-                    pageName,
-                    dataKey: pathArr,
-                    value: val,
-                  },
-                })
-                this.emit('stateChanged', {
-                  name: 'update',
-                  path: `${pageName}.${trimPath}`,
-                  newVal: val,
-                })
-              } else if (key.startsWith('.')) {
-                trimPath = key.substring(1, key.length - 1)
-                const pathArr = trimPath.split('.')
-
-                const currValue = _.get(this.root, [...pathArr]) || ''
-
-                if (isObject(currValue)) {
-                  val = mergeDeep(currValue, val)
-                }
-                this.newDispatch({
-                  type: 'SET_VALUE',
-                  payload: {
-                    dataKey: pathArr,
-                    value: val,
-                  },
-                })
-                this.emit('stateChanged', {
-                  name: 'update',
-                  path: `${trimPath}`,
-                  newVal: val,
-                })
-              }
-            } else if (key.startsWith('=')) {
-              //handles function evaluation
-              const trimPath = key.substring(2, key.length)
-              const pathArr = trimPath.split('.')
-              let func =
-                _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
-              if (isObject(func)) {
-                const populateWithRoot = populateObject({
-                  source: func,
-                  lookFor: '.',
-                  locations: [this.root, this.root[pageName]],
-                })
-
-                const populateWithSelf = populateObject({
-                  source: populateWithRoot,
-                  lookFor: '..',
-                  locations: [this.root, this.root[pageName]],
-                })
-
-                const populateAfterInheriting = populateObject({
-                  source: populateWithSelf,
-                  lookFor: '=',
-                  locations: [this.root, this.root[pageName]],
-                })
-                const populateAfterAttachingMyBaseUrl = populateObject({
-                  source: populateAfterInheriting,
-                  lookFor: '~',
-                  locations: [this],
-                })
-
-                const boundDispatch = this.dispatch.bind(this)
-                func = attachFns({
-                  cadlObject: populateAfterAttachingMyBaseUrl,
-                  dispatch: boundDispatch,
-                })
-              }
-              if (typeof func === 'function') {
-                if (isObject(populatedCommand[key])) {
-                  const { dataIn, dataOut } = populatedCommand[key]
-                  const result = await func(dataIn)
-                  if (dataOut) {
-                    const pathArr = dataOut.split('.')
-                    this.newDispatch({
-                      type: 'SET_VALUE',
-                      payload: {
-                        dataKey: pathArr,
-                        value: result,
-                      },
-                    })
-                    this.emit('stateChanged', {
-                      name: 'update',
-                      path: `${dataOut}`,
-                      newVal: result,
-                    })
-                  } else if (dataIn && dataOut === undefined) {
-                    results = result
-                  }
-                } else {
-                  await func()
-                }
-              } else if (Array.isArray(func)) {
-                func = func[1]
-                await func()
-              }
-            }
+          const evalObjectResults = await this.handleEvalObject({
+            object: updateObject,
+            pageName,
           })
+          results = evalObjectResults
         } else if (Array.isArray(updateObject)) {
           /**
            * handles the following format
@@ -962,145 +1081,9 @@ export default class CADL extends EventEmitter {
            *  {if:['.condition', ifTrue, ifFalse]}
            * ]
            */
-          await asyncForEach(updateObject, async (command) => {
-            /**
-             * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
-             */
-            const populatedCommand = await this.dispatch({
-              type: 'populate-object',
-              payload: {
-                pageName,
-                object: command,
-              },
-            })
-
-            const commandKeys = Object.keys(populatedCommand)
-            await asyncForEach(commandKeys, async (key) => {
-              if (key === 'if') {
-                //handle If command
-                const result = await this.handleIfCommand({
-                  pageName,
-                  ifCommand: populatedCommand,
-                })
-                //record result if any
-                if (isObject(result)) {
-                  results = result
-                }
-              } else if (!key.startsWith('=')) {
-                //handles assignment expressions
-                let trimPath, val
-                val = populatedCommand[key]
-                if (key.startsWith('..')) {
-                  trimPath = key.substring(2, key.length - 1)
-                  const pathArr = trimPath.split('.')
-
-                  const currValue =
-                    _.get(this.root, [pageName, ...pathArr]) || ''
-                  if (isObject(currValue)) {
-                    val = mergeDeep(currValue, val)
-                  }
-                  this.newDispatch({
-                    type: 'SET_VALUE',
-                    payload: {
-                      pageName,
-                      dataKey: pathArr,
-                      value: val,
-                    },
-                  })
-                  this.emit('stateChanged', {
-                    name: 'update',
-                    path: `${pageName}.${trimPath}`,
-                    newVal: val,
-                  })
-                } else if (key.startsWith('.')) {
-                  trimPath = key.substring(1, key.length - 1)
-                  const pathArr = trimPath.split('.')
-
-                  const currValue = _.get(this.root, [...pathArr]) || ''
-                  if (isObject(currValue)) {
-                    val = mergeDeep(currValue, val)
-                  }
-                  this.newDispatch({
-                    type: 'SET_VALUE',
-                    payload: {
-                      dataKey: pathArr,
-                      value: val,
-                    },
-                  })
-                  this.emit('stateChanged', {
-                    name: 'update',
-                    path: `${trimPath}`,
-                    newVal: val,
-                  })
-                }
-              } else if (key.startsWith('=')) {
-                //handles function evaluation
-                const trimPath = key.substring(2, key.length)
-                const pathArr = trimPath.split('.')
-                let func =
-                  _.get(this.root, pathArr) ||
-                  _.get(this.root[pageName], pathArr)
-
-                if (isObject(func)) {
-                  const populateWithRoot = populateObject({
-                    source: func,
-                    lookFor: '.',
-                    locations: [this.root, this.root[pageName]],
-                  })
-
-                  const populateWithSelf = populateObject({
-                    source: populateWithRoot,
-                    lookFor: '..',
-                    locations: [this.root, this.root[pageName]],
-                  })
-
-                  const populateAfterInheriting = populateObject({
-                    source: populateWithSelf,
-                    lookFor: '=',
-                    locations: [this.root, this.root[pageName]],
-                  })
-                  const populateAfterAttachingMyBaseUrl = populateObject({
-                    source: populateAfterInheriting,
-                    lookFor: '~',
-                    locations: [this],
-                  })
-
-                  const boundDispatch = this.dispatch.bind(this)
-                  func = attachFns({
-                    cadlObject: populateAfterAttachingMyBaseUrl,
-                    dispatch: boundDispatch,
-                  })
-                }
-                if (typeof func === 'function') {
-                  if (isObject(populatedCommand[key])) {
-                    const { dataIn, dataOut } = populatedCommand[key]
-                    const result = await func(dataIn)
-                    if (dataOut) {
-                      const pathArr = dataOut.split('.')
-                      this.newDispatch({
-                        type: 'SET_VALUE',
-                        payload: {
-                          dataKey: pathArr,
-                          value: result,
-                        },
-                      })
-                      this.emit('stateChanged', {
-                        name: 'update',
-                        path: `${dataOut}`,
-                        newVal: result,
-                      })
-                    } else if (dataIn && dataOut === undefined) {
-                      results = result
-                    }
-                  } else {
-                    await func()
-                  }
-                } else if (Array.isArray(func)) {
-                  func = func[1]
-                  await func()
-                }
-              }
-            })
+          results = await this.handleEvalArray({
+            array: updateObject,
+            pageName,
           })
         }
         //populates Global because this object is instantiated once

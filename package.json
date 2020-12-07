@@ -17,7 +17,7 @@
     "start:val_ui": "npm-run-all --parallel start:val_ui watch",
     "start:test": "npm-run-all --parallel serve:test watch ",
     "test": "jest",
-    "test:CADL": "node --inspect node_modules/.bin/jest --watch --runInBand ./src/CADL/__tests__/CADL.test.ts",
+    "test:CADL": "node --inspect node_modules/.bin/jest --watch --runInBand ./src/CADL/__tests__/ --watch",
     "bump-version": "npm version patch",
     "prepublish:public": "npm run build && npm run bump-version",
     "publish:public": "npm publish --access public",
