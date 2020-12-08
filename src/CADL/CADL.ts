@@ -22,6 +22,7 @@ import {
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
   replaceVars,
+  isPopulated,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
@@ -570,7 +571,6 @@ export default class CADL extends EventEmitter {
       locations: [localRoot],
     })
     const boundDispatch = this.dispatch.bind(this)
-
     localRoot = pageName
       ? sourceCopyWithLocalKeys[pageName]
       : sourceCopyWithLocalKeys
@@ -1557,24 +1557,37 @@ export default class CADL extends EventEmitter {
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
-          if (typeof command === 'function') {
+          let populatedCommand
+          if (isPopulated(command)) {
+            populatedCommand = command
+          } else {
+            populatedCommand = populateVals({
+              source: command,
+              locations: [this.root, this.root[pageName]],
+              lookFor: ['.', '..', '=', '~'],
+            })
+          }
+          if (typeof populatedCommand === 'function') {
             try {
               //TODO: check dispatch function/ side effects work accordingly
-              await command()
+              await populatedCommand()
             } catch (error) {
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init`,
                 error
               )
             }
-          } else if (isObject(command) && 'actionType' in command) {
+          } else if (
+            isObject(populatedCommand) &&
+            'actionType' in populatedCommand
+          ) {
             const {
               actionType,
               dataKey,
               dataObject,
               object,
               funcName,
-            }: any = command
+            }: any = populatedCommand
             switch (actionType) {
               case 'updateObject': {
                 await this.updateObject({ dataKey, dataObject })
@@ -1586,7 +1599,7 @@ export default class CADL extends EventEmitter {
                     funcName in this.root.builtIn &&
                     typeof this.root.builtIn[funcName] === 'function'
                   ) {
-                    await this.root.builtIn[funcName](command)
+                    await this.root.builtIn[funcName](populatedCommand)
                   }
                 }
                 break
@@ -1602,13 +1615,16 @@ export default class CADL extends EventEmitter {
                 return
               }
             }
-          } else if (isObject(command) && 'if' in command) {
+          } else if (isObject(populatedCommand) && 'if' in populatedCommand) {
             //TODO: add the then condition
-            await this.handleIfCommand({ pageName, ifCommand: command })
-          } else if (Array.isArray(command)) {
-            if (typeof command[0][1] === 'function') {
+            await this.handleIfCommand({
+              pageName,
+              ifCommand: populatedCommand,
+            })
+          } else if (Array.isArray(populatedCommand)) {
+            if (typeof populatedCommand[0][1] === 'function') {
               try {
-                await command[0][1]()
+                await populatedCommand[0][1]()
               } catch (error) {
                 throw new UnableToExecuteFn(
                   `An error occured while executing ${pageName}.init`,
