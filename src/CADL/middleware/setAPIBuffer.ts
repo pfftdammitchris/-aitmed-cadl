@@ -7,7 +7,7 @@ export default function setAPIBuffer(apiObject) {
   try {
     let limit
     if (store.env === 'test') {
-      limit = 1
+      limit = 60
     } else {
       limit = 3
     }
