@@ -275,13 +275,13 @@ export default class CADL extends EventEmitter {
   async initPage(
     pageName: string,
     skip: string[] = [],
-    options: { evolve?: boolean; builtIn?: Record<string, any> } = {}
+    options: { reload?: boolean; builtIn?: Record<string, any> } = {}
   ): Promise<void> {
     if (!this.cadlEndpoint) await this.init()
-    if (options.evolve === undefined) {
-      options.evolve = true
+    if (options.reload === undefined) {
+      options.reload = true
     }
-    if (options.evolve === false) return
+    if (options.reload === false) return
 
     const { builtIn } = options
     if (builtIn && isObject(builtIn)) {
@@ -294,7 +294,7 @@ export default class CADL extends EventEmitter {
     let prevVal = {}
     //FOR FORMDATA
     //process formData
-    if (this.root[pageName] && options.evolve) {
+    if (this.root[pageName] && options.reload) {
       this.newDispatch({
         type: 'DELETE_PAGE',
         payload: { pageName },
