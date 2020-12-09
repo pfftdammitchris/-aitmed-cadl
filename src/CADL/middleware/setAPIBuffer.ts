@@ -12,7 +12,8 @@ export default function setAPIBuffer(apiObject) {
       limit = 3
     }
     const apiDispatchBufferString = localStorage.getItem('api-dispatch-buffer')
-    const hash = Base64.stringify(sha256(JSON.stringify(apiObject)))
+    const hash: string = Base64.stringify(sha256(JSON.stringify(apiObject)))
+    const hashSub = hash.substring(0, 8)
     const currentTimestamp = moment(Date.now())
     let apiDispatchBufferObject
     if (apiDispatchBufferString !== null) {
@@ -22,20 +23,20 @@ export default function setAPIBuffer(apiObject) {
     }
     let apiDispatchBufferStringUpdate
     let pass
-    if (!(hash in apiDispatchBufferObject)) {
-      apiDispatchBufferObject[hash] = currentTimestamp.toString()
+    if (!(hashSub in apiDispatchBufferObject)) {
+      apiDispatchBufferObject[hashSub] = currentTimestamp.toString()
       apiDispatchBufferStringUpdate = JSON.stringify(apiDispatchBufferObject)
       localStorage.setItem('api-dispatch-buffer', apiDispatchBufferStringUpdate)
       pass = true
     } else {
-      const oldTimestamp = moment(apiDispatchBufferObject[hash])
+      const oldTimestamp = moment(apiDispatchBufferObject[hashSub])
       const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
       if (timeDiff > limit) {
-        apiDispatchBufferObject[hash] = currentTimestamp.toString()
+        apiDispatchBufferObject[hashSub] = currentTimestamp.toString()
         pass = true
       } else {
         apiDispatchBufferObject[
-          `${hash}FAILED_REPEAT`
+          `${hashSub}FAILED_REPEAT`
         ] = currentTimestamp.toString()
         pass = false
       }
