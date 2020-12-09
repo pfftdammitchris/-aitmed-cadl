@@ -18,6 +18,8 @@ export default function setAPIBuffer(apiObject) {
     } else {
       limit = 3
     }
+
+    //TODO: replace with root
     const apiDispatchBufferString = localStorage.getItem('api-dispatch-buffer')
 
     const hash = Base64.stringify(sha256(JSON.stringify(apiObject)))
