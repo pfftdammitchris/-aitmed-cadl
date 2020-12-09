@@ -26,9 +26,9 @@ export default {
           object.splice(i, 1)
           return
         }
-        return
       }
     }
+    return
   },
   append({ newMessage, messages }) {
     if (isArray(messages)) {
@@ -36,11 +36,9 @@ export default {
         var cloned = _.cloneDeep(newMessage)
         messages.push(cloned)
       }
-      return
     }
     return
   },
-
   has({ object, key }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
