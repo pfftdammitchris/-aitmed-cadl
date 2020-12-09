@@ -2,7 +2,6 @@ import * as edgeServices from './edges'
 import * as vertexServices from './vertexes'
 import * as documentServices from './documents'
 import * as builtInServices from './builtIn'
-import * as utils from './utils'
 import * as remove from './remove'
 
 export default function (key) {
@@ -15,7 +14,6 @@ export default function (key) {
     rd: documentServices.get,
     dx: remove.remove,
     builtIn: builtInServices.builtIn,
-    localSearch: utils.localSearch,
   }
   return fns[key]
 }

@@ -22,11 +22,12 @@ import {
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
   replaceVars,
+  isPopulated,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import PatientChart from './__mocks__/PatientChart'
+// import MeetingLobby from './__mocks__/MeetingLobby'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -40,6 +41,7 @@ export default class CADL extends EventEmitter {
   private _designSuffix: Record<string, any>
   private _aspectRatio: number
   private _map: Record<string, any>
+  private _config: Record<string, any>
   public verificationRequest = {
     timer: 0,
     phoneNumber: '',
@@ -122,6 +124,10 @@ export default class CADL extends EventEmitter {
     this.baseUrl = baseUrl
     this.assetsUrl = assetsUrl
 
+    this._config = this.processPopulate({
+      source: config,
+      lookFor: ['.', '..', '=', '~'],
+    })
     //set overrides of Base Objects
     if (BaseDataModel) {
       const processedBaseDataModel = this.processPopulate({
@@ -270,13 +276,13 @@ export default class CADL extends EventEmitter {
   async initPage(
     pageName: string,
     skip: string[] = [],
-    options: { evolve?: boolean; builtIn?: Record<string, any> } = {}
+    options: { reload?: boolean; builtIn?: Record<string, any> } = {}
   ): Promise<void> {
     if (!this.cadlEndpoint) await this.init()
-    if (options.evolve === undefined) {
-      options.evolve = true
+    if (options.reload === undefined) {
+      options.reload = true
     }
-    if (options.evolve === false) return
+    if (options.reload === false) return
 
     const { builtIn } = options
     if (builtIn && isObject(builtIn)) {
@@ -289,7 +295,7 @@ export default class CADL extends EventEmitter {
     let prevVal = {}
     //FOR FORMDATA
     //process formData
-    if (this.root[pageName] && options.evolve) {
+    if (this.root[pageName] && options.reload) {
       this.newDispatch({
         type: 'DELETE_PAGE',
         payload: { pageName },
@@ -450,16 +456,16 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'PatientChart') return PatientChart
+    // if (pageName === 'MeetingLobby') return MeetingLobby
 
     let pageCADL
     let pageUrl
     if (pageName.startsWith('~')) {
       if (!this.myBaseUrl) {
-        console.log('BaseUrl is not present')
-        return { error: 'BaseUrl is not present.' }
+        pageUrl = this.baseUrl
+      } else {
+        pageUrl = this.myBaseUrl
       }
-      pageUrl = this.myBaseUrl
       pageName = pageName.substring(2)
     } else {
       pageUrl = this.baseUrl
@@ -565,7 +571,6 @@ export default class CADL extends EventEmitter {
       locations: [localRoot],
     })
     const boundDispatch = this.dispatch.bind(this)
-
     localRoot = pageName
       ? sourceCopyWithLocalKeys[pageName]
       : sourceCopyWithLocalKeys
@@ -712,7 +717,7 @@ export default class CADL extends EventEmitter {
       //handle If command
       const result = await this.handleIfCommand({
         pageName,
-        ifCommand: commands[key],
+        ifCommand: { [key]: commands[key] },
       })
       //record result if any
       if (isObject(result)) {
@@ -720,12 +725,19 @@ export default class CADL extends EventEmitter {
       }
     } else if (!key.startsWith('=')) {
       //handles assignment expressions
-      const command = commands[key]
-      await this.handleEvalAssignmentExpressions({ pageName, command, key })
+      await this.handleEvalAssignmentExpressions({
+        pageName,
+        command: { [key]: commands[key] },
+        key,
+      })
     } else if (key.startsWith('=')) {
       //handles function evaluation
-      const command = commands[key]
-      results = this.handleEvalFunction({ command, pageName, key })
+
+      results = this.handleEvalFunction({
+        command: { [key]: commands[key] },
+        pageName,
+        key,
+      })
     }
     return results
   }
@@ -740,7 +752,7 @@ export default class CADL extends EventEmitter {
   private async handleEvalAssignmentExpressions({ pageName, command, key }) {
     //handles assignment expressions
     let trimPath, val
-    val = command
+    val = command[key]
     if (key.startsWith('..')) {
       trimPath = key.substring(2, key.length - 1)
       const pathArr = trimPath.split('.')
@@ -830,8 +842,8 @@ export default class CADL extends EventEmitter {
       })
     }
     if (typeof func === 'function') {
-      if (isObject(command)) {
-        const { dataIn, dataOut } = command
+      if (isObject(command[key])) {
+        const { dataIn, dataOut } = command[key]
         const result = await func(dataIn)
         if (dataOut) {
           const pathArr = dataOut.split('.')
@@ -1545,24 +1557,37 @@ export default class CADL extends EventEmitter {
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
-          if (typeof command === 'function') {
+          let populatedCommand
+          if (isPopulated(command)) {
+            populatedCommand = command
+          } else {
+            populatedCommand = populateVals({
+              source: command,
+              locations: [this.root, this.root[pageName]],
+              lookFor: ['.', '..', '=', '~'],
+            })
+          }
+          if (typeof populatedCommand === 'function') {
             try {
               //TODO: check dispatch function/ side effects work accordingly
-              await command()
+              await populatedCommand()
             } catch (error) {
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init`,
                 error
               )
             }
-          } else if (isObject(command) && 'actionType' in command) {
+          } else if (
+            isObject(populatedCommand) &&
+            'actionType' in populatedCommand
+          ) {
             const {
               actionType,
               dataKey,
               dataObject,
               object,
               funcName,
-            }: any = command
+            }: any = populatedCommand
             switch (actionType) {
               case 'updateObject': {
                 await this.updateObject({ dataKey, dataObject })
@@ -1574,7 +1599,7 @@ export default class CADL extends EventEmitter {
                     funcName in this.root.builtIn &&
                     typeof this.root.builtIn[funcName] === 'function'
                   ) {
-                    await this.root.builtIn[funcName](command)
+                    await this.root.builtIn[funcName](populatedCommand)
                   }
                 }
                 break
@@ -1590,13 +1615,16 @@ export default class CADL extends EventEmitter {
                 return
               }
             }
-          } else if (isObject(command) && 'if' in command) {
+          } else if (isObject(populatedCommand) && 'if' in populatedCommand) {
             //TODO: add the then condition
-            await this.handleIfCommand({ pageName, ifCommand: command })
-          } else if (Array.isArray(command)) {
-            if (typeof command[0][1] === 'function') {
+            await this.handleIfCommand({
+              pageName,
+              ifCommand: populatedCommand,
+            })
+          } else if (Array.isArray(populatedCommand)) {
+            if (typeof populatedCommand[0][1] === 'function') {
               try {
-                await command[0][1]()
+                await populatedCommand[0][1]()
               } catch (error) {
                 throw new UnableToExecuteFn(
                   `An error occured while executing ${pageName}.init`,
@@ -2069,7 +2097,7 @@ export default class CADL extends EventEmitter {
   }
 
   public getConfig() {
-    return store.getConfig()
+    return this._config
   }
   set map(map) {
     this._map = map

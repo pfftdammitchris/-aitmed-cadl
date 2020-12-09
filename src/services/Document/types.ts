@@ -1,5 +1,4 @@
 import * as NoteUtilsTypes from '../Note/utilsTypes'
-import { CommonTypes } from '../../common/types'
 
 export interface NoteDocumentDeat {
   url: string

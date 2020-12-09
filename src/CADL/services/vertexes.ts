@@ -3,6 +3,7 @@ import store from '../../common/store'
 import { mergeDeep } from '../../utils'
 import { isPopulated } from '../utils'
 import { UnableToLocateValue } from '../errors'
+import setAPIBuffer from '../middleware/setAPIBuffer'
 
 export { get, create }
 
@@ -37,6 +38,12 @@ function get({ pageName, apiObject, dispatch }) {
           { options: { ...options } }
         )
       }
+      //Buffer check
+      const shouldPass = setAPIBuffer({
+        idList: [id],
+        options,
+      })
+      if (!shouldPass) return
       const { data } = await store.level2SDK.vertexServices.retrieveVertex({
         idList: [id],
         options,
@@ -109,6 +116,13 @@ function create({ pageName, apiObject, dispatch }) {
             { ...options, mergedName, id }
           )
         }
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          ...options,
+          mergedName,
+          id,
+        })
+        if (!shouldPass) return
         const { data } = await store.level2SDK.vertexServices.updateVertex({
           ...options,
           mergedName,
@@ -135,6 +149,12 @@ function create({ pageName, apiObject, dispatch }) {
             { ...options, name }
           )
         }
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          ...options,
+          name,
+        })
+        if (!shouldPass) return
         const response = await store.level2SDK.vertexServices.createVertex({
           ...options,
           name,

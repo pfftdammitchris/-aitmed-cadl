@@ -3,6 +3,7 @@ import store from '../../common/store'
 import { documentToNote } from '../../services/document/utils'
 import Document from '../../services/document'
 import { isPopulated } from '../utils'
+import setAPIBuffer from '../middleware/setAPIBuffer'
 import { UnableToLocateValue } from '../errors'
 
 export { get, create }
@@ -64,6 +65,12 @@ function get({ pageName, apiObject, dispatch }) {
           { idList, options: requestOptions }
         )
       }
+      //Buffer check
+      const shouldPass = setAPIBuffer({
+        idList,
+        options: requestOptions,
+      })
+      if (!shouldPass) return
       let rawResponse
       await store.level2SDK.documentServices
         .retrieveDocument({
@@ -74,6 +81,7 @@ function get({ pageName, apiObject, dispatch }) {
           rawResponse = res.data
           return Promise.all(
             res?.data?.document.map(async (document) => {
+              //decrypt data
               const note = await documentToNote({ document })
               return note
             })
@@ -161,6 +169,18 @@ function create({ pageName, apiObject, dispatch }) {
           )
         }
 
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          id,
+          edge_id: eid,
+          content: name?.data,
+          mediaType: name?.type,
+          title: name?.title,
+          tags: name?.tags,
+          type: restOfDocOptions?.type,
+          dTypeProps,
+        })
+        if (!shouldPass) return
         const response = await Document.update(id, {
           // ...options,
           edge_id: eid,
@@ -199,6 +219,16 @@ function create({ pageName, apiObject, dispatch }) {
             }
           )
         }
+        //Buffer check
+        const shouldPass = setAPIBuffer({
+          edge_id: eid,
+          content: name?.data,
+          mediaType: name?.type,
+          title: name?.title,
+          type: restOfDocOptions?.type,
+          dTypeProps,
+        })
+        if (!shouldPass) return
         const response = await Document.create({
           edge_id: eid,
           content: name?.data,

@@ -1,4 +1,5 @@
 import array from '../array'
+import utils from '../utils'
 
 describe('Unit Testing Services', () => {
   // Test array services
@@ -76,6 +77,23 @@ describe('Unit Testing Services', () => {
       }
       array.add({ object: testObject, value: testValue })
       expect(testObject[testObject.length - 1] === testValue).toBe(false)
+    })
+  })
+
+  describe('Utils Services', () => {
+    describe('exists', () => {
+      it('should return false when a val is falsey', () => {
+        const obj = { 0: '', 2: 'red' }
+        expect(utils.exists(obj)).toEqual(false)
+        const obj2 = { 0: undefined, 2: 'red' }
+        expect(utils.exists(obj2)).toEqual(false)
+        const obj3 = { 0: null, 2: 4 }
+        expect(utils.exists(obj3)).toEqual(false)
+      })
+      it('should return true when all vals are truthy', () => {
+        const obj = { 0: false, 2: 'red' }
+        expect(utils.exists(obj)).toEqual(true)
+      })
     })
   })
 })

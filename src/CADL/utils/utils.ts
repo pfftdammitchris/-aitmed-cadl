@@ -142,6 +142,7 @@ function lookUp(directions: string, location: Record<string, any>): any {
  *
  */
 function isPopulated(item: string | Record<string, any>): boolean {
+  if (typeof item === 'function') return true
   let itemCopy = _.cloneDeep(item)
   let isPop: boolean = true
   if (isObject(itemCopy)) {
@@ -528,7 +529,11 @@ function populateString({
   for (let location of locations) {
     try {
       replacement = dot.pick(currVal, location)
-      // replacement = lookUp(currVal, location)
+
+      //default to baseUrl if myBaseUrl is not available
+      if (currVal === '.myBaseUrl' && !replacement) {
+        replacement = dot.pick('.baseUrl', location)
+      }
       if (replacement && lookFor == '~') {
         replacement = replacement + source.substring(2)
         break
@@ -772,24 +777,35 @@ function populateVals({
   pageName,
   dispatch,
 }: {
-  source: Record<string, any>
+  source: Record<string, any> | string
   lookFor: string[]
   skip?: string[]
   locations: any[]
   pageName?: string
   dispatch?: Function
-}): Record<string, any> {
+}): any {
   let sourceCopy = _.cloneDeep(source || {})
 
   for (let symbol of lookFor) {
-    sourceCopy = populateObject({
-      source: sourceCopy,
-      lookFor: symbol,
-      skip,
-      locations,
-      pageName,
-      dispatch,
-    })
+    if (typeof sourceCopy === 'string') {
+      sourceCopy = populateString({
+        source: sourceCopy,
+        lookFor: symbol,
+        skip,
+        locations,
+        pageName,
+        dispatch,
+      })
+    } else {
+      sourceCopy = populateObject({
+        source: sourceCopy,
+        lookFor: symbol,
+        skip,
+        locations,
+        pageName,
+        dispatch,
+      })
+    }
   }
 
   return sourceCopy
