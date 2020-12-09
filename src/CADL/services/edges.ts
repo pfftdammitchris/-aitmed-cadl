@@ -67,16 +67,20 @@ function get({ pageName, apiObject, dispatch }) {
       }
 
       //Buffer check
-      const shouldPass = setAPIBuffer({
+      const { pass: shouldPass, cacheIndex } = setAPIBuffer({
         idList,
         options: requestOptions,
       })
-      if (!shouldPass) return
-      const { data } = await store.level2SDK.edgeServices.retrieveEdge({
-        idList,
-        options: requestOptions,
-      })
-      res = data
+      if (!shouldPass) {
+        res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+        return
+      } else {
+        const { data } = await store.level2SDK.edgeServices.retrieveEdge({
+          idList,
+          options: requestOptions,
+        })
+        res = data
+      }
     } catch (error) {
       throw error
     }
