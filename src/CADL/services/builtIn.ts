@@ -8,6 +8,7 @@ import stringServices from './string'
 import objectServices from './object'
 import arrayServices from './array'
 import ecos from './ecos'
+import utils from './utils'
 
 import Document from '../../services/Document'
 export { builtIn }
@@ -85,6 +86,7 @@ export default function builtInFns(dispatch?: Function) {
     object: objectServices,
     array: arrayServices,
     ecos,
+    utils,
     async createNewAccount({ name }) {
       const {
         phoneNumber,
@@ -225,19 +227,6 @@ export default function builtInFns(dispatch?: Function) {
         { url }
       )
       return response?.data
-    },
-    utils: {
-      base64ToBlob({
-        data,
-        type = 'application/pdf',
-      }: {
-        data: string
-        type: string
-      }) {
-        const blob = store.level2SDK.utilServices.base64ToBlob(data, type)
-        const blobUrl = URL.createObjectURL(blob)
-        return blobUrl
-      },
     },
     cleanLocalStorage() {
       store.level2SDK.Account.logoutClean()

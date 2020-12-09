@@ -15,59 +15,60 @@ import stringServices from '../CADL/services/string'
 //   console.log('red')
 // })()
 export default (async function () {
-  console.log(stringServices.formatUnixtimeLT_en(Date.now()))
-  const cadl = new CADL({
-    ...defaultConfig,
-    configUrl: 'https://public.aitmed.com/config/meet2d.yml',
-    aspectRatio: 3,
-  })
+  console.log(ecc.signature('Hello World'))
+  // console.log(stringServices.formatUnixtimeLT_en(Date.now()))
+  // const cadl = new CADL({
+  //   ...defaultConfig,
+  //   configUrl: 'https://public.aitmed.com/config/meet2d.yml',
+  //   aspectRatio: 3,
+  // })
 
-  await cadl.init()
+  // await cadl.init()
 
-  const obj = {
-    emit: {
-      dataKey: {
-        var1: { value: 4, key: 'red' },
-        var2: { value: 6, key: 'green' },
-      },
-      actions: [
-        {
-          if: [
-            {
-              '=.builtIn.string.equal': {
-                dataIn: {
-                  string1: 'fred',
-                  string2: 'ted',
-                },
-              },
-            },
-            '$var1.value',
-            'Male',
-          ],
-        },
-        {
-          '=.builtIn.object.remove': {
-            object: '..GeneralInfo.Radio',
-            key: '$var1.key',
-          },
-        },
-        {
-          '=.builtIn.object.set': {
-            object: '..GeneralInfo.Radio',
-            key: '$var2.key',
-            value: 'Male',
-          },
-        },
-      ],
-    },
-  }
+  // const obj = {
+  //   emit: {
+  //     dataKey: {
+  //       var1: { value: 4, key: 'red' },
+  //       var2: { value: 6, key: 'green' },
+  //     },
+  //     actions: [
+  //       {
+  //         if: [
+  //           {
+  //             '=.builtIn.string.equal': {
+  //               dataIn: {
+  //                 string1: 'fred',
+  //                 string2: 'ted',
+  //               },
+  //             },
+  //           },
+  //           '$var1.value',
+  //           'Male',
+  //         ],
+  //       },
+  //       {
+  //         '=.builtIn.object.remove': {
+  //           object: '..GeneralInfo.Radio',
+  //           key: '$var1.key',
+  //         },
+  //       },
+  //       {
+  //         '=.builtIn.object.set': {
+  //           object: '..GeneralInfo.Radio',
+  //           key: '$var2.key',
+  //           value: 'Male',
+  //         },
+  //       },
+  //     ],
+  //   },
+  // }
 
-  const newObj = await cadl.emitCall({
-    dataKey: obj.emit.dataKey,
-    actions: obj.emit.actions,
-    pageName: 'SignIn',
-  })
-  debugger
+  // const newObj = await cadl.emitCall({
+  //   dataKey: obj.emit.dataKey,
+  //   actions: obj.emit.actions,
+  //   pageName: 'SignIn',
+  // })
+  // debugger
   // const vc = await Account.requestVerificationCode('+1 8881907654')
   // debugger
 
@@ -230,97 +231,97 @@ export default (async function () {
   // const res = cadl.getData('CreateNewAccount', 'formData.vertex')
   // debugger
 
-  async function test_LoginNewDevice({ phone_number }) {
-    console.log('Testing loginNewDevice')
-    let verification_code
-    try {
-      verification_code = await Account.requestVerificationCode(phone_number)
-    } catch (err) {
-      debugger
-      console.log(err)
-    }
-    try {
-      const loginResult = await Account.loginByVerificationCode(
-        phone_number,
-        verification_code
-      ).catch((err) => {
-        console.log(err)
-        debugger
-      })
-      console.log(loginResult)
-    } catch (err) {
-      // debugger
-      console.log(err)
-    }
-  }
-  //**************************** */
-  //**************************** */
-  //**************************** */
-  async function test_login({ password }) {
-    console.log('Testing login')
-    try {
-      const loginResult = await Account.loginByPassword(password)
-      console.log(loginResult)
-    } catch (err) {
-      console.log(err)
-    }
-  }
+  // async function test_LoginNewDevice({ phone_number }) {
+  //   console.log('Testing loginNewDevice')
+  //   let verification_code
+  //   try {
+  //     verification_code = await Account.requestVerificationCode(phone_number)
+  //   } catch (err) {
+  //     debugger
+  //     console.log(err)
+  //   }
+  //   try {
+  //     const loginResult = await Account.loginByVerificationCode(
+  //       phone_number,
+  //       verification_code
+  //     ).catch((err) => {
+  //       console.log(err)
+  //       debugger
+  //     })
+  //     console.log(loginResult)
+  //   } catch (err) {
+  //     // debugger
+  //     console.log(err)
+  //   }
+  // }
+  // //**************************** */
+  // //**************************** */
+  // //**************************** */
+  // async function test_login({ password }) {
+  //   console.log('Testing login')
+  //   try {
+  //     const loginResult = await Account.loginByPassword(password)
+  //     console.log(loginResult)
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  // }
 
-  async function test_UpdateDocument() {
-    try {
-      var {
-        data: {
-          edge: { eid },
-        },
-      } = await store.level2SDK.edgeServices.createEdge({ type: 10001 })
-    } catch (err) {
-      console.log(err)
-    }
-    var b64Id = store.level2SDK.utilServices.uint8ArrayToBase64(eid)
+  // async function test_UpdateDocument() {
+  //   try {
+  //     var {
+  //       data: {
+  //         edge: { eid },
+  //       },
+  //     } = await store.level2SDK.edgeServices.createEdge({ type: 10001 })
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  //   var b64Id = store.level2SDK.utilServices.uint8ArrayToBase64(eid)
 
-    debugger
-    try {
-      var {
-        data: {
-          document: { id, name: oldName, deat },
-        },
-      } = await store.level2SDK.documentServices.createDocument({
-        type: 10001,
-        eid: b64Id,
-        name: {
-          data: { hello: 'goodbye' },
-        },
-      })
-      debugger
-      console.log(deat)
-    } catch (err) {
-      console.log(err)
-    }
-    debugger
-    try {
-      var b64DocId = store.level2SDK.utilServices.uint8ArrayToBase64(id)
+  //   debugger
+  //   try {
+  //     var {
+  //       data: {
+  //         document: { id, name: oldName, deat },
+  //       },
+  //     } = await store.level2SDK.documentServices.createDocument({
+  //       type: 10001,
+  //       eid: b64Id,
+  //       name: {
+  //         data: { hello: 'goodbye' },
+  //       },
+  //     })
+  //     debugger
+  //     console.log(deat)
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  //   debugger
+  //   try {
+  //     var b64DocId = store.level2SDK.utilServices.uint8ArrayToBase64(id)
 
-      const updateDocumentResponse = await Document.update(b64DocId, {
-        content: { ...oldName, data: { george: 'jungle' } },
-        type: 2,
-        subtype: 3,
-        size: 154,
-      })
-      console.log('This is the result of updating the document')
-      console.log(updateDocumentResponse)
-    } catch (err) {
-      console.log(err)
-    }
-    debugger
-    try {
-      const retrieveDocument = await store.level2SDK.documentServices.retrieveDocument(
-        {
-          idList: [id],
-        }
-      )
-      console.log(retrieveDocument)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  //     const updateDocumentResponse = await Document.update(b64DocId, {
+  //       content: { ...oldName, data: { george: 'jungle' } },
+  //       type: 2,
+  //       subtype: 3,
+  //       size: 154,
+  //     })
+  //     console.log('This is the result of updating the document')
+  //     console.log(updateDocumentResponse)
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  //   debugger
+  //   try {
+  //     const retrieveDocument = await store.level2SDK.documentServices.retrieveDocument(
+  //       {
+  //         idList: [id],
+  //       }
+  //     )
+  //     console.log(retrieveDocument)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
 })()
