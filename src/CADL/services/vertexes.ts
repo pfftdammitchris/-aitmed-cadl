@@ -3,7 +3,6 @@ import store from '../../common/store'
 import { mergeDeep } from '../../utils'
 import { isPopulated } from '../utils'
 import { UnableToLocateValue } from '../errors'
-import setAPIBuffer from '../middleware/setAPIBuffer'
 
 export { get, create }
 
@@ -29,6 +28,7 @@ function get({ pageName, apiObject, dispatch }) {
         `Missing reference ${id} at page ${pageName}`
       )
     }
+
     let res: Record<string, any> = {}
     try {
       if (store.env === 'test') {
@@ -39,22 +39,41 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
       //Buffer check
-      const shouldPass = setAPIBuffer({
-        idList: [id],
-        options,
+      const { pass: shouldPass, cacheIndex } = await dispatch({
+        type: 'set-api-buffer',
+        payload: {
+          apiObject: {
+            idList: [id],
+            options,
+          },
+        },
       })
-      if (!shouldPass) return
-      const { data } = await store.level2SDK.vertexServices.retrieveVertex({
-        idList: [id],
-        options,
-      })
-      res = data
-      if (store.env === 'test') {
-        console.log(
-          '%cGet Vertex Response',
-          'background: purple; color: white; display: block;',
-          res
-        )
+      if (!shouldPass) {
+        res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+        if (store.env === 'test') {
+          console.log(
+            `%cUsing Cached Data for`,
+            'background:#7268A6; color: white; display: block;',
+            apiObject
+          )
+        }
+      } else {
+        const { data } = await store.level2SDK.vertexServices.retrieveVertex({
+          idList: [id],
+          options,
+        })
+        await dispatch({
+          type: 'set-cache',
+          payload: { data, cacheIndex },
+        })
+        res = data
+        if (store.env === 'test') {
+          console.log(
+            '%cGet Vertex Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
+        }
       }
     } catch (error) {
       throw error
@@ -117,24 +136,39 @@ function create({ pageName, apiObject, dispatch }) {
           )
         }
         //Buffer check
-        const shouldPass = setAPIBuffer({
-          ...options,
-          mergedName,
-          id,
+        const { pass: shouldPass, cacheIndex } = await dispatch({
+          type: 'set-api-buffer',
+          payload: {
+            apiObject: { ...options, mergedName, id },
+          },
         })
-        if (!shouldPass) return
-        const { data } = await store.level2SDK.vertexServices.updateVertex({
-          ...options,
-          mergedName,
-          id,
-        })
-        res = data
-        if (store.env === 'test') {
-          console.log(
-            '%cUpdate Vertex Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
+        if (!shouldPass) {
+          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+          if (store.env === 'test') {
+            console.log(
+              `%cUsing Cached Data for`,
+              'background:#7268A6; color: white; display: block;',
+              apiObject
+            )
+          }
+        } else {
+          const { data } = await store.level2SDK.vertexServices.updateVertex({
+            ...options,
+            mergedName,
+            id,
+          })
+          await dispatch({
+            type: 'set-cache',
+            payload: { data, cacheIndex },
+          })
+          res = data
+          if (store.env === 'test') {
+            console.log(
+              '%cUpdate Vertex Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
         }
       } catch (error) {
         throw error
@@ -150,22 +184,38 @@ function create({ pageName, apiObject, dispatch }) {
           )
         }
         //Buffer check
-        const shouldPass = setAPIBuffer({
-          ...options,
-          name,
+        const { pass: shouldPass, cacheIndex } = await dispatch({
+          type: 'set-api-buffer',
+          payload: {
+            apiObject: { ...options, name },
+          },
         })
-        if (!shouldPass) return
-        const response = await store.level2SDK.vertexServices.createVertex({
-          ...options,
-          name,
-        })
-        res = response
-        if (store.env === 'test') {
-          console.log(
-            '%cCreate Vertex Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
+        if (!shouldPass) {
+          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+          if (store.env === 'test') {
+            console.log(
+              `%cUsing Cached Data for`,
+              'background:#7268A6; color: white; display: block;',
+              apiObject
+            )
+          }
+        } else {
+          const response = await store.level2SDK.vertexServices.createVertex({
+            ...options,
+            name,
+          })
+          await dispatch({
+            type: 'set-cache',
+            payload: { data: response, cacheIndex },
+          })
+          res = response
+          if (store.env === 'test') {
+            console.log(
+              '%cCreate Vertex Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
         }
       } catch (error) {
         throw error

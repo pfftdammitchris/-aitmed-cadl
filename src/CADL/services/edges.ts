@@ -3,7 +3,6 @@ import store from '../../common/store'
 import { mergeDeep, replaceEidWithId } from '../../utils'
 import { isPopulated } from '../utils'
 import { UnableToLocateValue } from '../errors'
-import setAPIBuffer from '../middleware/setAPIBuffer'
 
 export { get, create }
 
@@ -54,6 +53,16 @@ function get({ pageName, apiObject, dispatch }) {
     if (sCondition) {
       requestOptions.scondition = sCondition
     }
+    //Buffer check
+    const { pass: shouldPass, cacheIndex } = await dispatch({
+      type: 'set-api-buffer',
+      payload: {
+        apiObject: {
+          idList,
+          options: requestOptions,
+        },
+      },
+    })
     try {
       if (store.env === 'test') {
         console.log(
@@ -66,17 +75,26 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
-      //Buffer check
-      const shouldPass = setAPIBuffer({
-        idList,
-        options: requestOptions,
-      })
-      if (!shouldPass) return
-      const { data } = await store.level2SDK.edgeServices.retrieveEdge({
-        idList,
-        options: requestOptions,
-      })
-      res = data
+      if (!shouldPass) {
+        res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+        if (store.env === 'test') {
+          console.log(
+            `%cUsing Cached Data for`,
+            'background:#7268A6; color: white; display: block;',
+            apiObject
+          )
+        }
+      } else {
+        const { data } = await store.level2SDK.edgeServices.retrieveEdge({
+          idList,
+          options: requestOptions,
+        })
+        await dispatch({
+          type: 'set-cache',
+          payload: { data, cacheIndex },
+        })
+        res = data
+      }
     } catch (error) {
       throw error
     }
@@ -157,11 +175,18 @@ function create({ pageName, apiObject, dispatch }) {
     if (name) {
       mergedVal = mergeDeep(mergedVal, { name })
     }
-    let res
 
+    let res
     //if there is an id present
     //it is treated as un update request
     if (id && !id.startsWith('.')) {
+      //Buffer check
+      const { pass: shouldPass, cacheIndex } = await dispatch({
+        type: 'set-api-buffer',
+        payload: {
+          apiObject: { ...mergedVal, id },
+        },
+      })
       try {
         if (store.env === 'test') {
           console.log(
@@ -171,52 +196,79 @@ function create({ pageName, apiObject, dispatch }) {
           )
         }
         //Buffer check
-        const shouldPass = setAPIBuffer({
-          ...mergedVal,
-          id,
-        })
-        if (!shouldPass) return
-        const { data } = await store.level2SDK.edgeServices.updateEdge({
-          ...mergedVal,
-          id,
-        })
-        res = data
+        if (!shouldPass) {
+          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+          if (store.env === 'test') {
+            console.log(
+              `%cUsing Cached Data for`,
+              'background:#7268A6; color: white; display: block;',
+              apiObject
+            )
+          }
+        } else {
+          const { data } = await store.level2SDK.edgeServices.updateEdge({
+            ...mergedVal,
+            id,
+          })
+          await dispatch({
+            type: 'set-cache',
+            payload: { data, cacheIndex },
+          })
+          res = data
 
-        if (store.env === 'test') {
-          console.log(
-            '%cUpdate Edge Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
+          if (store.env === 'test') {
+            console.log(
+              '%cUpdate Edge Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
         }
       } catch (error) {
         throw error
       }
     } else {
+      //Buffer check
+      const { pass: shouldPass, cacheIndex } = await dispatch({
+        type: 'set-api-buffer',
+        payload: {
+          apiObject: { ...mergedVal },
+        },
+      })
       try {
         if (store.env === 'test') {
           console.log(
             '%cCreate Edge Request',
             'background: purple; color: white; display: block;',
-            { ...mergedVal, id }
+            { ...mergedVal }
           )
         }
-        //Buffer check
-        const shouldPass = setAPIBuffer({
-          ...mergedVal,
-        })
-        if (!shouldPass) return
-        const { data } = await store.level2SDK.edgeServices.createEdge({
-          ...mergedVal,
-        })
-        res = data
+        if (!shouldPass) {
+          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+          if (store.env === 'test') {
+            console.log(
+              `%cUsing Cached Data for`,
+              'background:#7268A6; color: white; display: block;',
+              apiObject
+            )
+          }
+        } else {
+          const { data } = await store.level2SDK.edgeServices.createEdge({
+            ...mergedVal,
+          })
+          await dispatch({
+            type: 'set-cache',
+            payload: { data, cacheIndex },
+          })
+          res = data
 
-        if (store.env === 'test') {
-          console.log(
-            '%cCreate Edge Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
+          if (store.env === 'test') {
+            console.log(
+              '%cCreate Edge Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
         }
       } catch (error) {
         throw error
