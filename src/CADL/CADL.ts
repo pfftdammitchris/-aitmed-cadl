@@ -3,6 +3,9 @@ import axios from 'axios'
 import YAML from 'yaml'
 import { EventEmitter } from 'events'
 import produce, { setAutoFreeze } from 'immer'
+import moment from 'moment'
+import sha256 from 'crypto-js/sha256'
+import Base64 from 'crypto-js/enc-base64'
 setAutoFreeze(false)
 
 import store from '../common/store'
@@ -1126,6 +1129,71 @@ export default class CADL extends EventEmitter {
         }
         break
       }
+      case 'set-api-buffer': {
+        const { apiObject } = action.payload
+        try {
+          let limit
+          if (store.env === 'test') {
+            limit = 60
+          } else {
+            limit = 3
+          }
+
+          const hash = Base64.stringify(sha256(JSON.stringify(apiObject)))
+          const currentTimestamp = moment(Date.now())
+          let apiDispatchBufferObject = this.root['apiCache']
+
+          let pass
+          if (!(hash in apiDispatchBufferObject)) {
+            //if request has not been made(hash is undefined)
+            //the request continues
+            pass = true
+          } else {
+            //if similar request has been made (hash exists)
+            //compare recorded timestamp with current timestamp
+            const oldTimestamp = moment(
+              apiDispatchBufferObject[hash]?.timestamp
+            )
+            const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
+            if (timeDiff > limit) {
+              apiDispatchBufferObject[
+                hash
+              ].timestamp = currentTimestamp.toString()
+              pass = true
+            } else {
+              apiDispatchBufferObject[`${hash}FAILED_REPEAT`] = {
+                timestamp: currentTimestamp.toString(),
+                request: apiObject,
+              }
+              pass = false
+            }
+          }
+          //remove old values
+          for (let [key, val] of Object.entries(apiDispatchBufferObject)) {
+            //@ts-ignore
+            const timeDiff = currentTimestamp.diff(val?.timestamp, 'seconds')
+            if (timeDiff > limit) {
+              delete apiDispatchBufferObject[key]
+            }
+          }
+          return { pass, cacheIndex: hash }
+        } catch (error) {
+          console.log(error)
+          return { pass: false, cacheIndex: hash }
+        }
+      }
+      case 'set-cache': {
+        this.newDispatch({
+          type: 'SET_CACHE',
+          payload: action.payload,
+        })
+        break
+      }
+      case 'get-cache': {
+        const { cacheIndex } = action.payload
+        const cacheData = this.getApiCache(cacheIndex)
+        return cacheData
+      }
       case 'emit-update': {
         const { pageName, dataKey, newVal } = action.payload
         this.emit('stateChanged', {
@@ -1868,6 +1936,7 @@ export default class CADL extends EventEmitter {
     return produce(root, (draft) => {
       draft.actions = {}
       draft.builtIn = builtInFns(this.dispatch.bind(this))
+      draft.apiCache = {}
     })
   }
 
@@ -1922,6 +1991,16 @@ export default class CADL extends EventEmitter {
         case 'DELETE_PAGE': {
           const { pageName } = action.payload
           delete draft[pageName]
+          break
+        }
+        case 'SET_CACHE': {
+          const { cacheIndex, data } = action.payload
+          const currentTimestamp = moment(Date.now()).toString()
+
+          _.set(draft['apiCache'], cacheIndex, {
+            data,
+            timestamp: currentTimestamp,
+          })
           break
         }
         case 'EDIT_DRAFT': {
@@ -1990,6 +2069,10 @@ export default class CADL extends EventEmitter {
     })
 
     return Object.values(returnValues)
+  }
+
+  private getApiCache(cacheIndex) {
+    return this.root.apiCache[cacheIndex].data
   }
 
   public get cadlVersion() {
