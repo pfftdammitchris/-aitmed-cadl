@@ -59,4 +59,24 @@ export default {
     }
     return
   },
+  LoopToGenerate(span: number) {
+    let fotmat = (n) => {
+      if (n < 13 * 60) {
+        let h = Math.floor(n / 60)
+        let m = n % 60
+        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}`
+      } else {
+        let h = Math.floor((n - 12 * 60) / 60)
+        let m = (n - 12 * 60) % 60
+        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}(pm)`
+      }
+    }
+    let i: number = 0
+    let arr: string[] = []
+    while (i <= 24 * 60) {
+      arr.push(fotmat(i));
+      i += span;
+    }
+    return arr
+  }
 }
