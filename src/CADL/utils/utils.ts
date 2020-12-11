@@ -700,7 +700,7 @@ function populateObject({
   pageName?: string
   skipIf?: boolean
 }): Record<string, any> {
-  let sourceCopy = _.cloneDeep(source || {})
+  let sourceCopy = source
   Object.keys(sourceCopy).forEach((key) => {
     let index = key
     let shouldSkipIf
