@@ -17,7 +17,7 @@ export default {
     }
     return
   },
-  removeByKey({ object, key }) {   //the format of the array must be [ man: man]
+  removeByKey({ object, key }) {   //the format of the array must be [ man: man]  man： man
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i][key]) {
@@ -42,7 +42,7 @@ export default {
   has({ object, key }) {  // the format of array must be [ key: man ]
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
-        if (object[i].key === key) {
+        if (object[i][key] === key) {
           return true
         }
       }
