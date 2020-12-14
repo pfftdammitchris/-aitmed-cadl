@@ -100,6 +100,6 @@ export default {
     if (isArray(object)) {
       return object.length
     }
-    return
+    return 0
   }
 }
