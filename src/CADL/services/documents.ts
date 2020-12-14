@@ -3,7 +3,6 @@ import store from '../../common/store'
 import { documentToNote } from '../../services/document/utils'
 import Document from '../../services/document'
 import { isPopulated } from '../utils'
-import setAPIBuffer from '../middleware/setAPIBuffer'
 import { UnableToLocateValue } from '../errors'
 
 export { get, create }
@@ -57,6 +56,16 @@ function get({ pageName, apiObject, dispatch }) {
     if (sCondition) {
       requestOptions.scondition = sCondition
     }
+    //Buffer check
+    const { pass: shouldPass, cacheIndex } = await dispatch({
+      type: 'set-api-buffer',
+      payload: {
+        apiObject: {
+          idList,
+          options: requestOptions,
+        },
+      },
+    })
     try {
       if (store.env === 'test') {
         console.log(
@@ -66,36 +75,45 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
       //Buffer check
-      const shouldPass = setAPIBuffer({
-        idList,
-        options: requestOptions,
-      })
-      if (!shouldPass) return
-      let rawResponse
-      await store.level2SDK.documentServices
-        .retrieveDocument({
-          idList,
-          options: requestOptions,
-        })
-        .then((res) => {
-          rawResponse = res.data
-          return Promise.all(
-            res?.data?.document.map(async (document) => {
-              //decrypt data
-              const note = await documentToNote({ document })
-              return note
-            })
+      if (!shouldPass) {
+        res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+        if (store.env === 'test') {
+          console.log(
+            `%cUsing Cached Data for`,
+            'background:#7268A6; color: white; display: block;',
+            apiObject
           )
+        }
+      } else {
+        let rawResponse
+        await store.level2SDK.documentServices
+          .retrieveDocument({
+            idList,
+            options: requestOptions,
+          })
+          .then((res) => {
+            rawResponse = res.data
+            return Promise.all(
+              res?.data?.document.map(async (document) => {
+                //decrypt data
+                const note = await documentToNote({ document })
+                return note
+              })
+            )
+          })
+          .then((res) => {
+            rawResponse.doc = res
+            delete rawResponse.document
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+        await dispatch({
+          type: 'set-cache',
+          payload: { data: rawResponse, cacheIndex },
         })
-        .then((res) => {
-          rawResponse.doc = res
-          delete rawResponse.document
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-
-      res = rawResponse
+        res = rawResponse
+      }
     } catch (error) {
       throw error
     }
@@ -170,40 +188,59 @@ function create({ pageName, apiObject, dispatch }) {
         }
 
         //Buffer check
-        const shouldPass = setAPIBuffer({
-          id,
-          edge_id: eid,
-          content: name?.data,
-          mediaType: name?.type,
-          title: name?.title,
-          tags: name?.tags,
-          type: restOfDocOptions?.type,
-          dTypeProps,
+        const { pass: shouldPass, cacheIndex } = await dispatch({
+          type: 'set-api-buffer',
+          payload: {
+            apiObject: {
+              id,
+              edge_id: eid,
+              content: name?.data,
+              mediaType: name?.type,
+              title: name?.title,
+              tags: name?.tags,
+              type: restOfDocOptions?.type,
+              dTypeProps,
+            },
+          },
         })
-        if (!shouldPass) return
-        const response = await Document.update(id, {
-          // ...options,
-          edge_id: eid,
-          content: name?.data,
-          mediaType: name?.type,
-          title: name?.title,
-          tags: name?.tags,
-          type: restOfDocOptions?.type,
-          dTypeProps,
-        })
-        res = response
-        if (store.env === 'test') {
-          console.log(
-            '%cUpdate Document Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
+        if (!shouldPass) {
+          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+          if (store.env === 'test') {
+            console.log(
+              `%cUsing Cached Data for`,
+              'background:#7268A6; color: white; display: block;',
+              apiObject
+            )
+          }
+        } else {
+          const response = await Document.update(id, {
+            edge_id: eid,
+            content: name?.data,
+            mediaType: name?.type,
+            title: name?.title,
+            tags: name?.tags,
+            type: restOfDocOptions?.type,
+            dTypeProps,
+          })
+          await dispatch({
+            type: 'set-cache',
+            payload: { data: response, cacheIndex },
+          })
+          res = response
+          if (store.env === 'test') {
+            console.log(
+              '%cUpdate Document Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
         }
       } catch (error) {
         throw error
       }
     } else {
       //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
+
       try {
         const { subtype: dTypeProps, eid, name, ...restOfDocOptions } = options
         if (store.env === 'test') {
@@ -220,30 +257,49 @@ function create({ pageName, apiObject, dispatch }) {
           )
         }
         //Buffer check
-        const shouldPass = setAPIBuffer({
-          edge_id: eid,
-          content: name?.data,
-          mediaType: name?.type,
-          title: name?.title,
-          type: restOfDocOptions?.type,
-          dTypeProps,
+        const { pass: shouldPass, cacheIndex } = await dispatch({
+          type: 'set-api-buffer',
+          payload: {
+            apiObject: {
+              edge_id: eid,
+              content: name?.data,
+              mediaType: name?.type,
+              title: name?.title,
+              type: restOfDocOptions?.type,
+              dTypeProps,
+            },
+          },
         })
-        if (!shouldPass) return
-        const response = await Document.create({
-          edge_id: eid,
-          content: name?.data,
-          mediaType: name?.type,
-          title: name?.title,
-          type: restOfDocOptions?.type,
-          dTypeProps,
-        })
-        res = response
-        if (store.env === 'test') {
-          console.log(
-            '%cCreate Document Response',
-            'background: purple; color: white; display: block;',
-            res
-          )
+        if (!shouldPass) {
+          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
+          if (store.env === 'test') {
+            console.log(
+              `%cUsing Cached Data for`,
+              'background:#7268A6; color: white; display: block;',
+              apiObject
+            )
+          }
+        } else {
+          const response = await Document.create({
+            edge_id: eid,
+            content: name?.data,
+            mediaType: name?.type,
+            title: name?.title,
+            type: restOfDocOptions?.type,
+            dTypeProps,
+          })
+          await dispatch({
+            type: 'set-cache',
+            payload: { data: response, cacheIndex },
+          })
+          res = response
+          if (store.env === 'test') {
+            console.log(
+              '%cCreate Document Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
         }
       } catch (error) {
         throw error
