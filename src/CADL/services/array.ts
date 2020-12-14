@@ -52,10 +52,10 @@ export default {
     }
     return
   },
-  has({ object, key }) {  // the format of array must be [ key: man ]
+  has({ object, value }) {  // the format of array must be [ key: man ]
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
-        if (object[i] === key) {
+        if (object[i] === value) {
           return true
         }
       }
