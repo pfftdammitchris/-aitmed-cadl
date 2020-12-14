@@ -59,8 +59,8 @@ export default {
     }
     return
   },
-  LoopToGenerate(span: number) {
-    let fotmat = (n) => {
+  LoopToGenerate(span) {
+    let fotmat = (n: number) => {
       if (n < 13 * 60) {
         let h = Math.floor(n / 60)
         let m = n % 60
@@ -72,11 +72,34 @@ export default {
       }
     }
     let i: number = 0
-    let arr: string[] = []
+    let arr = []
     while (i <= 24 * 60) {
       arr.push(fotmat(i));
       i += span;
     }
+    console.log(arr)
     return arr
+  },
+  addIndex({ object, value }) {
+    if (isArray(object)) {
+      if (value) {
+        //  get the length of array , and generate index  
+        var arrayLenght = object.keys.length;
+        console.log(arrayLenght);
+        let index = `I${arrayLenght}`;
+        var cloned = _.cloneDeep(value)
+        object[index] = cloned;
+        // object.push(cloned)
+      }
+      return
+    }
+    return
+  },
+  // get the length of object
+  getListLength({ object }) {
+    if (isArray(object)) {
+      return object.length
+    }
+    return
   }
 }
