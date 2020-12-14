@@ -30,6 +30,19 @@ export default {
     }
     return
   },
+  removeByValue({ object, value }) {   //the format of the array must be [ man: man]  man： man
+    if (isArray(object)) {
+      for (let i = 0; i < object.length; i++) {
+        if (object[i] == value) {
+          // TO DO: how to handle objects with same key? should they all be deleted, or just delete first one?
+          // Should duplicate object key made not allowed using add method?
+          object.splice(i, 1)
+          return
+        }
+      }
+    }
+    return
+  },
   append({ newMessage, messages }) {
     if (isArray(messages)) {
       if (newMessage) {
@@ -42,7 +55,7 @@ export default {
   has({ object, key }) {  // the format of array must be [ key: man ]
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
-        if (object[i][key] === key) {
+        if (object[i] === key) {
           return true
         }
       }
@@ -80,21 +93,21 @@ export default {
     console.log(arr)
     return arr
   },
-  addIndex({ object, value }) {
-    if (isArray(object)) {
-      if (value) {
-        //  get the length of array , and generate index  
-        var arrayLenght = object.keys.length;
-        console.log(arrayLenght);
-        let index = `I${arrayLenght}`;
-        var cloned = _.cloneDeep(value)
-        object[index] = cloned;
-        // object.push(cloned)
-      }
-      return
-    }
-    return
-  },
+  // addIndex({ object, value }) {
+  //   if (isArray(object)) {
+  //     if (value) {
+  //       //  get the length of array , and generate index  
+  //       var arrayLenght = object.keys.length;
+  //       console.log(arrayLenght);
+  //       let index = `I${arrayLenght}`;
+  //       var cloned = _.cloneDeep(value)
+  //       object[index] = cloned;
+  //       // object.push(cloned)
+  //     }
+  //     return
+  //   }
+  //   return
+  // },
   // get the length of object
   getListLength({ object }) {
     if (isArray(object)) {
