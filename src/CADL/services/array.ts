@@ -87,8 +87,8 @@ export default {
     let i: number = 0
     let arr: any[] = []
     while (i <= 24 * 60) {
-      arr.push(fotmat(i));
-      i += parseInt(span);
+      arr.push(fotmat(i))
+      i += parseInt(span)
     }
     console.log(arr)
     return arr
