@@ -81,14 +81,14 @@ export default {
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}(pm)`
+        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}pm`
       }
     }
     let i: number = 0
     let arr: any[] = []
     while (i <= 24 * 60) {
-      arr.push(fotmat(i));
-      i += parseInt(span);
+      arr.push(fotmat(i))
+      i += parseInt(span)
     }
     console.log(arr)
     return arr

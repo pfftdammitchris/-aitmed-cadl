@@ -20,4 +20,7 @@ export default {
   equal({ string1, string2 }) {
     return string1 === string2
   },
+  getFirstChar(string: string) {
+    return string.charAt(0).toUpperCase();
+  }
 }

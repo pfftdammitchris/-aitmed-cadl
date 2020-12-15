@@ -7,6 +7,7 @@ import encryptionServices from './ecc'
 import stringServices from './string'
 import objectServices from './object'
 import arrayServices from './array'
+import numberService from './number'
 import ecos from './ecos'
 import utils from './utils'
 
@@ -85,6 +86,7 @@ export default function builtInFns(dispatch?: Function) {
     eccNaCl: encryptionServices,
     object: objectServices,
     array: arrayServices,
+    number: numberService,
     ecos,
     utils,
     async createNewAccount({ name }) {
