@@ -18,32 +18,48 @@ function get({ pageName, apiObject, dispatch }) {
     const { api, dataKey, dataIn, dataOut, ...options } = _.cloneDeep(
       apiObject || {}
     )
-
     let requestOptions = {
       ...options,
     }
     let maxcount = options?.maxcount
     let type = options?.type
     let sCondition = options?.sCondition
+    let nonce
+
     if (dataIn) {
       //get current object name value
-      const { deat, id, ...currentVal } = await dispatch({
+      const currentVal = await dispatch({
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
+
+      const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
+        type: 'populate-object',
+        payload: { object: currentVal, pageName },
+      })
+
+      nonce = _nonce
+
       if (!isPopulated(id)) {
         throw new UnableToLocateValue(
           `Missing reference ${id} at page ${pageName}`
         )
       }
       idList = Array.isArray(id) ? [...id] : [id]
-      requestOptions = { ...requestOptions, ...currentVal }
-      maxcount = currentVal?.maxcount
-      type = currentVal?.type
-      sCondition = currentVal?.sCondition
+
+      requestOptions = { ...requestOptions, ...populatedCurrentVal }
+      maxcount = populatedCurrentVal?.maxcount
+      type = populatedCurrentVal?.type
+      sCondition = populatedCurrentVal?.sCondition
     } else if (options.id) {
       idList = Array.isArray(options.id) ? [...options.id] : [options.id]
     }
+    const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
+      type: 'populate-object',
+      payload: { object: requestOptions, pageName },
+    })
+    requestOptions = { ...requestOptions, ...populatedCurrentVal }
+
     if (maxcount) {
       requestOptions.maxcount = parseInt(maxcount)
     }
@@ -60,6 +76,7 @@ function get({ pageName, apiObject, dispatch }) {
         apiObject: {
           idList,
           options: requestOptions,
+          nonce,
         },
       },
     })

@@ -10,6 +10,7 @@ import arrayServices from './array'
 import numberService from './number'
 import ecos from './ecos'
 import utils from './utils'
+import math from './math'
 
 import Document from '../../services/Document'
 export { builtIn }
@@ -89,6 +90,7 @@ export default function builtInFns(dispatch?: Function) {
     number: numberService,
     ecos,
     utils,
+    math,
     async createNewAccount({ name }) {
       const {
         phoneNumber,

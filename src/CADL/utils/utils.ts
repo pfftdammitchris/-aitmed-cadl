@@ -19,8 +19,15 @@ export {
   replaceEvalObject,
   replaceIfObject,
   replaceVars,
+  isNoodlFunction,
 }
 
+function isNoodlFunction(object: Record<string, any>): boolean {
+  if (!isObject(object)) return false
+  const key = Object.keys(object)[0]
+  if (key.startsWith('=')) return true
+  return false
+}
 /**
  * Maps ecos.eid to id.
  *
@@ -247,7 +254,7 @@ function attachFns({
            * get:output
            * store:output
            */
-          const { api } = output
+          const { api, _nonce, ...restOptions } = output
           //have this because api can be of shape 'builtIn.***'
           const apiSplit = api.split('.')
           const apiType = apiSplit[0]
@@ -293,8 +300,12 @@ function attachFns({
               break
             }
             default: {
-              output = isPopulated(output)
-                ? services(apiType)({ pageName, apiObject: output, dispatch })
+              output = isPopulated(restOptions)
+                ? services(apiType)({
+                    pageName,
+                    apiObject: output,
+                    dispatch,
+                  })
                 : output
               break
             }

@@ -26,11 +26,12 @@ import {
   replaceEvalObject,
   replaceVars,
   isPopulated,
+  isNoodlFunction,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import ContactsList from './__mocks__/ContactsList'
+// import MeetingRoomCreate from './__mocks__/MeetingRoomCreate'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -285,7 +286,6 @@ export default class CADL extends EventEmitter {
     if (options.reload === undefined) {
       options.reload = true
     }
-    if (options.reload === false) return
 
     const { builtIn } = options
     if (builtIn && isObject(builtIn)) {
@@ -295,6 +295,11 @@ export default class CADL extends EventEmitter {
       })
     }
     let pageCADL = await this.getPage(pageName)
+    if (options.reload === false && this.root[pageName]) {
+      pageCADL = { [pageName]: this.root[pageName] }
+    } else {
+      pageCADL = await this.getPage(pageName)
+    }
     let prevVal = {}
     //FOR FORMDATA
     //process formData
@@ -459,7 +464,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'ContactsList') return ContactsList
+    // if (pageName === 'MeetingRoomCreate') return MeetingRoomCreate
 
     let pageCADL
     let pageUrl
@@ -764,6 +769,10 @@ export default class CADL extends EventEmitter {
       if (isObject(currValue)) {
         val = mergeDeep(currValue, val)
       }
+      if (isNoodlFunction(val)) {
+        const key = Object.keys(val)[0]
+        val = await this.handleEvalFunction({ pageName, key, command: val })
+      }
       this.newDispatch({
         type: 'SET_VALUE',
         payload: {
@@ -785,6 +794,10 @@ export default class CADL extends EventEmitter {
 
       if (isObject(currValue)) {
         val = mergeDeep(currValue, val)
+      }
+      if (isNoodlFunction(val)) {
+        const key = Object.keys(val)[0]
+        val = await this.handleEvalFunction({ pageName, key, command: val })
       }
       this.newDispatch({
         type: 'SET_VALUE',
@@ -866,7 +879,7 @@ export default class CADL extends EventEmitter {
           results = result
         }
       } else {
-        await func()
+        results = await func()
       }
     } else if (Array.isArray(func)) {
       func = func[1]
