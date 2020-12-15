@@ -81,7 +81,7 @@ export default {
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}(pm)`
+        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}pm`
       }
     }
     let i: number = 0
