@@ -26,11 +26,12 @@ import {
   replaceEvalObject,
   replaceVars,
   isPopulated,
+  isNoodlFunction,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import ContactsList from './__mocks__/ContactsList'
+import MeetingRoomCreate from './__mocks__/MeetingRoomCreate'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -283,9 +284,8 @@ export default class CADL extends EventEmitter {
   ): Promise<void> {
     if (!this.cadlEndpoint) await this.init()
     if (options.reload === undefined) {
-      options.reload = true
+      options.reload = false
     }
-    if (options.reload === false) return
 
     const { builtIn } = options
     if (builtIn && isObject(builtIn)) {
@@ -294,7 +294,13 @@ export default class CADL extends EventEmitter {
         payload: { builtInFns: { ...builtIn } },
       })
     }
-    let pageCADL = await this.getPage(pageName)
+    let pageCADL
+    if (options.reload === false && this.root[pageName]) {
+      pageCADL = { [pageName]: this.root[pageName] }
+    } else {
+      pageCADL = await this.getPage(pageName)
+    }
+    debugger
     let prevVal = {}
     //FOR FORMDATA
     //process formData
@@ -312,6 +318,7 @@ export default class CADL extends EventEmitter {
       pageName,
     })
 
+    debugger
     //FOR FNS
     const processedWithFns = this.processPopulate({
       source: processedFormData,
@@ -340,6 +347,7 @@ export default class CADL extends EventEmitter {
 
     //run init commands if any
     let init = Object.values(processedPage)[0].init
+    debugger
     if (init) {
       await this.runInit(processedPage).then((page) => {
         //FOR COMPONENTS
@@ -459,7 +467,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'ContactsList') return ContactsList
+    if (pageName === 'MeetingRoomCreate') return MeetingRoomCreate
 
     let pageCADL
     let pageUrl
@@ -753,6 +761,7 @@ export default class CADL extends EventEmitter {
    * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
    */
   private async handleEvalAssignmentExpressions({ pageName, command, key }) {
+    debugger
     //handles assignment expressions
     let trimPath, val
     val = command[key]
@@ -763,6 +772,12 @@ export default class CADL extends EventEmitter {
       const currValue = _.get(this.root, [pageName, ...pathArr]) || ''
       if (isObject(currValue)) {
         val = mergeDeep(currValue, val)
+      }
+      debugger
+      if (isNoodlFunction(val)) {
+        debugger
+        const key = Object.keys(val)[0]
+        val = await this.handleEvalFunction({ pageName, key, command: val })
       }
       this.newDispatch({
         type: 'SET_VALUE',
@@ -785,6 +800,12 @@ export default class CADL extends EventEmitter {
 
       if (isObject(currValue)) {
         val = mergeDeep(currValue, val)
+      }
+      debugger
+      if (isNoodlFunction(val)) {
+        debugger
+        const key = Object.keys(val)[0]
+        val = await this.handleEvalFunction({ pageName, key, command: val })
       }
       this.newDispatch({
         type: 'SET_VALUE',
@@ -845,9 +866,12 @@ export default class CADL extends EventEmitter {
       })
     }
     if (typeof func === 'function') {
+      debugger
       if (isObject(command[key])) {
         const { dataIn, dataOut } = command[key]
+        debugger
         const result = await func(dataIn)
+        debugger
         if (dataOut) {
           const pathArr = dataOut.split('.')
           this.newDispatch({
@@ -863,15 +887,19 @@ export default class CADL extends EventEmitter {
             newVal: result,
           })
         } else if (dataIn && dataOut === undefined) {
+          debugger
           results = result
         }
       } else {
-        await func()
+        results = await func()
+        debugger
       }
     } else if (Array.isArray(func)) {
+      debugger
       func = func[1]
       await func()
     }
+    debugger
     return results
   }
 
@@ -1054,6 +1082,7 @@ export default class CADL extends EventEmitter {
          */
         let { pageName, updateObject } = action.payload
         let results
+        debugger
         if (typeof updateObject === 'string') {
           //handle possible missing references
           updateObject = await this.handleEvalString({
@@ -1613,6 +1642,7 @@ export default class CADL extends EventEmitter {
   public async runInit(
     pageObject: Record<string, any>
   ): Promise<Record<string, any>> {
+    debugger
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
 
@@ -1621,6 +1651,7 @@ export default class CADL extends EventEmitter {
       let init = Object.values(page)[0].init
 
       if (init) {
+        debugger
         this.initCallQueue = init.map((_command, index) => index)
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
@@ -1736,6 +1767,7 @@ export default class CADL extends EventEmitter {
             },
           })
         }
+        debugger
         resolve(page)
       }
     })

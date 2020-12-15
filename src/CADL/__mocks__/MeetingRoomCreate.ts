@@ -351,7 +351,7 @@ export default {
                       {
                         actionType: 'evalObject',
                         object: {
-                          '=..newRoomInfo.edgeAPI.store': '',
+                          '=.MeetingRoomCreate.newRoomInfo.edgeAPI.store': '',
                           '.._nonce@': { '=.builtIn.math.random': '' },
                           '.Global.rootRoomInfo@': '=..createdRoomInfo.edge',
                         },
