@@ -11,31 +11,36 @@ function get({ pageName, apiObject, dispatch }) {
     const { api, dataKey, dataIn, dataOut, ...options } = _.cloneDeep(
       apiObject || {}
     )
+    let res: Record<string, any> = {}
+    let requestOptions = {
+      ...options,
+    }
+    let nonce
+
     //get current object name value
-    const { deat, ...currentVal } = await dispatch({
+    const currentVal = await dispatch({
       type: 'get-data',
       payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
     })
 
-    let populatedCurrentVal = await dispatch({
+    let { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
       type: 'populate-object',
       payload: { object: currentVal, pageName },
     })
 
-    let id = populatedCurrentVal?.id
+    nonce = _nonce
     if (!isPopulated(id)) {
       throw new UnableToLocateValue(
         `Missing reference ${id} at page ${pageName}`
       )
     }
-
-    let res: Record<string, any> = {}
+    requestOptions = { ...requestOptions, ...populatedCurrentVal }
     try {
       if (store.env === 'test') {
         console.log(
           '%cGet Vertex Request',
           'background: purple; color: white; display: block;',
-          { options: { ...options } }
+          { options: requestOptions }
         )
       }
       //Buffer check
@@ -44,7 +49,8 @@ function get({ pageName, apiObject, dispatch }) {
         payload: {
           apiObject: {
             idList: [id],
-            options,
+            options: requestOptions,
+            nonce,
           },
         },
       })
@@ -60,7 +66,7 @@ function get({ pageName, apiObject, dispatch }) {
       } else {
         const { data } = await store.level2SDK.vertexServices.retrieveVertex({
           idList: [id],
-          options,
+          options: requestOptions,
         })
         await dispatch({
           type: 'set-cache',

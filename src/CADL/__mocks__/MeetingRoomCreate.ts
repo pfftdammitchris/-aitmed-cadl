@@ -1,6 +1,5 @@
 export default {
   MeetingRoomCreate: {
-    _nonce: 0,
     module: 'meetingroom',
     pageNumber: '90',
     title: 'Meeting Rooms',
@@ -22,12 +21,7 @@ export default {
         ],
       },
     ],
-    save: [
-      '..newRoomInfo.edgeAPI.store',
-      {
-        '.._nonce@': '=.builtIn.math.random',
-      },
-    ],
+    save: ['..newRoomInfo.edgeAPI.store'],
     lastTop: '0.0',
     listData: {
       hostroom: {
@@ -43,7 +37,7 @@ export default {
         sCondition: 'refid IS NULL AND tage=0 AND ctime>UNIX_TIMESTAMP()-86400',
         maxcount: '20',
         obfname: 'mtime',
-        _nonce: '=.._nonce',
+        _nonce: '=.Global._nonce',
       },
     },
     newRoomInfo: {
@@ -344,15 +338,16 @@ export default {
                   {
                     type: 'button',
                     onClick: [
-                      // {
-                      //   actionType: 'saveObject',
-                      //   object: '..save',
-                      // },
+                      {
+                        actionType: 'saveObject',
+                        object: '..save',
+                      },
                       {
                         actionType: 'evalObject',
                         object: {
-                          '=.MeetingRoomCreate.newRoomInfo.edgeAPI.store': '',
-                          '.._nonce@': { '=.builtIn.math.random': '' },
+                          '.Global._nonce@': {
+                            '=.builtIn.math.random': '',
+                          },
                           '.Global.rootRoomInfo@': '=..createdRoomInfo.edge',
                         },
                       },

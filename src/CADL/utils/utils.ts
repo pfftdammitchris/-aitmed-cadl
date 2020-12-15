@@ -20,98 +20,9 @@ export {
   replaceIfObject,
   replaceVars,
   isNoodlFunction,
-  isDNA,
-  evolve,
 }
 
-function evolve({
-  source,
-  lookFor,
-  locations,
-  skip = [],
-  path = [],
-  dispatch,
-  pageName,
-  skipIf = true,
-}: {
-  source: Record<string, any>
-  lookFor: string
-  locations: Record<string, any>[]
-  skip?: string[]
-  path?: string[]
-  dispatch?: Function
-  pageName?: string
-  skipIf?: boolean
-}) {
-  let sourceCopy = source
-  Object.keys(sourceCopy).forEach((key) => {
-    let index = key
-    let shouldSkipIf
-    if (key === 'if' && skipIf) {
-      shouldSkipIf = true
-    }
-    if (!skip.includes(key) && key !== 'dataKey' && !shouldSkipIf) {
-      if (isObject(sourceCopy[key])) {
-        if (
-          !(
-            ('actionType' in sourceCopy[key] &&
-              sourceCopy[key].actionType === 'evalObject' &&
-              sourceCopy[key].object &&
-              isObject(sourceCopy[key].object)) ||
-            Array.isArray(sourceCopy[key].object)
-          )
-        ) {
-          sourceCopy[key] = populateObject({
-            source: sourceCopy[key],
-            lookFor,
-            locations,
-            skip,
-            path: path.concat(index),
-            dispatch,
-            pageName,
-            skipIf,
-          })
-        }
-      } else if (Array.isArray(sourceCopy[key])) {
-        sourceCopy[key] = populateArray({
-          source: sourceCopy[key],
-          skip,
-          lookFor,
-          locations,
-          path: path.concat(index),
-          dispatch,
-          pageName,
-          skipIf,
-        })
-      } else if (typeof sourceCopy[key] === 'string') {
-        if (isDNA(sourceCopy[key]) && !key.includes('_DNA')) {
-          sourceCopy[`${key}_DNA`] = sourceCopy[key]
-        } else if (!key.includes('_DNA')) {
-          sourceCopy[key] = populateString({
-            source: sourceCopy[key],
-            skip,
-            lookFor,
-            locations,
-            path: path.concat(index),
-            dispatch,
-            pageName,
-          })
-        }
-      }
-    }
-  })
-
-  return sourceCopy
-}
-
-function isDNA(string: string): boolean {
-  if (typeof string === 'string') {
-    if (string.startsWith('=')) return true
-  }
-  return false
-}
 function isNoodlFunction(object: Record<string, any>): boolean {
-  debugger
   if (!isObject(object)) return false
   const key = Object.keys(object)[0]
   if (key.startsWith('=')) return true
@@ -343,7 +254,7 @@ function attachFns({
            * get:output
            * store:output
            */
-          const { api, _nonce, _nonce_DNA, ...restOptions } = output
+          const { api, _nonce, ...restOptions } = output
           //have this because api can be of shape 'builtIn.***'
           const apiSplit = api.split('.')
           const apiType = apiSplit[0]
@@ -389,11 +300,10 @@ function attachFns({
               break
             }
             default: {
-              debugger
               output = isPopulated(restOptions)
                 ? services(apiType)({
                     pageName,
-                    apiObject: { ...output },
+                    apiObject: output,
                     dispatch,
                   })
                 : output
@@ -842,28 +752,15 @@ function populateObject({
           skipIf,
         })
       } else if (typeof sourceCopy[key] === 'string') {
-        if (isDNA(sourceCopy[key]) && key.includes('_DNA')) {
-          sourceCopy[key.replace('_DNA', '')] = sourceCopy[key]
-          sourceCopy[key.replace('_DNA', '')] = populateString({
-            source: sourceCopy[key],
-            skip,
-            lookFor,
-            locations,
-            path: path.concat(index),
-            dispatch,
-            pageName,
-          })
-        } else if (!key.includes('_DNA')) {
-          sourceCopy[key] = populateString({
-            source: sourceCopy[key],
-            skip,
-            lookFor,
-            locations,
-            path: path.concat(index),
-            dispatch,
-            pageName,
-          })
-        }
+        sourceCopy[key] = populateString({
+          source: sourceCopy[key],
+          skip,
+          lookFor,
+          locations,
+          path: path.concat(index),
+          dispatch,
+          pageName,
+        })
       }
     }
   })
