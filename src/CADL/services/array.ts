@@ -17,7 +17,8 @@ export default {
     }
     return
   },
-  removeByKey({ object, key }) {   //the format of the array must be [ man: man]  man： man
+  removeByKey({ object, key }) {
+    //the format of the array must be [ man: man]  man： man
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i][key]) {
@@ -30,7 +31,8 @@ export default {
     }
     return
   },
-  removeByValue({ object, value }) {   //the format of the array must be [ man: man]  man： man
+  removeByValue({ object, value }) {
+    //the format of the array must be [ man: man]  man： man
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i] == value) {
@@ -52,7 +54,8 @@ export default {
     }
     return
   },
-  has({ object, value }) {  // the format of array must be [ key: man ]
+  has({ object, value }) {
+    // the format of array must be [ key: man ]
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i] === value) {
@@ -72,7 +75,7 @@ export default {
     }
     return
   },
-  LoopToGenerate(span) {
+  LoopToGenerate({ span }) {
     let fotmat = (n: number) => {
       if (n < 13 * 60) {
         let h = Math.floor(n / 60)
@@ -96,7 +99,7 @@ export default {
   // addIndex({ object, value }) {
   //   if (isArray(object)) {
   //     if (value) {
-  //       //  get the length of array , and generate index  
+  //       //  get the length of array , and generate index
   //       var arrayLenght = object.keys.length;
   //       console.log(arrayLenght);
   //       let index = `I${arrayLenght}`;
@@ -114,5 +117,5 @@ export default {
       return object.length
     }
     return 0
-  }
+  },
 }
