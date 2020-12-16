@@ -42,7 +42,6 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'populate-object',
         payload: { object: currentVal, pageName },
       })
-
       nonce = _nonce
       if (!isPopulated(id)) {
         throw new UnableToLocateValue(
@@ -51,7 +50,7 @@ function get({ pageName, apiObject, dispatch }) {
       }
 
       idList = Array.isArray(id) ? [...id] : [id]
-      requestOptions = { ...requestOptions, ...populatedCurrentVal }
+      requestOptions = populatedCurrentVal
       maxcount = populatedCurrentVal?.maxcount
       type = populatedCurrentVal?.type
       sCondition = populatedCurrentVal?.sCondition
@@ -63,7 +62,8 @@ function get({ pageName, apiObject, dispatch }) {
       type: 'populate-object',
       payload: { object: requestOptions, pageName },
     })
-    requestOptions = { ...requestOptions, ...populatedCurrentVal }
+    nonce = _nonce
+    requestOptions = populatedCurrentVal
     if (maxcount) {
       requestOptions.maxcount = parseInt(maxcount)
     }
