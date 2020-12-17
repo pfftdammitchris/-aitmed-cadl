@@ -661,6 +661,7 @@ export default class CADL extends EventEmitter {
         payload: {
           pageName,
           object: command,
+          copy: true,
         },
       })
       results = await this.handleEvalCommands({
@@ -698,6 +699,7 @@ export default class CADL extends EventEmitter {
         payload: {
           pageName,
           object: command,
+          copy: true,
         },
       })
 
@@ -933,9 +935,14 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'populate-object': {
-        const { pageName, object } = action.payload
-        const populatedObject = populateObject({
-          source: object,
+        const { pageName, object, copy } = action.payload
+        let populatedObject
+        let sourceObject = object
+        if (copy) {
+          sourceObject = _.cloneDeep(object)
+        }
+        populatedObject = populateObject({
+          source: sourceObject,
           lookFor: '=',
           locations: [this.root, this.root[pageName]],
         })

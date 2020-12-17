@@ -183,7 +183,7 @@ function create({ pageName, apiObject, dispatch }) {
 
     let populatedCurrentVal = await dispatch({
       type: 'populate-object',
-      payload: { object: currentVal, pageName },
+      payload: { object: currentVal, pageName, copy: true },
     })
     //merging existing name field and incoming name field
     const parsedType = parseInt(populatedCurrentVal.type)
@@ -192,7 +192,6 @@ function create({ pageName, apiObject, dispatch }) {
     if (name) {
       mergedVal = mergeDeep(mergedVal, { name })
     }
-
     let res
     //if there is an id present
     //it is treated as un update request

@@ -21,6 +21,6 @@ export default {
     return string1 === string2
   },
   getFirstChar(string: string) {
-    return string.charAt(0).toUpperCase();
-  }
+    return string.charAt(0).toUpperCase()
+  },
 }
