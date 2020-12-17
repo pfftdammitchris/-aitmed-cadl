@@ -1,5 +1,4 @@
 import _, { isArray } from 'lodash'
-import object from './object'
 
 export default {
   add({ object, value }) {
