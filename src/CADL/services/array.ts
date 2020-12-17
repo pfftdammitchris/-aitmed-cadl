@@ -1,4 +1,5 @@
 import _, { isArray } from 'lodash'
+import object from './object'
 
 export default {
   add({ object, value }) {
@@ -117,5 +118,17 @@ export default {
       return object.length
     }
     return 0
+  },
+  // convert ["anemia", "anxiety", "arthritis"] to [{key: "anemia"},{key: "anxiety"},{key: "arthritis"}] for listObject
+  covertToJsonArray({ array }) {
+    let dataObject: Record<string, any> = []
+    if (isArray(array)) {
+      for (let i = 0; i < array.length; i++) {
+        dataObject.push({ key: array[i] })
+      }
+      console.dir(dataObject)
+      return dataObject
+    }
+    return `${array}is not an array`
   },
 }
