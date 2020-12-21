@@ -127,7 +127,6 @@ export default class CADL extends EventEmitter {
     //set baseUrl and assets Url
     this.baseUrl = baseUrl
     this.assetsUrl = assetsUrl
-
     this._config = this.processPopulate({
       source: config,
       lookFor: ['.', '..', '=', '~'],
@@ -316,7 +315,6 @@ export default class CADL extends EventEmitter {
       withFns: true,
       pageName,
     })
-
     //FOR FNS
     const processedWithFns = this.processPopulate({
       source: processedFormData,
@@ -440,7 +438,6 @@ export default class CADL extends EventEmitter {
         cadlObject: processedComponentsAgain,
         dispatch: boundDispatch,
       })
-
       this.newDispatch({
         type: 'SET_ROOT_PROPERTIES',
         payload: { properties: replaceUpdateJob2 },
@@ -565,23 +562,32 @@ export default class CADL extends EventEmitter {
     skip?: string[]
     withFns?: boolean
   }): Record<string, any> {
-    let sourceCopy = _.cloneDeep(source)
+    // let sourceCopy = _.cloneDeep(source)
+    let sourceCopy = source
     let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
+    if (pageName === 'PatientDashboard') {
+    }
     const sourceCopyWithRootKeys = populateKeys({
       source: sourceCopy,
       lookFor: '.',
       locations: [this.root, sourceCopy],
     })
     //populate the keys from the local page object
+    if (pageName === 'PatientDashboard') {
+    }
     const sourceCopyWithLocalKeys = populateKeys({
       source: sourceCopyWithRootKeys,
       lookFor: '..',
       locations: [localRoot],
     })
+    if (pageName === 'PatientDashboard') {
+    }
     const boundDispatch = this.dispatch.bind(this)
     localRoot = pageName
       ? sourceCopyWithLocalKeys[pageName]
       : sourceCopyWithLocalKeys
+    if (pageName === 'PatientDashboard') {
+    }
     const sourceCopyWithVals = populateVals({
       source: sourceCopyWithLocalKeys,
       lookFor,
@@ -590,6 +596,8 @@ export default class CADL extends EventEmitter {
       pageName,
       dispatch: boundDispatch,
     })
+    if (pageName === 'PatientDashboard') {
+    }
     localRoot = pageName
       ? sourceCopyWithVals[pageName]
       : sourceCopyWithLocalKeys
@@ -661,7 +669,7 @@ export default class CADL extends EventEmitter {
         payload: {
           pageName,
           object: command,
-          copy: true,
+          // copy: true,
         },
       })
       results = await this.handleEvalCommands({
@@ -699,7 +707,7 @@ export default class CADL extends EventEmitter {
         payload: {
           pageName,
           object: command,
-          copy: true,
+          // copy: true,
         },
       })
 
@@ -742,7 +750,6 @@ export default class CADL extends EventEmitter {
       })
     } else if (key.startsWith('=')) {
       //handles function evaluation
-
       results = this.handleEvalFunction({
         command: { [key]: commands[key] },
         pageName,
@@ -1636,7 +1643,7 @@ export default class CADL extends EventEmitter {
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
 
-      let page = { ...pageObject }
+      let page = pageObject
       const pageName = Object.keys(page)[0]
       let init = Object.values(page)[0].init
 
@@ -1980,10 +1987,22 @@ export default class CADL extends EventEmitter {
       switch (action.type) {
         case 'SET_VALUE': {
           const { pageName, dataKey, value } = action.payload
+          let currVal
+          let newVal = value
           if (typeof pageName === 'undefined') {
-            _.set(draft, dataKey, value)
+            currVal = _.get(state, dataKey)
           } else {
-            _.set(draft[pageName], dataKey, value)
+            currVal = _.get(state[pageName], dataKey)
+          }
+          if (isObject(currVal) && isObject(newVal)) {
+            newVal = _.merge(currVal, newVal)
+          } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
+            currVal.length = 0
+            currVal.push(...newVal)
+          } else if (typeof pageName === 'undefined') {
+            _.set(draft, dataKey, newVal)
+          } else {
+            _.set(draft[pageName], dataKey, newVal)
           }
           break
         }

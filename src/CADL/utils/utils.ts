@@ -65,7 +65,9 @@ function populateKeys({
   lookFor: string
   locations: Record<string, any>[]
 }): Record<string, any> {
-  let output = _.cloneDeep(source || {})
+  // let output = _.cloneDeep(source || {})
+  let output = source
+
   Object.keys(output).forEach((key) => {
     if (key.startsWith(lookFor)) {
       let parent = {}
@@ -77,7 +79,7 @@ function populateKeys({
         try {
           const res = lookUp(currKey, location)
           if (res) {
-            parent = res
+            parent = _.cloneDeep(res)
           }
         } catch (error) {
           if (error instanceof UnableToLocateValue) {
@@ -92,11 +94,13 @@ function populateKeys({
           populateKeys({ source: parent, lookFor, locations }),
           populateKeys({ source: output[key], lookFor, locations })
         )
+        // output = Object.assign(output, mergedObjects)
         output = { ...output, ...mergedObjects }
         delete output[key]
       } else if (Object.keys(parent).length) {
         //TODO: test why it is undefined when .Edge:""
         //check SignUp page
+        delete parent[key]
         const mergedObjects = populateKeys({
           source: parent,
           lookFor,
@@ -109,12 +113,17 @@ function populateKeys({
     } else if (isObject(output[key])) {
       output[key] = populateKeys({ source: output[key], lookFor, locations })
     } else if (Array.isArray(output[key])) {
-      output[key] = output[key].map((elem) => {
+      const copy = [...output[key]]
+      output[key].length = 0
+      let replacement = copy.reduce((acc, elem) => {
         if (isObject(elem)) {
-          return populateKeys({ source: elem, lookFor, locations })
+          elem = populateKeys({ source: elem, lookFor, locations })
         }
-        return elem
-      })
+        acc.push(elem)
+        return acc
+      }, [])
+      output[key].push(...replacement)
+      copy.length = 0
     }
   })
   return output
@@ -233,7 +242,8 @@ function attachFns({
     dispatch: Function
   }): Record<string, any> {
     //traverse through the page object and look for the api keyword
-    let output = _.cloneDeep(cadlObject || {})
+    let output = cadlObject
+    // let output = _.cloneDeep(cadlObject || {})
     if (isObject(output)) {
       Object.keys(output).forEach((key) => {
         if (isObject(output[key])) {
@@ -243,11 +253,16 @@ function attachFns({
             dispatch,
           })
         } else if (Array.isArray(output[key])) {
-          output[key] = output[key].map((elem) => {
-            if (isObject(elem))
-              return attachFnsHelper({ pageName, cadlObject: elem, dispatch })
-            return elem
-          })
+          const copy = [...output[key]]
+          output[key].length = 0
+          let replacement = copy.reduce((acc, elem) => {
+            if (isObject(elem)) {
+              elem = attachFnsHelper({ pageName, cadlObject: elem, dispatch })
+            }
+            acc.push(elem)
+            return acc
+          }, [])
+          output[key].push(...replacement)
         } else if (typeof output[key] === 'string' && key === 'api') {
           //when api keyword is found we attach the corresponding ecos function to the current output which should be the value of get or store
           /**
@@ -363,7 +378,8 @@ function replaceEvalObject({
   cadlObject: Record<string, any>
   dispatch: Function
 }): Record<string, any> {
-  const cadlCopy = _.cloneDeep(cadlObject || {})
+  const cadlCopy = cadlObject
+  // const cadlCopy = _.cloneDeep(cadlObject || {})
   Object.keys(cadlCopy).forEach(async (key) => {
     if (
       key === 'object' &&
@@ -394,12 +410,17 @@ function replaceEvalObject({
         dispatch,
       })
     } else if (Array.isArray(cadlCopy[key])) {
-      cadlCopy[key] = cadlCopy[key].map((elem) => {
+      const copy = [...cadlCopy[key]]
+      cadlCopy[key].length = 0
+      let replacement = copy.reduce((acc, elem) => {
         if (isObject(elem)) {
-          return replaceEvalObject({ pageName, cadlObject: elem, dispatch })
+          elem = replaceEvalObject({ pageName, cadlObject: elem, dispatch })
         }
-        return elem
-      })
+        acc.push(elem)
+        return acc
+      }, [])
+      cadlCopy[key].push(...replacement)
+      copy.length = 0
     }
   })
   return cadlCopy
@@ -623,14 +644,17 @@ function populateArray({
   pageName?: string
   skipIf?: boolean
 }): any[] {
-  let sourceCopy = _.cloneDeep(source || [])
+  // let sourceCopy = _.cloneDeep(source || [])
+  let sourceCopy = source
   if (path) {
     var previousKey = path[path.length - 1] || ''
   }
-  let replacement = sourceCopy.map((elem, i) => {
+  const copy = [...sourceCopy]
+  sourceCopy.length = 0
+  let replacement = copy.reduce((acc, elem, i) => {
     let index = '[' + i + ']'
     if (Array.isArray(elem)) {
-      return populateArray({
+      elem = populateArray({
         source: elem,
         skip,
         lookFor,
@@ -650,7 +674,7 @@ function populateArray({
           Array.isArray(elem.object)
         )
       ) {
-        return populateObject({
+        elem = populateObject({
           source: elem,
           skip,
           lookFor,
@@ -662,7 +686,7 @@ function populateArray({
         })
       }
     } else if (typeof elem === 'string') {
-      return populateString({
+      elem = populateString({
         source: elem,
         skip,
         lookFor,
@@ -672,10 +696,12 @@ function populateArray({
         pageName,
       })
     }
-    return elem
-  })
-
-  return replacement
+    acc.push(elem)
+    return acc
+  }, [])
+  sourceCopy.push(...replacement)
+  copy.length = 0
+  return sourceCopy
 }
 
 /**
@@ -795,7 +821,8 @@ function populateVals({
   pageName?: string
   dispatch?: Function
 }): any {
-  let sourceCopy = _.cloneDeep(source || {})
+  // let sourceCopy = _.cloneDeep(source || {})
+  let sourceCopy = source
 
   for (let symbol of lookFor) {
     if (typeof sourceCopy === 'string') {
