@@ -175,16 +175,16 @@ function create({ pageName, apiObject, dispatch }) {
       type: 'get-data',
       payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
     })
-    if (!isPopulated(id)) {
-      throw new UnableToLocateValue(
-        `Missing reference ${id} at page ${pageName}`
-      )
-    }
 
     let populatedCurrentVal = await dispatch({
       type: 'populate-object',
       payload: { object: currentVal, pageName, copy: true },
     })
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
     //merging existing name field and incoming name field
     const parsedType = parseInt(populatedCurrentVal.type)
     if (parsedType === NaN || parsedType === 0) return
