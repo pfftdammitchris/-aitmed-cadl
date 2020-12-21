@@ -661,19 +661,8 @@ export default class CADL extends EventEmitter {
 
     const objectKeys = Object.keys(command)
     await asyncForEach(objectKeys, async (key) => {
-      /**
-       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
-       */
-      const populatedCommand = await this.dispatch({
-        type: 'populate-object',
-        payload: {
-          pageName,
-          object: command,
-          // copy: true,
-        },
-      })
       results = await this.handleEvalCommands({
-        commands: populatedCommand,
+        commands: command,
         key,
         pageName,
       })
@@ -743,15 +732,34 @@ export default class CADL extends EventEmitter {
       }
     } else if (!key.startsWith('=')) {
       //handles assignment expressions
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: { [key]: commands[key] },
+          // copy: true,
+        },
+      })
       await this.handleEvalAssignmentExpressions({
         pageName,
-        command: { [key]: commands[key] },
+        command: populatedCommand,
         key,
       })
     } else if (key.startsWith('=')) {
+      /**
+       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+       */
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: { [key]: commands[key] },
+          // copy: true,
+        },
+      })
       //handles function evaluation
-      results = this.handleEvalFunction({
-        command: { [key]: commands[key] },
+      results = await this.handleEvalFunction({
+        command: populatedCommand,
         pageName,
         key,
       })
@@ -1620,7 +1628,6 @@ export default class CADL extends EventEmitter {
         value: newVal,
       },
     })
-
     await this.dispatch({
       type: 'update-localStorage',
     })
@@ -2059,10 +2066,15 @@ export default class CADL extends EventEmitter {
     actions: any[]
     pageName: string
   }): Promise<any[]> {
-    const actionsWithVals = replaceVars({ vars: dataKey, source: actions })
     const returnValues = {}
-    await asyncForEach(actionsWithVals, async (action, index) => {
+    await asyncForEach(actions, async (action, index) => {
       //handles explicit evalObject call
+      const clone = _.cloneDeep(action)
+      const actionWithVals: Record<string, any> = replaceVars({
+        vars: dataKey,
+        source: clone,
+      })
+
       if ('actionType' in action && action?.actionType === 'evalObject') {
         const response = await this.dispatch({
           type: 'eval-object',
@@ -2085,7 +2097,7 @@ export default class CADL extends EventEmitter {
           type: 'eval-object',
           payload: {
             pageName,
-            updateObject: action,
+            updateObject: actionWithVals,
           },
         })
         if (response) {
@@ -2097,7 +2109,7 @@ export default class CADL extends EventEmitter {
         //handles if blocks
         const response = await this.handleIfCommand({
           pageName,
-          ifCommand: action,
+          ifCommand: actionWithVals,
         })
         if (response) {
           returnValues[index] = response

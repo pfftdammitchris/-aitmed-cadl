@@ -178,7 +178,11 @@ function create({ pageName, apiObject, dispatch }) {
       },
     })
 
-    const { api, id, ...options } = currentVal
+    const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
+      type: 'populate-object',
+      payload: { object: currentVal, pageName },
+    })
+
     if (!isPopulated(id)) {
       throw new UnableToLocateValue(
         `Missing reference ${id} at page ${pageName}`
@@ -188,7 +192,12 @@ function create({ pageName, apiObject, dispatch }) {
     //If id is in apiObject then it is an updateRequest
     if (id) {
       try {
-        const { eid, name, subtype: dTypeProps, ...restOfDocOptions } = options
+        const {
+          eid,
+          name,
+          subtype: dTypeProps,
+          ...restOfDocOptions
+        } = populatedCurrentVal
         if (store.env === 'test') {
           console.log(
             '%cUpdate Document Request',
@@ -260,7 +269,12 @@ function create({ pageName, apiObject, dispatch }) {
       //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
 
       try {
-        const { subtype: dTypeProps, eid, name, ...restOfDocOptions } = options
+        const {
+          subtype: dTypeProps,
+          eid,
+          name,
+          ...restOfDocOptions
+        } = populatedCurrentVal
         if (store.env === 'test') {
           console.log(
             '%cCreate Document Request',
