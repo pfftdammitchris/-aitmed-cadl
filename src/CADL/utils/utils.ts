@@ -741,11 +741,24 @@ function populateObject({
   Object.keys(sourceCopy).forEach((key) => {
     let index = key
     let shouldSkipIf
+    let shouldSkipBuiltIn
     if (key === 'if' && skipIf) {
       shouldSkipIf = true
     }
-    if (!skip.includes(key) && key !== 'dataKey' && !shouldSkipIf) {
+    if (key.includes('builtIn') && skip.includes('builtIn')) {
+      shouldSkipBuiltIn = true
+    }
+
+    if (
+      !skip.includes(key) &&
+      key !== 'dataKey' &&
+      !shouldSkipIf &&
+      !shouldSkipBuiltIn
+    ) {
       if (isObject(sourceCopy[key])) {
+        // if (key.includes('dataIn')) {
+        //   sourceCopy[key] = _.cloneDeep(sourceCopy[key])
+        // }
         if (
           !(
             ('actionType' in sourceCopy[key] &&
@@ -883,11 +896,12 @@ function replaceUint8ArrayWithBase64(
 }
 
 function replaceVars({ vars, source }) {
-  const withVals = populateArray({
+  const withVals = populateObject({
     source,
     lookFor: '$',
     locations: [vars],
     skipIf: false,
+    // skip: ['builtIn'],
   })
   return withVals
 }
