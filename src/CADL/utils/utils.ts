@@ -184,7 +184,7 @@ function isPopulated(item: string | Record<string, any>): boolean {
         if (
           currVal.startsWith('.') ||
           currVal.startsWith('..') ||
-          currVal.startsWith('=') ||
+          currVal.startsWith('=.') ||
           currVal.startsWith('~')
         ) {
           isPop = false
@@ -195,7 +195,7 @@ function isPopulated(item: string | Record<string, any>): boolean {
     if (
       item.startsWith('.') ||
       item.startsWith('..') ||
-      item.startsWith('=') ||
+      item.startsWith('=.') ||
       item.startsWith('~')
     ) {
       isPop = false
@@ -756,10 +756,6 @@ function populateObject({
       !shouldSkipBuiltIn
     ) {
       if (isObject(sourceCopy[key])) {
-        // if (key.includes('dataIn') && !('object' in sourceCopy[key])) {
-        //   debugger
-        //   sourceCopy[key] = _.cloneDeep(sourceCopy[key])
-        // }
         if (
           !(
             ('actionType' in sourceCopy[key] &&

@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import store from '../../common/store'
+import { isPopulated } from '../utils'
 
 export default {
   base64ToBlob({
@@ -9,6 +10,9 @@ export default {
     data: string
     type: string
   }) {
+    if (!data) return
+    if (typeof data !== 'string') return
+    if (!isPopulated(data)) return
     const blob = store.level2SDK.utilServices.base64ToBlob(data, type)
     const blobUrl = URL.createObjectURL(blob)
     return blobUrl
