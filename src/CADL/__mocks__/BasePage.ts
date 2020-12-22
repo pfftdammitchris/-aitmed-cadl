@@ -489,10 +489,10 @@ export default {
     children: [
       {
         type: 'label',
-        text: '__.message',
-        text2: '_.text3',
+        text: '_.message',
+        text2: '.text3',
         text3: 'v',
-        text4: '__.children.1.text',
+        text4: '_.children.1.text',
         style: {
           '.LabelStyle': {
             left: '0',

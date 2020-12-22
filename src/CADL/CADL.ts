@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SelectRedraw from './__mocks__/SelectRedraw'
+// import BasePage from './__mocks__/BasePage'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -344,7 +344,6 @@ export default class CADL extends EventEmitter {
       type: 'SET_ROOT_PROPERTIES',
       payload: { properties: processedPage },
     })
-
     //run init commands if any
     let init = Object.values(processedPage)[0].init
     if (init) {
@@ -455,7 +454,9 @@ export default class CADL extends EventEmitter {
     }
     this.dispatch({ type: 'update-map' })
 
-    if (options.done) options.done()
+    if (options.done) {
+      options.done()
+    }
   }
 
   /**
@@ -467,7 +468,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: remove after testing
     //TODO used for local testing
-    // if (pageName === 'SelectRedraw') return SelectRedraw
+    // if (pageName === 'BasePage') return BasePage
 
     let pageCADL
     let pageUrl
@@ -571,39 +572,35 @@ export default class CADL extends EventEmitter {
     // let sourceCopy = _.cloneDeep(source)
     let sourceCopy = source
     let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
-    if (pageName === 'PatientDashboard') {
-    }
+
+    //using a clone and deep clone to find references when certain slices of the noodl root are being processed
+    let rootCopy = _.clone(this.root)
+    let rootDeepCopy = _.cloneDeep(this.root)
+    let localCopy = _.clone(localRoot)
+    let localDeepCopy = _.clone(localRoot)
     const sourceCopyWithRootKeys = populateKeys({
       source: sourceCopy,
       lookFor: '.',
-      locations: [this.root, sourceCopy],
+      locations: [rootCopy, rootDeepCopy],
     })
     //populate the keys from the local page object
-    if (pageName === 'PatientDashboard') {
-    }
     const sourceCopyWithLocalKeys = populateKeys({
       source: sourceCopyWithRootKeys,
       lookFor: '..',
-      locations: [localRoot],
+      locations: [localCopy, localDeepCopy],
     })
-    if (pageName === 'PatientDashboard') {
-    }
     const boundDispatch = this.dispatch.bind(this)
     localRoot = pageName
       ? sourceCopyWithLocalKeys[pageName]
       : sourceCopyWithLocalKeys
-    if (pageName === 'PatientDashboard') {
-    }
     const sourceCopyWithVals = populateVals({
       source: sourceCopyWithLocalKeys,
       lookFor,
       skip,
-      locations: [this, this.root, localRoot],
+      locations: [this, rootCopy, rootDeepCopy, localCopy, localDeepCopy],
       pageName,
       dispatch: boundDispatch,
     })
-    if (pageName === 'PatientDashboard') {
-    }
     localRoot = pageName
       ? sourceCopyWithVals[pageName]
       : sourceCopyWithLocalKeys
@@ -737,13 +734,18 @@ export default class CADL extends EventEmitter {
         results = result
       }
     } else if (!key.startsWith('=')) {
+      const shouldCopy =
+        key.includes('builtIn') &&
+        'dataIn' in commands[key] &&
+        !('object' in commands[key]['dataIn']) &&
+        !('array' in commands[key]['dataIn'])
       //handles assignment expressions
       const populatedCommand = await this.dispatch({
         type: 'populate-object',
         payload: {
           pageName,
           object: { [key]: commands[key] },
-          // copy: true,
+          copy: shouldCopy,
         },
       })
       await this.handleEvalAssignmentExpressions({
@@ -755,12 +757,17 @@ export default class CADL extends EventEmitter {
       /**
        * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
        */
+      const shouldCopy =
+        key.includes('builtIn') &&
+        'dataIn' in commands[key] &&
+        !('object' in commands[key]['dataIn']) &&
+        !('array' in commands[key]['dataIn'])
       const populatedCommand = await this.dispatch({
         type: 'populate-object',
         payload: {
           pageName,
           object: { [key]: commands[key] },
-          // copy: true,
+          copy: shouldCopy,
         },
       })
       //handles function evaluation

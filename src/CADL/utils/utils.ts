@@ -756,7 +756,8 @@ function populateObject({
       !shouldSkipBuiltIn
     ) {
       if (isObject(sourceCopy[key])) {
-        // if (key.includes('dataIn')) {
+        // if (key.includes('dataIn') && !('object' in sourceCopy[key])) {
+        //   debugger
         //   sourceCopy[key] = _.cloneDeep(sourceCopy[key])
         // }
         if (
