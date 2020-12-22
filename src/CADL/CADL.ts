@@ -279,7 +279,11 @@ export default class CADL extends EventEmitter {
   async initPage(
     pageName: string,
     skip: string[] = [],
-    options: { reload?: boolean; builtIn?: Record<string, any> } = {}
+    options: {
+      reload?: boolean
+      builtIn?: Record<string, any>
+      done?: Function
+    } = {}
   ): Promise<void> {
     if (!this.cadlEndpoint) await this.init()
     if (options.reload === undefined) {
@@ -450,6 +454,8 @@ export default class CADL extends EventEmitter {
       })
     }
     this.dispatch({ type: 'update-map' })
+
+    if (options.done) options.done()
   }
 
   /**
