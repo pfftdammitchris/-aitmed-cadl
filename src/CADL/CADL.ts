@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import BasePage from './__mocks__/BasePage'
+// import EditProfile from './__mocks__/EditProfile'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -323,15 +323,7 @@ export default class CADL extends EventEmitter {
     const processedWithFns = this.processPopulate({
       source: processedFormData,
       lookFor: ['.', '..', '_', '~'],
-      skip: [
-        'update',
-        // 'save',
-        'check',
-        'init',
-        'formData',
-        'components',
-        ...skip,
-      ],
+      skip: ['update', 'check', 'init', 'formData', 'components', ...skip],
       withFns: true,
       pageName,
     })
@@ -353,15 +345,7 @@ export default class CADL extends EventEmitter {
         const processedComponents = this.processPopulate({
           source: page,
           lookFor: ['.', '..', '_', '~'],
-          skip: [
-            'update',
-            'check',
-            'init',
-            // 'listObject',
-            'formData',
-            'dataIn',
-            ...skip,
-          ],
+          skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
           withFns: true,
           pageName,
         })
@@ -406,15 +390,7 @@ export default class CADL extends EventEmitter {
       const processedComponents = this.processPopulate({
         source: processedPage,
         lookFor: ['.', '..', '_', '~'],
-        skip: [
-          'update',
-          'check',
-          'init',
-          // 'listObject',
-          'formData',
-          'dataIn',
-          ...skip,
-        ],
+        skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
         withFns: true,
         pageName,
       })
@@ -466,9 +442,8 @@ export default class CADL extends EventEmitter {
    * @throws {UnableToParseYAML} -When unable to parse yaml file
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
-    //TODO: remove after testing
-    //TODO used for local testing
-    // if (pageName === 'BasePage') return BasePage
+    //TODO: used for local testing
+    // if (pageName === 'EditProfile') return EditProfile
 
     let pageCADL
     let pageUrl
