@@ -1614,6 +1614,7 @@ export default class CADL extends EventEmitter {
       payload: {
         dataKey: pathArr,
         value: newVal,
+        replace: true,
       },
     })
     await this.dispatch({
@@ -1981,13 +1982,16 @@ export default class CADL extends EventEmitter {
     return produce(state, (draft) => {
       switch (action.type) {
         case 'SET_VALUE': {
-          const { pageName, dataKey, value } = action.payload
+          const { pageName, dataKey, value, replace } = action.payload
           let currVal
           let newVal = value
-          if (typeof pageName === 'undefined') {
-            currVal = _.get(state, dataKey)
-          } else {
-            currVal = _.get(state[pageName], dataKey)
+          if (!replace) {
+            //used to merge new value to existing value ref
+            if (typeof pageName === 'undefined') {
+              currVal = _.get(state, dataKey)
+            } else {
+              currVal = _.get(state[pageName], dataKey)
+            }
           }
           if (isObject(currVal) && isObject(newVal)) {
             newVal = _.merge(currVal, newVal)
