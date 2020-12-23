@@ -65,7 +65,6 @@ function populateKeys({
   lookFor: string
   locations: Record<string, any>[]
 }): Record<string, any> {
-  // let output = _.cloneDeep(source || {})
   let output = source
 
   Object.keys(output).forEach((key) => {
@@ -243,7 +242,6 @@ function attachFns({
   }): Record<string, any> {
     //traverse through the page object and look for the api keyword
     let output = cadlObject
-    // let output = _.cloneDeep(cadlObject || {})
     if (isObject(output)) {
       Object.keys(output).forEach((key) => {
         if (isObject(output[key])) {
@@ -379,7 +377,6 @@ function replaceEvalObject({
   dispatch: Function
 }): Record<string, any> {
   const cadlCopy = cadlObject
-  // const cadlCopy = _.cloneDeep(cadlObject || {})
   Object.keys(cadlCopy).forEach(async (key) => {
     if (
       key === 'object' &&
@@ -644,7 +641,6 @@ function populateArray({
   pageName?: string
   skipIf?: boolean
 }): any[] {
-  // let sourceCopy = _.cloneDeep(source || [])
   let sourceCopy = source
   if (path) {
     var previousKey = path[path.length - 1] || ''
@@ -831,7 +827,6 @@ function populateVals({
   pageName?: string
   dispatch?: Function
 }): any {
-  // let sourceCopy = _.cloneDeep(source || {})
   let sourceCopy = source
 
   for (let symbol of lookFor) {
@@ -898,7 +893,6 @@ function replaceVars({ vars, source }) {
     lookFor: '$',
     locations: [vars],
     skipIf: false,
-    // skip: ['builtIn'],
   })
   return withVals
 }

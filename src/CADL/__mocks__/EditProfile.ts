@@ -3,36 +3,74 @@ export default {
     pageNumber: '310',
     title: 'Edit Profile',
     init: [
+      '.SignInCheck',
       {
         if: [
-          '=.Global.currentUser.vertex.sk',
-          'continue',
+          '=.DisplayProfile.docProfile.doc.0.name.type',
           {
-            goto: 'SignIn',
+            '..tar@': '.DisplayProfile.docDetail.document.name.data',
+          },
+          {
+            '..tar@': 'drImg.png',
           },
         ],
       },
     ],
+    profileObject: '.DisplayProfile.profileObject',
+    tar: '',
     save: [
       {
         '=.EditProfile.profile.docAPI.store': '',
       },
     ],
-    profile: {
-      document: '.DisplayProfile.profile.document',
+    update: [
+      {
+        '=.EditProfile.uploadProfile.docAPI.store': '',
+      },
+      {
+        '=.builtIn.utils.base64ToBlob': {
+          dataIn: {
+            data: '=..uploadProfile.document.name.data',
+            type: '=..uploadProfile.document.name.type',
+          },
+          dataOut: 'DisplayProfile.docDetail.document.name.data',
+        },
+      },
+    ],
+    uploadProfile: {
+      document: {
+        '.Document': '',
+        subtype: {
+          isEncrypted: '1',
+          isOnServer: '0',
+        },
+        type: '.DocType.UploadProfile',
+        name: {
+          title: '',
+          type: '..uploadProfile.docAPI.store.subtype.mediaType',
+          data: 'binFile',
+        },
+        deat: {
+          sig: '',
+          url: '',
+        },
+        eid: '.Global.rootNotebookID',
+      },
       docAPI: {
         store: {
           api: 'cd',
-          dataOut: 'profile.document',
-          dataIn: 'profile.document',
+          dataKey: 'uploadProfile.document',
           subtype: {
             mediaType: '',
           },
-          condition: {
-            isPlain: 'text/plain',
-            isJpeg: 'image/jpeg',
-            isPng: 'image/png',
-          },
+        },
+      },
+    },
+    profile: {
+      docAPI: {
+        store: {
+          api: 'cd',
+          dataKey: 'EditProfile.profileObject',
         },
       },
     },
@@ -40,17 +78,16 @@ export default {
       {
         type: 'view',
         style: {
-          left: '0',
           top: '0',
           width: '1',
-          height: '1.7',
+          height: '1',
         },
         children: [
           {
-            '.BaseHeader': null,
+            '.BaseHeader3': null,
           },
           {
-            '.HeaderRightButton': null,
+            '.HeaderLeftButton2': null,
             text: 'Cancel',
             onClick: [
               {
@@ -59,117 +96,212 @@ export default {
             ],
           },
           {
+            '.HeaderRightButton': null,
+            text: 'Done',
+            onClick: [
+              {
+                goto: 'DisplayProfile',
+              },
+            ],
+          },
+          {
             type: 'image',
+            path: '..tar',
             contentType: 'file',
+            viewTag: 'avatarTag',
+            style: {
+              top: '0.15',
+              width: '0.2',
+              left: '0.1',
+            },
+          },
+          {
+            type: 'button',
+            text: 'Change Image',
             onClick: [
               {
                 actionType: 'updateObject',
                 dataObject: 'BLOB',
-                dataKey: 'profile.document.name.data.avatarUrl',
+                dataKey: 'EditProfile.uploadProfile.document.name.data',
+              },
+              {
+                actionType: 'builtIn',
+                funcName: 'redraw',
+                viewTag: 'avatarTag',
+              },
+              {
+                actionType: 'evalObject',
+                object: '..update',
               },
             ],
-            path: 'drImg.png',
             style: {
-              left: '0.39',
-              top: '0.12',
-              width: '0.22',
-              border: {
-                style: '5',
+              top: '0.35',
+              left: '0.05',
+              width: '0.3',
+              height: '0.04',
+              backgroundColor: '0xffffff',
+              borderWidth: '0',
+              color: '0x388ECC',
+              textAlign: {
+                x: 'center',
               },
-              borderRadius: 1000,
-            },
-          },
-          {
-            type: 'image',
-            backgourndColor: '0xe0dfe6ff',
-            path: 'chooseAvatar2.png',
-            style: {
-              left: '0.38',
-              top: '0.2',
-              width: '0.05',
-              border: {
-                style: '5',
-              },
-              borderRadius: 10000,
             },
           },
           {
             type: 'view',
             style: {
-              top: '0.25',
+              top: '0.12',
+              left: '0.4',
+              width: '0.4',
+              height: '0.2',
             },
             children: [
               {
                 type: 'label',
-                text: 'Aitmed ID',
-                style: {
-                  left: '0.15',
-                  top: '0.01',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
+                textBoard: [
+                  {
+                    text: 'First name',
                   },
-                },
-              },
-              {
-                type: 'label',
-                dataKey: 'Global.currentUser.vertex.id',
+                  {
+                    text: '*',
+                    color: '0xD53C42',
+                  },
+                ],
                 style: {
-                  left: '0.35',
-                  top: '0.25',
+                  top: '0',
+                  fontSize: '18',
+                  fontWeight: '400',
                   width: '0.5',
                   height: '0.04',
-                  fontSize: '12',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  color: '0x00000058',
-                  border: {
-                    style: '2',
-                    width: '1',
-                  },
                 },
               },
               {
-                type: 'label',
-                text: 'Phone #',
+                type: 'textField',
+                placeholder: '.Global.currentUser.vertex.name.firstName',
+                dataKey: 'profileObject.name.data.firstName',
                 style: {
-                  left: '0.15',
-                  top: '0.3',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                dataKey: 'Global.currentUser.vertex.uid',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '0.35',
-                  width: '0.7',
-                  height: '0.04',
+                  top: '0.04',
                   fontSize: '16',
-                  color: '0x00000058',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
+                  fontWeight: '400',
+                  width: '0.5',
+                  height: '0.02',
                   border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
+                    style: '3',
+                  },
+                  borderWidth: '1.5',
+                  borderRadius: '5',
+                },
+              },
+              {
+                type: 'label',
+                textBoard: [
+                  {
+                    text: 'Last name',
+                  },
+                  {
+                    text: '*',
+                    color: '0xD53C42',
+                  },
+                ],
+                style: {
+                  top: '0.1',
+                  fontSize: '18',
+                  fontWeight: '400',
+                  width: '0.5',
+                  height: '0.04',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: '.Global.currentUser.vertex.name.lastName',
+                dataKey: 'profileObject.name.data.lastName',
+                style: {
+                  top: '0.14',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.5',
+                  height: '0.02',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1.5',
+                  borderRadius: '5',
+                },
+              },
+            ],
+          },
+          {
+            type: 'view',
+            style: {
+              top: '0.4',
+              width: '0.9',
+              left: '0.05',
+              height: '0.35',
+              border: {
+                style: '3',
+              },
+              borderWidth: '1',
+              borderColor: '0x388FCD',
+              borderRadius: '5',
+            },
+            children: [
+              {
+                type: 'view',
+                style: {
+                  width: '0.9',
+                  height: '0.05',
+                  backgroundColor: '0x388FCD',
+                },
+                children: [
+                  {
+                    type: 'label',
+                    text: 'Contact Information',
+                    style: {
+                      top: '0.008',
+                      width: '0.9',
+                      height: '0.03',
+                      fontSize: '20',
+                      color: '0xffffff',
+                      fontWeight: '400',
+                      textAlign: {
+                        x: 'center',
+                      },
+                    },
+                  },
+                ],
+              },
+              {
+                type: 'label',
+                text: 'Phone number',
+                style: {
+                  top: '0.07',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.35',
+                  height: '0.03',
+                  left: '0.05',
+                },
+              },
+              {
+                type: 'label',
+                placeholder: '.Global.currentUser.vertex.uid',
+                dataKey: 'profileObject.name.data.phone',
+                isEdit: false,
+                style: {
+                  top: '0.07',
+                  width: '0.5',
+                  height: '0.03',
+                  left: '0.35',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  color: '0xacacac',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                  textAlign: {
+                    x: 'center',
                   },
                 },
               },
@@ -177,410 +309,188 @@ export default {
                 type: 'label',
                 text: 'Email',
                 style: {
-                  left: '0.15',
-                  top: '0.4',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
+                  top: '0.11',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.2',
+                  height: '0.03',
+                  left: '0.05',
                 },
               },
               {
                 type: 'textField',
-                placeholder: 'your email',
-                dataKey: 'profile.document.name.data.email',
-                contentType: 'text',
+                placeholder: 'example@domain.com',
+                dataKey: 'profileObject.name.data.email',
                 style: {
-                  left: '0.15',
-                  top: '0.45',
-                  width: '0.7',
-                  height: '0.04',
+                  top: '0.11',
+                  width: '0.59',
+                  height: '0.03',
+                  left: '0.25',
                   fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'First name',
-                style: {
-                  left: '0.15',
-                  top: '0.5',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your first name',
-                dataKey: 'profile.document.name.data.firstName',
-                contentType: 'text',
-                required: 'true',
-                style: {
-                  left: '0.15',
-                  top: '0.55',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'Middle name',
-                style: {
-                  left: '0.15',
-                  top: '0.6',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your middle name',
-                dataKey: 'profile.document.name.data.middleName',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '0.65',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'Last name',
-                style: {
-                  left: '0.15',
-                  top: '0.7',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your last name',
-                dataKey: 'profile.document.name.data.lastName',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '0.75',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'Mailing address',
-                style: {
-                  left: '0.15',
-                  top: '0.8',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your mail address',
-                dataKey: 'profile.document.name.data.mailingAddress',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '0.85',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'City',
-                style: {
-                  left: '0.15',
-                  top: '0.9',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your city',
-                dataKey: 'profile.document.name.data.city',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '0.95',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'State',
-                style: {
-                  left: '0.15',
-                  top: '1',
-                  width: '0.325',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'select',
-                dataKey: 'profile.document.name.data.state',
-                style: {
-                  left: '0.15',
-                  top: '1.05',
-                  width: '0.325',
-                  height: '0.04',
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-                backgroundColor: '0xffffff',
-                options: ['AL', 'AK', 'AZ', 'AR', 'CA', 'CO'],
-              },
-              {
-                type: 'label',
-                text: 'Zip',
-                style: {
-                  left: '0.525',
-                  top: '1',
-                  width: '0.325',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your zip',
-                dataKey: 'profile.document.name.data.zip',
-                contentType: 'text',
-                style: {
-                  left: '0.525',
-                  top: '1.05',
-                  width: '0.325',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'Language',
-                style: {
-                  left: '0.15',
-                  top: '1.1',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'your language',
-                dataKey: 'profile.document.name.data.language',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '1.15',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                  border: {
-                    style: '2',
-                    width: '1',
-                    color: '0x00000058',
-                  },
-                },
-              },
-              {
-                type: 'label',
-                text: 'Add note',
-                style: {
-                  left: '0.15',
-                  top: '1.2',
-                  width: '0.7',
-                  height: '0.04',
-                  fontSize: '12',
-                  color: '0x000000',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'textField',
-                placeholder: 'please add notes here',
-                dataKey: 'profile.document.name.data.note',
-                contentType: 'text',
-                style: {
-                  left: '0.15',
-                  top: '1.25',
-                  width: '0.7',
-                  height: '0.15',
-                  fontSize: '16',
-                  textAlign: {
-                    x: 'left',
-                    y: 'center',
-                  },
+                  fontWeight: '400',
                   border: {
                     style: '3',
-                    width: '1',
-                    color: '0x00000058',
                   },
-                },
-              },
-              {
-                type: 'button',
-                text: 'Save',
-                onClick: [
-                  {
-                    actionType: 'evalObject',
-                    object: '..save',
-                  },
-                  {
-                    actionType: 'updateObject',
-                    dataKey: 'Global.profile.document',
-                    dataObject: '..profile.document',
-                  },
-                  {
-                    goto: 'DisplayProfile',
-                  },
-                ],
-                style: {
-                  left: '0.2',
-                  top: '1.44',
-                  width: '0.6',
-                  height: '0.0493',
-                  fontWeight: 400,
-                  color: '0xffffffff',
-                  backgroundColor: '0x3366FF',
-                  borderRadius: 2,
+                  borderWidth: '1',
+                  borderRadius: '5',
                   textAlign: {
                     x: 'center',
                   },
                 },
               },
+              {
+                type: 'label',
+                text: 'Address',
+                style: {
+                  top: '0.15',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.35',
+                  height: '0.03',
+                  left: '0.05',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: 'Lin1',
+                dataKey: 'profileObject.name.data.line1',
+                style: {
+                  top: '0.15',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.59',
+                  height: '0.03',
+                  left: '0.25',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: 'Lin2',
+                dataKey: 'profileObject.name.data.line2',
+                style: {
+                  top: '0.19',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.59',
+                  height: '0.03',
+                  left: '0.25',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: 'City',
+                dataKey: 'profileObject.name.data.city',
+                style: {
+                  top: '0.23',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.18',
+                  height: '0.03',
+                  left: '0.25',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: 'State',
+                dataKey: 'profileObject.name.data.state',
+                style: {
+                  top: '0.23',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.18',
+                  height: '0.03',
+                  left: '0.455',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: 'Zip code',
+                dataKey: 'profileObject.name.data.zip',
+                style: {
+                  top: '0.23',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.18',
+                  height: '0.03',
+                  left: '0.66',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                },
+              },
+              {
+                type: 'textField',
+                placeholder: 'Country',
+                dataKey: 'profileObject.name.data.country',
+                style: {
+                  top: '0.27',
+                  fontSize: '16',
+                  fontWeight: '400',
+                  width: '0.59',
+                  height: '0.03',
+                  left: '0.25',
+                  border: {
+                    style: '3',
+                  },
+                  borderWidth: '1',
+                  borderRadius: '5',
+                },
+              },
             ],
+          },
+          {
+            type: 'button',
+            text: 'Save',
+            onClick: [
+              {
+                actionType: 'evalObject',
+                object: '..save',
+              },
+              {
+                actionType: 'evalObject',
+                object: {
+                  '.Global._nonce@': {
+                    '=.builtIn.math.random': '',
+                  },
+                },
+              },
+              {
+                goto: 'DisplayProfile',
+              },
+            ],
+            style: {
+              top: '0.8',
+              width: '0.5',
+              left: '0.25',
+              height: '0.05',
+              backgroundColor: '0x398FCD',
+              color: '0xffffff',
+              textAlign: {
+                x: 'center',
+              },
+            },
           },
         ],
       },
