@@ -96,21 +96,6 @@ export default {
     console.log(arr)
     return arr
   },
-  // addIndex({ object, value }) {
-  //   if (isArray(object)) {
-  //     if (value) {
-  //       //  get the length of array , and generate index
-  //       var arrayLenght = object.keys.length;
-  //       console.log(arrayLenght);
-  //       let index = `I${arrayLenght}`;
-  //       var cloned = _.cloneDeep(value)
-  //       object[index] = cloned;
-  //       // object.push(cloned)
-  //     }
-  //     return
-  //   }
-  //   return
-  // },
   // get the length of object
   getListLength({ object }) {
     if (isArray(object)) {
@@ -130,4 +115,33 @@ export default {
     }
     return `${array}is not an array`
   },
+  calendarArray({ year, month }) {
+    year = parseInt(year)
+    month = parseInt(month)
+    let isLeapYear = (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) ? true : false
+    let days = [31, 28, 31, 30, 31, 20, 31, 31, 30, 31, 30, 31]
+    days[1] = isLeapYear ? 29 : 28
+    let dataArray = new Array(42).fill(0)
+    // What day is the first day of the month
+    let day = new Date(`${year}-${month}-1`).getDay();
+    for (let i = day, j = 1; i < day + days[month - 1]; i++, j++) {
+      dataArray[i] = j;
+    }
+    let frontMonth = month == 1 ? days[11] : days[month - 2]
+    for (let i = day - 1, j = 0; i >= 0; i--, j++) {
+      if (day == 0) break
+      else {
+        dataArray[i] = frontMonth - j;
+      }
+    }
+    for (let i = day + days[month - 1], j = 1; i < 42; i++, j++) {
+      if ((day + days[month - 1]) == 36) break
+      else {
+        dataArray[i] = j;
+      }
+    }
+    let dataJson = _.chunk(dataArray, 7);
+    // return dataJson;
+    console.log(dataJson);
+  }
 }
