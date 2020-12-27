@@ -140,8 +140,7 @@ export default {
         dataArray[i] = j;
       }
     }
-    let dataJson = _.chunk(dataArray, 7);
-    // return dataJson;
-    console.log(dataJson);
+    // let dataJson = _.chunk(dataArray, 7);
+    return dataArray;
   }
 }
