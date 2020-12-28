@@ -126,26 +126,23 @@ export default {
     // What day is the first day of the month
     let day = new Date(`${year}-${month}-1`).getDay();
     for (let i = day, j = 1; i < day + days[month - 1]; i++, j++) {
-      dataArray[i] = j;
+      dataArray[i] = j
     }
     let frontMonth = month == 1 ? days[11] : days[month - 2]
     for (let i = day - 1, j = 0; i >= 0; i--, j++) {
       if (day == 0) break
       else {
-        dataArray[i] = frontMonth - j;
+        dataArray[i] = frontMonth - j
       }
     }
     for (let i = day + days[month - 1], j = 1; i < 42; i++, j++) {
-      if ((day + days[month - 1]) == 36) break
-      else {
-        dataArray[i] = j;
-      }
+      dataArray[i] = j
     }
     //  convert dataarray to jsononject
     for (let i = 0; i < dataArray.length; i++) {
       dataObject.push({ key: dataArray[i] })
     }
     // let dataJson = _.chunk(dataArray, 7);
-    return dataObject;
+    return dataObject
   }
 }
