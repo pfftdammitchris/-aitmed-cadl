@@ -118,6 +118,7 @@ export default {
   calendarArray({ year, month }) {
     year = parseInt(year)
     month = parseInt(month)
+    let dataObject: Record<string, any> = []
     let isLeapYear = (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) ? true : false
     let days = [31, 28, 31, 30, 31, 20, 31, 31, 30, 31, 30, 31]
     days[1] = isLeapYear ? 29 : 28
@@ -140,7 +141,11 @@ export default {
         dataArray[i] = j;
       }
     }
+    //  convert dataarray to jsononject
+    for (let i = 0; i < dataArray.length; i++) {
+      dataObject.push({ key: dataArray[i] })
+    }
     // let dataJson = _.chunk(dataArray, 7);
-    return dataArray;
+    return dataObject;
   }
 }
