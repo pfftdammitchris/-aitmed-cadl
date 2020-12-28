@@ -1985,16 +1985,18 @@ export default class CADL extends EventEmitter {
           const { pageName, dataKey, value, replace } = action.payload
           let currVal
           let newVal = value
-          if (!replace) {
-            //used to merge new value to existing value ref
-            if (typeof pageName === 'undefined') {
-              currVal = _.get(state, dataKey)
-            } else {
-              currVal = _.get(state[pageName], dataKey)
-            }
+          //used to merge new value to existing value ref
+          if (typeof pageName === 'undefined') {
+            currVal = _.get(state, dataKey)
+          } else {
+            currVal = _.get(state[pageName], dataKey)
           }
           if (isObject(currVal) && isObject(newVal)) {
-            newVal = _.merge(currVal, newVal)
+            if (replace) {
+              newVal = _.merge(newVal, currVal)
+            } else {
+              newVal = _.merge(currVal, newVal)
+            }
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
             currVal.length = 0
             currVal.push(...newVal)
