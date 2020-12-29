@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import EditProfile from './__mocks__/EditProfile'
+// import ContactsList from './__mocks__/ContactsList'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -412,11 +412,13 @@ export default class CADL extends EventEmitter {
         withFns: true,
         pageName,
       })
+
       let replaceUpdateJob2 = replaceEvalObject({
         pageName,
         cadlObject: processedComponentsAgain,
         dispatch: boundDispatch,
       })
+
       this.newDispatch({
         type: 'SET_ROOT_PROPERTIES',
         payload: { properties: replaceUpdateJob2 },
@@ -443,7 +445,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'EditProfile') return EditProfile
+    // if (pageName === 'ContactsList') return ContactsList
 
     let pageCADL
     let pageUrl
