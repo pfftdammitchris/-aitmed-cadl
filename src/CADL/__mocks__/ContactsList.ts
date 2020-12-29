@@ -1,8 +1,25 @@
 export default {
   ContactsList: {
     pageNumber: '340',
-    title: 'Contacts',
-    init: ['.SignInCheck', '..listData.get'],
+    title: 'My Directory',
+    init: [
+      '.SignInCheck',
+      '..listData.get',
+      {
+        if: [
+          '..listData.contactList.doc.0',
+          'continue',
+          {
+            '=.builtIn.checkField': {
+              dataIn: {
+                contentType: 'messageHidden',
+                wait: 100,
+              },
+            },
+          },
+        ],
+      },
+    ],
     save: [
       {
         '=.ContactsList.contactInfo.docAPI.store': '',
@@ -31,6 +48,7 @@ export default {
         maxcount: '500',
         obfname: 'mtime',
         sCondition: '.DocType.GetAllContact',
+        _nonce: '=.Global._nonce',
       },
     },
     contactInfo: {
@@ -120,7 +138,7 @@ export default {
               top: '0.1',
               left: '0',
               width: '0.8',
-              height: '0.08',
+              height: '0.8',
             },
             children: [
               {
@@ -129,7 +147,7 @@ export default {
                   top: '0.1',
                   left: '0.05',
                   width: '0.9',
-                  height: '0.71',
+                  height: '0.05',
                 },
                 children: [
                   {
@@ -158,6 +176,20 @@ export default {
                       top: '0.015',
                       left: '0.83',
                       height: '0.03',
+                    },
+                  },
+                  {
+                    type: 'label',
+                    contentType: 'messageHidden',
+                    text: 'No contacts added',
+                    style: {
+                      left: '0.31',
+                      top: '0.05',
+                      width: '0.72',
+                      height: '0.04',
+                      color: '0x000058',
+                      fontSize: '16',
+                      isHidden: 'true',
                     },
                   },
                 ],
@@ -286,6 +318,16 @@ export default {
                                   },
                                 ],
                               },
+                              {
+                                '.Global._nonce@': {
+                                  '=.builtIn.math.random': '',
+                                },
+                              },
+                              {
+                                '.ContactsList.contactInfo.document._nonce@': {
+                                  '=.builtIn.math.random': '',
+                                },
+                              },
                             ],
                           },
                           {
@@ -330,9 +372,10 @@ export default {
                         type: 'image',
                         path: 'rightYellowArrow.png',
                         style: {
-                          left: '0.87',
-                          top: '0.04',
-                          height: '0.02',
+                          left: '0.82',
+                          top: '0.03',
+                          height: '0.03',
+                          zIndex: 1000,
                         },
                         onClick: [
                           {

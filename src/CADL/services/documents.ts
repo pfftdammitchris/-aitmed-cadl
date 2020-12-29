@@ -227,6 +227,7 @@ function create({ pageName, apiObject, dispatch }) {
               tags: name?.tags,
               type: restOfDocOptions?.type,
               dTypeProps,
+              nonce: _nonce,
             },
           },
         })
@@ -299,6 +300,7 @@ function create({ pageName, apiObject, dispatch }) {
               title: name?.title,
               type: restOfDocOptions?.type,
               dTypeProps,
+              nonce: _nonce,
             },
           },
         })
