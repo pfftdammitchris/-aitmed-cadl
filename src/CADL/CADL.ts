@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import ContactsList from './__mocks__/ContactsList'
+// import SignIn from './__mocks__/SignIn'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -445,7 +445,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'ContactsList') return ContactsList
+    // if (pageName === 'SignIn') return SignIn
 
     let pageCADL
     let pageUrl
@@ -882,6 +882,9 @@ export default class CADL extends EventEmitter {
             path: `${dataOut}`,
             newVal: result,
           })
+          if (result) {
+            results = result
+          }
         } else if (dataIn && dataOut === undefined) {
           results = result
         }
