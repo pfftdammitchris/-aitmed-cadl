@@ -24,7 +24,7 @@ export default {
       },
       {
         if: [
-          '..appLink.url',
+          '=..appLink.url',
           {
             goto: '..appLink.url',
           },
@@ -35,7 +35,7 @@ export default {
         if: [
           '=.Global.currentUser.vertex.sk',
           {
-            goto: 'MeetingRoomInvited',
+            goto: 'PatientChart',
           },
           'continue',
         ],
@@ -46,8 +46,7 @@ export default {
         '..appLink.url@': 'https://apps.apple.com/us/app/aitcom/id1526258312',
       },
       {
-        '..appLink.img@':
-          'https://public.aitmed.com/commonRes/aitmed/appstore.png',
+        '..appLink.img@': 'https://public.aitmed.com/commonRes/appstore.png',
       },
     ],
     setAndroid: [
@@ -56,8 +55,7 @@ export default {
           'https://play.google.com/store/apps/details?id=com.aitmed.aitcom',
       },
       {
-        '..appLink.img@':
-          'https://public.aitmed.com/commonRes/aitmed/google-play.png',
+        '..appLink.img@': 'https://public.aitmed.com/commonRes/google-play.png',
       },
     ],
     appLink: {
@@ -85,7 +83,7 @@ export default {
       },
       {
         if: [
-          '..formData.pass',
+          '=..formData.pass',
           {
             '.Global.currentUser.vertex.sk@': '=..formData.sk',
           },
@@ -103,11 +101,12 @@ export default {
       },
       {
         if: [
-          '..loginNewDevice.response.edge',
+          '=..loginNewDevice.response.edge',
           'continue',
           {
             actionType: 'popUp',
             popUpView: 'wrongCode',
+            wait: true,
           },
         ],
       },
@@ -146,18 +145,12 @@ export default {
         '.Global.currentUser.dataCache.loadingDateTime@':
           '=.Global.currentDateTime',
       },
-      {
-        if: [
-          '=.Global.shareNotebook.edge.id',
-          'continue',
-          '=.Global.shareNotebook.edgeAPI.store',
-        ],
-      },
     ],
     formData: {
+      checkMessage: '',
       countryCode: '+1',
-      phoneNumber: '',
-      password: '',
+      phoneNumber: '8881307128',
+      password: '123456',
       code: '',
       sk: '',
       pass: '',
@@ -171,8 +164,8 @@ export default {
       vertexAPI: {
         get: {
           api: 'rv',
-          dataIn: 'retrieveVertex.vertex',
-          dataOut: 'retrieveVertex.response',
+          dataIn: 'SignIn.retrieveVertex.vertex',
+          dataOut: 'SignIn.retrieveVertex.response',
         },
       },
     },
@@ -189,8 +182,8 @@ export default {
         '.EdgeAPI': '',
         store: {
           api: 'ce',
-          dataIn: 'verificationCode.edge',
-          dataOut: 'verificationCode.response',
+          dataIn: 'SignIn.verificationCode.edge',
+          dataOut: 'SignIn.verificationCode.response',
         },
       },
     },
@@ -213,8 +206,8 @@ export default {
         '.EdgeAPI': '',
         store: {
           api: 'ce',
-          dataIn: 'loginNewDevice.edge',
-          dataOut: 'loginNewDevice.response',
+          dataIn: 'SignIn.loginNewDevice.edge',
+          dataOut: 'SignIn.loginNewDevice.response',
         },
       },
     },
@@ -229,8 +222,8 @@ export default {
         '.EdgeAPI': '',
         store: {
           api: 'ce',
-          dataIn: 'loginUser.edge',
-          dataOut: 'loginUser.response',
+          dataIn: 'SignIn.loginUser.edge',
+          dataOut: 'SignIn.loginUser.response',
         },
       },
     },
@@ -395,6 +388,28 @@ export default {
                     style: '2',
                   },
                 },
+                onBlur: [
+                  {
+                    emit: {
+                      actions: [
+                        {
+                          '=.builtIn.typeCheck.phoneNumber': {
+                            dataIn: {
+                              phoneNumber: '=..formData.phoneNumber',
+                              countryCode: '=..formData.countryCode',
+                              toastMessage:
+                                'Unacceptible phone number format example: 888-999-0000',
+                              style: {
+                                backgroundColor: 'red',
+                              },
+                            },
+                            dataOut: 'formData.checkMessage',
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
               },
             ],
           },
@@ -495,7 +510,7 @@ export default {
                     if: [
                       '=.Global.currentUser.vertex.sk',
                       {
-                        goto: 'MeetingRoomInvited',
+                        goto: 'PatientChart',
                       },
                       'continue',
                     ],
@@ -618,7 +633,7 @@ export default {
                         color: '0x007affff',
                         fontSize: '19',
                         display: 'inline',
-                        backgroundColor: '0xeeeeee',
+                        backgroundColor: '0xeaeaea',
                         textAlign: {
                           x: 'center',
                           y: 'center',
@@ -671,7 +686,7 @@ export default {
                         object: [
                           {
                             if: [
-                              '..formData.pass',
+                              '=..formData.pass',
                               {
                                 '.Global.currentUser.vertex.sk@':
                                   '=..formData.sk',
@@ -696,7 +711,7 @@ export default {
                             if: [
                               '=.Global.currentUser.vertex.sk',
                               {
-                                goto: 'MeetingRoomInvited',
+                                goto: 'PatientChart',
                               },
                               'continue',
                             ],
@@ -714,7 +729,7 @@ export default {
                         color: '0x007affff',
                         fontSize: '19',
                         display: 'inline',
-                        backgroundColor: '0xeeeeee',
+                        backgroundColor: '0xeaeaea',
                         textAlign: {
                           x: 'center',
                           y: 'center',
@@ -732,7 +747,7 @@ export default {
                       '.DividerStyle': {
                         left: '0.45',
                         top: '0.255',
-                        width: '0.001',
+                        width: '0.002',
                         height: '0.08',
                         backgroundColor: '0x00000088',
                       },
@@ -750,6 +765,7 @@ export default {
               top: '0.8',
               left: '0.5',
               height: '0.07',
+              borderWidth: '0',
             },
             onClick: [
               {

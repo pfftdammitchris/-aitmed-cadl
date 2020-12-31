@@ -10,6 +10,7 @@ import arrayServices from './array'
 import numberService from './number'
 import ecos from './ecos'
 import utils from './utils'
+import typeCheck from './typeCheck'
 import math from './math'
 
 import Document from '../../services/Document'
@@ -88,6 +89,7 @@ export default function builtInFns(dispatch?: Function) {
     object: objectServices,
     array: arrayServices,
     number: numberService,
+    typeCheck,
     ecos,
     utils,
     math,
