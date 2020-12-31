@@ -11,8 +11,7 @@ export default {
       return true
     } else {
       return {
-        toastMessage,
-        style,
+        toast: { message: toastMessage, style },
       }
     }
   },
