@@ -490,9 +490,7 @@ export default class CADL extends EventEmitter {
     }
 
     try {
-      debugger
       cadlObject = YAML.parse(cadlYAML)
-      debugger
     } catch (error) {
       throw new UnableToParseYAML(`Unable to parse yaml for ${url}`, error)
     }
