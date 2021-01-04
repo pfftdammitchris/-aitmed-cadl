@@ -120,7 +120,7 @@ export default {
     month = parseInt(month)
     let dataObject: Record<string, any> = []
     let isLeapYear = (year % 4 == 0 && year % 100 != 0 || year % 400 == 0) ? true : false
-    let days = [31, 28, 31, 30, 31, 20, 31, 31, 30, 31, 30, 31]
+    let days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     days[1] = isLeapYear ? 29 : 28
     let dataArray = new Array(42).fill(0)
     // What day is the first day of the month
@@ -128,15 +128,18 @@ export default {
     for (let i = day, j = 1; i < day + days[month - 1]; i++, j++) {
       dataArray[i] = j
     }
-    let frontMonth = month == 1 ? days[11] : days[month - 2]
+    // let frontMonth = month == 1 ? days[11] : days[month - 2]
+    //  fill other day
     for (let i = day - 1, j = 0; i >= 0; i--, j++) {
       if (day == 0) break
       else {
-        dataArray[i] = frontMonth - j
+        // dataArray[i] = frontMonth - j
+        dataArray[i] = ''
       }
     }
     for (let i = day + days[month - 1], j = 1; i < 42; i++, j++) {
-      dataArray[i] = j
+      // dataArray[i] = j
+      dataArray[i] = ''
     }
     //  convert dataarray to jsononject
     for (let i = 0; i < dataArray.length; i++) {
