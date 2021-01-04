@@ -8,6 +8,7 @@ import stringServices from './string'
 import objectServices from './object'
 import arrayServices from './array'
 import numberService from './number'
+import dateService from './date'
 import ecos from './ecos'
 import utils from './utils'
 import typeCheck from './typeCheck'
@@ -89,6 +90,7 @@ export default function builtInFns(dispatch?: Function) {
     object: objectServices,
     array: arrayServices,
     number: numberService,
+    date: dateService,
     typeCheck,
     ecos,
     utils,
