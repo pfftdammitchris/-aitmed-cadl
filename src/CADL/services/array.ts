@@ -11,6 +11,22 @@ export default {
     }
     return
   },
+  addByIndex({ object, value, index }) {
+    if (isArray(object)) {
+      if (value) {
+        var cloned = _.cloneDeep(value)
+        if (object[parseInt(index)][0] == null) {
+          object[parseInt(index)][0] = cloned
+        }
+        else {
+          object[parseInt(index)].push(cloned)
+        }
+
+      }
+      return
+    }
+    return
+  },
   clear({ object }) {
     if (isArray(object)) {
       object.length = 0
@@ -21,11 +37,14 @@ export default {
     //the format of the array must be [ man: man]  man： man
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
-        if (object[i][key]) {
+        if (object[i].key === key) {
           // TO DO: how to handle objects with same key? should they all be deleted, or just delete first one?
           // Should duplicate object key made not allowed using add method?
           object.splice(i, 1)
+          console.log(i);
           return
+        } else {
+          console.log('false', 'color: red');
         }
       }
     }
@@ -55,10 +74,19 @@ export default {
     return
   },
   has({ object, value }) {
-    // the format of array must be [ key: man ]
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i] === value) {
+          return true
+        }
+      }
+    }
+    return false
+  },
+  hasKey({ object, key }) {
+    if (isArray(object)) {
+      for (let i = 0; i < object.length; i++) {
+        if (object[i].key === key) {
           return true
         }
       }
@@ -75,7 +103,6 @@ export default {
     }
     return
   },
-
   // convert ["anemia", "anxiety", "arthritis"] to [{key: "anemia"},{key: "anxiety"},{key: "arthritis"}] for listObject
   covertToJsonArray({ array }) {
     let dataObject: Record<string, any> = []
@@ -95,4 +122,16 @@ export default {
     }
     return 0
   },
+  // copy one item of array1 to array2 by key
+  copyByKey({ array1, array2, key }) {
+    if (isArray(array1) && isArray(array2)) {
+      for (let i = 0; i < array1.length; i++) {
+        if (array1[i].key === key) {
+          array2.push(array1[i])
+          return array2
+        }
+      }
+    }
+    return array2
+  }
 }
