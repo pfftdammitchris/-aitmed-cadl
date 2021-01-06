@@ -10,7 +10,7 @@ export default {
     return new Date().getFullYear()
   },
   getTimezoneOffset() {
-    return new Date().getTimezoneOffset()
+    return new Date().getTimezoneOffset().toString()
   },
   /**
    * return time stamp (s)
@@ -49,11 +49,11 @@ export default {
       if (n < 13 * 60) {
         let h = Math.floor(n / 60)
         let m = n % 60
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}am`
+        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}pm`
+        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
     let i: number = 0
