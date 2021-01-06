@@ -10,7 +10,7 @@ export default {
     return new Date().getFullYear()
   },
   getTimezoneOffset() {
-    return new Date().getTimezoneOffset()
+    return new Date().getTimezoneOffset().toString()
   },
   /**
    * return time stamp (s)
