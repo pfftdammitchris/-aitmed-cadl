@@ -51,7 +51,6 @@ export default {
     return
   },
   removeByValue({ object, value }) {
-    //the format of the array must be [ man: man]  man： man
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i] == value) {
