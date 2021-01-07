@@ -15,11 +15,15 @@ export default {
     if (isArray(object)) {
       if (value) {
         var cloned = _.cloneDeep(value)
-        if (object[parseInt(index)][0] == null) {
-          object[parseInt(index)][0] = cloned
+        if (object[parseInt(index)] == null) {
+          let item_1 = new Array();
+          item_1.push(cloned)
+          object[parseInt(index)] = item_1
         }
         else {
-          object[parseInt(index)].push(cloned)
+          let item_2 = object[parseInt(index)]
+          item_2.push(cloned)
+          object[parseInt(index)] = item_2
         }
 
       }
