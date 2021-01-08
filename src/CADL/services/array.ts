@@ -136,5 +136,20 @@ export default {
       }
     }
     return array2
+  },
+
+  changeColorByKey({ array, key, value }) {
+    if (isArray(array)) {
+      if (key) {
+        for (let i = 0; i < array.length; i++) {
+          if (array[i].key === key) {
+            array[i].color = value
+            return
+          }
+        }
+      }
+      return
+    }
+    return
   }
 }

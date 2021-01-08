@@ -29,6 +29,7 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
+      console.log(object[key])
       return object[key]
     }
     return
