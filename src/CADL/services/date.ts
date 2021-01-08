@@ -13,7 +13,7 @@ export default {
     return new Date().getTimezoneOffset().toString()
   },
   /**
-   * return time stamp (s)
+   * return time stamp (s)  date-->to ---> timestamp
    */
   getTime() {
     let date = new Date().toString()
@@ -21,22 +21,28 @@ export default {
     return stamp
   },
   /**
+   * timestamp--->date
+   */
+  stampToDate({ timeStamp }) {
+    return new Date((parseInt(timeStamp) * 1000))
+  },
+  /**
    * Returns the time stamp interval of a day  (s)
    * @param {string} (date) -->  MM-DD-YY
    * @return
    */
   getTimeStampOfDate({ date }) {
-    //   convert time to MM-DD-YY
+    //   convert time to YYYY-MM-DD
     let timeStamp = {
       start: 0,
       end: 0,
     }
     let dateArray = date.split('-')
-    dateArray[0] = parseInt(dateArray[0]) - 1
+    dateArray[1] = parseInt(dateArray[1]) - 1
     let dateObject = new Date()
-    dateObject.setMonth(dateArray[0])
-    dateObject.setDate(dateArray[1])
-    dateObject.setFullYear(dateArray[2])
+    dateObject.setMonth(dateArray[1])
+    dateObject.setDate(dateArray[2])
+    dateObject.setFullYear(dateArray[0])
     dateObject.setHours(0)
     dateObject.setMinutes(0)
     dateObject.setSeconds(0)
