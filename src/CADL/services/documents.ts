@@ -114,8 +114,15 @@ function get({ pageName, apiObject, dispatch }) {
             return Promise.all(
               res?.data?.document.map(async (document) => {
                 //decrypt data
-                const note = await documentToNote({ document })
-                return note
+                if (document?.deat?.url) {
+                  //skip files that are in S3
+                  //these will be retrieved as needed by noodl established prepareDoc util fn
+                  return document
+                } else {
+                  const note = await documentToNote({ document })
+
+                  return note
+                }
               })
             )
           })
