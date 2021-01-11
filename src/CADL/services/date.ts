@@ -26,6 +26,11 @@ export default {
   stampToDate({ timeStamp }) {
     return new Date((parseInt(timeStamp) * 1000))
   },
+  stampToTime(timeStamp) {
+    let time = new Date((parseInt(timeStamp) * 1000)).toString()
+    let timeArray = time.split(" ")[4].split(':');
+    return (parseInt(timeArray[0]) < 12) ? `${timeArray[0]}:${timeArray[1]}AM` : `${parseInt(timeArray[0]) - 12}:${timeArray[1]}PM`
+  },
   /**
    * Returns the time stamp interval of a day  (s)
    * @param {string} (date) -->  MM-DD-YY
