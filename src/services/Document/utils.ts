@@ -141,7 +141,6 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       data,
       contentType
     )
-
     if (/^text\//.test(blob.type)) {
       content = await new Response(blob).text()
     } else if (blob.type === 'application/json') {

@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import _, { isObject } from 'lodash'
 import store from '../../common/store'
 import { isPopulated } from '../utils'
 import { documentToNote } from '../../services/document/utils'
@@ -28,7 +28,12 @@ export default {
   },
 
   async prepareDoc({ doc }: { doc: Record<string, any> }) {
-    const note = await documentToNote({ document: doc })
+    let note
+    if (isObject(doc.subtype)) {
+      note = doc
+    } else {
+      note = await documentToNote({ document: doc })
+    }
     const { name } = note
     if (!name?.data) return
     if (typeof name?.data !== 'string') return
