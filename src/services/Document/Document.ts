@@ -95,6 +95,7 @@ export const create: NoteTypes.Create = async ({
           besak: esak,
           id: edge.eid,
           type: edge.type,
+          name: edge.name,
           sig: pk,
         })
       } catch (error) {
@@ -323,6 +324,7 @@ export const update: any = async (
             besak: esak,
             id: edge.eid,
             type: edge.type,
+            name: edge.name,
             sig: pk,
           })
         } catch (error) {
