@@ -48,7 +48,7 @@ export default {
         bvid: '.Global.currentUser.vertex.id',
         name: {
           roomName: 'New Room',
-          videoProvider: 'twilio',
+          videoProvider: '.Global.currentUser.vertex.name.userName',
         },
       },
       edgeAPI: {
@@ -73,6 +73,7 @@ export default {
           top: '0',
           width: '1',
           height: '1',
+          position: 'fixed',
         },
         children: [
           {
@@ -182,7 +183,7 @@ export default {
                   },
                   {
                     type: 'label',
-                    text: 'participants name',
+                    dataKey: 'itemObject.name.videoProvider',
                     style: {
                       left: '0.08',
                       top: '0.08',
@@ -348,7 +349,8 @@ export default {
                           '.Global._nonce@': {
                             '=.builtIn.math.random': '',
                           },
-                          '.Global.rootRoomInfo@': '=..createdRoomInfo.edge',
+                          '.Global.rootRoomInfo.edge@':
+                            '=..createdRoomInfo.edge.edge',
                         },
                       },
                       {
