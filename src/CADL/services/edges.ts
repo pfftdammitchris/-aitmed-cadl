@@ -26,13 +26,12 @@ function get({ pageName, apiObject, dispatch }) {
     let sCondition = options?.sCondition
     let nonce
 
+    //get current object name value
+    const currentVal = await dispatch({
+      type: 'get-data',
+      payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
+    })
     if (dataIn) {
-      //get current object name value
-      const currentVal = await dispatch({
-        type: 'get-data',
-        payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
-      })
-
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
         payload: { object: currentVal, pageName },
