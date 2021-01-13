@@ -5,6 +5,21 @@ export default {
     title: 'Meeting Rooms',
     init: [
       '.SignInCheck',
+      {
+        actionType: 'evalObject',
+        object: {
+          '=.builtIn.string.concat': {
+            dataIn: [
+              ' =..calendarDate.year',
+              '-',
+              '=..calendarDate.month',
+              '-',
+              '=..calendarDate.day',
+            ],
+            dataOut: 'MeetingRoomCreate.listData.hostroom.sCondition',
+          },
+        },
+      },
       '..listData.get',
       {
         if: [
@@ -25,7 +40,13 @@ export default {
     lastTop: '0.0',
     listData: {
       hostroom: {
-        edge: null,
+        id: '.Global.currentUser.vertex.id',
+        type: '40000',
+        xfname: 'bvid',
+        sCondition: 'refid IS NULL AND tage=0 AND ctime>UNIX_TIMESTAMP()-86400',
+        maxcount: '20',
+        obfname: 'mtime',
+        _nonce: '=.Global._nonce',
       },
       get: {
         '.EdgeAPI.get': '',
