@@ -1,6 +1,7 @@
-import _ from 'lodash'
+import _, { isObject } from 'lodash'
 import store from '../../common/store'
 import { isPopulated } from '../utils'
+import { documentToNote } from '../../services/document/utils'
 
 export default {
   base64ToBlob({
@@ -30,5 +31,25 @@ export default {
   log({ value }) {
     console.log(value)
     return
-  }
+  },
+
+  async prepareDoc({ doc }: { doc: Record<string, any> }) {
+    let note
+    if (isObject(doc.subtype)) {
+      note = doc
+    } else {
+      note = await documentToNote({ document: doc })
+    }
+    const { name } = note
+    if (!name?.data) return
+    if (typeof name?.data !== 'string') return
+    if (!isPopulated(name?.data)) return
+    const blob = store.level2SDK.utilServices.base64ToBlob(
+      name?.data,
+      name?.type
+    )
+    const blobUrl = URL.createObjectURL(blob)
+    name.data = blobUrl
+    return note
+  },
 }

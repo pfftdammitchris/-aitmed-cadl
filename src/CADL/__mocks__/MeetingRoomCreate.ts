@@ -5,6 +5,21 @@ export default {
     title: 'Meeting Rooms',
     init: [
       '.SignInCheck',
+      {
+        actionType: 'evalObject',
+        object: {
+          '=.builtIn.string.concat': {
+            dataIn: [
+              ' =..calendarDate.year',
+              '-',
+              '=..calendarDate.month',
+              '-',
+              '=..calendarDate.day',
+            ],
+            dataOut: 'MeetingRoomCreate.listData.hostroom.sCondition',
+          },
+        },
+      },
       '..listData.get',
       {
         if: [
@@ -25,7 +40,13 @@ export default {
     lastTop: '0.0',
     listData: {
       hostroom: {
-        edge: null,
+        id: '.Global.currentUser.vertex.id',
+        type: '40000',
+        xfname: 'bvid',
+        sCondition: 'refid IS NULL AND tage=0 AND ctime>UNIX_TIMESTAMP()-86400',
+        maxcount: '20',
+        obfname: 'mtime',
+        _nonce: '=.Global._nonce',
       },
       get: {
         '.EdgeAPI.get': '',
@@ -48,7 +69,7 @@ export default {
         bvid: '.Global.currentUser.vertex.id',
         name: {
           roomName: 'New Room',
-          videoProvider: 'twilio',
+          videoProvider: '.Global.currentUser.vertex.name.userName',
         },
       },
       edgeAPI: {
@@ -73,6 +94,7 @@ export default {
           top: '0',
           width: '1',
           height: '1',
+          position: 'fixed',
         },
         children: [
           {
@@ -182,7 +204,7 @@ export default {
                   },
                   {
                     type: 'label',
-                    text: 'participants name',
+                    dataKey: 'itemObject.name.videoProvider',
                     style: {
                       left: '0.08',
                       top: '0.08',
@@ -348,7 +370,8 @@ export default {
                           '.Global._nonce@': {
                             '=.builtIn.math.random': '',
                           },
-                          '.Global.rootRoomInfo@': '=..createdRoomInfo.edge',
+                          '.Global.rootRoomInfo.edge@':
+                            '=..createdRoomInfo.edge.edge',
                         },
                       },
                       {
