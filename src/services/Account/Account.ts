@@ -53,7 +53,7 @@ export const create: AccountTypes.Create = async (
   phone_number,
   password,
   verification_code,
-  userName
+  userInfo
 ) => {
   const { code: statusCode, ...rest } = await getStatus()
   let userVertex
@@ -63,7 +63,7 @@ export const create: AccountTypes.Create = async (
       id: rest?.data.user_id,
       phone_number,
       password,
-      userInfo: { userName, phoneNumber: phone_number },
+      userInfo: { ...userInfo, phoneNumber: phone_number },
     })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
@@ -75,7 +75,7 @@ export const create: AccountTypes.Create = async (
       phone_number,
       password,
       verification_code,
-      userInfo: { userName, phoneNumber: phone_number },
+      userInfo: { ...userInfo, phoneNumber: phone_number },
     })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)

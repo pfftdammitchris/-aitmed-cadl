@@ -96,12 +96,7 @@ export default function builtInFns(dispatch?: Function) {
     utils,
     math,
     async createNewAccount({ name }) {
-      const {
-        phoneNumber,
-        password,
-        // verificationCode,
-        userName,
-      } = name
+      const { phoneNumber, password, userName, firstName, lastName } = name
       let validPhoneNumber
       if (phoneNumber.includes('-')) {
         validPhoneNumber = phoneNumber.replace(/-/g, '')
@@ -113,7 +108,7 @@ export default function builtInFns(dispatch?: Function) {
         validPhoneNumber,
         password,
         name?.verificationCode,
-        userName
+        { userName, firstName, lastName }
       )
       let sk = localStorage.getItem('sk')
       if (dispatch) {

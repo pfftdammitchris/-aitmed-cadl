@@ -38,15 +38,17 @@ export interface Create {
     phone_number: string,
     password: string,
     verification_code: number,
-    name: string
+    userInfo: Record<string, any>
   ): Promise<Record<string, any>>
 }
 
 // Login
 export interface Login {
-  (phone_number: string, password: string, verification_code: string): Promise<
-    any
-  >
+  (
+    phone_number: string,
+    password: string,
+    verification_code: string
+  ): Promise<any>
 }
 
 // LoginByPassword
