@@ -31,6 +31,7 @@ function get({ pageName, apiObject, dispatch }) {
       type: 'get-data',
       payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
     })
+    debugger
     if (dataIn) {
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
