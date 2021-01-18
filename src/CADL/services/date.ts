@@ -27,9 +27,12 @@ export default {
     return new Date((parseInt(timeStamp) * 1000))
   },
   stampToTime(timeStamp) {
-    let time = new Date((parseInt(timeStamp) * 1000)).toString()
-    let timeArray = time.split(" ")[4].split(':');
-    return (parseInt(timeArray[0]) < 12) ? `${timeArray[0]}:${timeArray[1]}AM` : `${parseInt(timeArray[0]) - 12}:${timeArray[1]}PM`
+    if (timeStamp) {
+      let time = new Date((parseInt(timeStamp) * 1000)).toString()
+      let timeArray = time.split(" ")[4].split(':');
+      return (parseInt(timeArray[0]) < 12) ? `${timeArray[0]}:${timeArray[1]}AM` : `${parseInt(timeArray[0]) - 12}:${timeArray[1]}PM`
+    }
+    return 'timeStamp is null'
   },
   /**
    * Returns the time stamp interval of a day  (s)
