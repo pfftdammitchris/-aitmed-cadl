@@ -31,13 +31,11 @@ function get({ pageName, apiObject, dispatch }) {
       type: 'get-data',
       payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
     })
-    debugger
     if (dataIn) {
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
-        payload: { object: currentVal, pageName },
+        payload: { object: currentVal, pageName, copy: true },
       })
-
       nonce = _nonce
 
       if (!isPopulated(id)) {

@@ -676,7 +676,6 @@ export default class CADL extends EventEmitter {
         payload: {
           pageName,
           object: command,
-          // copy: true,
         },
       })
 
@@ -1641,7 +1640,6 @@ export default class CADL extends EventEmitter {
   public async runInit(
     pageObject: Record<string, any>
   ): Promise<Record<string, any>> {
-    debugger
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
 
