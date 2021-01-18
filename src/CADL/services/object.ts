@@ -43,7 +43,6 @@ export default {
     }
     return
   },
-
   // Modifies in place
 
   // remove({ object, key }) {

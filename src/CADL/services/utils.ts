@@ -52,4 +52,9 @@ export default {
     name.data = blobUrl
     return note
   },
+
+  alert({ value }) {
+    alert(value)
+    return
+  }
 }
