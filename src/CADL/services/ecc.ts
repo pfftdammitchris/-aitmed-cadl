@@ -98,13 +98,11 @@ export default {
     )
     const symmetricKey = store.level2SDK.utilServices.generateSKey()
     const partialKey = symmetricKey.slice(0, 16)
-    const sak = sha256().update(partialKey).digest()
-    const sakUint8Array = new Uint8Array(sak)
 
     const esak = store.level2SDK.utilServices.aKeyEncrypt(
       pkToUint8Array,
       skToUint8Array,
-      sakUint8Array
+      partialKey
     )
     const esakBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(esak)
     return esakBase64
@@ -153,19 +151,17 @@ export default {
     const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
       secretKey
     )
-    const sakUint8Array = store.level2SDK.utilServices.aKeyDecrypt(
+    const partialKey = store.level2SDK.utilServices.aKeyDecrypt(
       pkToUint8Array,
       skToUint8Array,
       esakUint8Array
     )
-
-    let decryptedDataUint8Array
-    if (sakUint8Array) {
-      decryptedDataUint8Array = store.level2SDK.utilServices.sKeyDecrypt(
-        sakUint8Array,
-        data
-      )
-    }
+    const sak = sha256().update(partialKey).digest()
+    const sakUint8Array = new Uint8Array(sak)
+    const decryptedDataUint8Array = store.level2SDK.utilServices.sKeyDecrypt(
+      sakUint8Array,
+      data
+    )
     if (decryptedDataUint8Array !== null) {
       return decryptedDataUint8Array
     } else {
@@ -214,15 +210,16 @@ export default {
     const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
       secretKey
     )
-    const sakUint8Array = store.level2SDK.utilServices.aKeyDecrypt(
+    const partialKey = store.level2SDK.utilServices.aKeyDecrypt(
       pkToUint8Array,
       skToUint8Array,
       esakUint8Array
     )
-    let sakBase64
-    if (sakUint8Array) {
-      sakBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(sakUint8Array)
-    }
+    const sak = sha256().update(partialKey).digest()
+    const sakUint8Array = new Uint8Array(sak)
+    const sakBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
+      sakUint8Array
+    )
     return sakBase64
   },
   /**
