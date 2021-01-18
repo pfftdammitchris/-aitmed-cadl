@@ -34,9 +34,8 @@ function get({ pageName, apiObject, dispatch }) {
     if (dataIn) {
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
-        payload: { object: currentVal, pageName },
+        payload: { object: currentVal, pageName, copy: true },
       })
-
       nonce = _nonce
 
       if (!isPopulated(id)) {
