@@ -29,6 +29,7 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
+      console.log(object[key])
       return object[key]
     }
     return
@@ -42,7 +43,6 @@ export default {
     }
     return
   },
-
   // Modifies in place
 
   // remove({ object, key }) {
