@@ -15,6 +15,7 @@ export default {
     if (typeof data !== 'string') return
     if (!isPopulated(data)) return
     const blob = store.level2SDK.utilServices.base64ToBlob(data, type)
+    console.dir(blob)
     const blobUrl = URL.createObjectURL(blob)
     return blobUrl
   },
@@ -25,6 +26,11 @@ export default {
       }
     }
     return true
+  },
+
+  log({ value }) {
+    console.log(value)
+    return
   },
 
   async prepareDoc({ doc }: { doc: Record<string, any> }) {
@@ -46,4 +52,9 @@ export default {
     name.data = blobUrl
     return note
   },
+
+  alert({ value }) {
+    alert(value)
+    return
+  }
 }

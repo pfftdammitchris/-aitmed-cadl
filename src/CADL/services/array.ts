@@ -54,8 +54,24 @@ export default {
     }
     return
   },
-  removeByValue({ object, value }) {
+  removeByName({ object, key, name }) {
     //the format of the array must be [ man: man]  man： man
+    if (isArray(object)) {
+      for (let i = 0; i < object.length; i++) {
+        if (object[i][key] == name || object[i][key] == "") {
+          // TO DO: how to handle objects with same key? should they all be deleted, or just delete first one?
+          // Should duplicate object key made not allowed using add method?
+          object.splice(i, 1)
+          console.log(i);
+          return
+        } else {
+          console.log('false', 'color: red');
+        }
+      }
+    }
+    return
+  },
+  removeByValue({ object, value }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
         if (object[i] == value) {
@@ -68,6 +84,9 @@ export default {
     }
     return
   },
+
+
+
   append({ newMessage, messages }) {
     if (isArray(messages)) {
       if (newMessage) {
@@ -137,5 +156,20 @@ export default {
       }
     }
     return array2
+  },
+
+  changeColorByKey({ array, key, value }) {
+    if (isArray(array)) {
+      if (key) {
+        for (let i = 0; i < array.length; i++) {
+          if (array[i].key === key) {
+            array[i].color = value
+            return
+          }
+        }
+      }
+      return
+    }
+    return
   }
 }
