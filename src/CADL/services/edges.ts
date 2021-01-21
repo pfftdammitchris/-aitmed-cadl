@@ -270,11 +270,76 @@ function create({ pageName, apiObject, dispatch }) {
           const { data } = await store.level2SDK.edgeServices.createEdge({
             ...mergedVal,
           })
+          const isInviteEdge = data?.edge?.type === 1053
+          if (isInviteEdge) {
+            const pkOfInviter = localStorage.getItem('pk')
+            const skOfInviter = localStorage.getItem('sk')
+            const {
+              data: { edge },
+            } = await store.level2SDK.edgeServices.retrieveEdge({
+              idList: [data?.edge?.refid],
+            })
+            const rootEdge = edge[0]
+            let rootEdgeBesak = rootEdge?.besak
+            if (!rootEdge?.besak) {
+              const besak = store.level2SDK.commonServices.generateEsak(
+                pkOfInviter
+              )
+              const {
+                data: updatedRootEdgeRes,
+              } = await store.level2SDK.edgeServices.updateEdge({
+                id: rootEdge.eid,
+                type: 40000,
+                besak,
+                name: rootEdge.name,
+                sig: pkOfInviter ? pkOfInviter : '',
+              })
+
+              if (updatedRootEdgeRes?.edge?.length > 0) rootEdgeBesak = besak
+            }
+            let pkOfInviterToUint8Array, skOfInviterToUint8Array
+            if (pkOfInviter && skOfInviter) {
+              pkOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+                pkOfInviter
+              )
+              skOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+                skOfInviter
+              )
+            }
+            const sak = store.level2SDK.utilServices.aKeyDecrypt(
+              pkOfInviterToUint8Array,
+              skOfInviterToUint8Array,
+              rootEdgeBesak
+            )
+            const inviteEdge = data?.edge
+            const pkOfInvitee = inviteEdge.deat.pk
+            const pkOfInviteeToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+              pkOfInvitee
+            )
+            if (sak) {
+              const eesak = store.level2SDK.utilServices.aKeyEncrypt(
+                pkOfInviteeToUint8Array,
+                skOfInviterToUint8Array,
+                sak
+              )
+              const {
+                data: updatedInviteEdgeRes,
+              } = await store.level2SDK.edgeServices.updateEdge({
+                id: inviteEdge.eid,
+                type: 1053,
+                eesak,
+                name: inviteEdge.name,
+                sig: pkOfInviter ? pkOfInviter : '',
+              })
+              res = updatedInviteEdgeRes
+            }
+          } else {
+            res = data
+          }
           await dispatch({
             type: 'set-cache',
-            payload: { data, cacheIndex },
+            payload: { res, cacheIndex },
           })
-          res = data
 
           if (store.env === 'test') {
             console.log(
