@@ -31,6 +31,19 @@ export default {
     }
     return
   },
+  /**
+   * object (Array|Object): The collection used for iteration.
+   * iterate: Sorting iterative function.
+   * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
+   */
+  SortBy({ object, iterate, orders }) {
+    console.log("test sortBy: %s", iterate);
+    if (isArray(object)) {
+      return _.orderBy(object, iterate, orders)
+    }
+    return "object not is array"
+  },
+
   clear({ object }) {
     if (isArray(object)) {
       object.length = 0
