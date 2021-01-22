@@ -41,7 +41,7 @@ export default {
     if (isArray(object)) {
       return _.orderBy(object, iterate, orders)
     }
-    return "object not is array"
+    return "object is not array"
   },
 
   clear({ object }) {
