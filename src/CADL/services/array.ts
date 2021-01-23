@@ -97,7 +97,48 @@ export default {
     }
     return
   },
+  /**
+   * object (Array|Object): The collection used for iteration.
+   * index: one index of array
+   */
+  removeByIndex({ object, index }) {
+    if (isArray(object)) {
+      object.splice(index, 1);
+      return
+    }
+    return
+  },
+  /***
+   * object1 : this object format like    0: {duration: "03:00AM-07:00AM", index: 0, key: "Su"}
+   * object2 : this object format like    0: ["08:00AM-01:00PM"] 
+   * index : 
+   * duration ：
+   */
 
+  removeWeekByIndexs({ object1, object2, index, duration }) {
+    //Functions used to make specific pages
+    if (isArray(object1) && isArray(object2)) {
+      for (let i = 0; i < object1.length; i++) {
+        if (object1[i].index === index && object1[i].duration === duration) {
+          object1.splice(i, 1)
+          console.log(i);
+        } else {
+          console.log('false', 'color: red');
+        }
+      }
+
+      for (let i = 0; i < object2[index].length; i++) {
+        if (object2[index][i] === duration) {
+          object2[index].splice(i, 1)
+          console.log(i);
+        } else {
+          console.log('false', 'color: red');
+        }
+      }
+      return
+    }
+    return
+  },
 
 
   append({ newMessage, messages }) {
@@ -128,6 +169,28 @@ export default {
       }
     }
     return false
+  },
+  AddWeek({ object, duration, index, key }) {
+    console.log(object, duration, index, key);
+    if (typeof (index) == undefined) {
+      console.log("index is undefined");
+      return;
+    }
+    if (typeof (key) == undefined) {
+      console.log("key is undefined");
+      return;
+    }
+    if (typeof (duration) == undefined) {
+      console.log("duration is undefined");
+      return;
+    }
+    // if (_.isArray(object)) {
+    var arr = { "duration": duration, "index": index, "key": key }
+    console.log(object.length)
+    object[object.length] = arr
+    return
+    // }
+    // return
   },
   push({ newMessage, messages }) {
     if (isArray(messages)) {
