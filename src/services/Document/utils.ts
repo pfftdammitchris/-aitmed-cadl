@@ -21,6 +21,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
   esakOfCurrentUser,
 }) => {
   // Validate Edge
+
   const edge =
     typeof _edge === 'undefined' ? await retrieveEdge(document.eid) : _edge
   if (edge === null)
@@ -93,44 +94,90 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
         throw 'deat.url is missing'
       }
     }
+
+    const vid = localStorage.getItem('user_vid')
     // Decryption
     const edgeHasBesak = edge.besak && edge.besak !== ''
     const edgeHasEesak = edge.eesak && edge.eesak !== ''
-    if (dType.isEncrypted && (edgeHasBesak || edgeHasEesak)) {
+    let inviteEdge
+    if (edge.type === 40000) {
+      const vidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
+        edge.bvid
+      )
+      if (vidUint8ArrayToBase64 !== vid) {
+        //we have to fetch invite edge to get eesak
+        const { data } = await store.level2SDK.edgeServices.retrieveEdge({
+          idList: [edge.eid],
+          options: {
+            type: 1053,
+            xfname: 'refid',
+          },
+        })
+        const { edge: invites } = data
+        const inviteEdgeArray = invites.filter((invite) => {
+          const evidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
+            invite.evid
+          )
+
+          return evidUint8ArrayToBase64 === vid && invite.sig
+        })
+        inviteEdge = inviteEdgeArray.length > 0 ? inviteEdgeArray.shift() : ''
+      }
+    }
+
+    if (
+      dType.isEncrypted &&
+      (edgeHasBesak || edgeHasEesak || inviteEdge.eesak)
+    ) {
       let esak
-      if (esakOfCurrentUser) {
+      if (inviteEdge) {
+        esak = inviteEdge.eesak
+      } else if (esakOfCurrentUser) {
         esak = esakOfCurrentUser
       } else {
         esak = edgeHasBesak ? edge.besak : edge.eesak
       }
-      let publicKeyOfReceiver: string
-      if (edge.sig) {
+      let publicKeyOfSender: string
+      if (inviteEdge) {
+        publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
+          inviteEdge.sig
+        )
+        try {
+          data = await store.level2SDK.commonServices.decryptData(
+            esak,
+            publicKeyOfSender,
+            data
+          )
+        } catch (error) {
+          console.log(error)
+        }
+      } else if (edge.sig) {
         if (edge.sig instanceof Uint8Array) {
-          publicKeyOfReceiver = store.level2SDK.utilServices.uint8ArrayToBase64(
+          publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
             edge.sig
           )
         } else {
-          publicKeyOfReceiver = edge.sig
+          publicKeyOfSender = edge.sig
         }
         data = await store.level2SDK.commonServices.decryptData(
           esak,
-          publicKeyOfReceiver,
+          publicKeyOfSender,
           data
         )
       } else if (!edge.sig && edge.type === 10001) {
         const pkLocalStorage = localStorage.getItem('pk')
-        publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : ''
+        publicKeyOfSender = pkLocalStorage ? pkLocalStorage : ''
         data = await store.level2SDK.commonServices.decryptData(
           esak,
-          publicKeyOfReceiver,
+          publicKeyOfSender,
           data
         )
       } else if (edge.type === 10000) {
         const pkLocalStorage = localStorage.getItem('pk')
-        publicKeyOfReceiver = pkLocalStorage ? pkLocalStorage : ''
+        publicKeyOfSender = pkLocalStorage ? pkLocalStorage : ''
         data = await store.level2SDK.commonServices.decryptData(
           esak,
-          publicKeyOfReceiver,
+          publicKeyOfSender,
           data
         )
       }
