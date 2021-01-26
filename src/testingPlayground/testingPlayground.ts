@@ -9,13 +9,14 @@ import { Account } from '../'
 import Document from '../services/Document'
 import store from '../common/store'
 import ecc from '../CADL/services/ecc'
+import string from '../CADL/services/string'
 import stringServices from '../CADL/services/string'
 
 // export default (async function () {
 //   console.log('red')
 // })()
 export default (async function () {
-  console.log(ecc.signature('Hello World'))
+  console.log(string.formatTimer(Date.now()))
   // console.log(stringServices.formatUnixtimeLT_en(Date.now()))
   // const cadl = new CADL({
   //   ...defaultConfig,
