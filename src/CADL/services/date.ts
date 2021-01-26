@@ -23,7 +23,7 @@ export default {
   /**
    * timestamp--->date
    */
-  stampToDate({ timeStamp }) {
+  stampToDate(timeStamp) {
     return new Date((parseInt(timeStamp) * 1000))
   },
   stampToTime(timeStamp) {
