@@ -119,7 +119,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
             invite.evid
           )
 
-          return evidUint8ArrayToBase64 === vid && invite.sig
+          return evidUint8ArrayToBase64 === vid
         })
         inviteEdge = inviteEdgeArray.length > 0 ? inviteEdgeArray.shift() : ''
       }
@@ -130,6 +130,15 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       (edgeHasBesak || edgeHasEesak || inviteEdge.eesak)
     ) {
       let esak
+      const creatorOfEdge =
+        edge.bvid instanceof Uint8Array
+          ? store.level2SDK.utilServices.uint8ArrayToBase64(edge.evid)
+          : edge.evid
+      const currentUserVid = localStorage.getItem('user_vid')
+      const isCurrentUserCreatorOfEdge =
+        creatorOfEdge === currentUserVid
+          ? store.level2SDK.utilServices.uint8ArrayToBase64(edge.bvid)
+          : edge.bvid
       if (inviteEdge) {
         esak = inviteEdge.eesak
       } else if (esakOfCurrentUser) {
@@ -139,8 +148,14 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       }
       let publicKeyOfSender: string
       if (inviteEdge) {
+        const {
+          data: inviterVertexResponse,
+        } = await store.level2SDK.vertexServices.retrieveVertex({
+          idList: [inviteEdge?.bvid],
+        })
+        const inviterVertex = inviterVertexResponse?.vertex?.[0]
         publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
-          inviteEdge.sig
+          inviterVertex?.pk
         )
         try {
           data = await store.level2SDK.commonServices.decryptData(
@@ -151,20 +166,23 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
         } catch (error) {
           console.log(error)
         }
-      } else if (edge.sig) {
-        if (edge.sig instanceof Uint8Array) {
-          publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
-            edge.sig
-          )
-        } else {
-          publicKeyOfSender = edge.sig
-        }
+      } else if (!isCurrentUserCreatorOfEdge) {
+        const {
+          data: creatorOfEdgeResponse,
+        } = await store.level2SDK.vertexServices.retrieveVertex({
+          idList: [edge?.bvid],
+        })
+        const creatorOfEdgeVertex = creatorOfEdgeResponse?.vertex?.[0]
+        publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
+          creatorOfEdgeVertex?.pk
+        )
+
         data = await store.level2SDK.commonServices.decryptData(
           esak,
           publicKeyOfSender,
           data
         )
-      } else if (!edge.sig && edge.type === 10001) {
+      } else if (edge.type === 10001) {
         const pkLocalStorage = localStorage.getItem('pk')
         publicKeyOfSender = pkLocalStorage ? pkLocalStorage : ''
         data = await store.level2SDK.commonServices.decryptData(
@@ -175,6 +193,14 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       } else if (edge.type === 10000) {
         const pkLocalStorage = localStorage.getItem('pk')
         publicKeyOfSender = pkLocalStorage ? pkLocalStorage : ''
+        data = await store.level2SDK.commonServices.decryptData(
+          esak,
+          publicKeyOfSender,
+          data
+        )
+      } else {
+        publicKeyOfSender = localStorage.getItem('pk') || ''
+
         data = await store.level2SDK.commonServices.decryptData(
           esak,
           publicKeyOfSender,

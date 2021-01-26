@@ -292,10 +292,9 @@ function create({ pageName, apiObject, dispatch }) {
                 type: 40000,
                 besak,
                 name: rootEdge.name,
-                sig: pkOfInviter ? pkOfInviter : '',
               })
 
-              if (updatedRootEdgeRes?.edge?.length > 0) rootEdgeBesak = besak
+              if (updatedRootEdgeRes?.edge) rootEdgeBesak = besak
             }
             let pkOfInviterToUint8Array, skOfInviterToUint8Array
             if (pkOfInviter && skOfInviter) {
@@ -329,7 +328,6 @@ function create({ pageName, apiObject, dispatch }) {
                 type: 1053,
                 eesak,
                 name: inviteEdge.name,
-                sig: pkOfInviter ? pkOfInviter : '',
               })
               res = updatedInviteEdgeRes
             }
