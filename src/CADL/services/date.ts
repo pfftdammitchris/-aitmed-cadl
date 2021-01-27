@@ -79,7 +79,7 @@ export default {
     console.log(arr)
     return arr
   },
-  calendarArray({ year, month }) {
+  calendarArray({ year, month, today }) {
     year = parseInt(year)
     month = parseInt(month)
     let dataObject: Record<string, any> = []
@@ -108,11 +108,20 @@ export default {
     }
     //  convert dataarray to jsononject
     for (let i = 0; i < dataArray.length; i++) {
-      dataObject.push({
-        key: dataArray[i],
-        color: '0xf5b4ae',
-        backgroundColor: '#000000',
-      })
+      if (dataArray[i] == today) {
+        dataObject.push({
+          key: dataArray[i],
+          color: '#ffffff',
+          backgroundColor: '#508CC7',
+        })
+      } else {
+        dataObject.push({
+          key: dataArray[i],
+          color: '#000000',
+          backgroundColor: '#ffffff',
+        })
+      }
+
     }
     // let dataJson = _.chunk(dataArray, 7);
     return dataObject
