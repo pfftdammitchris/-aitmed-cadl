@@ -566,7 +566,10 @@ function populateString({
       if (replacement && lookFor == '~') {
         replacement = replacement + source.substring(2)
         break
-      } else if (replacement && replacement !== source) {
+      } else if (
+        (replacement || replacement === '') &&
+        replacement !== source
+      ) {
         if (
           typeof replacement === 'string' &&
           replacement.startsWith(lookFor)
