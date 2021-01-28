@@ -215,6 +215,7 @@ function create({ pageName, apiObject, dispatch }) {
               content: name?.data,
               mediaType: name?.type,
               title: name?.title,
+              user: name?.user,
               tags: name?.tags,
               type: restOfDocOptions?.type,
             }
@@ -231,6 +232,7 @@ function create({ pageName, apiObject, dispatch }) {
               content: name?.data,
               mediaType: name?.type,
               title: name?.title,
+              user: name?.user,
               tags: name?.tags,
               type: restOfDocOptions?.type,
               dTypeProps,
@@ -254,6 +256,7 @@ function create({ pageName, apiObject, dispatch }) {
             mediaType: name?.type,
             title: name?.title,
             tags: name?.tags,
+            user: name?.user,
             type: restOfDocOptions?.type,
             dTypeProps,
           })
@@ -291,6 +294,7 @@ function create({ pageName, apiObject, dispatch }) {
               edge_id: eid,
               content: name?.data,
               mediaType: name?.type,
+              user: name?.user,
               title: name?.title,
               type: restOfDocOptions?.type,
             }
@@ -304,6 +308,7 @@ function create({ pageName, apiObject, dispatch }) {
               edge_id: eid,
               content: name?.data,
               mediaType: name?.type,
+              user: name?.user,
               title: name?.title,
               type: restOfDocOptions?.type,
               dTypeProps,
@@ -326,6 +331,7 @@ function create({ pageName, apiObject, dispatch }) {
             content: name?.data,
             mediaType: name?.type,
             title: name?.title,
+            user: name?.user,
             type: restOfDocOptions?.type,
             dTypeProps,
           })

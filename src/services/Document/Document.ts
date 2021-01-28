@@ -34,6 +34,7 @@ export const create: NoteTypes.Create = async ({
   tags = [],
   content,
   type,
+  user,
   mediaType,
   dataType = 0,
   dTypeProps,
@@ -162,6 +163,9 @@ export const create: NoteTypes.Create = async ({
     title,
     tags,
     type: blob.type,
+  }
+  if (user) {
+    name.user = user
   }
 
   // data must be base64 in name field
