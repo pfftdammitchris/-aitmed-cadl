@@ -5,7 +5,7 @@ import { ungzip } from '../../utils'
 
 import DType from '../../common/DType'
 
-import * as NoteTypes from '../Note/types'
+import * as NoteTypes from './types'
 import * as NoteUtilsTypes from './utilsTypes'
 
 export const CONTENT_SIZE_LIMIT = 32768
@@ -248,6 +248,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     ...document,
     name: {
       title: name.title,
+      user: name?.user,
       type: contentType,
       data: content,
       tags: name.tags || [],

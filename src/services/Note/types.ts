@@ -9,6 +9,7 @@ export interface NoteDocumentDeat {
 
 export interface NoteDocumentName {
   title: string
+  user?: string
   tags: string[]
   edit_mode?: number
   type: string
@@ -120,7 +121,8 @@ export interface ListSharedNotesReturn {
   mapper: Record<string, Note>
 }
 export interface ListSharedNotes {
-  (notebook_id: string | Uint8Array, options?: ListSharedNotesOptions): Promise<
-    ListSharedNotesReturn
-  >
+  (
+    notebook_id: string | Uint8Array,
+    options?: ListSharedNotesOptions
+  ): Promise<ListSharedNotesReturn>
 }
