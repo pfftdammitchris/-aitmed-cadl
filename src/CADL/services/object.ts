@@ -1,4 +1,4 @@
-import _, { isObject } from 'lodash'
+import _, { isArray, isObject } from 'lodash'
 
 // Points from talk with Ray:
 // Original plan is to modify the object in place, but the object could be referenced in multiple locations
@@ -43,6 +43,16 @@ export default {
     }
     return
   },
+  //  clear one key of all items of object, and set one item ， for list radio
+  clearAndSetKey({ object, item, key, value }) {
+    if (isArray(object)) {
+      for (let i = 0; i < object.length; i++) {
+        object[i][key] = ""
+      }
+      item[key] = value
+    }
+    return
+  }
   // Modifies in place
 
   // remove({ object, key }) {
