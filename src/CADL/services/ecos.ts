@@ -17,6 +17,7 @@ export default {
     const sharedDoc = await Document.create({
       content,
       title: note?.name?.title,
+      user: note?.name?.user,
       type: note?.type,
       edge_id: targetEdgeID,
       mediaType: note?.name?.type,
@@ -38,6 +39,7 @@ export default {
       await Document.create({
         content,
         title: note?.name?.title,
+        user: note?.name?.user,
         type: note?.type,
         edge_id: targetEdgeID,
         mediaType: note?.name?.type,
