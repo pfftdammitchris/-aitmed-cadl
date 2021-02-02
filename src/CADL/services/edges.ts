@@ -311,7 +311,9 @@ function create({ pageName, apiObject, dispatch }) {
               rootEdgeBesak
             )
             const inviteEdge = data?.edge
-            const pkOfInvitee = inviteEdge.deat.pk
+            const pkOfInvitee = inviteEdge.deat.evPK
+              ? inviteEdge.deat.evPK
+              : inviteEdge.deat.eePK
             const pkOfInviteeToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
               pkOfInvitee
             )
