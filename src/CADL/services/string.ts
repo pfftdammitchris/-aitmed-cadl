@@ -2,6 +2,9 @@ import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 
 export default {
+  formatTimer(time: number) {
+    return moment(time).format('HH:mm:ss')
+  },
   formatUnixtime_en(unixTime: number) {
     return moment(unixTime * 1000).format('lll')
   },

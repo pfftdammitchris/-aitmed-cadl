@@ -34,6 +34,7 @@ export const create: NoteTypes.Create = async ({
   tags = [],
   content,
   type,
+  user,
   mediaType,
   dataType = 0,
   dTypeProps,
@@ -63,40 +64,35 @@ export const create: NoteTypes.Create = async ({
 
   // Encryption
   let esak: Uint8Array | string = ''
-  let publicKeyOfReceiver: string = ''
-  if (edge.besak && edge.sig && !!+dTypeProps?.isEncrypted) {
-    esak = edge.besak
-    if (edge.sig instanceof Uint8Array) {
-      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
-        edge.sig
-      )
-    } else {
-      publicKeyOfReceiver = edge.sig
-    }
-  } else if (edge.eesak && edge.sig && !!+dTypeProps?.isEncrypted) {
-    esak = edge.eesak
-    if (edge.sig instanceof Uint8Array) {
-      publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
-        edge.sig
-      )
-    } else {
-      publicKeyOfReceiver = edge.sig
-    }
-  } else if (!!+dTypeProps?.isEncrypted && !edge.besak) {
-    //the document has an isEncrypted prop set to true
-    //so we add a besak to edge
-    const pk = localStorage.getItem('pk')
-    if (pk) {
+  let publicKeyOfSender: string = ''
+  const creatorOfEdge =
+    edge.bvid instanceof Uint8Array
+      ? store.level2SDK.utilServices.uint8ArrayToBase64(edge.bvid)
+      : edge.bvid
+  const evidOfEdge =
+    edge.evid instanceof Uint8Array
+      ? store.level2SDK.utilServices.uint8ArrayToBase64(edge.evid)
+      : edge.evid
+  const currentUserVid = localStorage.getItem('user_vid')
+  const isCurrentUserCreatorOfEdge = creatorOfEdge === currentUserVid
+  const isCurrentUserOnEvidOfEdge = creatorOfEdge === evidOfEdge
+  const publicKeyOfCurrentUser = localStorage.getItem('pk') || ''
+  const isInviteEdge = edge?.type === 40000
+
+  if (isCurrentUserCreatorOfEdge) {
+    if (edge.besak && !!+dTypeProps?.isEncrypted) {
+      esak = edge.besak
+      publicKeyOfSender = publicKeyOfCurrentUser
+    } else if (!edge.besak && !!+dTypeProps?.isEncrypted) {
       let updatedEdge
-      publicKeyOfReceiver = pk
-      esak = ecc.generateESAK({ pk })
+      publicKeyOfSender = publicKeyOfCurrentUser
+      esak = ecc.generateESAK({ pk: publicKeyOfCurrentUser })
       try {
         updatedEdge = await store.level2SDK.edgeServices.updateEdge({
           besak: esak,
           id: edge.eid,
           type: edge.type,
           name: edge.name,
-          sig: pk,
         })
       } catch (error) {
         console.log(error)
@@ -106,12 +102,57 @@ export const create: NoteTypes.Create = async ({
         esak = ''
       }
     }
+  } else if (isInviteEdge && !isCurrentUserCreatorOfEdge) {
+    //we have to fetch invite edge to get eesak
+    const { data } = await store.level2SDK.edgeServices.retrieveEdge({
+      idList: [edge.eid],
+      options: {
+        type: 1053,
+        xfname: 'refid',
+      },
+    })
+    const { edge: invites } = data
+    const inviteEdgeArray = invites.filter((invite) => {
+      const evidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
+        invite.evid
+      )
+
+      return evidUint8ArrayToBase64 === currentUserVid
+    })
+    const inviteEdge = inviteEdgeArray.length > 0 ? inviteEdgeArray.shift() : ''
+
+    if (inviteEdge) {
+      esak = inviteEdge.eesak
+    }
+    if (!inviteEdge) {
+      esak = ''
+    }
+
+    const {
+      data: creatorOfEdgeResponse,
+    } = await store.level2SDK.vertexServices.retrieveVertex({
+      idList: [edge?.bvid],
+    })
+    const inviterVertex = creatorOfEdgeResponse?.vertex?.[0]
+    publicKeyOfSender = inviterVertex?.deat?.pk
+  } else if (isCurrentUserOnEvidOfEdge) {
+    if (edge.eesak && !!+dTypeProps?.isEncrypted) {
+      esak = edge.eesak
+
+      const {
+        data: creatorOfEdgeResponse,
+      } = await store.level2SDK.vertexServices.retrieveVertex({
+        idList: [edge?.bvid],
+      })
+      const creatorOfEdgeVertex = creatorOfEdgeResponse?.vertex?.[0]
+      publicKeyOfSender = creatorOfEdgeVertex?.deat?.pk
+    }
   }
 
   const { data, isEncrypt } = await produceEncryptData(
     gzipData,
     esak,
-    publicKeyOfReceiver
+    publicKeyOfSender
   )
   dType.isEncrypted = isEncrypt
 
@@ -122,6 +163,9 @@ export const create: NoteTypes.Create = async ({
     title,
     tags,
     type: blob.type,
+  }
+  if (user) {
+    name.user = user
   }
 
   // data must be base64 in name field
@@ -235,32 +279,6 @@ export const update: any = async (
 
   const dType = isOldDataStructure ? new DType() : new DType(document.type)
 
-  if (isOldDataStructure) {
-    if (typeof name.isOnS3 !== 'undefined') {
-      dType.isOnServer = !name.isOnS3
-      delete name.isOnS3
-    }
-    if (typeof name.isGzip !== 'undefined') {
-      dType.isGzip = name.isGzip
-      delete name.isGzip
-    }
-    if (typeof name.isBinary !== 'undefined') {
-      dType.isBinary = name.isBinary
-      delete name.isBinary
-    }
-    if (typeof name.isEncrypt !== 'undefined') {
-      dType.isEncrypted = name.isEncrypt
-      delete name.isEncrypt
-    }
-
-    if (typeof name.edit_mode !== 'undefined') {
-      dType.isEditable = !!name.edit_mode
-      delete name.edit_mode
-    }
-
-    dType.setMediaType(name.type)
-  }
-
   let note: any
   let response
   // Update document
@@ -292,24 +310,24 @@ export const update: any = async (
 
     // Encryption
     let esak: Uint8Array | string = ''
-    let publicKeyOfReceiver: string = ''
+    let publicKeyOfSender: string = ''
     if (edge.besak && edge.sig) {
       esak = edge.besak
       if (edge.sig instanceof Uint8Array) {
-        publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
+        publicKeyOfSender = await store.level2SDK.utilServices.uint8ArrayToBase64(
           edge.sig
         )
       } else {
-        publicKeyOfReceiver = edge.sig
+        publicKeyOfSender = edge.sig
       }
     } else if (edge.eesak && edge.sig) {
       esak = edge.eesak
       if (edge.sig instanceof Uint8Array) {
-        publicKeyOfReceiver = await store.level2SDK.utilServices.uint8ArrayToBase64(
+        publicKeyOfSender = await store.level2SDK.utilServices.uint8ArrayToBase64(
           edge.sig
         )
       } else {
-        publicKeyOfReceiver = edge.sig
+        publicKeyOfSender = edge.sig
       }
     } else if (!!+dTypeProps?.isEncrypted && !edge.besak) {
       //the document has an isEncrypted prop set to true
@@ -317,7 +335,7 @@ export const update: any = async (
       const pk = localStorage.getItem('pk')
       if (pk) {
         let updatedEdge
-        publicKeyOfReceiver = pk
+        publicKeyOfSender = pk
         esak = ecc.generateESAK({ pk })
         try {
           updatedEdge = await store.level2SDK.edgeServices.updateEdge({
@@ -341,7 +359,7 @@ export const update: any = async (
     const { data, isEncrypt } = await produceEncryptData(
       gzipData,
       esak,
-      publicKeyOfReceiver
+      publicKeyOfSender
     )
     dType.isEncrypted = isEncrypt
 
