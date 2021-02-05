@@ -6,7 +6,7 @@ export default {
     return token
   },
   getAPPID({ appName }) {
-    const appNameUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+    const appNameUint8Array = store.level2SDK.utilServices.uTF8ToUint8Array(
       appName
     )
     const appNameSHA256 = sha256(appNameUint8Array)
