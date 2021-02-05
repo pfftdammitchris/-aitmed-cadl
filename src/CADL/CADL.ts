@@ -1131,7 +1131,11 @@ export default class CADL extends EventEmitter {
         return results
       }
       case 'update-localStorage': {
-        localStorage.setItem('Global', JSON.stringify(this.root?.Global))
+        //only add the Global object if user is loggedIn
+        const esk = localStorage.getItem('esk')
+        if (esk) {
+          localStorage.setItem('Global', JSON.stringify(this.root?.Global))
+        }
         break
       }
       case 'add-fn': {

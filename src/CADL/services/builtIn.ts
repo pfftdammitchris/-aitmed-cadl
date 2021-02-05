@@ -235,6 +235,7 @@ export default function builtInFns(dispatch?: Function) {
     },
     cleanLocalStorage() {
       store.level2SDK.Account.logoutClean()
+      localStorage.removeItem('Global')
       return
     },
   }
