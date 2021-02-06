@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import AppointmentSchedule from './__mocks__/AppointmentSchedule'
+// import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -445,7 +445,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'AppointmentSchedule') return AppointmentSchedule
+    // if (pageName === 'BaseDataModel') return BaseDataModel
 
     let pageCADL
     let pageUrl
@@ -2069,12 +2069,14 @@ export default class CADL extends EventEmitter {
     const returnValues = {}
     await asyncForEach(actions, async (action, index) => {
       //handles explicit evalObject call
+      if (typeof action === 'string' && action.includes('=')) {
+        action = { [action]: '' }
+      }
       const clone = _.cloneDeep(action)
       const actionWithVals: Record<string, any> = replaceVars({
         vars: dataKey,
         source: clone,
       })
-
       if ('actionType' in action && action?.actionType === 'evalObject') {
         const response = await this.dispatch({
           type: 'eval-object',
