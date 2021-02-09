@@ -35,7 +35,7 @@ export default {
         if: [
           '=.Global.currentUser.vertex.sk',
           {
-            goto: 'MeetingRoomInvited',
+            goto: { destination: 'MeetingRoomInvited', reload: true },
           },
           'continue',
         ],
