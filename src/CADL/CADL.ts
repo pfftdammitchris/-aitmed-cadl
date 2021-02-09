@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SignIn from './__mocks__/SignIn'
+// import Logout from './__mocks__/Logout'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -294,7 +294,11 @@ export default class CADL extends EventEmitter {
     if (builtIn && isObject(builtIn)) {
       this.newDispatch({
         type: 'ADD_BUILTIN_FNS',
-        payload: { builtInFns: { ...builtIn } },
+        payload: {
+          builtInFns: {
+            ...builtIn,
+          },
+        },
       })
     }
     let pageCADL = await this.getPage(pageName)
@@ -445,7 +449,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'SignIn') return SignIn
+    // if (pageName === 'Logout') return Logout
 
     let pageCADL
     let pageUrl
@@ -1319,11 +1323,7 @@ export default class CADL extends EventEmitter {
     }
     if (condResult === true || condResult === 'true') {
       let lookFor
-      if (
-        isObject(ifTrueEffect) &&
-        'goto' in ifTrueEffect &&
-        typeof ifTrueEffect['goto'] === 'string'
-      ) {
+      if (isObject(ifTrueEffect) && 'goto' in ifTrueEffect) {
         //handles goto function logic
         const populatedTrueEffect = populateVals({
           source: ifTrueEffect,
@@ -1449,11 +1449,7 @@ export default class CADL extends EventEmitter {
       }
     } else if (condResult === false || condResult === 'false') {
       let lookFor
-      if (
-        isObject(ifFalseEffect) &&
-        'goto' in ifFalseEffect &&
-        typeof ifFalseEffect['goto'] === 'string'
-      ) {
+      if (isObject(ifFalseEffect) && 'goto' in ifFalseEffect) {
         if (
           'goto' in this.root.builtIn &&
           typeof this.root.builtIn['goto'] === 'function'
