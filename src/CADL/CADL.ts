@@ -694,7 +694,6 @@ export default class CADL extends EventEmitter {
         }
       })
     })
-    debugger
     return results
   }
 
@@ -1366,7 +1365,6 @@ export default class CADL extends EventEmitter {
         (isObject(ifTrueEffect) && 'actionType' in ifTrueEffect) ||
         Array.isArray(ifTrueEffect)
       ) {
-        debugger
         //this returns unhandled object expressions that will be handled by the UI
         return ifTrueEffect
       } else if (
