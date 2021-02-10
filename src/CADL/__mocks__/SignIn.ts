@@ -1100,10 +1100,10 @@ export default {
                         actionType: 'evalObject',
                         object: '..check',
                       },
-                      {
-                        actionType: 'evalObject',
-                        object: '..checkPk',
-                      },
+                      // {
+                      //   actionType: 'evalObject',
+                      //   object: '..checkPk',
+                      // },
                       {
                         actionType: 'evalObject',
                         object: {
