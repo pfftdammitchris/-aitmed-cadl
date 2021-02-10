@@ -717,6 +717,7 @@ export default class CADL extends EventEmitter {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       //handles assignment expressions
@@ -740,6 +741,7 @@ export default class CADL extends EventEmitter {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       const populatedCommand = await this.dispatch({
