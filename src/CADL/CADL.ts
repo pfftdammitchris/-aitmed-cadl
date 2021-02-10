@@ -645,11 +645,14 @@ export default class CADL extends EventEmitter {
 
     const objectKeys = Object.keys(command)
     await asyncForEach(objectKeys, async (key) => {
-      results = await this.handleEvalCommands({
+      const result = await this.handleEvalCommands({
         commands: command,
         key,
         pageName,
       })
+      if (!results && result) {
+        results = result
+      }
     })
     return results
   }
@@ -685,11 +688,14 @@ export default class CADL extends EventEmitter {
 
       const commandKeys = Object.keys(populatedCommand)
       await asyncForEach(commandKeys, async (key) => {
-        results = await this.handleEvalCommands({
+        const result = await this.handleEvalCommands({
           commands: populatedCommand,
           key,
           pageName,
         })
+        if (!results && result) {
+          results = result
+        }
       })
     })
     return results

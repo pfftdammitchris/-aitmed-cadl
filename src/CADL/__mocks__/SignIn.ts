@@ -129,6 +129,24 @@ export default {
             '=.builtIn.string.equal': {
               dataIn: {
                 string1: '=..loginNewDevice.response.code',
+                string2: 1020,
+              },
+            },
+          },
+          {
+            actionType: 'popUp',
+            popUpView: 'userCannotfind',
+            wait: true,
+          },
+          'continue',
+        ],
+      },
+      {
+        if: [
+          {
+            '=.builtIn.string.equal': {
+              dataIn: {
+                string1: '=..loginNewDevice.response.code',
                 string2: 0,
               },
             },
@@ -138,6 +156,17 @@ export default {
             actionType: 'popUp',
             popUpView: 'wrongCode',
             wait: true,
+          },
+        ],
+      },
+    ],
+    checkPk: [
+      {
+        if: [
+          '=.Global.currentUser.vertex.pk',
+          'continue',
+          {
+            goto: 'SignUp',
           },
         ],
       },
@@ -279,6 +308,11 @@ export default {
         '.BaseCheckView': '',
         message: 'Incorrect verificationCode',
         viewTag: 'wrongCode',
+      },
+      {
+        '.BaseCheckView': '',
+        message: 'Cannot Find the User',
+        viewTag: 'userCannotfind',
       },
       {
         type: 'view',
@@ -585,20 +619,8 @@ export default {
                         if: [
                           '=.Global.currentUser.vertex.sk',
                           {
-                            goto: 'ChatList',
+                            goto: 'MeetingRoomInvited',
                           },
-                          'continue',
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    actionType: 'evalObject',
-                    object: [
-                      {
-                        if: [
-                          '=.Global.currentUser.vertex.sk',
-                          'continue',
                           {
                             '=.SignIn.verificationCode.edgeAPI.store': '',
                           },
@@ -1078,6 +1100,10 @@ export default {
                         actionType: 'evalObject',
                         object: '..check',
                       },
+                      // {
+                      //   actionType: 'evalObject',
+                      //   object: '..checkPk',
+                      // },
                       {
                         actionType: 'evalObject',
                         object: {
@@ -1133,7 +1159,7 @@ export default {
                             if: [
                               '=.Global.currentUser.vertex.sk',
                               {
-                                goto: 'ChatList',
+                                goto: 'MeetingRoomInvited',
                               },
                               'continue',
                             ],
