@@ -356,7 +356,7 @@ export default class CADL extends EventEmitter {
         //process components again to fill in new values
         const processedComponentsAgain = this.processPopulate({
           source: processedComponents,
-          lookFor: ['.', '..', '_', '~', '='],
+          lookFor: ['.', '..', '_', '~'],
           skip: [
             'update',
             'check',
@@ -371,6 +371,25 @@ export default class CADL extends EventEmitter {
           withFns: true,
           pageName,
         })
+
+        const evolveComponentVals = populateObject({
+          source: processedComponentsAgain[pageName].components,
+          lookFor: '=',
+          skip: [
+            'update',
+            'check',
+            'edge',
+            'document',
+            'vertex',
+            'init',
+            'formData',
+            'dataIn',
+            ...skip,
+          ],
+          pageName,
+          locations: [processedComponentsAgain[pageName]],
+        })
+        processedComponentsAgain[pageName].components = evolveComponentVals
         let replaceUpdateJob2 = replaceEvalObject({
           pageName,
           cadlObject: processedComponentsAgain,
@@ -401,7 +420,7 @@ export default class CADL extends EventEmitter {
       //process components again to fill in new values
       const processedComponentsAgain = this.processPopulate({
         source: processedComponents,
-        lookFor: ['.', '..', '_', '~', '='],
+        lookFor: ['.', '..', '_', '~'],
         skip: [
           'update',
           'check',
@@ -417,6 +436,24 @@ export default class CADL extends EventEmitter {
         pageName,
       })
 
+      const evolveComponentVals = populateObject({
+        source: processedComponentsAgain[pageName].components,
+        lookFor: '=',
+        skip: [
+          'update',
+          'check',
+          'edge',
+          'document',
+          'vertex',
+          'init',
+          'formData',
+          'dataIn',
+          ...skip,
+        ],
+        pageName,
+        locations: [processedComponentsAgain[pageName]],
+      })
+      processedComponentsAgain[pageName].components = evolveComponentVals
       let replaceUpdateJob2 = replaceEvalObject({
         pageName,
         cadlObject: processedComponentsAgain,
