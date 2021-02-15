@@ -1,4 +1,5 @@
 import _, { isArray, isObject } from 'lodash'
+import number from './number'
 
 // Points from talk with Ray:
 // Original plan is to modify the object in place, but the object could be referenced in multiple locations
@@ -52,7 +53,7 @@ export default {
       item[key] = value
     }
     return
-  }
+  },
   // Modifies in place
 
   // remove({ object, key }) {

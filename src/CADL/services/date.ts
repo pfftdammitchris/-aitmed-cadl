@@ -1,4 +1,10 @@
-import _ from 'lodash'
+import _, { isObject } from 'lodash'
+import moment from 'moment'
+class splitTime {
+  showTime: string
+  stime: number
+  etime: number
+}
 export default {
   getDate() {
     return new Date().getDate()
@@ -125,5 +131,21 @@ export default {
     }
     // let dataJson = _.chunk(dataArray, 7);
     return dataObject
+  },
+  splitByTimeSlot({ object, timeSlot }) {
+    let splitTimeArray: Array<splitTime> = []
+    if (isObject(object)) {
+      if (timeSlot) {
+        let frequency = object.name.setting.bookingTimeSpan / timeSlot
+        for (let i = 0; i < frequency; i++) {
+          let splitTimeItem = new splitTime();
+          splitTimeItem.stime = object.stime + i * timeSlot * 60
+          splitTimeItem.etime = object.stime + (i + 1) * timeSlot * 60
+          splitTimeItem.showTime = moment(splitTimeItem.stime * 1000).format('LT')
+          splitTimeArray.push(splitTimeItem)
+        }
+        return splitTimeArray
+      }
+    }
   },
 }
