@@ -31,7 +31,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import Logout from './__mocks__/Logout'
+// import VideoChat from './__mocks__/VideoChat'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -486,7 +486,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'Logout') return Logout
+    // if (pageName === 'VideoChat') return VideoChat
 
     let pageCADL
     let pageUrl
@@ -687,7 +687,7 @@ export default class CADL extends EventEmitter {
         key,
         pageName,
       })
-      if (!results && result) {
+      if (results === undefined && result !== undefined) {
         results = result
       }
     })
@@ -730,7 +730,7 @@ export default class CADL extends EventEmitter {
           key,
           pageName,
         })
-        if (!results && result) {
+        if (results === undefined && result !== undefined) {
           results = result
         }
       })
@@ -1373,7 +1373,7 @@ export default class CADL extends EventEmitter {
         const populatedTrueEffect = populateVals({
           source: ifTrueEffect,
           pageName,
-          lookFor: ['..', '.'],
+          lookFor: ['..', '.', '='],
           locations: [this.root, this.root[pageName]],
         })
         await this.root.builtIn['goto'](populatedTrueEffect['goto'])
@@ -1503,7 +1503,7 @@ export default class CADL extends EventEmitter {
           const populatedFalseEffect = populateVals({
             source: ifFalseEffect,
             pageName,
-            lookFor: ['..', '.'],
+            lookFor: ['..', '.', '='],
             locations: [this.root, this.root[pageName]],
           })
           await this.root.builtIn['goto'](populatedFalseEffect['goto'])
