@@ -22,6 +22,7 @@ import {
   attachFns,
   populateKeys,
   populateVals,
+  populateArray,
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
   replaceVars,
@@ -372,7 +373,7 @@ export default class CADL extends EventEmitter {
           pageName,
         })
 
-        const evolveComponentVals = populateObject({
+        const evolveComponentVals = populateArray({
           source: processedComponentsAgain[pageName].components,
           lookFor: '=',
           skip: [
@@ -387,7 +388,7 @@ export default class CADL extends EventEmitter {
             ...skip,
           ],
           pageName,
-          locations: [processedComponentsAgain[pageName]],
+          locations: [processedComponentsAgain[pageName], this.root],
         })
         processedComponentsAgain[pageName].components = evolveComponentVals
         let replaceUpdateJob2 = replaceEvalObject({
@@ -436,7 +437,7 @@ export default class CADL extends EventEmitter {
         pageName,
       })
 
-      const evolveComponentVals = populateObject({
+      const evolveComponentVals = populateArray({
         source: processedComponentsAgain[pageName].components,
         lookFor: '=',
         skip: [
@@ -451,7 +452,7 @@ export default class CADL extends EventEmitter {
           ...skip,
         ],
         pageName,
-        locations: [processedComponentsAgain[pageName]],
+        locations: [processedComponentsAgain[pageName], this.root],
       })
       processedComponentsAgain[pageName].components = evolveComponentVals
       let replaceUpdateJob2 = replaceEvalObject({
