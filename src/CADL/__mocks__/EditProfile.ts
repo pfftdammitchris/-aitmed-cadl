@@ -43,6 +43,9 @@ export default {
       {
         '=.EditProfile.profile.docAPI.store': '',
       },
+      {
+        '=.Global.currentUser.vertexAPI.store': '',
+      },
     ],
     update: [
       {
