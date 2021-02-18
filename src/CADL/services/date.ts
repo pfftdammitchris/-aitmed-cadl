@@ -1,4 +1,4 @@
-import _, { isObject } from 'lodash'
+import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
 class splitTime {
   showTime: string
@@ -132,29 +132,35 @@ export default {
     // let dataJson = _.chunk(dataArray, 7);
     return dataObject
   },
-  splitByTimeSlot({ object, timeSlot }) {
-    let splitTimeArray: Array<splitTime> = []
-    let i = 0
-    if (isObject(object)) {
-      if (timeSlot) {
-        let splitTimeItem = new splitTime();
-        do {
-          splitTimeItem.stime = object.stime + i * timeSlot * 60
-          splitTimeItem.etime = object.stime + (i + 1) * timeSlot * 60
-          splitTimeItem.showTime = moment(splitTimeItem.stime * 1000).format('LT')
-          splitTimeArray.push(splitTimeItem)
-          // console.log(splitTimeItem.showTime)
-          // console.log(splitTimeItem.stime)
-          // console.log(splitTimeItem.etime)
-          console.log(splitTimeItem)
-          i += 1
-        } while (splitTimeItem.etime <= object.etime)
-        splitTimeArray.pop()
-        console.log(splitTimeArray)
-        return splitTimeArray
-      }
-      return
+  splitByTimeSlot({ object2, timeSlot }) {
+    let splitTimeArray = []
+    let splitTimeItem = {}
+    // alert(typeof (object))
+    console.log(object2)
+    if (object2) {
+      // alert(1)
+      object2.forEach(obj => {
+        if (isObject(obj)) {
+          if (timeSlot) {
+            let i = 0
+            do {
+              splitTimeItem = {
+                stime: obj.stime + i * timeSlot * 60,
+                etime: obj.stime + (i + 1) * timeSlot * 60,
+                showTime: moment((obj.stime + i * timeSlot * 60) * 1000).format('LT'),
+                refid: obj.id
+              }
+              if ((obj.etime - splitTimeItem.stime) < timeSlot * 60) continue
+              splitTimeArray.push(splitTimeItem)
+              i += 1
+            } while (splitTimeItem.etime <= obj.etime)
+            // splitTimeArray.pop()
+          }
+        }
+      })
+      console.log(splitTimeArray)
+      return splitTimeArray
     }
     return
-  },
+  }
 }
