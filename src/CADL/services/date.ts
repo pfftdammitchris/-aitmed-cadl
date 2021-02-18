@@ -134,18 +134,27 @@ export default {
   },
   splitByTimeSlot({ object, timeSlot }) {
     let splitTimeArray: Array<splitTime> = []
+    let i = 0
     if (isObject(object)) {
       if (timeSlot) {
-        let frequency = object.name.setting.bookingTimeSpan / timeSlot
-        for (let i = 0; i < frequency; i++) {
-          let splitTimeItem = new splitTime();
+        let splitTimeItem = new splitTime();
+        do {
           splitTimeItem.stime = object.stime + i * timeSlot * 60
           splitTimeItem.etime = object.stime + (i + 1) * timeSlot * 60
           splitTimeItem.showTime = moment(splitTimeItem.stime * 1000).format('LT')
           splitTimeArray.push(splitTimeItem)
-        }
+          // console.log(splitTimeItem.showTime)
+          // console.log(splitTimeItem.stime)
+          // console.log(splitTimeItem.etime)
+          console.log(splitTimeItem)
+          i += 1
+        } while (splitTimeItem.etime <= object.etime)
+        splitTimeArray.pop()
+        console.log(splitTimeArray)
         return splitTimeArray
       }
+      return
     }
+    return
   },
 }
