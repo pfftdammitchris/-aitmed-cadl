@@ -189,7 +189,6 @@ function create({ pageName, apiObject, dispatch }) {
       type: 'populate-object',
       payload: { object: currentVal, pageName },
     })
-
     if (!isPopulated(id)) {
       throw new UnableToLocateValue(
         `Missing reference ${id} at page ${pageName}`
