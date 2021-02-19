@@ -32,7 +32,9 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import VideoChat from './__mocks__/VideoChat'
+// import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
+// import NewChat from './__mocks__/NewChat'
+// import ChatPage from './__mocks__/ChatPage'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -487,7 +489,9 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'VideoChat') return VideoChat
+    // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
+    // if (pageName === 'NewChat') return NewChat
+    // if (pageName === 'ChatPage') return ChatPage
 
     let pageCADL
     let pageUrl
@@ -880,7 +884,12 @@ export default class CADL extends EventEmitter {
   private async handleEvalFunction({ key, pageName, command }) {
     //handles function evaluation
     let results
-    const trimPath = key.substring(2, key.length)
+    let trimPath
+    if (key.startsWith('=..')) {
+      trimPath = key.substring(3, key.length)
+    } else if (key.startsWith('=.')) {
+      trimPath = key.substring(2, key.length)
+    }
     const pathArr = trimPath.split('.')
     let func = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
     if (isObject(func)) {
@@ -1699,7 +1708,16 @@ export default class CADL extends EventEmitter {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
           let populatedCommand
-          if (isPopulated(command)) {
+          if (
+            isObject({ command }) &&
+            (Object.keys(command)[0].includes('=') ||
+              Object.keys(command)[0].includes('@'))
+          ) {
+            await this.dispatch({
+              type: 'eval-object',
+              payload: { updateObject: command, pageName },
+            })
+          } else if (isPopulated(command)) {
             populatedCommand = command
           } else {
             populatedCommand = populateVals({
