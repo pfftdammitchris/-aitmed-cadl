@@ -85,6 +85,9 @@ export default {
     console.log(arr)
     return arr
   },
+  minicalendarArray({ year, month, today }) {
+    return
+  },
   calendarArray({ year, month, today }) {
     year = parseInt(year)
     month = parseInt(month)
