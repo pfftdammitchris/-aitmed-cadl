@@ -265,4 +265,19 @@ export default {
     }
     return dataObject
   },
+  loopMonth({month, step}) {
+    month = parseInt(month)
+    step = parseInt(step)
+    if (month && step) {
+      let newmonth = month + step
+      if (newmonth > 12) {
+        newmonth = newmonth - 12
+      } else if (newmonth < 1) {
+        newmonth = newmonth + 12
+      }
+      return newmonth
+
+    }
+    return
+  },
 }
