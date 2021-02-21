@@ -5,6 +5,32 @@ class splitTime {
   stime: number
   etime: number
 }
+function convertWeek(day) {
+  switch (day) {
+    case 1:
+      day = 'MO';
+      break;
+    case 2:
+      day = 'TU';
+      break;
+    case 3:
+      day = 'WE';
+      break;
+    case 4:
+      day = 'TH';
+      break;
+    case 5:
+      day = 'FR';
+      break;
+    case 6:
+      day = 'SA';
+      break;
+    case 0:
+      day = 'SU';
+      break;
+  }
+  return day
+}
 export default {
   getDate() {
     return new Date().getDate()
@@ -85,9 +111,7 @@ export default {
     console.log(arr)
     return arr
   },
-  minicalendarArray({ year, month, today }) {
-    return
-  },
+
   calendarArray({ year, month, today }) {
     year = parseInt(year)
     month = parseInt(month)
@@ -165,5 +189,80 @@ export default {
       return splitTimeArray
     }
     return
-  }
+  },
+  ShowTimeSpan(object) {
+    // console.log("test ShowTimeSpan", object)
+    if (isObject(object)) {
+      if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
+        let start_date = moment(object.stime * 1000).format('LT')
+        let end_date = moment(object.etime * 1000).format('LT')
+        let duration_date = start_date + ' - ' + end_date
+        return duration_date
+      }
+      return
+    }
+    return
+  },
+  minicalendarArray({ year, month, today, middleDay, span, color, backgroundColor, todayColor, todayBackgroundColor }) {
+    console.log("test minicalendarArray", {
+      year: year,
+      month: month,
+      today: today,
+      middleDay: middleDay,
+      span: span
+    })
+    middleDay = parseInt(middleDay)
+    span = parseInt(span)
+    year = parseInt(year)
+    month = parseInt(month)
+    let dataObject: Record<string, any> = []
+    let isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ? true : false
+    let days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    days[1] = isLeapYear ? 29 : 28
+    let index = parseInt(-(span / 2))
+    for (let i = 1; i <= span; i++) {
+      let d = middleDay + index
+      if (today == d) {
+        let date = new Date(year, month, d)
+        let day = convertWeek(date.getDay())
+        dataObject.push({
+          key: today,
+          week: day,
+          color: todayColor,
+          backgroundColor: todayBackgroundColor,
+        })
+      } else if (d < 1) {
+        d = d + days[month - 1]
+        let date = new Date(year, month, d)
+        let day = convertWeek(date.getDay())
+        dataObject.push({
+          key: d,
+          week: day,
+          color: color,
+          backgroundColor: backgroundColor,
+        })
+      } else if (d > days[month - 1]) {
+        d = d - days[month - 1]
+        let date = new Date(year, month, d)
+        let day = convertWeek(date.getDay())
+        dataObject.push({
+          key: d,
+          week: day,
+          color: color,
+          backgroundColor: backgroundColor,
+        })
+      } else {
+        let date = new Date(year, month, d)
+        let day = convertWeek(date.getDay())
+        dataObject.push({
+          key: d,
+          week: day,
+          color: color,
+          backgroundColor: backgroundColor,
+        })
+      }
+      index = index + 1
+    }
+    return dataObject
+  },
 }
