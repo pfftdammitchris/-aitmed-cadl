@@ -33,6 +33,8 @@ import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
 // import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
+// import NewChat from './__mocks__/NewChat2'
+// import ChatPage from './__mocks__/ChatPage2'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -757,6 +759,33 @@ export default class CADL extends EventEmitter {
       if (isObject(result)) {
         results = result
       }
+    } else if (key === 'goto') {
+      /**
+       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+       */
+      const shouldCopy =
+        key.includes('builtIn') &&
+        'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
+        !('object' in commands[key]['dataIn']) &&
+        !('array' in commands[key]['dataIn'])
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: { [key]: commands[key] },
+          copy: shouldCopy,
+        },
+      })
+      results = await this.handleEvalFunction({
+        command: {
+          '=.builtIn.goto': {
+            dataIn: { destination: populatedCommand[key] },
+          },
+        },
+        pageName,
+        key: '=.builtIn.goto',
+      })
     } else if (!key.startsWith('=')) {
       const shouldCopy =
         key.includes('builtIn') &&
