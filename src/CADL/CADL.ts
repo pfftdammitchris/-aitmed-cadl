@@ -33,8 +33,6 @@ import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
 // import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
-// import NewChat from './__mocks__/NewChat2'
-// import ChatPage from './__mocks__/ChatPage2'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
