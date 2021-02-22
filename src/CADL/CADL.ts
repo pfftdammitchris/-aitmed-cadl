@@ -490,8 +490,6 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
     // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
-    // if (pageName === 'NewChat') return NewChat
-    // if (pageName === 'ChatPage') return ChatPage
 
     let pageCADL
     let pageUrl
