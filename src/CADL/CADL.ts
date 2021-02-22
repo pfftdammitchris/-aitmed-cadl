@@ -1732,7 +1732,7 @@ export default class CADL extends EventEmitter {
           const command: any = init[currIndex]
           let populatedCommand
           if (
-            isObject({ command }) &&
+            isObject(command) &&
             (Object.keys(command)[0].includes('=') ||
               Object.keys(command)[0].includes('@'))
           ) {
