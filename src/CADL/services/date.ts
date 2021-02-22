@@ -265,7 +265,7 @@ export default {
     }
     return dataObject
   },
-  loopMonth({month, step}) {
+  loopMonth({ month, step }) {
     month = parseInt(month)
     step = parseInt(step)
     if (month && step) {
@@ -277,6 +277,34 @@ export default {
       }
       return newmonth
 
+    }
+    return
+  },
+  AddHeightByTimeSpan({ object }) {
+    if (isArray(object)) {
+      console.log("test AddHeightByTimeSpan", object)
+      // let heights = [30, 40, 50, 60, 70]
+      object.forEach(obj => {
+        let span = (parseInt(obj.etime) - parseInt(obj.stime)) / (60)
+        span = span * 1.5
+        obj.height = span + "px"
+      })
+      return object
+    }
+    return
+  },
+  ShowDateByNumber({ year, month, day }) {
+    if (year && month && day) {
+      year = parseInt(year)
+      month = parseInt(month)
+      day = parseInt(day)
+      let date = new Date(year, month, day)
+      let months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+      ];
+      let weeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+      return weeks[date.getDay()] + " " + months[month] + " " + day + "," + year
     }
     return
   },
