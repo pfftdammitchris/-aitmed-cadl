@@ -167,9 +167,7 @@ export default {
       afternoon: []
     }
     // alert(typeof (object))
-    console.log(object2)
     if (object2) {
-      // alert(1)
       object2.forEach(obj => {
         if (isObject(obj)) {
           if (timeSlot) {
