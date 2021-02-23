@@ -304,8 +304,115 @@ export default {
         "July", "August", "September", "October", "November", "December"
       ];
       let weeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-      return weeks[date.getDay()] + " " + months[month] + " " + day + "," + year
+      return weeks[date.getDay() - 1] + " " + months[month - 1] + " " + day + "," + year
+    }
+    return
+  },
+
+  TransformWeekDate({ object }) {
+    if (isArray(object)) {
+      console.log("test TransformWeekDate", object)
+      let dataObject: Record<string, any> = []
+      object.forEach(obj => {
+        let date = new Date()
+        let year = date.getFullYear()
+        let month = date.getMonth()
+        let day = date.getDay()
+        let start_time, end_time;
+        let workdays = obj.duration.split("-")
+        workdays.forEach((d, index) => {
+          if (d.indexOf("AM") != -1) {
+            d = d.replace('AM', '')
+          } else if (d.indexOf("PM") != -1) {
+            d = d.replace('PM', '')
+            let split_date = d.split(":")
+            let form_date = parseInt(split_date[0]) + 12
+            d = form_date + ":" + split_date[1]
+          }
+
+          if (index == 0) {
+            start_time = year + "/" + month + "/" + day + " " + d
+          } else {
+            end_time = year + "/" + month + "/" + day + " " + d
+          }
+        })
+        let item = { itemStyle: { normal: { color: "#2988E65f" } }, value: [] }
+        item.value[0] = obj.index
+        item.value[1] = start_time
+        item.value[2] = end_time
+        dataObject.push(item)
+      })
+      let option = {
+        legend: {
+          bottom: '1%',
+          selectedMode: false,
+          textStyle: {
+            color: '#000'
+          }
+        },
+        grid: {
+          left: '3%',
+          right: '3%',
+          top: '1%',
+          bottom: '10%',
+          containLabel: true
+        },
+        xAxis: {
+          type: 'time',
+          interval: 3600 * 1000,
+          axisLabel: {
+            "formatter": function (value) {
+              var date = new Date(value);
+              return getzf(date.getHours()) + ':' + getzf(date.getMinutes());
+              function getzf(num) {
+                if (parseInt(num) < 10) {
+                  num = '0' + num;
+                }
+                return num;
+              }
+            },
+          }
+        },
+        yAxis: {
+          data: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+        },
+        series: [
+          {
+            type: 'custom',
+            renderItem: function (params, api) {
+              var categoryIndex = api.value(0);
+              var start = api.coord([api.value(1), categoryIndex]);
+              var end = api.coord([api.value(2), categoryIndex]);
+              var height = 24;
+              return {
+                type: 'rect',
+                shape: echarts.graphic.clipRectByRect({
+                  x: start[0],
+                  y: start[1] - height / 2,
+                  width: end[0] - start[0],
+                  height: height
+                }, { // 当前坐标系的包围盒。
+                  x: params.coordSys.x,
+                  y: params.coordSys.y,
+                  width: params.coordSys.width,
+                  height: params.coordSys.height
+                }),
+                style: api.style()
+              };
+            },
+            encode: {
+              x: [1, 2],
+              y: 0
+            },
+            data: dataObject
+          }
+        ]
+      }
+      return option
     }
     return
   },
 }
+
+
+
