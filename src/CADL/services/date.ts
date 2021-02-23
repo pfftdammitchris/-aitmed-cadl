@@ -1,4 +1,4 @@
-import _, { isArray, isObject } from 'lodash'
+import _, { indexOf, isArray, isObject } from 'lodash'
 import moment from 'moment'
 class splitTime {
   showTime: string
@@ -162,6 +162,10 @@ export default {
   splitByTimeSlot({ object2, timeSlot }) {
     let splitTimeArray = []
     let splitTimeItem = {}
+    let array = {
+      morning: [],
+      afternoon: []
+    }
     // alert(typeof (object))
     console.log(object2)
     if (object2) {
@@ -177,8 +181,17 @@ export default {
                 showTime: moment((obj.stime + i * timeSlot * 60) * 1000).format('LT'),
                 refid: obj.id
               }
-              if ((obj.etime - splitTimeItem.stime) < timeSlot * 60) continue
-              splitTimeArray.push(splitTimeItem)
+              if ((obj.etime - splitTimeItem.stime) < timeSlot * 60) {
+                continue
+              }
+              else {
+                if (splitTimeItem.showTime.indexOf("AM") != -1) {
+                  array.morning.push(splitTimeItem)
+                }
+                else {
+                  array.afternoon.push(splitTimeItem)
+                }
+              }
               i += 1
             } while (splitTimeItem.etime <= obj.etime)
             // splitTimeArray.pop()
@@ -186,7 +199,7 @@ export default {
         }
       })
       console.log(splitTimeArray)
-      return splitTimeArray
+      return array
     }
     return
   },
@@ -411,7 +424,7 @@ export default {
       return option
     }
     return
-  },
+  }
 }
 
 

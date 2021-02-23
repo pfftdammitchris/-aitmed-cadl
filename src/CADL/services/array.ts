@@ -285,5 +285,5 @@ export default {
       }
       return
     }
-  }
+  },
 }
