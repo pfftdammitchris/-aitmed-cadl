@@ -13,6 +13,7 @@ import ecos from './ecos'
 import utils from './utils'
 import typeCheck from './typeCheck'
 import math from './math'
+import FCM from './fcm'
 
 import Document from '../../services/Document'
 export { builtIn }
@@ -95,6 +96,7 @@ export default function builtInFns(dispatch?: Function) {
     ecos,
     utils,
     math,
+    FCM,
     async createNewAccount({ name }) {
       const { phoneNumber, password, userName, firstName, lastName } = name
       let validPhoneNumber
@@ -233,6 +235,7 @@ export default function builtInFns(dispatch?: Function) {
     },
     cleanLocalStorage() {
       store.level2SDK.Account.logoutClean()
+      localStorage.removeItem('Global')
       return
     },
   }

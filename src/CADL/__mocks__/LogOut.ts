@@ -174,7 +174,10 @@ export default {
                         if: [
                           '=..formData.pass',
                           {
-                            goto: 'SignIn',
+                            goto: {
+                              destination: 'SignIn',
+                              reload: true,
+                            },
                           },
                           'continue',
                         ],
@@ -297,7 +300,10 @@ export default {
                         if: [
                           '=..formData.pass',
                           {
-                            goto: 'SignIn',
+                            goto: {
+                              destination: 'SignIn',
+                              reload: true,
+                            },
                           },
                           'continue',
                         ],

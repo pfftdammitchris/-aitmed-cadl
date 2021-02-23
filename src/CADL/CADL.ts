@@ -22,6 +22,7 @@ import {
   attachFns,
   populateKeys,
   populateVals,
+  populateArray,
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
   replaceVars,
@@ -31,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import AppointmentSchedule from './__mocks__/AppointmentSchedule'
+// import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -294,7 +295,11 @@ export default class CADL extends EventEmitter {
     if (builtIn && isObject(builtIn)) {
       this.newDispatch({
         type: 'ADD_BUILTIN_FNS',
-        payload: { builtInFns: { ...builtIn } },
+        payload: {
+          builtInFns: {
+            ...builtIn,
+          },
+        },
       })
     }
     let pageCADL = await this.getPage(pageName)
@@ -352,7 +357,7 @@ export default class CADL extends EventEmitter {
         //process components again to fill in new values
         const processedComponentsAgain = this.processPopulate({
           source: processedComponents,
-          lookFor: ['.', '..', '_', '~', '='],
+          lookFor: ['.', '..', '_', '~'],
           skip: [
             'update',
             'check',
@@ -367,6 +372,25 @@ export default class CADL extends EventEmitter {
           withFns: true,
           pageName,
         })
+
+        const evolveComponentVals = populateArray({
+          source: processedComponentsAgain[pageName].components,
+          lookFor: '=',
+          skip: [
+            'update',
+            'check',
+            'edge',
+            'document',
+            'vertex',
+            'init',
+            'formData',
+            'dataIn',
+            ...skip,
+          ],
+          pageName,
+          locations: [processedComponentsAgain[pageName], this.root],
+        })
+        processedComponentsAgain[pageName].components = evolveComponentVals
         let replaceUpdateJob2 = replaceEvalObject({
           pageName,
           cadlObject: processedComponentsAgain,
@@ -397,7 +421,7 @@ export default class CADL extends EventEmitter {
       //process components again to fill in new values
       const processedComponentsAgain = this.processPopulate({
         source: processedComponents,
-        lookFor: ['.', '..', '_', '~', '='],
+        lookFor: ['.', '..', '_', '~'],
         skip: [
           'update',
           'check',
@@ -413,6 +437,24 @@ export default class CADL extends EventEmitter {
         pageName,
       })
 
+      const evolveComponentVals = populateArray({
+        source: processedComponentsAgain[pageName].components,
+        lookFor: '=',
+        skip: [
+          'update',
+          'check',
+          'edge',
+          'document',
+          'vertex',
+          'init',
+          'formData',
+          'dataIn',
+          ...skip,
+        ],
+        pageName,
+        locations: [processedComponentsAgain[pageName], this.root],
+      })
+      processedComponentsAgain[pageName].components = evolveComponentVals
       let replaceUpdateJob2 = replaceEvalObject({
         pageName,
         cadlObject: processedComponentsAgain,
@@ -445,7 +487,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'AppointmentSchedule') return AppointmentSchedule
+    // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
 
     let pageCADL
     let pageUrl
@@ -641,11 +683,14 @@ export default class CADL extends EventEmitter {
 
     const objectKeys = Object.keys(command)
     await asyncForEach(objectKeys, async (key) => {
-      results = await this.handleEvalCommands({
+      const result = await this.handleEvalCommands({
         commands: command,
         key,
         pageName,
       })
+      if (results === undefined && result !== undefined) {
+        results = result
+      }
     })
     return results
   }
@@ -681,11 +726,14 @@ export default class CADL extends EventEmitter {
 
       const commandKeys = Object.keys(populatedCommand)
       await asyncForEach(commandKeys, async (key) => {
-        results = await this.handleEvalCommands({
+        const result = await this.handleEvalCommands({
           commands: populatedCommand,
           key,
           pageName,
         })
+        if (results === undefined && result !== undefined) {
+          results = result
+        }
       })
     })
     return results
@@ -709,10 +757,38 @@ export default class CADL extends EventEmitter {
       if (isObject(result)) {
         results = result
       }
+    } else if (key === 'goto') {
+      /**
+       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+       */
+      const shouldCopy =
+        key.includes('builtIn') &&
+        'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
+        !('object' in commands[key]['dataIn']) &&
+        !('array' in commands[key]['dataIn'])
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: { [key]: commands[key] },
+          copy: shouldCopy,
+        },
+      })
+      results = await this.handleEvalFunction({
+        command: {
+          '=.builtIn.goto': {
+            dataIn: { destination: populatedCommand[key] },
+          },
+        },
+        pageName,
+        key: '=.builtIn.goto',
+      })
     } else if (!key.startsWith('=')) {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       //handles assignment expressions
@@ -736,6 +812,7 @@ export default class CADL extends EventEmitter {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       const populatedCommand = await this.dispatch({
@@ -830,7 +907,12 @@ export default class CADL extends EventEmitter {
   private async handleEvalFunction({ key, pageName, command }) {
     //handles function evaluation
     let results
-    const trimPath = key.substring(2, key.length)
+    let trimPath
+    if (key.startsWith('=..')) {
+      trimPath = key.substring(3, key.length)
+    } else if (key.startsWith('=.')) {
+      trimPath = key.substring(2, key.length)
+    }
     const pathArr = trimPath.split('.')
     let func = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
     if (isObject(func)) {
@@ -1131,7 +1213,11 @@ export default class CADL extends EventEmitter {
         return results
       }
       case 'update-localStorage': {
-        localStorage.setItem('Global', JSON.stringify(this.root?.Global))
+        //only add the Global object if user is loggedIn
+        const esk = localStorage.getItem('esk')
+        if (esk) {
+          localStorage.setItem('Global', JSON.stringify(this.root?.Global))
+        }
         break
       }
       case 'add-fn': {
@@ -1315,16 +1401,12 @@ export default class CADL extends EventEmitter {
     }
     if (condResult === true || condResult === 'true') {
       let lookFor
-      if (
-        isObject(ifTrueEffect) &&
-        'goto' in ifTrueEffect &&
-        typeof ifTrueEffect['goto'] === 'string'
-      ) {
+      if (isObject(ifTrueEffect) && 'goto' in ifTrueEffect) {
         //handles goto function logic
         const populatedTrueEffect = populateVals({
           source: ifTrueEffect,
           pageName,
-          lookFor: ['..', '.'],
+          lookFor: ['..', '.', '='],
           locations: [this.root, this.root[pageName]],
         })
         await this.root.builtIn['goto'](populatedTrueEffect['goto'])
@@ -1445,11 +1527,7 @@ export default class CADL extends EventEmitter {
       }
     } else if (condResult === false || condResult === 'false') {
       let lookFor
-      if (
-        isObject(ifFalseEffect) &&
-        'goto' in ifFalseEffect &&
-        typeof ifFalseEffect['goto'] === 'string'
-      ) {
+      if (isObject(ifFalseEffect) && 'goto' in ifFalseEffect) {
         if (
           'goto' in this.root.builtIn &&
           typeof this.root.builtIn['goto'] === 'function'
@@ -1458,7 +1536,7 @@ export default class CADL extends EventEmitter {
           const populatedFalseEffect = populateVals({
             source: ifFalseEffect,
             pageName,
-            lookFor: ['..', '.'],
+            lookFor: ['..', '.', '='],
             locations: [this.root, this.root[pageName]],
           })
           await this.root.builtIn['goto'](populatedFalseEffect['goto'])
@@ -1653,7 +1731,16 @@ export default class CADL extends EventEmitter {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
           let populatedCommand
-          if (isPopulated(command)) {
+          if (
+            isObject(command) &&
+            (Object.keys(command)[0].includes('=') ||
+              Object.keys(command)[0].includes('@'))
+          ) {
+            await this.dispatch({
+              type: 'eval-object',
+              payload: { updateObject: command, pageName },
+            })
+          } else if (isPopulated(command)) {
             populatedCommand = command
           } else {
             populatedCommand = populateVals({
@@ -2065,12 +2152,14 @@ export default class CADL extends EventEmitter {
     const returnValues = {}
     await asyncForEach(actions, async (action, index) => {
       //handles explicit evalObject call
+      if (typeof action === 'string' && action.includes('=')) {
+        action = { [action]: '' }
+      }
       const clone = _.cloneDeep(action)
       const actionWithVals: Record<string, any> = replaceVars({
         vars: dataKey,
         source: clone,
       })
-
       if ('actionType' in action && action?.actionType === 'evalObject') {
         const response = await this.dispatch({
           type: 'eval-object',

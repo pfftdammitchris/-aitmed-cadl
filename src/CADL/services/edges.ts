@@ -178,6 +178,10 @@ function create({ pageName, apiObject, dispatch }) {
       type: 'populate-object',
       payload: { object: currentVal, pageName, copy: true },
     })
+    const isFCMRegisterEdge = populatedCurrentVal.type === 1090
+    if (isFCMRegisterEdge) {
+      populatedCurrentVal.subtype = 2
+    }
     if (!isPopulated(id)) {
       throw new UnableToLocateValue(
         `Missing reference ${id} at page ${pageName}`
