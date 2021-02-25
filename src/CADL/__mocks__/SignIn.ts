@@ -35,7 +35,7 @@ export default {
         if: [
           '=.Global.currentUser.vertex.sk',
           {
-            goto: 'PatientChart',
+            goto: { destination: 'MeetingRoomInvited', reload: true },
           },
           'continue',
         ],
@@ -43,7 +43,7 @@ export default {
     ],
     setIOS: [
       {
-        '..appLink.url@': 'https://apps.apple.com/us/app/aitcom/id1526258312',
+        '..appLink.url@': 'https://apps.apple.com/us/app/aitmeet/id1539500231',
       },
       {
         '..appLink.img@': 'https://public.aitmed.com/commonRes/appstore.png',
@@ -52,7 +52,7 @@ export default {
     setAndroid: [
       {
         '..appLink.url@':
-          'https://play.google.com/store/apps/details?id=com.aitmed.aitcom',
+          'https://play.google.com/store/apps/details?id=com.aitmed.ameet',
       },
       {
         '..appLink.img@': 'https://public.aitmed.com/commonRes/google-play.png',
@@ -94,19 +94,79 @@ export default {
           },
         ],
       },
+      {
+        if: [
+          {
+            '=.builtIn.string.equal': {
+              dataIn: {
+                string1: '=.SignIn.formData.phoneNumber',
+                string2: '=.Global.phoneNumber',
+              },
+            },
+          },
+          'continue',
+          {
+            '.Global.currentUser.vertex.sk@': '',
+          },
+        ],
+      },
     ],
     check: [
       {
         '=.SignIn.loginNewDevice.edgeAPI.store': '',
       },
       {
+        actionType: 'evalObject',
+        object: {
+          '.Global._nonce@': {
+            '=.builtIn.math.random': '',
+          },
+        },
+      },
+      {
         if: [
-          '=..loginNewDevice.response.edge',
+          {
+            '=.builtIn.string.equal': {
+              dataIn: {
+                string1: '=..loginNewDevice.response.code',
+                string2: 1020,
+              },
+            },
+          },
+          {
+            actionType: 'popUp',
+            popUpView: 'userCannotfind',
+            wait: true,
+          },
+          'continue',
+        ],
+      },
+      {
+        if: [
+          {
+            '=.builtIn.string.equal': {
+              dataIn: {
+                string1: '=..loginNewDevice.response.code',
+                string2: 0,
+              },
+            },
+          },
           'continue',
           {
             actionType: 'popUp',
             popUpView: 'wrongCode',
             wait: true,
+          },
+        ],
+      },
+    ],
+    checkPk: [
+      {
+        if: [
+          '=.Global.currentUser.vertex.pk',
+          'continue',
+          {
+            goto: 'SignUp',
           },
         ],
       },
@@ -123,6 +183,9 @@ export default {
       },
       {
         '.Global.currentUser.JWT@': '=..loginUser.response.jwt',
+      },
+      {
+        '.Global.phoneNumber@': '=..formData.phoneNumber',
       },
       {
         '=.builtIn.storeCredentials': {
@@ -147,10 +210,11 @@ export default {
       },
     ],
     formData: {
-      checkMessage: '',
+      checkOk: 'false',
+      checkMessage: 'no message',
       countryCode: '+1',
-      phoneNumber: '8881307128',
-      password: '123456',
+      phoneNumber: '',
+      password: '',
       code: '',
       sk: '',
       pass: '',
@@ -174,6 +238,7 @@ export default {
       edge: {
         '.Edge': '',
         type: 1010,
+        _nonce: '=.Global._nonce',
         name: {
           phone_number: '=..apiData.phoneNumber',
         },
@@ -192,6 +257,7 @@ export default {
       edge: {
         '.Edge': '',
         type: 1040,
+        _nonce: '=.Global._nonce',
         name: {
           phone_number: '=..apiData.phoneNumber',
           verification_code: '=..formData.code',
@@ -216,6 +282,7 @@ export default {
       edge: {
         '.Edge': '',
         type: 1030,
+        _nonce: '=.Global._nonce',
         bvid: '=..loginNewDevice.response.edge.deat.user_id',
       },
       edgeAPI: {
@@ -230,6 +297,7 @@ export default {
     apiData: {
       phoneNumber: '',
     },
+    initFocus: 'phoneNumberVT',
     components: [
       {
         '.BaseCheckView': '',
@@ -242,78 +310,64 @@ export default {
         viewTag: 'wrongCode',
       },
       {
+        '.BaseCheckView': '',
+        message: 'Cannot Find the User',
+        viewTag: 'userCannotfind',
+      },
+      {
         type: 'view',
         style: {
           left: '0',
           top: '0',
           width: '1',
           height: '1',
+          position: 'fixed',
         },
         children: [
           {
             type: 'image',
+            path: 'backpic.png',
+            style: {
+              left: '0',
+              width: '1',
+              top: '0',
+            },
+          },
+          {
+            type: 'image',
             path: '~/assets/mLogo.png',
             style: {
-              left: '0.1',
-              top: '0.05',
-              width: '0.25',
-            },
-          },
-          {
-            type: 'label',
-            text: 'Welcome back',
-            style: {
-              color: '0x000000ff',
-              left: '0.147',
-              top: '0.28',
-              width: '0.72',
-              height: '0.041',
-              fontSize: '24',
-              fontStyle: 'bold',
-              display: 'inline',
-              textAlign: {
-                x: 'left',
-                y: 'center',
-              },
-            },
-          },
-          {
-            type: 'label',
-            text: 'sign in to continue',
-            style: {
-              color: '0x00000058',
-              left: '0.147',
-              top: '0.33',
-              width: '0.72',
-              height: '0.041',
-              fontSize: '16',
-              fontStyle: 'bold',
-              display: 'inline',
-              textAlign: {
-                x: 'left',
-                y: 'center',
-              },
+              top: '0.08',
+              width: '0.38',
+              left: '0.31',
             },
           },
           {
             type: 'view',
             style: {
-              left: '0.121',
-              top: '0.42',
-              width: '0.2',
-              height: '0.09',
+              top: '0.35',
+              height: '0.65',
+              width: '1',
+              left: '0',
+              backgroundColor: '0xffffff',
+              border: {
+                style: 3,
+              },
+              borderRadius: '50',
+              boxSizing: 'border-box',
             },
             children: [
               {
                 type: 'label',
-                text: 'Country',
+                text: 'Welcome back!',
                 style: {
-                  color: '0x00000058',
-                  left: '0',
-                  top: '0',
-                  width: '0.2',
+                  color: '0x000000ff',
+                  left: '0.147',
+                  top: '0.05',
+                  width: '0.72',
                   height: '0.041',
-                  fontSize: '12',
+                  fontSize: '28',
+                  display: 'inline',
                   textAlign: {
                     x: 'left',
                     y: 'center',
@@ -321,46 +375,16 @@ export default {
                 },
               },
               {
-                type: 'select',
-                contentType: 'countryCode',
-                placeholder: '..formData.countryCode',
-                dataKey: 'formData.countryCode',
-                options: '.CountryCode',
-                required: 'true',
-                style: {
-                  left: '0',
-                  top: '0.045',
-                  width: '0.2',
-                  height: '0.041',
-                  fontSize: '14',
-                  borderWidth: '1',
-                  border: {
-                    style: '2',
-                    color: '0x00000058',
-                  },
-                },
-              },
-            ],
-          },
-          {
-            type: 'view',
-            style: {
-              left: '0.3333',
-              top: '0.42',
-              width: '0.61333',
-              height: '0.09',
-            },
-            children: [
-              {
                 type: 'label',
-                text: 'Phone',
+                text: 'Sign in to continue',
                 style: {
-                  color: '0x00000058',
-                  left: '0',
-                  top: '0',
-                  width: '0.483',
+                  color: '0x00000088',
+                  left: '0.147',
+                  top: '0.1',
+                  width: '0.72',
                   height: '0.041',
-                  fontSize: '12',
+                  fontSize: '22',
+                  display: 'inline',
                   textAlign: {
                     x: 'left',
                     y: 'center',
@@ -368,166 +392,586 @@ export default {
                 },
               },
               {
-                type: 'textField',
-                contentType: 'phoneNumber',
-                placeholder: 'your phone number',
-                dataKey: 'formData.phoneNumber',
-                required: 'true',
+                type: 'view',
                 style: {
-                  textAlign: {
-                    x: 'left',
-                  },
-                  fontSize: '14',
-                  left: '0',
-                  top: '0.045',
-                  width: '0.54667',
-                  height: '0.041',
-                  required: 'true',
-                  borderWidth: '1',
-                  border: {
-                    style: '2',
-                  },
+                  left: '0.121',
+                  top: '0.18',
+                  width: '0.2',
+                  height: '0.09',
                 },
-                onBlur: [
+                children: [
                   {
-                    emit: {
-                      actions: [
-                        {
-                          '=.builtIn.typeCheck.phoneNumber': {
-                            dataIn: {
-                              phoneNumber: '=..formData.phoneNumber',
-                              countryCode: '=..formData.countryCode',
-                              toastMessage:
-                                'Unacceptible phone number format example: 888-999-0000',
-                              style: {
-                                backgroundColor: 'red',
-                              },
-                            },
-                            dataOut: 'formData.checkMessage',
-                          },
-                        },
-                      ],
+                    type: 'label',
+                    text: 'Country',
+                    style: {
+                      color: '0x00000058',
+                      left: '0',
+                      top: '0',
+                      width: '0.2',
+                      height: '0.041',
+                      fontSize: '12',
+                      textAlign: {
+                        x: 'left',
+                        y: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'select',
+                    contentType: 'countryCode',
+                    placeholder: '..formData.countryCode',
+                    dataKey: 'formData.countryCode',
+                    options: '.CountryCode',
+                    required: 'true',
+                    style: {
+                      left: '0',
+                      top: '0.045',
+                      width: '0.2',
+                      height: '0.041',
+                      fontSize: '14',
+                      borderWidth: '1',
+                      'box-sizing': 'border-box',
+                      border: {
+                        style: '2',
+                        color: '0x00000058',
+                      },
                     },
                   },
                 ],
               },
-            ],
-          },
-          {
-            type: 'textField',
-            contentType: 'password',
-            placeholder: 'your password',
-            dataKey: 'formData.password',
-            required: 'true',
-            style: {
-              textAlign: {
-                x: 'left',
-              },
-              fontSize: '14',
-              left: '0.121',
-              top: '0.554',
-              width: '0.76',
-              height: '0.041',
-              backgroundColor: '0x388ecc00',
-              borderWidth: '1',
-              border: {
-                style: '2',
-              },
-            },
-          },
-          {
-            type: 'label',
-            text: 'Forgot Password?',
-            style: {
-              color: '0x00000058',
-              left: '0.134',
-              top: '0.62',
-              width: '0.747',
-              height: '0.041',
-              fontSize: '14',
-              fontStyle: 'bold',
-              display: 'inline',
-              textAlign: {
-                x: 'right',
-                y: 'center',
-              },
-            },
-          },
-          {
-            type: 'button',
-            text: 'Sign In',
-            style: {
-              color: '0xffffffff',
-              fontSize: '16',
-              fontStyle: 'bold',
-              left: '0.134',
-              top: '0.7',
-              width: '0.747',
-              height: '0.06',
-              backgroundColor: '0x388eccff',
-              border: {
-                style: '1',
-              },
-              display: 'inline',
-              textAlign: {
-                x: 'center',
-                y: 'center',
-              },
-            },
-            onClick: [
               {
-                actionType: 'evalObject',
-                object: {
-                  '=.builtIn.string.concat': {
-                    dataIn: [
-                      '=.SignIn.formData.countryCode',
-                      ' ',
-                      '=.SignIn.formData.phoneNumber',
+                type: 'view',
+                style: {
+                  left: '0.3333',
+                  top: '0.18',
+                  width: '0.61333',
+                  height: '0.09',
+                },
+                children: [
+                  {
+                    type: 'label',
+                    text: 'Phone',
+                    style: {
+                      color: '0x00000058',
+                      left: '0',
+                      top: '0',
+                      width: '0.483',
+                      height: '0.041',
+                      fontSize: '12',
+                      textAlign: {
+                        x: 'left',
+                        y: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'textField',
+                    viewTag: 'phoneNumberVT',
+                    contentType: 'phoneNumber',
+                    placeholder: 'your phone number',
+                    dataKey: 'formData.phoneNumber',
+                    required: 'true',
+                    onChange: [
+                      {
+                        emit: {
+                          actions: [
+                            {
+                              '=.builtIn.typeCheck.phoneNumber': {
+                                dataIn: {
+                                  phoneNumber: '=..formData.phoneNumber',
+                                  countryCode: '=..formData.countryCode',
+                                },
+                                dataOut: 'SignIn.formData.checkOk',
+                              },
+                            },
+                            {
+                              if: [
+                                '=..formData.checkOk',
+                                'continue',
+                                {
+                                  '..formData.checkMessage@':
+                                    'Unacceptible phone number format example: 888-999-0000',
+                                },
+                              ],
+                            },
+                          ],
+                        },
+                      },
                     ],
-                    dataOut: 'SignIn.apiData.phoneNumber',
+                    style: {
+                      textAlign: {
+                        x: 'left',
+                      },
+                      fontSize: '14',
+                      left: '0',
+                      top: '0.045',
+                      width: '0.54667',
+                      height: '0.041',
+                      required: 'true',
+                      borderWidth: '1',
+                      'box-sizing': 'border-box',
+                      border: {
+                        style: '2',
+                      },
+                    },
+                  },
+                ],
+              },
+              {
+                type: 'textField',
+                contentType: 'password',
+                placeholder: 'your password',
+                dataKey: 'formData.password',
+                required: 'true',
+                style: {
+                  textAlign: {
+                    x: 'left',
+                  },
+                  fontSize: '14',
+                  left: '0.121',
+                  top: '0.314',
+                  width: '0.76',
+                  height: '0.041',
+                  backgroundColor: '0x388ecc00',
+                  borderWidth: '1',
+                  border: {
+                    style: '2',
                   },
                 },
               },
               {
-                actionType: 'evalObject',
-                object: [
+                type: 'label',
+                text: 'Forget password?',
+                onClick: [
                   {
-                    if: [
-                      '=.Global.currentUser.vertex.esk',
-                      {
-                        actionType: 'evalObject',
-                        object: '..save',
+                    actionType: 'popUp',
+                    popUpView: 'resetUser',
+                  },
+                ],
+                style: {
+                  color: '0x00000058',
+                  left: '0.56',
+                  top: '0.38',
+                  width: '0.32',
+                  height: '0.041',
+                  fontSize: '14',
+                  display: 'inline',
+                  textAlign: {
+                    x: 'right',
+                    y: 'center',
+                  },
+                },
+              },
+              {
+                type: 'button',
+                text: 'Sign In',
+                style: {
+                  color: '0xffffffff',
+                  fontSize: '16',
+                  fontStyle: 'bold',
+                  left: '0.134',
+                  top: '0.46',
+                  width: '0.747',
+                  height: '0.06',
+                  backgroundColor: '0x388eccff',
+                  border: {
+                    style: '1',
+                  },
+                  display: 'inline',
+                  textAlign: {
+                    x: 'center',
+                    y: 'center',
+                  },
+                },
+                onClick: [
+                  {
+                    actionType: 'evalObject',
+                    object: {
+                      '=.builtIn.string.concat': {
+                        dataIn: [
+                          '=.SignIn.formData.countryCode',
+                          ' ',
+                          '=.SignIn.formData.phoneNumber',
+                        ],
+                        dataOut: 'SignIn.apiData.phoneNumber',
                       },
-                      'continue',
+                    },
+                  },
+                  {
+                    actionType: 'evalObject',
+                    object: [
+                      {
+                        if: [
+                          '=.Global.currentUser.vertex.esk',
+                          {
+                            actionType: 'evalObject',
+                            object: '..save',
+                          },
+                          'continue',
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    actionType: 'evalObject',
+                    object: [
+                      {
+                        if: [
+                          '=.Global.currentUser.vertex.sk',
+                          {
+                            goto: 'MeetingRoomInvited',
+                          },
+                          {
+                            '=.SignIn.verificationCode.edgeAPI.store': '',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                  {
+                    actionType: 'evalObject',
+                    object: {
+                      '.Global._nonce@': {
+                        '=.builtIn.math.random': '',
+                      },
+                    },
+                  },
+                  {
+                    actionType: 'popUp',
+                    popUpView: 'inputVerificationCode',
+                  },
+                ],
+              },
+              {
+                type: 'image',
+                path: '..appLink.img',
+                style: {
+                  width: '0.3',
+                  top: '0.52',
+                  left: '0.57',
+                  height: '0.07',
+                  borderWidth: '0',
+                },
+                onClick: [
+                  {
+                    goto: '..appLink.url',
+                  },
+                ],
+              },
+              {
+                type: 'view',
+                style: {
+                  left: '0',
+                  top: '0.58',
+                  width: '1',
+                  height: '0.054',
+                  backgroundColor: '0xffffff',
+                },
+                children: [
+                  {
+                    type: 'label',
+                    text: 'New to AiTmed?',
+                    style: {
+                      color: '0xb1b1b1',
+                      fontSize: '15',
+                      left: '0.2',
+                      top: '0',
+                      width: '0.3',
+                      height: '0.054',
+                      textAlign: {
+                        x: 'right',
+                        y: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'button',
+                    text: 'Sign Up',
+                    style: {
+                      color: '0x3185c7ff',
+                      fontSize: '15',
+                      fontStyle: 'bold',
+                      left: '0.544',
+                      top: '0',
+                      width: '0.25',
+                      height: '0.054',
+                      backgroundColor: '0xffffff00',
+                      border: {
+                        style: '1',
+                      },
+                    },
+                    onClick: [
+                      {
+                        goto: 'SignUp',
+                      },
                     ],
                   },
                 ],
               },
+            ],
+          },
+          {
+            type: 'popUp',
+            viewTag: 'resetUser',
+            style: {
+              left: '0',
+              top: '0',
+              width: '1',
+              height: '1',
+              backgroundColor: '0x00000066',
+            },
+            children: [
               {
-                actionType: 'evalObject',
-                object: [
+                type: 'view',
+                style: {
+                  left: '0.05',
+                  top: '0.3',
+                  width: '0.89333',
+                  height: '0.45',
+                  zIndex: '100',
+                  backgroundColor: '0xeaeaea',
+                  border: {
+                    style: '5',
+                  },
+                  borderRadius: '15',
+                },
+                children: [
                   {
-                    if: [
-                      '=.Global.currentUser.vertex.sk',
-                      {
-                        goto: 'PatientChart',
+                    type: 'label',
+                    text: 'Forget your password?',
+                    style: {
+                      '.LabelStyle': {
+                        left: '0',
+                        top: '0.02',
+                        width: '0.89333',
+                        height: '0.05',
+                        color: '0x000000',
+                        fontSize: '19',
+                        display: 'inline',
+                        fontStyle: 'bold',
+                        fontFamily: 'sans-serif',
+                        textAlign: {
+                          x: 'center',
+                          y: 'center',
+                        },
                       },
-                      'continue',
-                    ],
+                    },
                   },
-                ],
-              },
-              {
-                actionType: 'evalObject',
-                object: [
                   {
-                    '=.SignIn.verificationCode.edgeAPI.store': '',
+                    type: 'label',
+                    textBoard: [
+                      {
+                        text: 'When using blockchain technology, there',
+                      },
+                      {
+                        br: null,
+                      },
+                      {
+                        text: 'is no way for us at AiTmed to recover',
+                      },
+                      {
+                        br: null,
+                      },
+                      {
+                        text: 'your password. It is blockchain-encrypted',
+                      },
+                      {
+                        br: null,
+                      },
+                      {
+                        text: 'for your security and privacy.',
+                      },
+                    ],
+                    style: {
+                      '.LabelStyle': null,
+                      left: '0',
+                      top: '0.07',
+                      width: '0.89333',
+                      height: '0.05',
+                      color: '0x000000',
+                      fontSize: '16',
+                      display: 'inline',
+                      fontFamily: 'sans-serif',
+                      textAlign: {
+                        x: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'label',
+                    textBoard: [
+                      {
+                        text: 'To reset your password, you must ',
+                      },
+                      {
+                        br: null,
+                      },
+                      {
+                        text: 'create a new account.',
+                      },
+                    ],
+                    style: {
+                      '.LabelStyle': null,
+                      left: '0',
+                      top: '0.18',
+                      width: '0.89333',
+                      height: '0.05',
+                      color: '0x000000',
+                      fontSize: '16',
+                      display: 'inline',
+                      fontFamily: 'sans-serif',
+                      textAlign: {
+                        x: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'label',
+                    textBoard: [
+                      {
+                        text: 'THIS WILL RESET YOUR ACCOUNT AND',
+                      },
+                      {
+                        br: null,
+                      },
+                      {
+                        text: 'DELETE ANY PREVIOUSLY STORED ',
+                      },
+                      {
+                        br: null,
+                      },
+                      {
+                        text: 'INFORMATION',
+                      },
+                    ],
+                    style: {
+                      '.LabelStyle': null,
+                      left: '0',
+                      top: '0.24',
+                      width: '0.89333',
+                      height: '0.05',
+                      color: '0x000000',
+                      fontSize: '16',
+                      display: 'inline',
+                      fontFamily: 'sans-serif',
+                      textAlign: {
+                        x: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'label',
+                    textBoard: [
+                      {
+                        text: 'This action cannot be undone.',
+                      },
+                    ],
+                    style: {
+                      '.LabelStyle': null,
+                      left: '0',
+                      top: '0.32',
+                      width: '0.89333',
+                      height: '0.05',
+                      color: '0x000000',
+                      fontSize: '16',
+                      display: 'inline',
+                      fontFamily: 'sans-serif',
+                      textAlign: {
+                        x: 'center',
+                      },
+                    },
+                  },
+                  {
+                    type: 'divider',
+                    style: {
+                      '.DividerStyle': {
+                        left: '0',
+                        top: '0.35',
+                        width: '0.89333',
+                        height: '0.001',
+                        backgroundColor: '0x00000088',
+                      },
+                    },
+                  },
+                  {
+                    type: 'button',
+                    onClick: [
+                      {
+                        actionType: 'popUpDismiss',
+                        popUpView: 'resetUser',
+                      },
+                      {
+                        goto: 'SignIn',
+                      },
+                    ],
+                    text: 'CANCEL',
+                    style: {
+                      '.LabelStyle': {
+                        left: '0',
+                        top: '0.375',
+                        width: '0.42',
+                        height: '0.06812',
+                        color: '0x007affff',
+                        fontSize: '19',
+                        display: 'inline',
+                        backgroundColor: '0xeaeaea',
+                        textAlign: {
+                          x: 'center',
+                          y: 'center',
+                        },
+                        border: {
+                          style: '5',
+                          borderRadius: '15',
+                        },
+                      },
+                    },
+                  },
+                  {
+                    type: 'divider',
+                    style: {
+                      '.DividerStyle': {
+                        left: '0.43',
+                        top: '0.35',
+                        width: '0.001',
+                        height: '0.06812',
+                        backgroundColor: '0x00000088',
+                      },
+                    },
+                  },
+                  {
+                    type: 'button',
+                    onClick: [
+                      {
+                        actionType: 'popUpDismiss',
+                        popUpView: 'resetUser',
+                      },
+                      {
+                        goto: 'SignUp',
+                      },
+                    ],
+                    text: 'OKAY',
+                    style: {
+                      '.LabelStyle': {
+                        left: '0.45',
+                        top: '0.375',
+                        width: '0.42',
+                        height: '0.06812',
+                        color: '0x007affff',
+                        fontSize: '19',
+                        display: 'inline',
+                        backgroundColor: '0xeaeaea',
+                        textAlign: {
+                          x: 'center',
+                          y: 'center',
+                        },
+                        border: {
+                          style: '5',
+                          borderRadius: '15',
+                        },
+                      },
+                    },
                   },
                 ],
-              },
-              {
-                actionType: 'popUp',
-                popUpView: 'inputVerificationCode',
               },
             ],
           },
@@ -656,6 +1100,10 @@ export default {
                         actionType: 'evalObject',
                         object: '..check',
                       },
+                      // {
+                      //   actionType: 'evalObject',
+                      //   object: '..checkPk',
+                      // },
                       {
                         actionType: 'evalObject',
                         object: {
@@ -711,7 +1159,7 @@ export default {
                             if: [
                               '=.Global.currentUser.vertex.sk',
                               {
-                                goto: 'PatientChart',
+                                goto: 'MeetingRoomInvited',
                               },
                               'continue',
                             ],
@@ -752,71 +1200,6 @@ export default {
                         backgroundColor: '0x00000088',
                       },
                     },
-                  },
-                ],
-              },
-            ],
-          },
-          {
-            type: 'image',
-            path: '..appLink.img',
-            style: {
-              width: '0.3',
-              top: '0.8',
-              left: '0.5',
-              height: '0.07',
-              borderWidth: '0',
-            },
-            onClick: [
-              {
-                goto: '..appLink.url',
-              },
-            ],
-          },
-          {
-            type: 'view',
-            style: {
-              left: '0.134',
-              top: '0.89',
-              width: '0.752',
-              height: '0.054',
-            },
-            children: [
-              {
-                type: 'label',
-                text: 'New user?',
-                style: {
-                  color: '0xb1b1b1',
-                  fontSize: '15',
-                  left: '0.2',
-                  top: '0',
-                  width: '0.4',
-                  height: '0.054',
-                  textAlign: {
-                    x: 'center',
-                    y: 'center',
-                  },
-                },
-              },
-              {
-                type: 'button',
-                text: 'Sign Up',
-                style: {
-                  color: '0x3185c7ff',
-                  fontSize: '15',
-                  fontStyle: 'bold',
-                  left: '0.41',
-                  top: '0',
-                  width: '0.25',
-                  height: '0.054',
-                  backgroundColor: '0xffffff00',
-                  border: {
-                    style: '1',
-                  },
-                },
-                onClick: [
-                  {
-                    goto: 'SignUp',
                   },
                 ],
               },

@@ -260,5 +260,30 @@ export default {
       return
     }
     return
-  }
+  },
+
+  convertToList({ array, key }) {
+    let array1: string[] = []
+    if (isArray(array)) {
+      if (key) {
+        for (let i = 0; i < array.length; i++) {
+          array1.push(array[i][key])
+        }
+        return array1
+      }
+      return
+    }
+    return
+  },
+
+  getByKey({ array, key1, value, key2 }) {
+    if (isArray(array)) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i][key1] === value) {
+          return array[i][key2]
+        }
+      }
+      return
+    }
+  },
 }

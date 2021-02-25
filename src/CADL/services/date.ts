@@ -137,11 +137,13 @@ export default {
   },
   splitByTimeSlot({ object2, timeSlot }) {
     let splitTimeArray: any[] = []
-    let splitTimeItem = {}
+    let splitTimeItem: splitTime
+    let array: any = {
+      morning: [],
+      afternoon: []
+    }
     // alert(typeof (object))
-    console.log(object2)
     if (object2) {
-      // alert(1)
       object2.forEach(obj => {
         if (isObject(obj)) {
           if (timeSlot) {
@@ -153,8 +155,17 @@ export default {
                 showTime: moment((obj['stime'] + i * timeSlot * 60) * 1000).format('LT'),
                 refid: obj['id']
               }
-              if ((obj['etime'] - splitTimeItem['stime']) < timeSlot * 60) continue
-              splitTimeArray.push(splitTimeItem)
+              if ((obj['etime'] - splitTimeItem['stime']) < timeSlot * 60) {
+                continue
+              }
+              else {
+                if (splitTimeItem['showTime'].indexOf("AM") != -1) {
+                  array.morning.push(splitTimeItem)
+                }
+                else {
+                  array.afternoon.push(splitTimeItem)
+                }
+              }
               i += 1
             } while (splitTimeItem['etime'] <= obj['etime'])
             // splitTimeArray.pop()
@@ -162,7 +173,7 @@ export default {
         }
       })
       console.log(splitTimeArray)
-      return splitTimeArray
+      return array
     }
     return
   },
@@ -388,7 +399,7 @@ export default {
       return option
     }
     return
-  },
+  }
 }
 
 
