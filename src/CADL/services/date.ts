@@ -196,12 +196,12 @@ export default {
     let isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ? true : false
     let days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     days[1] = isLeapYear ? 29 : 28
-    let index = - (span / 2)
+    let index = Math.ceil(-(span / 2))
     for (let i = 1; i <= span; i++) {
       let d = middleDay + index
       if (today == d) {
         let date = new Date(year, month, d)
-        let day = weeks[date.getDay() - 1]
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: today,
           week: day,
@@ -211,7 +211,7 @@ export default {
       } else if (d < 1) {
         d = d + days[month - 1]
         let date = new Date(year, month, d)
-        let day = weeks[date.getDay() - 1]
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: d,
           week: day,
@@ -221,7 +221,7 @@ export default {
       } else if (d > days[month - 1]) {
         d = d - days[month - 1]
         let date = new Date(year, month, d)
-        let day = weeks[date.getDay() - 1]
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: d,
           week: day,
@@ -230,7 +230,7 @@ export default {
         })
       } else {
         let date = new Date(year, month, d)
-        let day = weeks[date.getDay() - 1]
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: d,
           week: day,
@@ -281,7 +281,7 @@ export default {
         "July", "August", "September", "October", "November", "December"
       ];
       let weeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-      return weeks[date.getDay() - 1] + " " + months[month - 1] + " " + day + "," + year
+      return weeks[date.getDay()] + " " + months[month - 1] + " " + day + "," + year
     }
     return
   },
