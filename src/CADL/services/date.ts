@@ -1,36 +1,12 @@
 import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
-// class splitTime {
-//   showTime: string
-//   stime: number
-//   etime: number
-// }
-function convertWeek(day) {
-  switch (day) {
-    case 1:
-      day = 'MO';
-      break;
-    case 2:
-      day = 'TU';
-      break;
-    case 3:
-      day = 'WE';
-      break;
-    case 4:
-      day = 'TH';
-      break;
-    case 5:
-      day = 'FR';
-      break;
-    case 6:
-      day = 'SA';
-      break;
-    case 0:
-      day = 'SU';
-      break;
-  }
-  return day
+interface splitTime {
+  showTime: string
+  stime: number
+  etime: number
+  refid: string
 }
+
 export default {
   getDate() {
     return new Date().getDate()
@@ -160,9 +136,9 @@ export default {
     return dataObject
   },
   splitByTimeSlot({ object2, timeSlot }) {
-    let splitTimeArray = []
-    let splitTimeItem = {}
-    let array = {
+    let splitTimeArray: any[] = []
+    let splitTimeItem: splitTime
+    let array: any = {
       morning: [],
       afternoon: []
     }
@@ -174,16 +150,16 @@ export default {
             let i = 0
             do {
               splitTimeItem = {
-                stime: obj.stime + i * timeSlot * 60,
-                etime: obj.stime + (i + 1) * timeSlot * 60,
-                showTime: moment((obj.stime + i * timeSlot * 60) * 1000).format('LT'),
-                refid: obj.id
+                stime: obj['stime'] + i * timeSlot * 60,
+                etime: obj['stime'] + (i + 1) * timeSlot * 60,
+                showTime: moment((obj['stime'] + i * timeSlot * 60) * 1000).format('LT'),
+                refid: obj['id']
               }
-              if ((obj.etime - splitTimeItem.stime) < timeSlot * 60) {
+              if ((obj['etime'] - splitTimeItem['stime']) < timeSlot * 60) {
                 continue
               }
               else {
-                if (splitTimeItem.showTime.indexOf("AM") != -1) {
+                if (splitTimeItem['showTime'].indexOf("AM") != -1) {
                   array.morning.push(splitTimeItem)
                 }
                 else {
@@ -191,7 +167,7 @@ export default {
                 }
               }
               i += 1
-            } while (splitTimeItem.etime <= obj.etime)
+            } while (splitTimeItem['etime'] <= obj['etime'])
             // splitTimeArray.pop()
           }
         }
@@ -205,8 +181,8 @@ export default {
     // console.log("test ShowTimeSpan", object)
     if (isObject(object)) {
       if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
-        let start_date = moment(object.stime * 1000).format('LT')
-        let end_date = moment(object.etime * 1000).format('LT')
+        let start_date = moment(object['stime'] * 1000).format('LT')
+        let end_date = moment(object['etime'] * 1000).format('LT')
         let duration_date = start_date + ' - ' + end_date
         return duration_date
       }
@@ -226,16 +202,17 @@ export default {
     span = parseInt(span)
     year = parseInt(year)
     month = parseInt(month)
+    let weeks = ["SU", "MO", "TU", "WE", "TH", "FR", "SA"]
     let dataObject: Record<string, any> = []
     let isLeapYear = (year % 4 == 0 && year % 100 != 0) || year % 400 == 0 ? true : false
     let days = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
     days[1] = isLeapYear ? 29 : 28
-    let index = parseInt(-(span / 2))
+    let index = Math.ceil(-(span / 2))
     for (let i = 1; i <= span; i++) {
       let d = middleDay + index
       if (today == d) {
         let date = new Date(year, month, d)
-        let day = convertWeek(date.getDay())
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: today,
           week: day,
@@ -245,7 +222,7 @@ export default {
       } else if (d < 1) {
         d = d + days[month - 1]
         let date = new Date(year, month, d)
-        let day = convertWeek(date.getDay())
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: d,
           week: day,
@@ -255,7 +232,7 @@ export default {
       } else if (d > days[month - 1]) {
         d = d - days[month - 1]
         let date = new Date(year, month, d)
-        let day = convertWeek(date.getDay())
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: d,
           week: day,
@@ -264,7 +241,7 @@ export default {
         })
       } else {
         let date = new Date(year, month, d)
-        let day = convertWeek(date.getDay())
+        let day = weeks[date.getDay()]
         dataObject.push({
           key: d,
           week: day,
@@ -315,7 +292,7 @@ export default {
         "July", "August", "September", "October", "November", "December"
       ];
       let weeks = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-      return weeks[date.getDay() - 1] + " " + months[month - 1] + " " + day + "," + year
+      return weeks[date.getDay()] + " " + months[month - 1] + " " + day + "," + year
     }
     return
   },
@@ -347,7 +324,7 @@ export default {
             end_time = year + "/" + month + "/" + day + " " + d
           }
         })
-        let item = { itemStyle: { normal: { color: "#2988E65f" } }, value: [] }
+        let item: any = { itemStyle: { normal: { color: "#2988E65f" } }, value: [] }
         item.value[0] = obj.index
         item.value[1] = start_time
         item.value[2] = end_time
