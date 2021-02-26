@@ -1,10 +1,10 @@
-import _, { indexOf, isArray, isObject } from 'lodash'
+import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
-class splitTime {
-  showTime: string
-  stime: number
-  etime: number
-}
+// class splitTime {
+//   showTime: string
+//   stime: number
+//   etime: number
+// }
 function convertWeek(day) {
   switch (day) {
     case 1:
