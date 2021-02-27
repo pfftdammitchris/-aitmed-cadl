@@ -232,7 +232,7 @@ export default {
     if (isArray(object)) {
       return object.length
     }
-    return 0
+    return "0"
   },
   // copy one item of array1 to array2 by key
   copyByKey({ array1, array2, key }) {
