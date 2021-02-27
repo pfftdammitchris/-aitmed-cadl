@@ -54,9 +54,8 @@ export default {
     return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug }
   },
   async query({ cond = null, distance = 10000, carrier = null }) {
-    //@ts-ignore
     let type = 'either',
-      start = 0,
+      //   start = 0,
       size = SIZE,
       pos = [-117.9086, 33.8359]
     let INDEX = 'doctors'
