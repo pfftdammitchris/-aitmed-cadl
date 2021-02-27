@@ -29,4 +29,7 @@ export default {
     }
     return
   },
+  retainNumber({ value }) {
+    return parseInt(value)
+  }
 }
