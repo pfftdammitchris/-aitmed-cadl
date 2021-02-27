@@ -135,7 +135,6 @@ export default {
     return dataObject
   },
   splitByTimeSlot({ object2, timeSlot }) {
-    let splitTimeArray: any[] = []
     let splitTimeItem: splitTime
     let array: any = {
       morning: [],
@@ -169,10 +168,9 @@ export default {
           }
         }
       })
-      console.log(splitTimeArray)
       return array
     }
-    return
+    return array
   },
   ShowTimeSpan(object) {
     if (isObject(object)) {
