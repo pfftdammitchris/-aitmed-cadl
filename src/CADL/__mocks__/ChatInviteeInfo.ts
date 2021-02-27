@@ -6,10 +6,9 @@ export default {
     init: ['.SignInCheck'],
     save: [
       {
-        '=.ChatInviteeInfo.inviteToChat.edgeAPI.store': '',
+        '=..inviteToChat.edgeAPI.store': '',
       },
     ],
-
     inviteToChat: {
       edge: {
         id: '',
@@ -22,7 +21,7 @@ export default {
           fullName: '',
           InviterName: '.Global.currentUser.vertex.name.userName',
         },
-        subType: 1,
+        subtype: 1,
       },
       edgeAPI: {
         '.EdgeAPI': '',
@@ -332,7 +331,7 @@ export default {
                             actionType: 'evalObject',
                             object: [
                               {
-                                '.ChatInviteeInfo.inviteToChat.edge.refid@':
+                                '..inviteToChat.edge.refid@':
                                   '=.MessageObjStore.newChatInfo.rootChat.id',
                               },
                               {
@@ -350,8 +349,11 @@ export default {
                             ],
                           },
                           {
-                            '.MessageObjStore.newChatInfo.bufferChat@':
-                              '=..inviteToChat.edge',
+                            actionType: 'evalObject',
+                            object: {
+                              '.MessageObjStore.newChatInfo.bufferChat@':
+                                '=..inviteToChat.edge',
+                            },
                           },
                         ],
                       },

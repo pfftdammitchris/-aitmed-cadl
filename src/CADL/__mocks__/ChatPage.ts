@@ -6,26 +6,34 @@ export default {
       {
         '..chatEdge@': '=.MessageObjStore.currentChatEdge',
       },
-      { '=..messages.get': '' },
+      {
+        '=..messages.get': '',
+      },
+      {
+        '..newestMsg@': '=..messages.response.doc.0',
+      },
+      {
+        '..oldestMsg@': '=..messages.response.doc.$',
+      },
     ],
     chatEdge: '',
-    firstMsg: '',
-    lastMsg: '',
+    newestMsg: '',
+    oldestMsg: '',
     messages: {
-      respond: '',
+      response: '',
       get: {
         id: '=..chatEdge.refid',
         api: 'rd',
         xfname: 'E.refid',
         obfname: 'D.ctime',
         ObjType: 4,
-        maxcount: 50,
-        dataOut: 'messages.respond',
+        maxcount: 2,
+        dataOut: 'messages.response',
       },
     },
     newTextMessage: {
       document: {
-        eid: '=.ChatPage.chatEdge.id',
+        eid: '=..chatEdge.id',
         subtype: {
           isOnServer: 1,
           isZipped: 0,
@@ -83,68 +91,73 @@ export default {
       },
     },
     newMessages: {
-      respond: '',
+      response: '',
       get: {
         '..messages.get': '',
-        dataOut: 'newMessages.respond',
-        sCondition: {
-          '.builtIn.string.concat': ['ctime>', '=..firstMsg.ctime'],
-        },
+        sCondition: '',
+        dataOut: 'newMessages.response',
       },
     },
-    moreOldMessages: {
-      respond: '',
+    oldMessages: {
+      response: '',
       get: {
-        '..messages': '',
-        loid: '..lastMsg.id',
-        dataOut: 'moreOlderMessages.respond',
+        '..messages.get': '',
+        sCondition: '',
+        dataOut: 'oldMessages.response',
       },
     },
-    onNewMessageReceived: [
-      {
-        evolve: 'newMessages',
-      },
-      '=..newMessages.get',
-      {
-        '=.builtIn.array.push': {
-          dataIn: {
-            object: '=.ChatPage.newMessages.respond.doc',
-          },
-          dataOut: {
-            object: '=.ChatPage.messages.respond.doc',
+    onNewMessageToDisplay: {
+      actionType: 'evalObject',
+      object: [
+        {
+          '=.builtIn.string.concat': {
+            dataIn: ['ctime>', '=..newestMsg.ctime'],
+            dataOut: 'newMessages.get.sCondition',
           },
         },
-      },
-      {
-        '=.firstMsg@': '=.ChatPage.messages.respond.doc.0',
-      },
-    ],
-    onPullMoreMessage: [
-      {
-        evolve: 'moreOldMessage.get',
-      },
-      '=..moreOlderMessages.get',
-      {
-        '=.builtIn.array.append': {
-          dataIn: {
-            object: '=.ChatPage.moreOldMessages.respond.doc',
-          },
-          dataOut: {
-            object: '=.ChatPage.messages.respond.doc',
+        '=..newMessages.get',
+        {
+          '=..newestMsg@': '=..newMessages.response.doc.0',
+        },
+        {
+          actionType: 'builtIn',
+          funcName: 'insertTo',
+          viewTag: 'chatTag',
+          newItems: 'newMessages.response.doc',
+        },
+      ],
+    },
+    onPullMoreMessage: {
+      actionType: 'evalObject',
+      object: [
+        {
+          '=.builtIn.string.concat': {
+            dataIn: ['ctime<', '=..oldestMsg.ctime'],
+            dataOut: 'oldMessages.get.sCondition',
           },
         },
-      },
-      '=..lastMsg@:=.ChatPage.messages.respond.doc.$',
-    ],
+        '=..oldMessages.get',
+        {
+          '..oldestMsg@': '=..oldMessages.response.doc.$',
+        },
+        {
+          actionType: 'builtIn',
+          funcName: 'insertTo',
+          viewTag: 'chatTag',
+          newItems: 'newMessages.response.doc',
+          addToFront: false,
+        },
+      ],
+    },
     components: [
       {
         type: 'register',
-        onEvent: 'onFCMReceived',
-        actions: ['=..onNewMessageReceived'],
+        onEvent: 'onNewMessageDisplay',
+        actions: ['=..onNewMessageToDisplay'],
       },
       {
         type: 'register',
-        onEvent: 'onPullDown',
+        onEvent: 'onPullMoreMessage',
         actions: ['=..onPullMoreMessage'],
       },
       {
@@ -253,8 +266,9 @@ export default {
           },
           {
             type: 'chatList',
+            viewTag: 'chatTag',
             contentType: 'listObject',
-            listObject: '..messages.respond.doc',
+            listObject: '..messages.response.doc',
             iteratorVar: 'itemObject',
             style: {
               left: '0',
@@ -278,6 +292,7 @@ export default {
           },
           {
             type: 'textField',
+            viewTag: 'textInput',
             contentType: 'text',
             placeholder: 'Write here',
             dataKey: 'newTextMessage.document.name.data.text',
@@ -304,15 +319,25 @@ export default {
                 actionType: 'evalObject',
                 object: [
                   {
-                    '=.ChatPage.newTextMessage.docAPI.store': '',
+                    '=..newTextMessage.docAPI.store': '',
                   },
                   {
                     '..newTextMessage.document.name.data.text@': '',
                   },
+                  '=..onNewMessageToDisplay',
                   {
-                    event: 'onPullDown',
+                    '=.builtIn.object.clear': {
+                      dataIn: {
+                        object: '=..newTextMessage.document.name.data.text',
+                      },
+                    },
                   },
                 ],
+              },
+              {
+                actionType: 'builtIn',
+                funcName: 'clearText',
+                viewTag: 'textInput',
               },
             ],
             style: {
@@ -340,15 +365,18 @@ export default {
             contentType: 'file',
             onClick: [
               {
-                actionType: 'openDocumentManager',
-                dataObject: 'BLOB',
-                dataKey: 'newFileMessage.document.name.data',
-              },
-              {
-                '=..newFileMessage.docAPI.store': '',
-              },
-              {
-                event: 'onPullDown',
+                actionType: 'evalObject',
+                object: [
+                  {
+                    actionType: 'openDocumentManager',
+                    dataObject: 'BLOB',
+                    dataKey: 'newFileMessage.document.name.data',
+                  },
+                  {
+                    '=..newFileMessage.docAPI.store': '',
+                  },
+                  '=..onNewMessageToDisplay',
+                ],
               },
             ],
             style: {
