@@ -142,8 +142,7 @@ export default {
       morning: [],
       afternoon: []
     }
-    // alert(typeof (object))
-    if (object2) {
+    if (isArray(object2)) {
       object2.forEach(obj => {
         if (isObject(obj)) {
           if (timeSlot) {
@@ -168,7 +167,6 @@ export default {
               }
               i += 1
             } while (splitTimeItem['etime'] <= obj['etime'])
-            // splitTimeArray.pop()
           }
         }
       })
@@ -178,7 +176,6 @@ export default {
     return
   },
   ShowTimeSpan(object) {
-    // console.log("test ShowTimeSpan", object)
     if (isObject(object)) {
       if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
         let start_date = moment(object['stime'] * 1000).format('LT')
