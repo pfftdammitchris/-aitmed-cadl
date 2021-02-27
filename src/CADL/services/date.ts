@@ -87,7 +87,6 @@ export default {
     console.log(arr)
     return arr
   },
-
   calendarArray({ year, month, today }) {
     year = parseInt(year)
     month = parseInt(month)
@@ -398,6 +397,3 @@ export default {
     return
   }
 }
-
-
-
