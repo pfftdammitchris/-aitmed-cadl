@@ -1,5 +1,9 @@
 import _, { isArray } from 'lodash'
-
+class connection {
+  name: string
+  category: string
+  userId: string
+}
 export default {
   add({ object, value }) {
     if (isArray(object)) {
@@ -284,6 +288,31 @@ export default {
       }
       return
     }
+  },
+
+  getConnection({ array1, array2 }) {
+    let arrayItem: connection
+    let array: connection[] = []
+    if (isArray(array1) && isArray(array2)) {
+      array1.forEach(arr => {
+        arrayItem = {
+          name: arr['name']['inviterName'],
+          category: arr['name']['inviterCategory'],
+          userId: arr['evid']
+        }
+        array.push(arrayItem)
+      })
+      array2.forEach(arr => {
+        arrayItem = {
+          name: arr['name']['inviteeName'],
+          category: arr['name']['inviteeCategory'],
+          userId: arr['bvid']
+        }
+        array.push(arrayItem)
+      })
+      return array
+    }
+    return []
   }
 
 }
