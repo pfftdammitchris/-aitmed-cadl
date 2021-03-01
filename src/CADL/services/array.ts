@@ -293,7 +293,32 @@ export default {
   getConnection({ array1, array2 }) {
     let arrayItem: connection
     let array: connection[] = []
-    if (isArray(array1) && isArray(array2)) {
+    if (typeof (array1) == 'string' || typeof (array2) == 'string') {
+      if (isArray(array1)) {
+        array1.forEach(arr => {
+          arrayItem = {
+            name: arr['name']['inviterName'],
+            category: arr['name']['inviterCategory'],
+            userId: arr['evid']
+          }
+          array.push(arrayItem)
+        })
+        return array
+      } else if (isArray(array2)) {
+        array2.forEach(arr => {
+          arrayItem = {
+            name: arr['name']['inviteeName'],
+            category: arr['name']['inviteeCategory'],
+            userId: arr['bvid']
+          }
+          array.push(arrayItem)
+        })
+        return array
+      } else {
+        return
+      }
+    }
+    else {
       array1.forEach(arr => {
         arrayItem = {
           name: arr['name']['inviterName'],
