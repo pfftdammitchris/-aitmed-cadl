@@ -313,6 +313,12 @@ export default {
       return array
     }
     return []
+  },
+
+  getFirstItem({ array }) {
+    if (isArray(array)) {
+      return array[0]
+    }
   }
 
 }
