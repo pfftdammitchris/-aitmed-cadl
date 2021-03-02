@@ -9,6 +9,7 @@ import objectServices from './object'
 import arrayServices from './array'
 import numberService from './number'
 import dateService from './date'
+import searchService from './search'
 import ecos from './ecos'
 import utils from './utils'
 import typeCheck from './typeCheck'
@@ -93,6 +94,7 @@ export default function builtInFns(dispatch?: Function) {
     array: arrayServices,
     number: numberService,
     date: dateService,
+    search: searchService,
     typeCheck,
     ecos,
     utils,
