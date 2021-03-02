@@ -194,6 +194,15 @@ function create({ pageName, apiObject, dispatch }) {
         `Missing reference ${id} at page ${pageName}`
       )
     }
+    if (
+      populatedCurrentVal.type == '2000' &&
+      typeof populatedCurrentVal.name.nonce === 'function'
+    ) {
+      populatedCurrentVal.name = {
+        ...populatedCurrentVal.name,
+        nonce: populatedCurrentVal.name.nonce(),
+      }
+    }
     let res
     //If id is in apiObject then it is an updateRequest
     if (id) {
@@ -291,7 +300,7 @@ function create({ pageName, apiObject, dispatch }) {
             'background: purple; color: white; display: block;',
             {
               edge_id: eid,
-              content: name?.data,
+              content: name?.data ? name?.data : name,
               mediaType: name?.type,
               user: name?.user,
               title: name?.title,
@@ -328,6 +337,7 @@ function create({ pageName, apiObject, dispatch }) {
           const response = await Document.create({
             edge_id: eid,
             content: name?.data,
+            paymentNonce: name?.nonce,
             mediaType: name?.type,
             title: name?.title,
             user: name?.user,

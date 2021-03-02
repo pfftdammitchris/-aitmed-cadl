@@ -21,7 +21,6 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
   esakOfCurrentUser,
 }) => {
   // Validate Edge
-
   const edge =
     typeof _edge === 'undefined' ? await retrieveEdge(document.eid) : _edge
   if (edge === null)

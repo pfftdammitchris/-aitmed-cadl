@@ -38,6 +38,7 @@ export const create: NoteTypes.Create = async ({
   mediaType,
   dataType = 0,
   dTypeProps,
+  paymentNonce,
 }) => {
   //check if eid has been dereferenced
   if (!isPopulated(edge_id)) {
@@ -171,6 +172,9 @@ export const create: NoteTypes.Create = async ({
   // data must be base64 in name field
   if (dType.isOnServer) {
     name.data = bs64Data
+  }
+  if (paymentNonce) {
+    name.nonce = paymentNonce
   }
   const response = await store.level2SDK.documentServices
     .createDocument({
