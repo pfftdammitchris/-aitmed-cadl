@@ -46,6 +46,7 @@ export default {
            * callback function: cardNonceResponseReceived
            * Triggered when: SqPaymentForm completes a card nonce request
            */
+          //@ts-ignore
           cardNonceResponseReceived: async function (errors, nonce, cardData) {
             if (errors) {
               // Log errors from nonce generation to the browser developer console.
