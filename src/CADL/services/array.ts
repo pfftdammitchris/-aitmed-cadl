@@ -3,6 +3,7 @@ class connection {
   name: string
   category: string
   userId: string
+  phone: string
 }
 export default {
   add({ object, value }) {
@@ -299,7 +300,8 @@ export default {
           arrayItem = {
             name: arr['name']['inviterName'],
             category: arr['name']['inviterCategory'],
-            userId: arr['evid']
+            userId: arr['evid'],
+            phone: arr['name']['inviterPhoneNumber']
           }
           array.push(arrayItem)
         })
@@ -309,13 +311,14 @@ export default {
           arrayItem = {
             name: arr['name']['inviteeName'],
             category: arr['name']['inviteeCategory'],
-            userId: arr['bvid']
+            userId: arr['bvid'],
+            phone: arr['name']['inviteePhoneNumber']
           }
           array.push(arrayItem)
         })
         return array
       } else {
-        return
+        return []
       }
     }
     else {
@@ -323,7 +326,8 @@ export default {
         arrayItem = {
           name: arr['name']['inviterName'],
           category: arr['name']['inviterCategory'],
-          userId: arr['evid']
+          userId: arr['evid'],
+          phone: arr['name']['inviterPhoneNumber']
         }
         array.push(arrayItem)
       })
@@ -331,13 +335,13 @@ export default {
         arrayItem = {
           name: arr['name']['inviteeName'],
           category: arr['name']['inviteeCategory'],
-          userId: arr['bvid']
+          userId: arr['bvid'],
+          phone: arr['name']['inviteePhoneNumber']
         }
         array.push(arrayItem)
       })
       return array
     }
-    return []
   },
 
   getFirstItem({ array }) {
