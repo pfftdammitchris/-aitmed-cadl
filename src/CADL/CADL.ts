@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
+// import PaymentTest from './__mocks__/PaymentTest'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -487,7 +487,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
+    // // if (pageName === 'PaymentTest') return PaymentTest
 
     let pageCADL
     let pageUrl

@@ -8,6 +8,7 @@ export interface NoteDocumentDeat {
 
 export interface NoteDocumentName {
   title: string
+  nonce?: string
   user?: string
   tags: string[]
   edit_mode?: number
@@ -47,6 +48,7 @@ export type CreateParams = {
   type?: number
   dataType?: number
   dTypeProps?: Record<string, any>
+  paymentNonce?: string
 } & NoteUtilsTypes.ContentParams
 
 export interface Create {
