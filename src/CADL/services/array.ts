@@ -235,7 +235,7 @@ export default {
   // get the length of object
   getListLength({ object }) {
     if (isArray(object)) {
-      return object.length
+      return object.length.toString()
     }
     return "0"
   },
