@@ -66,6 +66,7 @@ export default {
             formContainer?.appendChild(nonceElement)
             //@ts-ignore
             document.getElementById('card-nonce').value = nonce
+            alert('Please click continue to finish the payment.')
             //@ts-ignore
             delete window.onGetCardNonce
             //@ts-ignore
