@@ -262,7 +262,7 @@ export default {
                             '..inviteToChat.edge.subType@': 0,
                           },
                           {
-                            '=..inviteToChat.edgeAPI.store': '',
+                            '=..inviteToChat.edgeAPI.store@': '',
                           },
                           {
                             '.MessageObjStore.currentChatEdge@':

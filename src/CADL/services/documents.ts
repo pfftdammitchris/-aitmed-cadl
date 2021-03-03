@@ -40,7 +40,7 @@ function get({ pageName, apiObject, dispatch }) {
 
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
-        payload: { object: currentVal, pageName },
+        payload: { object: currentVal, pageName, copy: true },
       })
       nonce = _nonce
       if (!isPopulated(id)) {
@@ -56,14 +56,15 @@ function get({ pageName, apiObject, dispatch }) {
       sCondition = populatedCurrentVal?.sCondition
     } else if (options.id) {
       idList = Array.isArray(options.id) ? [...options.id] : [options.id]
+    } else {
+      const { deat, _nonce, ...populatedCurrentVal } = await dispatch({
+        type: 'populate-object',
+        payload: { object: requestOptions, pageName },
+      })
+      nonce = _nonce
+      requestOptions = populatedCurrentVal
     }
 
-    const { deat, _nonce, ...populatedCurrentVal } = await dispatch({
-      type: 'populate-object',
-      payload: { object: requestOptions, pageName },
-    })
-    nonce = _nonce
-    requestOptions = populatedCurrentVal
     if (maxcount) {
       requestOptions.maxcount = parseInt(maxcount)
     }
