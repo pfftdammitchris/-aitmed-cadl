@@ -7,7 +7,7 @@ export default {
         '..chatEdge@': '=.MessageObjStore.currentChatEdge',
       },
       {
-        '=..messages.get': '',
+        '=..messages.docApi.get': '',
       },
       {
         '..newestMsg@': '=..messages.response.doc.0',
@@ -21,14 +21,19 @@ export default {
     oldestMsg: '',
     messages: {
       response: '',
-      get: {
+      document: {
         id: '=..chatEdge.refid',
-        api: 'rd',
         xfname: 'E.refid',
         obfname: 'D.ctime',
         ObjType: 4,
         maxcount: 2,
-        dataOut: 'messages.response',
+      },
+      docApi: {
+        get: {
+          api: 'rd',
+          dataOut: 'messages.response',
+          dataIn: 'messages.document',
+        },
       },
     },
     newTextMessage: {
@@ -92,32 +97,50 @@ export default {
     },
     newMessages: {
       response: '',
-      get: {
-        '..messages.get': '',
+      document: {
+        '..messages.document': '',
         sCondition: '',
-        dataOut: 'newMessages.response',
+        _nonce: '=.Global._nonce',
+      },
+      docApi: {
+        get: {
+          api: 'rd',
+          dataIn: 'newMessages.document',
+          dataOut: 'newMessages.response',
+        },
       },
     },
     oldMessages: {
       response: '',
-      get: {
-        '..messages.get': '',
+      document: {
+        '..messages.document': '',
         sCondition: '',
-        dataOut: 'oldMessages.response',
+      },
+      docApi: {
+        get: {
+          api: 'rd',
+          dataIn: 'oldMessages.document',
+          dataOut: 'oldMessages.response',
+        },
       },
     },
     onNewMessageToDisplay: {
       actionType: 'evalObject',
       object: [
+        // {
+        //   '=.builtIn.string.concat': {
+        //     dataIn: ['ctime>', '=..newestMsg.ctime'],
+        //     dataOut: 'ChatPage.newMessages.get.sCondition',
+        //   },
+        // },
         {
-          '=.builtIn.string.concat': {
-            dataIn: ['ctime>', '=..newestMsg.ctime'],
-            dataOut: 'newMessages.get.sCondition',
+          '.Global._nonce@': {
+            '=.builtIn.math.random': '',
           },
         },
-        '=..newMessages.get',
+        { '=..newMessages.docApi.get': '' },
         {
-          '=..newestMsg@': '=..newMessages.response.doc.0',
+          '..newestMsg@': '=..newMessages.response.doc.0',
         },
         {
           actionType: 'builtIn',
@@ -133,10 +156,10 @@ export default {
         {
           '=.builtIn.string.concat': {
             dataIn: ['ctime<', '=..oldestMsg.ctime'],
-            dataOut: 'oldMessages.get.sCondition',
+            dataOut: 'oldMessages.document.sCondition',
           },
         },
-        '=..oldMessages.get',
+        { '=..oldMessages.docApi.get': '' },
         {
           '..oldestMsg@': '=..oldMessages.response.doc.$',
         },
@@ -153,7 +176,10 @@ export default {
       {
         type: 'register',
         onEvent: 'onNewMessageDisplay',
-        actions: ['=..onNewMessageToDisplay'],
+        emit: {
+          dataKey: { var: 'onNewMessageDisplay' },
+          actions: ['=..onNewMessageToDisplay'],
+        },
       },
       {
         type: 'register',
@@ -324,7 +350,6 @@ export default {
                   {
                     '..newTextMessage.document.name.data.text@': '',
                   },
-                  '=..onNewMessageToDisplay',
                   {
                     '=.builtIn.object.clear': {
                       dataIn: {
@@ -334,6 +359,7 @@ export default {
                   },
                 ],
               },
+              '=..onNewMessageToDisplay',
               {
                 actionType: 'builtIn',
                 funcName: 'clearText',
@@ -375,9 +401,9 @@ export default {
                   {
                     '=..newFileMessage.docAPI.store': '',
                   },
-                  '=..onNewMessageToDisplay',
                 ],
               },
+              '=..onNewMessageToDisplay',
             ],
             style: {
               color: '0xffffffff',
