@@ -40,7 +40,7 @@ function get({ pageName, apiObject, dispatch }) {
 
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
-        payload: { object: currentVal, pageName },
+        payload: { object: currentVal, pageName, copy: true },
       })
       nonce = _nonce
       if (!isPopulated(id)) {
@@ -56,14 +56,15 @@ function get({ pageName, apiObject, dispatch }) {
       sCondition = populatedCurrentVal?.sCondition
     } else if (options.id) {
       idList = Array.isArray(options.id) ? [...options.id] : [options.id]
+    } else {
+      const { deat, _nonce, ...populatedCurrentVal } = await dispatch({
+        type: 'populate-object',
+        payload: { object: requestOptions, pageName },
+      })
+      nonce = _nonce
+      requestOptions = populatedCurrentVal
     }
 
-    const { deat, _nonce, ...populatedCurrentVal } = await dispatch({
-      type: 'populate-object',
-      payload: { object: requestOptions, pageName },
-    })
-    nonce = _nonce
-    requestOptions = populatedCurrentVal
     if (maxcount) {
       requestOptions.maxcount = parseInt(maxcount)
     }
@@ -194,6 +195,15 @@ function create({ pageName, apiObject, dispatch }) {
         `Missing reference ${id} at page ${pageName}`
       )
     }
+    if (
+      populatedCurrentVal.type == '2000' &&
+      typeof populatedCurrentVal.name.nonce === 'function'
+    ) {
+      populatedCurrentVal.name = {
+        ...populatedCurrentVal.name,
+        nonce: populatedCurrentVal.name.nonce(),
+      }
+    }
     let res
     //If id is in apiObject then it is an updateRequest
     if (id) {
@@ -291,7 +301,7 @@ function create({ pageName, apiObject, dispatch }) {
             'background: purple; color: white; display: block;',
             {
               edge_id: eid,
-              content: name?.data,
+              content: name?.data ? name?.data : name,
               mediaType: name?.type,
               user: name?.user,
               title: name?.title,
@@ -328,6 +338,7 @@ function create({ pageName, apiObject, dispatch }) {
           const response = await Document.create({
             edge_id: eid,
             content: name?.data,
+            paymentNonce: name?.nonce,
             mediaType: name?.type,
             title: name?.title,
             user: name?.user,
