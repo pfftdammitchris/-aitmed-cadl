@@ -348,6 +348,24 @@ export default {
     if (isArray(array)) {
       return array[0]
     }
-  }
-
+  },
+  /**
+   * Combine two arrays and sort 
+   * sortby: Select the character to sort 
+   * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
+   */
+  concatArray({ array1, array2, sortby, orders }) {
+    if (isArray(array1) && isArray(array2)) {
+      if (sortby) {
+        let arr = array1.concat(array2)
+        if (orders) {
+          return _.orderBy(arr, sortby, orders)
+        } else {
+          return _.orderBy(arr, sortby, "desc")
+        }
+      }
+      return array1.concat(array2)
+    }
+    return
+  },
 }

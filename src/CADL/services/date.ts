@@ -291,6 +291,12 @@ export default {
     }
     return
   },
+
+  /**
+   * Add a height attribute to each item below the array 
+   * @param object 
+   * @returns 
+   */
   AddHeightByTimeSpan({ object }) {
     if (isArray(object)) {
       console.log('test AddHeightByTimeSpan', object)
