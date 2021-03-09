@@ -567,7 +567,7 @@ function populateString({
         replacement = replacement + source.substring(2)
         break
       } else if (
-        (replacement || replacement === '') &&
+        (replacement || replacement === '' || replacement === 0) &&
         replacement !== source
       ) {
         if (
