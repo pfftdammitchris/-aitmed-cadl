@@ -136,7 +136,6 @@ export default {
     return dataObject
   },
   splitByTimeSlot({ object2, timeSlot }) {
-    let splitTimeArray: any[] = []
     let splitTimeItem: splitTime
     let array: any = {
       morning: [],
@@ -170,10 +169,9 @@ export default {
           }
         }
       })
-      console.log(splitTimeArray)
       return array
     }
-    return
+    return array
   },
   ShowTimeSpan(object) {
     if (isObject(object)) {
@@ -187,6 +185,24 @@ export default {
     }
     return
   },
+  ShowTimeSpanFormat(object) {
+    if (isObject(object)) {
+      if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
+        let date = new Date(object['stime'] * 1000)
+        let y = date.getFullYear()
+        let m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth()
+        let d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay()
+        let start_date = moment(object['stime'] * 1000).format('LT')
+        let end_date = moment(object['etime'] * 1000).format('LT')
+        let duration_date = y + "-" + m + "-" + d + " " + start_date + "-" + end_date
+        return duration_date
+      }
+      return
+    }
+    return
+  },
+  // minicalendarArray({ year, month, today, middleDay, span, color, backgroundColor, todayColor, todayBackgroundColor }) {
+  //   console.log("test minicalendarArray", {
   minicalendarArray({
     year,
     month,
@@ -275,6 +291,12 @@ export default {
     }
     return
   },
+
+  /**
+   * Add a height attribute to each item below the array 
+   * @param object 
+   * @returns 
+   */
   AddHeightByTimeSpan({ object }) {
     if (isArray(object)) {
       console.log('test AddHeightByTimeSpan', object)

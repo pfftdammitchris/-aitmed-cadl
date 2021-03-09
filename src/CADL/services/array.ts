@@ -1,5 +1,10 @@
 import _, { isArray } from 'lodash'
-
+class connection {
+  name: string
+  category: string
+  userId: string
+  phone: string
+}
 export default {
   add({ object, value }) {
     if (isArray(object)) {
@@ -230,9 +235,9 @@ export default {
   // get the length of object
   getListLength({ object }) {
     if (isArray(object)) {
-      return object.length
+      return object.length.toString()
     }
-    return 0
+    return "0"
   },
   // copy one item of array1 to array2 by key
   copyByKey({ array1, array2, key }) {
@@ -260,5 +265,107 @@ export default {
       return
     }
     return
-  }
+  },
+  convertToList({ array, key }) {
+    let array1: string[] = []
+    if (isArray(array)) {
+      if (key) {
+        for (let i = 0; i < array.length; i++) {
+          array1.push(array[i][key])
+        }
+        return array1
+      }
+      return
+    }
+    return
+  },
+
+  getByKey({ array, key1, value, key2 }) {
+    if (isArray(array)) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i][key1] === value) {
+          return array[i][key2]
+        }
+      }
+      return
+    }
+  },
+
+  getConnection({ array1, array2 }) {
+    let arrayItem: connection
+    let array: connection[] = []
+    if (typeof (array1) == 'string' || typeof (array2) == 'string') {
+      if (isArray(array1)) {
+        array1.forEach(arr => {
+          arrayItem = {
+            name: arr['name']['inviterName'],
+            category: arr['name']['inviterCategory'],
+            userId: arr['evid'],
+            phone: arr['name']['inviterPhoneNumber']
+          }
+          array.push(arrayItem)
+        })
+        return array
+      } else if (isArray(array2)) {
+        array2.forEach(arr => {
+          arrayItem = {
+            name: arr['name']['inviteeName'],
+            category: arr['name']['inviteeCategory'],
+            userId: arr['bvid'],
+            phone: arr['name']['inviteePhoneNumber']
+          }
+          array.push(arrayItem)
+        })
+        return array
+      } else {
+        return []
+      }
+    }
+    else {
+      array1.forEach(arr => {
+        arrayItem = {
+          name: arr['name']['inviterName'],
+          category: arr['name']['inviterCategory'],
+          userId: arr['evid'],
+          phone: arr['name']['inviterPhoneNumber']
+        }
+        array.push(arrayItem)
+      })
+      array2.forEach(arr => {
+        arrayItem = {
+          name: arr['name']['inviteeName'],
+          category: arr['name']['inviteeCategory'],
+          userId: arr['bvid'],
+          phone: arr['name']['inviteePhoneNumber']
+        }
+        array.push(arrayItem)
+      })
+      return array
+    }
+  },
+
+  getFirstItem({ array }) {
+    if (isArray(array)) {
+      return array[0]
+    }
+  },
+  /**
+   * Combine two arrays and sort 
+   * sortby: Select the character to sort 
+   * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
+   */
+  concatArray({ array1, array2, sortby, orders }) {
+    if (isArray(array1) && isArray(array2)) {
+      if (sortby) {
+        let arr = array1.concat(array2)
+        if (orders) {
+          return _.orderBy(arr, sortby, orders)
+        } else {
+          return _.orderBy(arr, sortby, "desc")
+        }
+      }
+      return array1.concat(array2)
+    }
+    return
+  },
 }
