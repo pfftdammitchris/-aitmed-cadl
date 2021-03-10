@@ -93,7 +93,7 @@ export default {
       carrier: carrier,
       pos: pos
     })
-    let type = "either", start = 0, size = SIZE
+    let type = "either", size = SIZE
     let INDEX = "doctors"
     let office = true
     let video = true
