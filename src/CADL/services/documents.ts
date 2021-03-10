@@ -199,6 +199,7 @@ function create({ pageName, apiObject, dispatch }) {
       populatedCurrentVal.type == '2000' &&
       typeof populatedCurrentVal.name.nonce === 'function'
     ) {
+      //document is a payment type
       populatedCurrentVal.name = {
         ...populatedCurrentVal.name,
         nonce: populatedCurrentVal.name.nonce(),
