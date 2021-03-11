@@ -394,5 +394,5 @@ export default {
       return array1.concat(array2)
     }
     return
-  },
+  }
 }
