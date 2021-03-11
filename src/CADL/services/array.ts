@@ -1,5 +1,5 @@
 import _, { isArray } from 'lodash'
-type Connection = {
+type connection = {
   name: string
   category: string
   userId: string
@@ -294,37 +294,33 @@ export default {
     let arrayItem: connection
     let array: connection[] = []
     let favorite1: boolean
-    if (typeof (array1) == 'string' || typeof (array2) == 'string') {
+    if (typeof array1 == 'string' || typeof array2 == 'string') {
       if (isArray(array1)) {
-        array1.forEach(arr => {
-          if (arr['subtype'] == 0)
-            favorite1 = false
-          else
-            favorite1 = true
+        array1.forEach((arr) => {
+          if (arr['subtype'] == 0) favorite1 = false
+          else favorite1 = true
           arrayItem = {
             name: arr['name']['inviterName'],
             category: arr['name']['inviterCategory'],
             userId: arr['evid'],
             phone: arr['name']['inviterPhoneNumber'],
             favorite: favorite1,
-            connectId: arr['id']
+            connectId: arr['id'],
           }
           array.push(arrayItem)
         })
         return array
       } else if (isArray(array2)) {
-        array2.forEach(arr => {
-          if (arr['subtype'] == 0)
-            favorite1 = false
-          else
-            favorite1 = true
+        array2.forEach((arr) => {
+          if (arr['subtype'] == 0) favorite1 = false
+          else favorite1 = true
           arrayItem = {
             name: arr['name']['inviteeName'],
             category: arr['name']['inviteeCategory'],
             userId: arr['bvid'],
             phone: arr['name']['inviteePhoneNumber'],
             favorite: favorite1,
-            connectId: arr['id']
+            connectId: arr['id'],
           }
           array.push(arrayItem)
         })
@@ -332,35 +328,30 @@ export default {
       } else {
         return []
       }
-    }
-    else {
-      array1.forEach(arr => {
-        if (arr['subtype'] == 0)
-          favorite1 = false
-        else
-          favorite1 = true
+    } else {
+      array1.forEach((arr) => {
+        if (arr['subtype'] == 0) favorite1 = false
+        else favorite1 = true
         arrayItem = {
           name: arr['name']['inviterName'],
           category: arr['name']['inviterCategory'],
           userId: arr['evid'],
           phone: arr['name']['inviterPhoneNumber'],
           favorite: favorite1,
-          connectId: arr['id']
+          connectId: arr['id'],
         }
         array.push(arrayItem)
       })
-      array2.forEach(arr => {
-        if (arr['subtype'] == 0)
-          favorite1 = false
-        else
-          favorite1 = true
+      array2.forEach((arr) => {
+        if (arr['subtype'] == 0) favorite1 = false
+        else favorite1 = true
         arrayItem = {
           name: arr['name']['inviteeName'],
           category: arr['name']['inviteeCategory'],
           userId: arr['bvid'],
           phone: arr['name']['inviteePhoneNumber'],
           favorite: favorite1,
-          connectId: arr['id']
+          connectId: arr['id'],
         }
         array.push(arrayItem)
       })
@@ -391,5 +382,5 @@ export default {
       return array1.concat(array2)
     }
     return
-  }
+  },
 }
