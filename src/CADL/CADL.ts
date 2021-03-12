@@ -777,12 +777,20 @@ export default class CADL extends EventEmitter {
           copy: shouldCopy,
         },
       })
-      results = await this.handleEvalFunction({
-        command: {
+      let gotoCommand
+      if (typeof populatedCommand[key] === 'string') {
+        gotoCommand = {
           '=.builtIn.goto': {
             dataIn: { destination: populatedCommand[key] },
           },
-        },
+        }
+      } else if (isObject(populatedCommand[key])) {
+        gotoCommand = {
+          '=.builtIn.goto': populatedCommand[key],
+        }
+      }
+      results = await this.handleEvalFunction({
+        command: gotoCommand,
         pageName,
         key: '=.builtIn.goto',
       })
