@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import VideoChat from './__mocks__/VideoChat'
+// import Logout from './__mocks__/LogOut'
 // import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
 
 export default class CADL extends EventEmitter {
@@ -488,7 +488,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'VideoChat') return VideoChat
+    // // if (pageName === 'Logout') return _.cloneDeep(Logout)
     // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
 
     let pageCADL
@@ -1418,7 +1418,14 @@ export default class CADL extends EventEmitter {
           lookFor: ['..', '.', '='],
           locations: [this.root, this.root[pageName]],
         })
-        await this.root.builtIn['goto'](populatedTrueEffect['goto'])
+        let gotoArgs
+
+        if (typeof populatedTrueEffect['goto'] === 'string') {
+          gotoArgs = populatedTrueEffect['goto']
+        } else if (isObject(populatedTrueEffect['goto'])) {
+          gotoArgs = populatedTrueEffect['goto'].dataIn
+        }
+        await this.root.builtIn['goto'](gotoArgs)
         return
       } else if (
         isObject(ifTrueEffect) &&
@@ -1548,7 +1555,15 @@ export default class CADL extends EventEmitter {
             lookFor: ['..', '.', '='],
             locations: [this.root, this.root[pageName]],
           })
-          await this.root.builtIn['goto'](populatedFalseEffect['goto'])
+
+          let gotoArgs
+
+          if (typeof populatedFalseEffect['goto'] === 'string') {
+            gotoArgs = populatedFalseEffect['goto']
+          } else if (isObject(populatedFalseEffect['goto'])) {
+            gotoArgs = populatedFalseEffect['goto'].dataIn
+          }
+          await this.root.builtIn['goto'](gotoArgs)
           return
         }
       } else if (typeof ifFalseEffect === 'function') {
