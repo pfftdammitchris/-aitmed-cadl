@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import ChatPage from './__mocks__/ChatPage'
+// import VideoChat from './__mocks__/VideoChat'
 // import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
 
 export default class CADL extends EventEmitter {
@@ -488,7 +488,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'ChatPage') return ChatPage
+    // if (pageName === 'VideoChat') return VideoChat
     // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
 
     let pageCADL
@@ -876,7 +876,6 @@ export default class CADL extends EventEmitter {
       const pathArr = trimPath.split('.')
 
       const currValue = _.get(this.root, [...pathArr]) || ''
-
       if (isObject(currValue)) {
         val = mergeDeep(currValue, val)
       }
