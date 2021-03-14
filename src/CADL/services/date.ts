@@ -457,4 +457,9 @@ export default {
     }
     return
   },
+
+  transformMonth({ month }) {
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+    return months[month - 1]
+  },
 }
