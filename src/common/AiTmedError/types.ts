@@ -18,8 +18,8 @@ export enum ErrorCodes {
   PROFILE_PHOTO_INVALID,
   LOGIN_REQUIRED,
 
-  /* Notebook */
-  NOTEBOOK_NOT_EXIST = 2000,
+  /* Edges */
+  EDGE_DOES_NOT_EXIST = 2000,
   NOTEBOOK_PERMISSION_DENIED,
   NOT_A_NOTEBOOk,
   ROOT_NOTEBOOK_EXIST,
@@ -82,8 +82,8 @@ export const defaultErrorMessages: Record<string, string> = {
   LOGIN_REQUIRED:
     'There is no secretKey present in localStorage. Please log In.',
 
-  /* Notebook */
-  NOTEBOOK_NOT_EXIST: 'notebook is not exist',
+  /* Edges */
+  EDGE_DOES_NOT_EXIST: 'The requested edge does not exist',
   NOTEBOOK_PERMISSION_DENIED: 'notebook permission denied',
   NOT_A_NOTEBOOk: 'not a notebook',
   ROOT_NOTEBOOK_EXIST: 'the root notebook is already exist',
