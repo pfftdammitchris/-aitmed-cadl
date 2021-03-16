@@ -5,16 +5,16 @@ import AiTmedError from '../../common/AiTmedError'
 import DType from '../../common/DType'
 import { CommonTypes } from '../../common/types'
 
-import * as NoteTypes from './types'
+import * as DocumentTypes from './types'
 import { UnableToLocateValue } from '../../CADL/errors'
 
 import {
+  documentToNote,
   contentToBlob,
   produceEncryptData,
   produceGzipData,
   CONTENT_SIZE_LIMIT,
-} from '../Note'
-import { documentToNote } from './utils'
+} from './utils'
 import { isPopulated } from '../../CADL/utils'
 import ecc from '../../CADL/services/ecc'
 
@@ -26,9 +26,9 @@ import ecc from '../../CADL/services/ecc'
  * @param params.type: 0 | 1 | 2 | 3 | 10 | 11 | 12
  * @param params.tags?: string[]
  * @param params.dataType?: number
- * @returns Promise<Note>
+ * @returns Promise<Document>
  */
-export const create: NoteTypes.Create = async ({
+export const create: DocumentTypes.Create = async ({
   edge_id,
   title,
   tags = [],
@@ -45,7 +45,7 @@ export const create: NoteTypes.Create = async ({
     throw new UnableToLocateValue(`Missing reference ${edge_id}`)
   }
   const edge = await retrieveEdge(edge_id)
-  if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+  if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
   const dType = new DType()
   dType.dataType = dTypeProps?.dataType || dataType
 
@@ -160,7 +160,7 @@ export const create: NoteTypes.Create = async ({
   const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(data)
   dType.isBinary = false
 
-  const name: NoteTypes.NoteDocumentName = {
+  const name: DocumentTypes.NoteDocumentName = {
     title,
     tags,
     type: blob.type,
@@ -189,7 +189,7 @@ export const create: NoteTypes.Create = async ({
   if (!response || !response.data) {
     throw new AiTmedError({
       name: 'UNKNOW_ERROR',
-      message: 'Note -> create -> createDocument -> no response',
+      message: 'Document -> create -> createDocument -> no response',
     })
   }
   const document: CommonTypes.Doc = response.data?.document
@@ -218,7 +218,7 @@ export const create: NoteTypes.Create = async ({
  *
  * @param id: Uint8Array | string
  * @param _edge?: Edge
- * @returns Promise<Note>
+ * @returns Promise<Document>
  */
 //TODO: refactor to account for retrieving using edge and xfname:eid
 export const retrieve = async (id, _edge) => {
@@ -239,7 +239,7 @@ export const retrieve = async (id, _edge) => {
  * @param type?: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
  * @param fields.tags?: string[]
  * @param save?: boolean
- * @returns Promise<Note>
+ * @returns Promise<Document>
  */
 export const update: any = async (
   id,
@@ -257,7 +257,7 @@ export const update: any = async (
   } else {
     edge = await retrieveEdge(document.eid)
   }
-  if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+  if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
 
   // Update Params
   const params: any = {
@@ -266,7 +266,7 @@ export const update: any = async (
   }
 
   // Update name
-  const name: NoteTypes.NoteDocumentName = document.name
+  const name: DocumentTypes.NoteDocumentName = document.name
   if (typeof title !== 'undefined') name.title = title
   if (typeof tags !== 'undefined') {
     const tagsSet = new Set([...name.tags, ...tags])
@@ -296,7 +296,7 @@ export const update: any = async (
     if (!response || response.code !== 0) {
       throw new AiTmedError({
         name: 'UNKNOW_ERROR',
-        message: 'Note -> update -> updateDocument -> no response',
+        message: 'Document -> update -> updateDocument -> no response',
       })
     }
     const doc = await retrieveDocument(id)
@@ -391,7 +391,7 @@ export const update: any = async (
     if (!response || response.code !== 0) {
       throw new AiTmedError({
         name: 'UNKNOW_ERROR',
-        message: 'Note -> update -> updateDocument -> no response',
+        message: 'Document -> update -> updateDocument -> no response',
       })
     }
 

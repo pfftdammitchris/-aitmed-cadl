@@ -1,21 +1,102 @@
 import AiTmedError from '../../common/AiTmedError'
 import { retrieveEdge } from '../../common/retrieve'
 import store from '../../common/store'
-import { ungzip } from '../../utils'
+import { gzip, ungzip } from '../../utils'
 
 import DType from '../../common/DType'
 
-import * as NoteTypes from './types'
-import * as NoteUtilsTypes from './utilsTypes'
+import * as DocumentTypes from './types'
+import * as DocumentUtilsTypes from './utilsTypes'
 
 export const CONTENT_SIZE_LIMIT = 32768
+
+/**
+ *
+ * @param data: Uint8Array | Blob
+ * @param besak?: string | Uint8Array
+ * @returns Promise<obj>
+ * @returns obj.data: Uint8Array
+ * @returns obj.isEncrypt: boolean
+ */
+export const produceEncryptData: DocumentUtilsTypes.ProduceEncryptData = async (
+  _data,
+  esak,
+  publicKeyOfReceiver
+) => {
+  // Make sure data is Uint8Array
+  let data: Uint8Array =
+      _data instanceof Blob
+        ? await store.level2SDK.utilServices.blobToUint8Array(_data)
+        : _data,
+    isEncrypt = false
+  if (typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver) {
+    /* Encryption */
+    try {
+      data = await store.level2SDK.commonServices.encryptData(
+        esak,
+        publicKeyOfReceiver,
+        data
+      )
+      isEncrypt = true
+    } catch (error) {}
+  }
+  return { data, isEncrypt }
+}
+/**
+ *
+ * @param _data Uint8Array | Blob
+ * @returns Promise<obj>
+ * @returns obj.data: Uint8Array
+ * @returns obj.isGzip: boolean
+ */
+export const produceGzipData: DocumentUtilsTypes.ProduceGzipData = async (
+  _data
+) => {
+  // Make sure data is Uint8Array
+  let u8a =
+    _data instanceof Blob
+      ? await store.level2SDK.utilServices.blobToUint8Array(_data)
+      : _data
+
+  const data = gzip(u8a)
+  const isGzip = data.length < u8a.length
+  return { data: isGzip ? data : u8a, isGzip }
+}
+/**
+ * @param content: string | Blob
+ * @param type: text/plain | application/json | text/html | text/markdown | image/* | application/pdf | video/* | string
+ * @returns Blob
+ */
+export const contentToBlob: DocumentUtilsTypes.ContentToBlob = (
+  content,
+  type
+) => {
+  /* Convert content to be blob */
+  let blob
+  if (typeof content === 'string') {
+    blob = new Blob([content], { type })
+  } else if (content instanceof Blob) {
+    blob = content
+  } else {
+    try {
+      const jsonStr = JSON.stringify(content)
+      blob = new Blob([jsonStr], { type: 'application/json' })
+    } catch (error) {
+      throw new AiTmedError({
+        name: 'NOTE_CONTENT_INVALID',
+        message: error.message,
+      })
+    }
+  }
+  return blob
+}
 /**
  *
  * @param document: Doc
  * @param edge?: Edge
- * @returns Promise<Note>
+ * @returns Promise<Document>
  */
-export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
+export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
   document,
   _edge,
   esakOfCurrentUser,
@@ -26,12 +107,12 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
   if (edge === null)
     throw new AiTmedError({
       name: 'UNKNOW_ERROR',
-      message: 'Note -> documentToNote -> retrieveEdge -> edge is null',
+      message: 'Document -> documentToNote -> retrieveEdge -> edge is null',
     })
 
-  const name: NoteTypes.NoteDocumentName = document.name
+  const name: DocumentTypes.NoteDocumentName = document.name
   const contentType = parseInt(name.type) === 0 ? 'text/plain' : name.type
-  const deat: NoteTypes.NoteDocumentDeat | null = document.deat
+  const deat: DocumentTypes.NoteDocumentDeat | null = document.deat
 
   // DType
   const isOldDataStructure =
@@ -222,7 +303,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
       } catch (error) {
         throw new AiTmedError({
           name: 'UNKNOW_ERROR',
-          message: 'Note -> utils -> documentToNote -> JSON.parse failed',
+          message: 'Document -> utils -> documentToNote -> JSON.parse failed',
         })
       }
     } else {
@@ -232,7 +313,7 @@ export const documentToNote: NoteUtilsTypes.DocumentToNote = async ({
     if (typeof reason === 'string') {
       error = new AiTmedError({
         name: 'DOWNLOAD_FROM_S3_FAIL',
-        message: `Note -> documentToNote -> ${reason}`,
+        message: `Document -> documentToNote -> ${reason}`,
       })
     } else {
       error = reason

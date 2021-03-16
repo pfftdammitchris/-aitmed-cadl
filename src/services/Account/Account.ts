@@ -1,8 +1,6 @@
 import store, { Status } from '../../common/store'
 import { UnableToMakeAnotherRequest } from '../../CADL/errors'
 
-import Note from '../Note'
-
 import * as AccountTypes from './types'
 
 import * as accountUtils from './utils'
@@ -178,135 +176,6 @@ export const logout: AccountTypes.Logout = async (clean = false) => {
 }
 
 /**
- * Todo:
- *    waiting for backend to support verificating the verification code
- * @param phone_number: string
- * @param new_phone_number: string
- * @param verification_code: string
- * @returns Promise<User>
- */
-/*
-export const updatePhoneNumber = async (
-  phone_number: string,
-  new_phone_number: string,
-  verification_code: string,
-): Promise<AccountTypes.User> => {
-  console.log(
-    'Account->updatePhoneNumber',
-    phone_number,
-    new_phone_number,
-    verification_code,
-  )
-
-  return mockUser
-}
-*/
-
-/**
- * @param param
- * @param param.old_password: string
- * @param param.new_password: string
- */
-export const updatePassword: AccountTypes.UpdatePassword = async (
-  old_password,
-  new_password
-) => {
-  await store.level2SDK.Account.changePasswordWithOldPassword({
-    oldPassword: old_password,
-    newPassword: new_password,
-  })
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
-}
-
-/**
- * @param param
- * @param param.phone_number: string
- * @param param.verification_code: string
- * @param param.new_password: string
- */
-export const updatePasswordByVerificationCode: AccountTypes.UpdatePasswordByVerificationCode = async ({
-  phone_number,
-  verification_code,
-  new_password,
-}) => {
-  await store.level2SDK.Account.changePasswordWithVerificationCode({
-    phone_number,
-    verification_code,
-    password: new_password,
-  })
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
-}
-
-/**
- * @param profile: AccountTypes.Profile
- *
- * @param profile.first_name: string
- * @param profile.middle_name?: string
- * @param profile.last_name: string
- *
- * @param profile.gender: 'MALE' | 'FEMALE' | 'PNS'
- * @param profile.birthday: number
- * @param profile.languages?: string[]
- *
- * @param profile.profile_photo?: string
- *
- * @returns Promise<User>
- */
-export const updateProfile: AccountTypes.UpdateProfile = async (profile) => {
-  const root = await accountUtils.retrieveRootEdge()
-  // Clean Profile
-  const notes = await Note.list(root.eid, { dataType: 'profile' })
-  for (const noteId of notes.ids) {
-    await accountUtils.removeProfile(noteId, notes.mapper[noteId])
-  }
-  // Create Profile
-  await accountUtils.createProfile(root.eid, profile)
-  const user = await retrieve()
-  return user
-}
-
-/**
- * @returns Promise<User>
- */
-export const retrieve: AccountTypes.Retrieve = async () => {
-  const root = await accountUtils.retrieveRootEdge()
-  const profile = await accountUtils.retrieveProfile(root.eid)
-  const user = await accountUtils.generateUser(
-    root,
-    profile ? profile.profile : null
-  )
-  return user
-}
-
-/**
- * @returns Promise<User>
- */
-export const remove: AccountTypes.Remove = async () => {
-  const user = await retrieve()
-
-  // Clean root edge
-  const edge = await accountUtils.retrieveRootEdge()
-  const notes = await Note.list(edge.eid)
-  // Remove all note under root edge
-  for (const noteId of notes.ids) {
-    await store.level2SDK.documentServices
-      .deleteDocument([noteId])
-      .then(store.responseCatcher)
-      .catch(store.errorCatcher)
-  }
-  await store.level2SDK.edgeServices
-    .deleteEdge([edge.eid])
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
-
-  await store.level2SDK.vertexServices.deleteVertex([edge.bvid])
-  await logout(true)
-  return user
-}
-
-/**
  * @returns Status
  * Status.code:
  *  0 - LOGGED_IN
@@ -328,23 +197,4 @@ export const getStatus: AccountTypes.GetStatus = async () => {
     console.log(error)
     return { ...status, userId: '', phone_number: '' }
   }
-}
-
-/**
- *
- * @param password string
- * @returns boolean
- */
-export const verifyUserPassword = (password: string): boolean => {
-  try {
-    const [isPasswordValid] = store.level2SDK.Account.verifyUserPassword({
-      password,
-    })
-    if (isPasswordValid) return true
-  } catch (error) {
-    if ((error.name = 'PASSWORD_INVALID')) {
-      return false
-    }
-  }
-  return false
 }
