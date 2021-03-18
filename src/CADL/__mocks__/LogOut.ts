@@ -66,23 +66,40 @@ export default {
             children: [
               {
                 type: 'label',
-                text: 'Confirm your password:',
+                text:
+                  'It is important to remember your password, since we cannot recover it on blockchain',
                 style: {
                   color: '0x00000058',
                   left: '0.04',
-                  top: '0.04',
+                  top: '0.02',
+                  width: '0.7',
+                  height: '0.06',
+                  fontSize: '14',
+                  textAlign: {
+                    x: 'left',
+                  },
+                },
+              },
+              {
+                type: 'label',
+                text: 'Please enter your password to continue:',
+                style: {
+                  color: '0x00000058',
+                  left: '0.04',
+                  top: '0.08',
                   width: '0.7',
                   height: '0.04',
                   fontSize: '14',
+                  fontWeight: '400',
                 },
               },
               {
                 type: 'view',
                 style: {
                   left: '0.04',
-                  top: '0.08174',
+                  top: '0.12',
                   width: '0.76',
-                  height: '0.13624',
+                  height: '0.04',
                 },
                 children: [
                   {
@@ -96,36 +113,43 @@ export default {
                       left: '0.0',
                       top: '0.0',
                       width: '0.76',
-                      height: '0.05449',
+                      height: '0.035',
                       border: {
                         style: '2',
-                        width: '1',
+                        borderWidth: '1',
                         color: '0x00000088',
-                      },
-                    },
-                  },
-                  {
-                    type: 'label',
-                    contentType: 'messageHidden',
-                    text: 'Password Incorrect',
-                    style: {
-                      fontSize: '14',
-                      left: '0',
-                      top: '0.05449',
-                      width: '0.76',
-                      height: '0.04',
-                      color: '0xff0000ff',
-                      isHidden: 'true',
-                      textAlign: {
-                        x: 'center',
-                        y: 'center',
                       },
                     },
                   },
                 ],
               },
               {
+                type: 'label',
+                contentType: 'messageHidden',
+                text: 'Password Incorrect',
+                style: {
+                  fontSize: '14',
+                  left: '0.04',
+                  top: '0.17',
+                  width: '0.7',
+                  height: '0.035',
+                  color: '0xff0000ff',
+                  isHidden: 'true',
+                  textAlign: {
+                    x: 'center',
+                    y: 'center',
+                  },
+                },
+              },
+              {
                 type: 'view',
+                style: {
+                  left: '0.04',
+                  top: '0.2',
+                  width: '0.76',
+                  height: '0.1',
+                  shadow: 'true',
+                },
                 onClick: [
                   {
                     actionType: 'evalObject',
@@ -163,21 +187,12 @@ export default {
                   },
                   {
                     actionType: 'evalObject',
-                    object: {
-                      '.SignIn.formData.phoneNumber@': '=.Global.phoneNumber',
-                    },
-                  },
-                  {
-                    actionType: 'evalObject',
                     object: [
                       {
                         if: [
                           '=..formData.pass',
                           {
-                            goto: {
-                              destination: 'SignIn',
-                              reload: true,
-                            },
+                            goto: 'SignIn',
                           },
                           'continue',
                         ],
@@ -185,13 +200,6 @@ export default {
                     ],
                   },
                 ],
-                style: {
-                  left: '0.04',
-                  top: '0.2',
-                  width: '0.76',
-                  height: '0.1',
-                  shadow: 'true',
-                },
                 children: [
                   {
                     type: 'image',
@@ -203,8 +211,8 @@ export default {
                     },
                   },
                   {
-                    type: 'label',
-                    text: 'Lock application',
+                    type: 'button',
+                    text: 'Lock',
                     style: {
                       left: '0.16',
                       top: '0.01362',
@@ -220,17 +228,27 @@ export default {
                     text: 'Remember this device, only type password to sign in',
                     style: {
                       left: '0.16',
-                      top: '0.05449',
+                      top: '0.06449',
                       width: '0.58667',
                       height: '0.04087',
                       color: '0x00000058',
                       fontSize: '14',
+                      textAlign: {
+                        x: 'left',
+                      },
                     },
                   },
                 ],
               },
               {
                 type: 'view',
+                style: {
+                  left: '0.04',
+                  top: '0.32697',
+                  width: '0.76',
+                  height: '0.14',
+                  shadow: 'true',
+                },
                 onClick: [
                   {
                     actionType: 'evalObject',
@@ -287,7 +305,6 @@ export default {
                         if: [
                           '=..formData.pass',
                           '=.builtIn.cleanLocalStorage',
-                          ,
                           'continue',
                         ],
                       },
@@ -301,8 +318,10 @@ export default {
                           '=..formData.pass',
                           {
                             goto: {
-                              destination: 'SignIn',
-                              reload: true,
+                              dataIn: {
+                                destination: 'SignIn',
+                                reload: true,
+                              },
                             },
                           },
                           'continue',
@@ -311,13 +330,6 @@ export default {
                     ],
                   },
                 ],
-                style: {
-                  left: '0.04',
-                  top: '0.32697',
-                  width: '0.76',
-                  height: '0.14',
-                  shadow: 'true',
-                },
                 children: [
                   {
                     type: 'image',
@@ -329,8 +341,8 @@ export default {
                     },
                   },
                   {
-                    type: 'label',
-                    text: 'Log out of application',
+                    type: 'button',
+                    text: 'Log out',
                     style: {
                       left: '0.16',
                       top: '0.01362',
@@ -344,7 +356,7 @@ export default {
                   {
                     type: 'label',
                     text:
-                      'Clear credentials Username, password and device verfification needed to Sign in',
+                      'Clear credentials Username, password and device verfification needed to sign in',
                     style: {
                       left: '0.16',
                       top: '0.05449',
@@ -352,6 +364,9 @@ export default {
                       height: '0.1',
                       color: '0x00000058',
                       fontSize: '14',
+                      textAlign: {
+                        x: 'left',
+                      },
                     },
                   },
                 ],
@@ -374,6 +389,14 @@ export default {
                   fontSize: '16',
                   fontStyle: 'bold',
                   backgroundColor: '0x388eccff',
+                  border: {
+                    style: '1',
+                  },
+                  display: 'inline',
+                  textAlign: {
+                    x: 'center',
+                    y: 'center',
+                  },
                 },
               },
             ],

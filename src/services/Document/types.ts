@@ -1,4 +1,4 @@
-import * as NoteUtilsTypes from '../Note/utilsTypes'
+import * as DocumentUtilsTypes from './utilsTypes'
 
 export interface NoteDocumentDeat {
   url: string
@@ -20,15 +20,14 @@ export interface NoteDocumentName {
   data?: string
 }
 
-// export type NoteType =
-//   | 'text/plain'
-//   | 'application/json'
-//   | 'text/html'
-//   | 'text/markdown'
-//   | 'image/*'
-//   | 'application/pdf'
-//   | 'video/*'
-//   | string
+export type NoteType =
+  | 'text/plain'
+  | 'application/json'
+  | 'text/html'
+  | 'text/markdown'
+  | 'image/*'
+  | 'application/pdf'
+  | 'video/*'
 
 /**
  *  edit_mode: Decimal number which can be converted to be ninary
@@ -47,26 +46,11 @@ export type CreateParams = {
   tags?: string[]
   type?: number
   dataType?: number
+  mediaType?: NoteType
   dTypeProps?: Record<string, any>
   paymentNonce?: string
-} & NoteUtilsTypes.ContentParams
+} & DocumentUtilsTypes.ContentParams
 
 export interface Create {
   (params: CreateParams): Promise<any>
-}
-
-// Retrieve
-export interface Retrieve {
-  (id: string | Uint8Array): Promise<any>
-}
-
-// Remove
-export interface Remove {
-  (id: string | Uint8Array): Promise<any>
-}
-
-// Update
-export type UpdateFields = NoteUtilsTypes.UpdateNoteFields
-export interface Update {
-  (id: string | Uint8Array, fields: UpdateFields): Promise<any>
 }

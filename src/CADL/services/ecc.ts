@@ -230,7 +230,7 @@ export default {
    */
   async isEdgeEncrypted({ id }: { id: string }): Promise<boolean> {
     const edge = await retrieveEdge(id)
-    if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+    if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
 
     if (edge?.besak || edge?.eesak) return true
     return false
@@ -238,7 +238,7 @@ export default {
 
   async getSAKFromEdge({ id }: { id: string }): Promise<string> {
     const edge = await retrieveEdge(id)
-    if (!edge) throw new AiTmedError({ name: 'NOTEBOOK_NOT_EXIST' })
+    if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
 
     //WIP:
     //Should return the sak from the edge associated with the given id.
