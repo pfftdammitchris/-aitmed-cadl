@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import Logout from './__mocks__/LogOut'
+// import Settings from './__mocks__/Settings'
 // import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
 
 export default class CADL extends EventEmitter {
@@ -518,7 +518,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // // if (pageName === 'Logout') return _.cloneDeep(Logout)
+    // if (pageName === 'Settings') return _.cloneDeep(Settings)
     // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
 
     let pageCADL

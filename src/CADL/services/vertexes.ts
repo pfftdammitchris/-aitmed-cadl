@@ -108,15 +108,9 @@ function get({ pageName, apiObject, dispatch }) {
 
 function create({ pageName, apiObject, dispatch }) {
   return async (name) => {
-    const { dataKey, dataIn, dataOut, id, ...cloneOutput } = _.cloneDeep(
-      apiObject || {}
-    )
-    if (!isPopulated(id)) {
-      throw new UnableToLocateValue(
-        `Missing reference ${id} at page ${pageName}`
-      )
-    }
-    const currentVal = await dispatch({
+    const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
+
+    const { deat, id, ...currentVal } = await dispatch({
       type: 'get-data',
       payload: {
         dataKey: dataIn ? dataIn : dataKey,
@@ -125,10 +119,19 @@ function create({ pageName, apiObject, dispatch }) {
     })
     let populatedCurrentVal = await dispatch({
       type: 'populate-object',
-      payload: { object: currentVal, pageName },
+      payload: { object: currentVal, pageName, copy: true },
     })
-    const mergedVal = mergeDeep(populatedCurrentVal, cloneOutput)
-    const mergedName = mergeDeep({ name: mergedVal }, name)
+    if (!isPopulated(id)) {
+      throw new UnableToLocateValue(
+        `Missing reference ${id} at page ${pageName}`
+      )
+    }
+
+    let mergedVal = populatedCurrentVal
+    if (name) {
+      mergedVal = mergeDeep(mergedVal, { name })
+    }
+
     const { api, store: storeProp, get, ...options } = mergedVal
     let res
     //If id is in apiObject it is an update request
@@ -138,14 +141,14 @@ function create({ pageName, apiObject, dispatch }) {
           console.log(
             '%cUpdate Vertex Request',
             'background: purple; color: white; display: block;',
-            { ...options, mergedName, id }
+            { ...options, id }
           )
         }
         //Buffer check
         const { pass: shouldPass, cacheIndex } = await dispatch({
           type: 'set-api-buffer',
           payload: {
-            apiObject: { ...options, mergedName, id },
+            apiObject: { ...options, id },
           },
         })
         if (!shouldPass) {
@@ -160,7 +163,6 @@ function create({ pageName, apiObject, dispatch }) {
         } else {
           const { data } = await store.level2SDK.vertexServices.updateVertex({
             ...options,
-            mergedName,
             id,
           })
           await dispatch({
@@ -186,14 +188,14 @@ function create({ pageName, apiObject, dispatch }) {
           console.log(
             '%cCreate Vertex Request',
             'background: purple; color: white; display: block;',
-            { ...options, name }
+            { ...options }
           )
         }
         //Buffer check
         const { pass: shouldPass, cacheIndex } = await dispatch({
           type: 'set-api-buffer',
           payload: {
-            apiObject: { ...options, name },
+            apiObject: { ...options },
           },
         })
         if (!shouldPass) {
@@ -208,7 +210,6 @@ function create({ pageName, apiObject, dispatch }) {
         } else {
           const response = await store.level2SDK.vertexServices.createVertex({
             ...options,
-            name,
           })
           await dispatch({
             type: 'set-cache',
