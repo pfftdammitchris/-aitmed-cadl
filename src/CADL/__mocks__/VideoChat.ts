@@ -13,14 +13,21 @@ export default {
       {
         actionType: 'evalObject',
         object: {
+          '.Global.timer@': '=.Global.rootRoomInfo.edge.name.duration',
+        },
+      },
+      {
+        actionType: 'evalObject',
+        object: {
           '.Global.rootRoomInfo.edge@': '=..roomInfo.response.edge',
         },
       },
       {
         actionType: 'builtIn',
         funcName: 'videoChat',
-        roomId: '..roomInfo.response.edge.deat.roomId',
+        roomId: '..roomInfo.response.edge.deat.roomID',
         accessToken: '..roomInfo.response.edge.deat.accessToken',
+        timerTag: 'videoTimer',
         timer: '.Global.timer',
       },
     ],
@@ -172,15 +179,36 @@ export default {
                 dataKey: 'roomInfo.edge.name.roomName',
                 style: {
                   left: '0',
-                  top: '0.02',
+                  top: '0',
                   width: '1',
-                  height: '0.01',
-                  fontSize: '16',
+                  height: '55px',
+                  lineHeight: '55px',
+                  fontSize: '20',
+                  fontStyle: 'bold',
                   color: '0xFFFFFF',
-                  backgroundColor: '0x000000',
                   textAlign: {
                     x: 'center',
                   },
+                },
+              },
+              {
+                type: 'label',
+                text: 'Switch Camera',
+                style: {
+                  left: '0.77',
+                  top: '0',
+                  width: '0.2',
+                  height: '55px',
+                  lineHeight: '55px',
+                  fontSize: '14',
+                  color: '0xFFFFFF',
+                  textAlign: {
+                    x: 'right',
+                  },
+                },
+                onClick: {
+                  actionType: 'builtIn',
+                  funcName: 'switchCamera',
                 },
               },
             ],
@@ -430,6 +458,7 @@ export default {
               {
                 type: 'label',
                 contentType: 'timer',
+                viewTag: 'videoTimer',
                 'text=func': '=.builtIn.string.formatTimer',
                 dataKey: 'Global.timer',
                 style: {
@@ -448,19 +477,42 @@ export default {
       },
       {
         type: 'popUp',
+        viewTag: 'minimizeVideoChat',
+        global: true,
+        style: {
+          left: '0',
+          top: '0',
+          width: '0.1',
+          height: '0.1',
+        },
+        image: 'iconUrl',
+        onClick: [
+          {
+            actionType: 'builtIn',
+            funcName: 'goBack',
+            reload: false,
+          },
+          {
+            actionType: 'popUpDismiss',
+            popUpView: 'minimizeVidwoChat',
+          },
+        ],
+      },
+      {
+        type: 'popUp',
         viewTag: 'confirmView',
         style: {
-          left: '0.1',
+          left: '0',
           top: '0',
-          width: '0.8',
-          height: '0.9',
+          width: '1',
+          height: '1',
         },
         children: [
           {
             type: 'view',
             style: {
-              left: '0.0',
-              top: '0.15',
+              left: '0.1',
+              top: '0.325',
               width: '0.8',
               height: '0.35',
               backgroundColor: '0xeeeeeeff',
@@ -577,9 +629,14 @@ export default {
                   },
                   {
                     actionType: 'evalObject',
-                    object: {
-                      '..roomInfo.edge.tage@': 1,
-                    },
+                    object: [
+                      {
+                        '..roomInfo.edge.tage@': 1,
+                      },
+                      {
+                        '..roomInfo.edge.name.duration@': '=.Global.timer',
+                      },
+                    ],
                   },
                   {
                     actionType: 'saveObject',
@@ -594,7 +651,16 @@ export default {
                     },
                   },
                   {
-                    goto: 'MeetingRoomHistory',
+                    actionType: 'popUp',
+                    popUpView: 'minimizeVideoChat',
+                  },
+                  {
+                    goto: {
+                      dataIn: {
+                        destination: 'MeetingRoomHistory',
+                        keepLive: true,
+                      },
+                    },
                   },
                 ],
                 text: 'Keep Open',
@@ -629,9 +695,17 @@ export default {
                   },
                   {
                     actionType: 'evalObject',
-                    object: {
-                      '..roomInfo.edge.tage@': -1,
-                    },
+                    object: [
+                      {
+                        '..roomInfo.edge.tage@': -1,
+                      },
+                      {
+                        '..roomInfo.edge.subtype@': 1,
+                      },
+                      {
+                        '..roomInfo.edge.name.duration@': '=.Global.timer',
+                      },
+                    ],
                   },
                   {
                     actionType: 'saveObject',
@@ -745,11 +819,11 @@ export default {
                             },
                           },
                           {
-                            actionType: 'popUp',
-                            popUpView: 'underconstruction',
+                            actionType: 'builtIn',
+                            funcName: 'screenShare',
                           },
                           {
-                            goto: '=.VideoChat.popUpListTemp.pageName',
+                            goto: '.VideoChat.popUpListTemp.pageName',
                           },
                         ],
                       },

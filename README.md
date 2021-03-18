@@ -171,6 +171,18 @@ true or false that denotes whether or not to populate the functions
 | `.removeByKey({ object, key })`                                                                        | `void`                  | Removes the item in array if item has key
 | `.removeByName({ object, key, name })`                                                                 | `void`                  | Removes the item in array if item.key matches name
 | `.removeByValue({object, value})`                                                                      | `void`                  | Removes the item from the array that matches value
+| `.removeById({object, id})`                                                                            | `void`                  | Removes the item from the array that matches the id
+| `.removeByindex({object, index})`                                                                      | `void`                  | Removes the item from the array at the given index                                
+| `.removeWeekByIndexs({object1, object2, index, duration})`                                             | `void`                  | TODO
+| `.append({ newMessage, messages })`                                                                    | `void`                  | Appends given newMessage to messages array
+| `.has({ object, value })`                                                                              | `boolean`               | Returns whether or not the value is in the array
+| `.hasKey({ object, key })`                                                                             | `boolean`               | Returns whether ot not the array has a value witht the given key
+| `.AddWeek({ object, duration, index, key })`                                                           | `void`                  | TODO 
+| `.push({ newMessage, messages })`                                                                      | `void`                  | Pushes newMessage to messages array
+| `.covertToJsonArray({ array })`                                                                        | `object`                | Converts items in array to key:value objects
+| `.getListLength({ object })`                                                                           | `number`                | Returns the length of the array
+| `.copyByKey({ array1, array2, key })`                                                                  | `array`                 | Copies items from array1 to array2 if key matches
+| `.changeColorByKey({ array, key, value })`                                                             | `void`                  | TODO
 | **builtInFns.number**                                                                                  |                         |
 | `.inRange({ number, start, end })`                                                                     | `boolean`               | Returns true or false depending if the given number is in range of start and end 
 | `.multiply({ number, multiple })`                                                                      | `number`                | Returns the product of number and multiple

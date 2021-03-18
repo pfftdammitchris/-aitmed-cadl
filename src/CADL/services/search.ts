@@ -1,5 +1,6 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
+import _, { isArray } from 'lodash'
 // const node = 'http://44.192.21.229:9200'
 let client = new Client({ host: 'http://44.192.21.229:9200' })
 // let DEFAULT_ADDRESS = "92805"
@@ -194,5 +195,18 @@ export default {
     // console.log(template.query.bool.must)
     console.log(body.hits.hits)
     return body.hits.hits
+  },
+  GetAllLonAndLat({ object }) {
+    if (isArray(object)) {
+      let re: Record<string, any> = []
+      object.forEach(obj => {
+        let st = obj["_source"]["location"].split(" ")
+        let Lon = parseFloat(st[1].replace("(", ""))
+        let Lat = parseFloat(st[2].replace(")", ""))
+        re.push([Lon, Lat])
+      })
+      return re
+    }
+    return
   }
 }
