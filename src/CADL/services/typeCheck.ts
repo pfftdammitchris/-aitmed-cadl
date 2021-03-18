@@ -10,9 +10,10 @@ export default {
     if (countryCodeAndPhoneNumber.match(/^[+][0-9]+\s\d{10}$/)) {
       return true
     } else {
-      return {
-        toast: { message: toastMessage, style },
-      }
+      // return {
+      //   toast: { message: toastMessage, style },
+      // }
+      return false
     }
   },
 }
