@@ -63,4 +63,14 @@ export default {
     return
   },
 
+  getCountryCode(num:string){
+    debugger
+    return num.split(" ")[0];
+
+  },
+
+  getPhoneNumber(num:string){
+    return num.split(" ")[1];
+  },
+
 }
