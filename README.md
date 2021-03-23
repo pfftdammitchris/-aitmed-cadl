@@ -59,12 +59,12 @@ http://note.youdao.com/noteshare?id=b380665992fc6adbf8c467c92a3f10da&sub=56C107C
 
 This layer is connected to Lvl 2 SDK and noodl-ui-dom. The primary function of
 CADL is to parse and translate a noodl yaml file. CADL can resolve references in
-noodl file by replacing short-handed variables (marked by ., .., etc.) with ful
-variables. It will then go through noodl file, parse it, and replace any
+noodl file by replacing short-handed variables (marked by ., .., etc.) with values.
+It will then go through noodl file, parse it, and replace any
 functions with Lvl 2 API commands as appropriate.
 
 CADL is created in the frontend web layer. On creation, its constructor will be
-provided with aspectRation, cadlVersion, and configUrl as parameters. CADL will
+provided with aspectRatio, cadlVersion, and configUrl as parameters. CADL will
 have access to a store, which is created using provided parameters of env and
 configUrl. This store will have access to Lvl 2 SDK, and implements Lvl 2 SDK's
 setters and getters. Inside of CADL constructor, several properties of store
@@ -72,7 +72,7 @@ will be redirected, and store's noodlInstance will refer to the CADL.
 
 An integral part of CADL is the root. When CADL is created, initRoot() function
 is called, and two things are attached to the empty root: an empty actions {}
-object, and an array of builtIn functions, which include things like
+object, and an object of builtIn functions, which include things like
 createNewAccount, signIn, uploadDocument, etc. This process is completed within
 the CADL layer.
 
@@ -93,7 +93,8 @@ noodl file.
 The variable preload can be destructured to receive BasePage, BaseCSS, and
 BaseDataModel. These are the base elements in a noodl file; there are separate
 'pages' in noodl that needs processing as well, such as SignIn, SignUp, and
-DocumentDetails, but these are the big three ones. For each of these pages, they
+DocumentDetails, but these three serve as the base for other pages.
+For each of these pages, they
 are first retrieved using this.getPage() method, then processed down using
 this.processPopulate() method, and finally set into state using
 this.newDispatch() method. The key here is the processPopulate() method, which
@@ -113,7 +114,9 @@ noodl will need to be rendered separately, and that is the primary function of
 initPage(). This function is called in frontend code in src/index.js, and by
 createPreparePage() function. This function takes three parameters: pageName, an
 empty array denoted skip, and options. pageName variable is self-explanatory;
-I'm not sure what purpose skip[] does; the most notable thing about options is
+skip[] can be used to include properties that are not to be "processed," e.g [edge]
+will lead to teh edge property of the noodl file to not be processed and will 
+retain all variable references '..,.,=...etc'; the most notable thing about options is
 that once destructured, it contains a variable called evolve, and that must be
 true in order for the page to be rendered, otherwise the page will return. The
 evolve variable is invoked in frontend code, builtIn functions goto and goBack.
@@ -132,11 +135,12 @@ symbols that signifies a referencing variable, and replace that variable with
 its fully extended form.
 
 The function takes in five parameters: source, lookFor, skip, pageName, withFns.
--source: the source page of noodl, written in yml format -lookFor: an array of
+-source: the source page of noodl, written in object format -lookFor: an array of
 symbols to look out for, these symbols denote variables at current directory,
 parent directory, etc. that must be identified and have related variables
-resolved -skip: items to skip while parsing through yml file -withFns: a boolean
-true or false -pageName: name of the noodl page
+resolved -skip: items to skip while parsing through source file -withFns: a boolean
+true or false that denotes whether or not to populate the functions
+-pageName: name of the noodl page
 
 ## Methods That Can Be Accessed Through CADL/NOODL:
 
@@ -150,10 +154,38 @@ true or false -pageName: name of the noodl page
 | `.formatDurationInSecond(unixTime: number)`                                                            | `string`                | Returns the amount of time that has elapsed since Dec 31, 1969, 4:00 PM as a string                                                                                                                               |
 | `.concat(stringArr: string[])`                                                                         | `string`                | Concatenate an array of strings into one string, and returns the string                                                                                                                                           |
 | `.equal({ string1, string2 })`                                                                         | `boolean`               | Compare the two input strings and returns true if they are equal, otherwise returns false                                                                                                                         |
+| `.getFirstChar(string: string)`                                                                        | `string`                | Returns the first character of the string in upperCase
+| `.retainNumber({value:any})`                                                                           | `number`                | Parses the value into a number
 | **builtInFns.object**                                                                                  |                         |                                                                                                                                                                                                                   |
-| `.remove({ object, key })`                                                                             | `object`                | Creates a deep clone of the object, and removes the value in the deep clone at location specified by key                                                                                                          |
-| `.set({ object: any, key: any, value: any })`                                                          | `object`                | Creates a deep clone of the object, and updates the deep clone at location specified by key with value                                                                                                            |
-| `.has({ object: any, key: any })`                                                                      | `boolean`               | Checks if input object contains a value at specified key                                                                                                                                                          |
+| `.remove({ object, key })`                                                                             | `void`                  | Creates a deep clone of the object, and removes the value in the deep clone at location specified by key                                                                                                          |
+| `.set({ object: Record<string,any>, key: string, value: any })`                                        | `void`                  | Creates a deep clone of the object, and updates the deep clone at location specified by key with value                                                                                                            |
+| `.has({ object: Record<string,any>, key: string })`                                                    | `boolean`               | Checks if input object contains a value at specified key                                                                                                                                                          |
+| `.clear({object:Record<string,any>, key:string})`                                                      | `void`                  | Clears the value of the object at the given key e.g sets value at key to ''
+| `.get({object:Record<string,any>, key:string})`                                                        | `any`                   | Returns the value of the object at the given key
+| `.clearAndSetKey({ object, item, key, value })`                                                        | `void`                  | Clears one key of all items of an object, and sets one item e.g used for list radio
+| **builtInFns.array**                                                                                   |                         |
+| `.add({ object, value })`                                                                              | `void`                  | Adds value to the provided array(object)
+| `.addByIndex({object, value, index})`                                                                  | `void`                  | Adds value to the provided array(object) at the given index
+| `.SortBy({ object, iterate, orders })`                                                                 | `array`                 | Sorts array applying the iterate function and orders is by desc or asc
+| `.clear({object})`                                                                                     | `void`                  | Clears all values in given array
+| `.removeByKey({ object, key })`                                                                        | `void`                  | Removes the item in array if item has key
+| `.removeByName({ object, key, name })`                                                                 | `void`                  | Removes the item in array if item.key matches name
+| `.removeByValue({object, value})`                                                                      | `void`                  | Removes the item from the array that matches value
+| `.removeById({object, id})`                                                                            | `void`                  | Removes the item from the array that matches the id
+| `.removeByindex({object, index})`                                                                      | `void`                  | Removes the item from the array at the given index                                
+| `.removeWeekByIndexs({object1, object2, index, duration})`                                             | `void`                  | TODO
+| `.append({ newMessage, messages })`                                                                    | `void`                  | Appends given newMessage to messages array
+| `.has({ object, value })`                                                                              | `boolean`               | Returns whether or not the value is in the array
+| `.hasKey({ object, key })`                                                                             | `boolean`               | Returns whether ot not the array has a value witht the given key
+| `.AddWeek({ object, duration, index, key })`                                                           | `void`                  | TODO 
+| `.push({ newMessage, messages })`                                                                      | `void`                  | Pushes newMessage to messages array
+| `.covertToJsonArray({ array })`                                                                        | `object`                | Converts items in array to key:value objects
+| `.getListLength({ object })`                                                                           | `number`                | Returns the length of the array
+| `.copyByKey({ array1, array2, key })`                                                                  | `array`                 | Copies items from array1 to array2 if key matches
+| `.changeColorByKey({ array, key, value })`                                                             | `void`                  | TODO
+| **builtInFns.number**                                                                                  |                         |
+| `.inRange({ number, start, end })`                                                                     | `boolean`               | Returns true or false depending if the given number is in range of start and end 
+| `.multiply({ number, multiple })`                                                                      | `number`                | Returns the product of number and multiple
 | **builtInFns.eccNaCl**                                                                                 |                         |                                                                                                                                                                                                                   |
 | `.signature(message: string)`                                                                          | `string`                | Uses level2SDK.utilServices.signature to encrypt the input string and generate an encrypted signature                                                                                                             |
 | `.verifySignature(signature: string, pkSign: string)`                                                  | `boolean`               | Uses level2SDK.utilServices.verifySignature to verify if the signature is valid                                                                                                                                   |
@@ -167,6 +199,7 @@ true or false -pageName: name of the noodl page
 | `.decryptData({ esak: Uint8Array \| string, publicKey: string, secretKey: string, data: Uint8Array })` | `Uint8Array`            | Decrypts the esak with provided public key and secret key                                                                                                                                                         |
 | **builtInFns.ecos**                                                                                    |                         |                                                                                                                                                                                                                   |
 | `.shareDoc({ sourceDoc, targetEdgeID })`                                                               | `object`                | Share a document with a target edge by making a copy of the document as a Note object, then creating a new Document and pass in targetEdgeID as the document's edge_id                                            |
+| `.shareDocList({ sourceDocList, targetEdgeID })`                                                       | `void`                  | Shares multiple documents at a time using similar logic as shareDoc 
 | **Access directly from builtInFns**                                                                    |                         |                                                                                                                                                                                                                   |
 | `.createNewAccount({ name })`                                                                          | `object`                | Asynchronous function. Name is destructured to include phoneNumber, password, and userName. These credentials will be verified, and the function then calls Account.create. Account.create data will be returned. |
 | `.signIn({ phoneNumber, password, verificationCode })`                                                 | `object`                | Asynchronous function. Calls Account.login to complete login procedure. Account.login's returned data will be returned.                                                                                           |

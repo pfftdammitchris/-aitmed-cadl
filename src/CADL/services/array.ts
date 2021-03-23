@@ -1,5 +1,12 @@
 import _, { isArray } from 'lodash'
-
+type connection = {
+  name: string
+  category: string
+  userId: string
+  phone: string
+  favorite: boolean
+  connectId: string
+}
 export default {
   add({ object, value }) {
     if (isArray(object)) {
@@ -16,16 +23,14 @@ export default {
       if (value) {
         var cloned = _.cloneDeep(value)
         if (object[parseInt(index)] == null) {
-          let item_1 = new Array();
+          let item_1 = new Array()
           item_1.push(cloned)
           object[parseInt(index)] = item_1
-        }
-        else {
+        } else {
           let item_2 = object[parseInt(index)]
           item_2.push(cloned)
           object[parseInt(index)] = item_2
         }
-
       }
       return
     }
@@ -37,11 +42,11 @@ export default {
    * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
    */
   SortBy({ object, iterate, orders }) {
-    console.log("test sortBy: %s", iterate);
+    console.log('test sortBy: %s', iterate)
     if (isArray(object)) {
       return _.orderBy(object, iterate, orders)
     }
-    return "object is not array"
+    return 'object is not array'
   },
 
   clear({ object }) {
@@ -58,10 +63,10 @@ export default {
           // TO DO: how to handle objects with same key? should they all be deleted, or just delete first one?
           // Should duplicate object key made not allowed using add method?
           object.splice(i, 1)
-          console.log(i);
+          console.log(i)
           return
         } else {
-          console.log('false', 'color: red');
+          console.log('false', 'color: red')
         }
       }
     }
@@ -71,14 +76,14 @@ export default {
     //the format of the array must be [ man: man]  man： man
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
-        if (object[i][key] == name || object[i][key] == "") {
+        if (object[i][key] == name || object[i][key] == '') {
           // TO DO: how to handle objects with same key? should they all be deleted, or just delete first one?
           // Should duplicate object key made not allowed using add method?
           object.splice(i, 1)
-          console.log(i);
+          console.log(i)
           return
         } else {
-          console.log('false', 'color: red');
+          console.log('false', 'color: red')
         }
       }
     }
@@ -116,15 +121,15 @@ export default {
    */
   removeByIndex({ object, index }) {
     if (isArray(object)) {
-      object.splice(index, 1);
+      object.splice(index, 1)
       return
     }
     return
   },
   /***
    * object1 : this object format like    0: {duration: "03:00AM-07:00AM", index: 0, key: "Su"}
-   * object2 : this object format like    0: ["08:00AM-01:00PM"] 
-   * index : 
+   * object2 : this object format like    0: ["08:00AM-01:00PM"]
+   * index :
    * duration ：
    */
 
@@ -134,25 +139,24 @@ export default {
       for (let i = 0; i < object1.length; i++) {
         if (object1[i].index === index && object1[i].duration === duration) {
           object1.splice(i, 1)
-          console.log(i);
+          console.log(i)
         } else {
-          console.log('false', 'color: red');
+          console.log('false', 'color: red')
         }
       }
 
       for (let i = 0; i < object2[index].length; i++) {
         if (object2[index][i] === duration) {
           object2[index].splice(i, 1)
-          console.log(i);
+          console.log(i)
         } else {
-          console.log('false', 'color: red');
+          console.log('false', 'color: red')
         }
       }
       return
     }
     return
   },
-
 
   append({ newMessage, messages }) {
     if (isArray(messages)) {
@@ -184,21 +188,21 @@ export default {
     return false
   },
   AddWeek({ object, duration, index, key }) {
-    console.log(object, duration, index, key);
-    if (typeof (index) == undefined) {
-      console.log("index is undefined");
-      return;
+    console.log(object, duration, index, key)
+    if (typeof index == undefined) {
+      console.log('index is undefined')
+      return
     }
-    if (typeof (key) == undefined) {
-      console.log("key is undefined");
-      return;
+    if (typeof key == undefined) {
+      console.log('key is undefined')
+      return
     }
-    if (typeof (duration) == undefined) {
-      console.log("duration is undefined");
-      return;
+    if (typeof duration == undefined) {
+      console.log('duration is undefined')
+      return
     }
     // if (_.isArray(object)) {
-    var arr = { "duration": duration, "index": index, "key": key }
+    var arr = { duration: duration, index: index, key: key }
     console.log(object.length)
     object[object.length] = arr
     return
@@ -230,9 +234,9 @@ export default {
   // get the length of object
   getListLength({ object }) {
     if (isArray(object)) {
-      return object.length
+      return object.length.toString()
     }
-    return 0
+    return '0'
   },
   // copy one item of array1 to array2 by key
   copyByKey({ array1, array2, key }) {
@@ -260,5 +264,123 @@ export default {
       return
     }
     return
-  }
+  },
+  convertToList({ array, key }) {
+    let array1: string[] = []
+    if (isArray(array)) {
+      if (key) {
+        for (let i = 0; i < array.length; i++) {
+          array1.push(array[i][key])
+        }
+        return array1
+      }
+      return
+    }
+    return
+  },
+
+  getByKey({ array, key1, value, key2 }) {
+    if (isArray(array)) {
+      for (let i = 0; i < array.length; i++) {
+        if (array[i][key1] === value) {
+          return array[i][key2]
+        }
+      }
+      return
+    }
+  },
+
+  getConnection({ array1, array2 }) {
+    let arrayItem: connection
+    let array: connection[] = []
+    let favorite1: boolean
+    if (typeof array1 == 'string' || typeof array2 == 'string') {
+      if (isArray(array1)) {
+        array1.forEach((arr) => {
+          if (arr['subtype'] == 0) favorite1 = false
+          else favorite1 = true
+          arrayItem = {
+            name: arr['name']['inviterName'],
+            category: arr['name']['inviterCategory'],
+            userId: arr['evid'],
+            phone: arr['name']['inviterPhoneNumber'],
+            favorite: favorite1,
+            connectId: arr['id'],
+          }
+          array.push(arrayItem)
+        })
+        return array
+      } else if (isArray(array2)) {
+        array2.forEach((arr) => {
+          if (arr['subtype'] == 0) favorite1 = false
+          else favorite1 = true
+          arrayItem = {
+            name: arr['name']['inviteeName'],
+            category: arr['name']['inviteeCategory'],
+            userId: arr['bvid'],
+            phone: arr['name']['inviteePhoneNumber'],
+            favorite: favorite1,
+            connectId: arr['id'],
+          }
+          array.push(arrayItem)
+        })
+        return array
+      } else {
+        return []
+      }
+    } else {
+      array1.forEach((arr) => {
+        if (arr['subtype'] == 0) favorite1 = false
+        else favorite1 = true
+        arrayItem = {
+          name: arr['name']['inviterName'],
+          category: arr['name']['inviterCategory'],
+          userId: arr['evid'],
+          phone: arr['name']['inviterPhoneNumber'],
+          favorite: favorite1,
+          connectId: arr['id'],
+        }
+        array.push(arrayItem)
+      })
+      array2.forEach((arr) => {
+        if (arr['subtype'] == 0) favorite1 = false
+        else favorite1 = true
+        arrayItem = {
+          name: arr['name']['inviteeName'],
+          category: arr['name']['inviteeCategory'],
+          userId: arr['bvid'],
+          phone: arr['name']['inviteePhoneNumber'],
+          favorite: favorite1,
+          connectId: arr['id'],
+        }
+        array.push(arrayItem)
+      })
+      return array
+    }
+  },
+
+  getFirstItem({ array }) {
+    if (isArray(array)) {
+      return array[0]
+    }
+  },
+  /**
+   * Combine two arrays and sort
+   * sortby: Select the character to sort
+   * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
+   */
+  concatArray({ array1, array2, sortby, orders }) {
+    if (isArray(array1) && isArray(array2)) {
+      if (sortby) {
+        let arr = array1.concat(array2)
+        if (orders) {
+          return _.orderBy(arr, sortby, orders)
+        } else {
+          return _.orderBy(arr, sortby, 'desc')
+        }
+      }
+      return array1.concat(array2)
+    }
+    return
+  },
 }

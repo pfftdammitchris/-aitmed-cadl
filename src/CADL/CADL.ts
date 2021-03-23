@@ -32,7 +32,8 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import VideoChat from './__mocks__/VideoChat'
+// import Settings from './__mocks__/Settings'
+// import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -79,7 +80,7 @@ export default class CADL extends EventEmitter {
    * @throws {UnableToParseYAML} -if unable to parse yaml file
    * @throws {UnableToLoadConfig} -if unable to load config data
    *
-   * -loads config if not already loaded
+   * -loads noodl config if not already loaded
    * -sets CADL version, baseUrl, assetsUrl, and root
    */
   public async init({
@@ -91,7 +92,7 @@ export default class CADL extends EventEmitter {
     BaseCSS?: Record<string, any>
     BasePage?: Record<string, any>
   } = {}): Promise<void> {
-    //load config
+    //load noodl config
     let config: any
     try {
       config = await store.level2SDK.loadConfigData()
@@ -132,6 +133,7 @@ export default class CADL extends EventEmitter {
       source: config,
       lookFor: ['.', '..', '=', '~'],
     })
+
     //set overrides of Base Objects
     if (BaseDataModel) {
       const processedBaseDataModel = this.processPopulate({
@@ -227,6 +229,8 @@ export default class CADL extends EventEmitter {
       }
     }
 
+    //set Global object from localStorage
+    //used to retain user data in case of browser reload
     let localStorageGlobal = localStorage.getItem('Global')
     let localStorageGlobalParsed: Record<string, any> | null = null
     if (localStorageGlobal) {
@@ -276,22 +280,22 @@ export default class CADL extends EventEmitter {
    *
    * - initiates cadlObject for page specified
    */
-  //TODO: extract init functionality to use only runInit()
   async initPage(
     pageName: string,
     skip: string[] = [],
     options: {
-      reload?: boolean
+      reload?: boolean //if true then the pageObject is replaced
       builtIn?: Record<string, any>
       done?: Function
     } = {}
   ): Promise<void> {
     if (!this.cadlEndpoint) await this.init()
-    if (options.reload === undefined) {
+
+    const { builtIn, reload } = options
+    if (reload === undefined) {
       options.reload = true
     }
 
-    const { builtIn } = options
     if (builtIn && isObject(builtIn)) {
       this.newDispatch({
         type: 'ADD_BUILTIN_FNS',
@@ -303,51 +307,77 @@ export default class CADL extends EventEmitter {
       })
     }
     let pageCADL = await this.getPage(pageName)
-    if (options.reload === false && this.root[pageName]) {
+    if (reload === false && this.root[pageName]) {
+      //keep the current pageObject
       pageCADL = { [pageName]: this.root[pageName] }
     } else {
+      //refresh the pageObject
       pageCADL = await this.getPage(pageName)
     }
-    let prevVal = {}
-    //FOR FORMDATA
-    //process formData
-    if (this.root[pageName] && options.reload) {
+
+    if (this.root[pageName] && reload) {
+      //delete old pageObject if refreshing
       this.newDispatch({
         type: 'DELETE_PAGE',
         payload: { pageName },
       })
     }
-    const processedFormData = this.processPopulate({
+
+    let prevVal = {}
+
+    //the pageObject requires multiple processes
+    //in order to dereference references that are dependent on other references
+    /**
+     * e.g =..pageName.object.edge.refid ---> =..pageName.object2.edge.id
+     * here the reference "=..pageName.object.edge.refid" references
+     * another reference "=..pageName.object2.edge.id"
+     * to avoid this we process the object multiple times to make sure that
+     * all references that exist are accounted for
+     */
+
+    const FIRST_process = this.processPopulate({
       source: pageCADL,
       lookFor: ['.', '..', '~'],
       skip: ['update', 'save', 'check', 'init', 'components', ...skip],
       withFns: true,
       pageName,
     })
-    //FOR FNS
-    const processedWithFns = this.processPopulate({
-      source: processedFormData,
+
+    const SECOND_process = this.processPopulate({
+      source: FIRST_process,
       lookFor: ['.', '..', '_', '~'],
       skip: ['update', 'check', 'init', 'formData', 'components', ...skip],
       withFns: true,
       pageName,
     })
 
-    //replace updateObj with Fn
+    //used to call the dispatch function from service modules
     const boundDispatch = this.dispatch.bind(this)
 
-    let processedPage = processedWithFns
+    //sets processed pageObject to the root
+    /**
+     * shape of processed Page
+     * {
+     *  MeetingRoom:{
+     *    init:[],
+     *    components:[]
+     *    ...
+     *  }
+     * }
+     */
+    let processedPage = SECOND_process
     this.newDispatch({
       type: 'SET_ROOT_PROPERTIES',
       payload: { properties: processedPage },
     })
-    //run init commands if any
+
+    //run init commands of page if any
     let init = Object.values(processedPage)[0].init
     if (init) {
       await this.runInit(processedPage).then((page) => {
         //FOR COMPONENTS
         //process components
-        const processedComponents = this.processPopulate({
+        const FIRST_processComponents = this.processPopulate({
           source: page,
           lookFor: ['.', '..', '_', '~'],
           skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
@@ -355,8 +385,8 @@ export default class CADL extends EventEmitter {
           pageName,
         })
         //process components again to fill in new values
-        const processedComponentsAgain = this.processPopulate({
-          source: processedComponents,
+        const SECOND_processComponents = this.processPopulate({
+          source: FIRST_processComponents,
           lookFor: ['.', '..', '_', '~'],
           skip: [
             'update',
@@ -373,8 +403,9 @@ export default class CADL extends EventEmitter {
           pageName,
         })
 
+        //populate the components slice of the pageObject
         const evolveComponentVals = populateArray({
-          source: processedComponentsAgain[pageName].components,
+          source: SECOND_processComponents[pageName].components,
           lookFor: '=',
           skip: [
             'update',
@@ -388,18 +419,18 @@ export default class CADL extends EventEmitter {
             ...skip,
           ],
           pageName,
-          locations: [processedComponentsAgain[pageName], this.root],
+          locations: [SECOND_processComponents[pageName], this.root],
         })
-        processedComponentsAgain[pageName].components = evolveComponentVals
-        let replaceUpdateJob2 = replaceEvalObject({
+        SECOND_processComponents[pageName].components = evolveComponentVals
+        let replaceUpdateJob = replaceEvalObject({
           pageName,
-          cadlObject: processedComponentsAgain,
+          cadlObject: SECOND_processComponents,
           dispatch: boundDispatch,
         })
 
         this.newDispatch({
           type: 'SET_ROOT_PROPERTIES',
-          payload: { properties: replaceUpdateJob2 },
+          payload: { properties: replaceUpdateJob },
         })
         this.emit('stateChanged', {
           name: 'update',
@@ -411,7 +442,7 @@ export default class CADL extends EventEmitter {
     } else {
       //FOR COMPONENTS
       //process components
-      const processedComponents = this.processPopulate({
+      const FIRST_processComponents = this.processPopulate({
         source: processedPage,
         lookFor: ['.', '..', '_', '~'],
         skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
@@ -419,8 +450,8 @@ export default class CADL extends EventEmitter {
         pageName,
       })
       //process components again to fill in new values
-      const processedComponentsAgain = this.processPopulate({
-        source: processedComponents,
+      const SECOND_processComponents = this.processPopulate({
+        source: FIRST_processComponents,
         lookFor: ['.', '..', '_', '~'],
         skip: [
           'update',
@@ -438,7 +469,7 @@ export default class CADL extends EventEmitter {
       })
 
       const evolveComponentVals = populateArray({
-        source: processedComponentsAgain[pageName].components,
+        source: SECOND_processComponents[pageName].components,
         lookFor: '=',
         skip: [
           'update',
@@ -452,18 +483,18 @@ export default class CADL extends EventEmitter {
           ...skip,
         ],
         pageName,
-        locations: [processedComponentsAgain[pageName], this.root],
+        locations: [SECOND_processComponents[pageName], this.root],
       })
-      processedComponentsAgain[pageName].components = evolveComponentVals
-      let replaceUpdateJob2 = replaceEvalObject({
+      SECOND_processComponents[pageName].components = evolveComponentVals
+      let replaceUpdateJob = replaceEvalObject({
         pageName,
-        cadlObject: processedComponentsAgain,
+        cadlObject: SECOND_processComponents,
         dispatch: boundDispatch,
       })
 
       this.newDispatch({
         type: 'SET_ROOT_PROPERTIES',
-        payload: { properties: replaceUpdateJob2 },
+        payload: { properties: replaceUpdateJob },
       })
       this.emit('stateChanged', {
         name: 'update',
@@ -487,7 +518,8 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'VideoChat') return VideoChat
+    // if (pageName === 'Settings') return _.cloneDeep(Settings)
+    // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
 
     let pageCADL
     let pageUrl
@@ -757,6 +789,41 @@ export default class CADL extends EventEmitter {
       if (isObject(result)) {
         results = result
       }
+    } else if (key === 'goto') {
+      /**
+       * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
+       */
+      const shouldCopy =
+        key.includes('builtIn') &&
+        'dataIn' in commands[key] &&
+        isObject(commands[key]['dataIn']) &&
+        !('object' in commands[key]['dataIn']) &&
+        !('array' in commands[key]['dataIn'])
+      const populatedCommand = await this.dispatch({
+        type: 'populate-object',
+        payload: {
+          pageName,
+          object: { [key]: commands[key] },
+          copy: shouldCopy,
+        },
+      })
+      let gotoCommand
+      if (typeof populatedCommand[key] === 'string') {
+        gotoCommand = {
+          '=.builtIn.goto': {
+            dataIn: { destination: populatedCommand[key] },
+          },
+        }
+      } else if (isObject(populatedCommand[key])) {
+        gotoCommand = {
+          '=.builtIn.goto': populatedCommand[key],
+        }
+      }
+      results = await this.handleEvalFunction({
+        command: gotoCommand,
+        pageName,
+        key: '=.builtIn.goto',
+      })
     } else if (!key.startsWith('=')) {
       const shouldCopy =
         key.includes('builtIn') &&
@@ -847,7 +914,6 @@ export default class CADL extends EventEmitter {
       const pathArr = trimPath.split('.')
 
       const currValue = _.get(this.root, [...pathArr]) || ''
-
       if (isObject(currValue)) {
         val = mergeDeep(currValue, val)
       }
@@ -880,7 +946,12 @@ export default class CADL extends EventEmitter {
   private async handleEvalFunction({ key, pageName, command }) {
     //handles function evaluation
     let results
-    const trimPath = key.substring(2, key.length)
+    let trimPath
+    if (key.startsWith('=..')) {
+      trimPath = key.substring(3, key.length)
+    } else if (key.startsWith('=.')) {
+      trimPath = key.substring(2, key.length)
+    }
     const pathArr = trimPath.split('.')
     let func = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
     if (isObject(func)) {
@@ -1377,7 +1448,14 @@ export default class CADL extends EventEmitter {
           lookFor: ['..', '.', '='],
           locations: [this.root, this.root[pageName]],
         })
-        await this.root.builtIn['goto'](populatedTrueEffect['goto'])
+        let gotoArgs
+
+        if (typeof populatedTrueEffect['goto'] === 'string') {
+          gotoArgs = populatedTrueEffect['goto']
+        } else if (isObject(populatedTrueEffect['goto'])) {
+          gotoArgs = populatedTrueEffect['goto'].dataIn
+        }
+        await this.root.builtIn['goto'](gotoArgs)
         return
       } else if (
         isObject(ifTrueEffect) &&
@@ -1507,7 +1585,15 @@ export default class CADL extends EventEmitter {
             lookFor: ['..', '.', '='],
             locations: [this.root, this.root[pageName]],
           })
-          await this.root.builtIn['goto'](populatedFalseEffect['goto'])
+
+          let gotoArgs
+
+          if (typeof populatedFalseEffect['goto'] === 'string') {
+            gotoArgs = populatedFalseEffect['goto']
+          } else if (isObject(populatedFalseEffect['goto'])) {
+            gotoArgs = populatedFalseEffect['goto'].dataIn
+          }
+          await this.root.builtIn['goto'](gotoArgs)
           return
         }
       } else if (typeof ifFalseEffect === 'function') {
@@ -1694,12 +1780,22 @@ export default class CADL extends EventEmitter {
       let init = Object.values(page)[0].init
 
       if (init) {
+        //adds commands to queue
         this.initCallQueue = init.map((_command, index) => index)
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
           let populatedCommand
-          if (isPopulated(command)) {
+          if (
+            isObject(command) &&
+            (Object.keys(command)[0].includes('=') ||
+              Object.keys(command)[0].includes('@'))
+          ) {
+            await this.dispatch({
+              type: 'eval-object',
+              payload: { updateObject: command, pageName },
+            })
+          } else if (isPopulated(command)) {
             populatedCommand = command
           } else {
             populatedCommand = populateVals({
@@ -1714,7 +1810,7 @@ export default class CADL extends EventEmitter {
               await populatedCommand()
             } catch (error) {
               throw new UnableToExecuteFn(
-                `An error occured while executing ${pageName}.init`,
+                `An error occured while executing ${pageName}.init. Check command at index ${currIndex} under init`,
                 error
               )
             }
@@ -1799,8 +1895,12 @@ export default class CADL extends EventEmitter {
 
           page = populatedUpdatedPageWithFns
 
+          //update the init commands so they
+          //reflect the updated pageObject
           init = Object.values(populatedUpdatedPageWithFns)[0].init
 
+          //update the pageObject object to
+          //reflect the result of the current command
           this.newDispatch({
             type: 'SET_LOCAL_PROPERTIES',
             payload: {
@@ -2099,6 +2199,17 @@ export default class CADL extends EventEmitter {
     })
   }
 
+  /**
+   *
+   * @param EmitCallArgs
+   * @param EmitCallArgs.dataKey -object with variables e.g {var1:{name:'tom'}}
+   * @param EmitCallArgs.actions -an array of commands/actions to be performed
+   * @param EmitCallArgs.pageName
+   * @returns any[]
+   *
+   * -used to handle the emit syntax, where a series
+   *  of actions can be called given a common variable(s)
+   */
   public async emitCall({
     dataKey,
     actions,

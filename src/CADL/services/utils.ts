@@ -3,6 +3,10 @@ import store from '../../common/store'
 import { isPopulated } from '../utils'
 import { documentToNote } from '../../services/document/utils'
 
+// const node = "http://44.192.21.229:9200"
+// let index = "doctors"
+// const DEFAULT_ADDRESS = "92805"
+// const SIZE = 2
 export default {
   base64ToBlob({
     data,
@@ -56,5 +60,13 @@ export default {
   alert({ value }) {
     alert(value)
     return
-  }
+  },
+
+  getCountryCode(num: string) {
+    return num.split(' ')[0]
+  },
+
+  getPhoneNumber(num: string) {
+    return num.split(' ')[1]
+  },
 }
