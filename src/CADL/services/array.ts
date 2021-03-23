@@ -383,4 +383,15 @@ export default {
     }
     return
   },
+  isExist({ array, phoneNumber }) {
+    if (isArray(array)) {
+      array.forEach((arr) => {
+        if (phoneNumber === arr['phone']) {
+          return true
+        }
+      })
+      return false
+    }
+    return false
+  }
 }
