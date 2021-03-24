@@ -1,4 +1,4 @@
-import _, { isArray, isObject } from 'lodash'
+import _, { isArray, isObject, isString } from 'lodash'
 
 export default {
   remove({ object, key }) {
@@ -46,4 +46,35 @@ export default {
     }
     return
   },
+  extract({ array, field }) {
+    let match: string[] = field.split(".")
+    let result: string[] = []
+    if (isArray(array)) {
+      if (match.length === 1) {
+        array.forEach(arr => {
+          let str = arr[`${match[0]}${match[1]}`]
+          alert(str)
+          result.push(str)
+        });
+      }
+      else if (match.length === 2) {
+        array.forEach(arr => {
+
+          result.push(arr[match[0]][match[1]])
+        });
+      }
+    }
+    else if (array) {
+      if (match.length === 1) {
+        let str = array[match[0]][match[1]]
+        alert(typeof (str))
+        result.push(str)
+      }
+      else if (match.length === 2) {
+        let str = array[`${match[0]}${match[1]}`]
+        result.push(str)
+      }
+    }
+    return result
+  }
 }

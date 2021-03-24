@@ -384,13 +384,19 @@ export default {
     return
   },
   isExist({ array, phoneNumber }) {
+    let flag = 0
+    console.log(phoneNumber);
     if (isArray(array)) {
       array.forEach((arr) => {
         if (phoneNumber === arr['phone']) {
-          return true
+          flag = 1
+          return
         }
       })
-      return false
+      if (flag === 1)
+        return true
+      else
+        return false
     }
     return false
   }
