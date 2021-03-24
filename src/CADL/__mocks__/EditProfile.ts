@@ -167,7 +167,6 @@ export default {
             style: {
               top: '0.12',
               left: '0.4',
-              width: '0.4',
               height: '0.2',
             },
             children: [
