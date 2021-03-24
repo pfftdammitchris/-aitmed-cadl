@@ -5,7 +5,7 @@ export default {
     formData: {
       response: '',
       vertex: {
-        '.Vertex': '',
+        '.Global.currentUser.vertex': '',
         type: '1',
         name: {
           countryCode: '',
