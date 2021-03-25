@@ -161,6 +161,9 @@ function create({ pageName, apiObject, dispatch }) {
             )
           }
         } else {
+          if (options['type']) {
+            options['type'] = options?.type.toString()
+          }
           const { data } = await store.level2SDK.vertexServices.updateVertex({
             ...options,
             id,

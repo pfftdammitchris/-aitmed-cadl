@@ -1,8 +1,25 @@
 export default {
   PersonalDocuments: {
     pageNumber: '410',
-    title: 'MyDocuments',
-    init: ['.SignInCheck', '..listData.get'],
+    title: 'My Documents',
+    init: [
+      '.SignInCheck',
+      '..listData.get',
+      {
+        if: [
+          '=..listData.personalDoc.doc.0',
+          'continue',
+          {
+            '=.builtIn.checkField': {
+              dataIn: {
+                contentType: 'messageHidden',
+                wait: 100,
+              },
+            },
+          },
+        ],
+      },
+    ],
     listData: {
       personalDoc: {
         doc: {
@@ -16,9 +33,9 @@ export default {
         api: 'rd',
         dataKey: 'listData.personalDoc',
         ObjType: 4,
-        ids: ['.Global.rootNotebookID'],
-        type: '.DocType.UploadFile',
-        xfname: 'eid',
+        ids: ['.Global.currentUser.vertex.id'],
+        // sCondition: '.DocType.GetAllDocument',
+        xfname: 'E.bvid|E.evid',
         obfname: 'mtime',
         maxcount: '40',
         _nonce: '=.Global._nonce',
@@ -44,55 +61,70 @@ export default {
             '.HeaderLeftButton': null,
           },
           {
+            '.HeaderRightImg': null,
+            path: 'sideNav2.png',
+            onClick: [
+              {
+                goto: 'SideMenuBar',
+              },
+            ],
+          },
+          {
             type: 'view',
             style: {
               top: '0.1',
-              left: '0',
-              width: '0.8',
-              height: '0.7',
+              left: '0.05',
+              width: '0.9',
+              height: '0.08',
             },
             children: [
               {
-                type: 'view',
+                '.SearchField': null,
+                placeholder: '  Search Documents',
                 style: {
-                  top: '0',
-                  left: '0.05',
-                  width: '0.9',
-                  height: '0.08',
+                  left: '0.1',
+                  top: '0.025',
                 },
-                children: [
+              },
+              {
+                '.SearchDoc': null,
+                style: {
+                  top: '0.026',
+                  left: '0.75',
+                },
+              },
+              {
+                type: 'image',
+                path: 'add.png',
+                onClick: [
                   {
-                    '.SearchField': null,
-                    placeholder: '  Search Documents',
-                    dataKey: '..searchData.searchContact',
-                    style: {
-                      left: '0.2',
-                      top: '0.025',
-                    },
-                  },
-                  {
-                    '.SearchDoc': null,
-                    style: {
-                      top: '0.025',
-                    },
-                  },
-                  {
-                    type: 'image',
-                    path: 'add.png',
-                    onClick: [
-                      {
-                        goto: 'AddDocuments',
-                      },
-                    ],
-                    style: {
-                      top: '0.03',
-                      left: '0.85',
-                      height: '0.02',
-                    },
+                    goto: 'AddDocuments',
                   },
                 ],
+                style: {
+                  top: '0.024',
+                  left: '0',
+                  height: '0.03',
+                },
               },
             ],
+          },
+          {
+            type: 'label',
+            contentType: 'messageHidden',
+            text: 'No documents added',
+            style: {
+              left: '0',
+              top: '0.18',
+              width: '1',
+              height: '0.04',
+              color: '0x000058',
+              fontSize: '16',
+              isHidden: 'true',
+              textAlign: {
+                x: 'center',
+              },
+            },
           },
           {
             type: 'view',
@@ -119,7 +151,7 @@ export default {
                       left: '0',
                       top: '0',
                       width: '1',
-                      height: '0.07',
+                      height: '0.1',
                       border: {
                         style: '2',
                       },
@@ -133,7 +165,20 @@ export default {
                         dataObject: 'itemObject',
                       },
                       {
-                        goto: 'DocumentDetail',
+                        actionType: 'evalObject',
+                        object: [
+                          {
+                            if: [
+                              '=.Global.DocReference.document.name.data.note',
+                              {
+                                goto: 'MyDocumentNotes',
+                              },
+                              {
+                                goto: 'MyDocumentDetail',
+                              },
+                            ],
+                          },
+                        ],
                       },
                     ],
                     children: [
@@ -156,13 +201,13 @@ export default {
                       {
                         type: 'label',
                         text: '10.30am',
-                        'text=func': '.builtIn.string.formatUnixtime_en',
+                        'text=func': '=.builtIn.string.formatUnixtime_en',
                         dataKey: 'itemObject.ctime',
                         style: {
                           color: '0x808080',
-                          left: '0.7',
-                          top: '0.01',
-                          width: '0.2',
+                          left: '0.05',
+                          top: '0.06',
+                          width: '0.4',
                           height: '0.02',
                           fontSize: '12',
                         },

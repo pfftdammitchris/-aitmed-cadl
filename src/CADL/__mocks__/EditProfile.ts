@@ -11,7 +11,7 @@ export default {
             '..tar@': '.DisplayProfile.docDetail.document.name.data',
           },
           {
-            '..tar@': 'drImg.png',
+            '..tar@': 'empty.png',
           },
         ],
       },
@@ -20,21 +20,36 @@ export default {
     tar: '',
     save: [
       {
+        '.Global.currentUser.vertex.name.firstName@':
+          '=..profileObject.name.data.firstName',
+      },
+      {
+        '.Global.currentUser.vertex.name.lastName@':
+          '=..profileObject.name.data.lastName',
+      },
+      {
+        actionType: 'evalObject',
+        object: {
+          '=.builtIn.string.concat': {
+            dataIn: [
+              '=.Global.currentUser.vertex.name.firstName',
+              ' ',
+              '=.Global.currentUser.vertex.name.lastName',
+            ],
+            dataOut: 'Global.currentUser.vertex.name.fullName',
+          },
+        },
+      },
+      {
         '=.EditProfile.profile.docAPI.store': '',
+      },
+      {
+        '=.Global.currentUser.vertexAPI.store': '',
       },
     ],
     update: [
       {
         '=.EditProfile.uploadProfile.docAPI.store': '',
-      },
-      {
-        '=.builtIn.utils.base64ToBlob': {
-          dataIn: {
-            data: '=..uploadProfile.document.name.data',
-            type: '=..uploadProfile.document.name.type',
-          },
-          dataOut: 'DisplayProfile.docDetail.document.name.data',
-        },
       },
     ],
     uploadProfile: {
@@ -96,15 +111,6 @@ export default {
             ],
           },
           {
-            '.HeaderRightButton': null,
-            text: 'Done',
-            onClick: [
-              {
-                goto: 'DisplayProfile',
-              },
-            ],
-          },
-          {
             type: 'image',
             path: '..tar',
             contentType: 'file',
@@ -120,9 +126,18 @@ export default {
             text: 'Change Image',
             onClick: [
               {
+                actionType: 'openPhotoLibrary',
+                dataObject: 'BLOB',
+                dataKey: 'EditProfile.uploadProfile.document.name.data',
+              },
+              {
                 actionType: 'updateObject',
                 dataObject: 'BLOB',
                 dataKey: 'EditProfile.uploadProfile.document.name.data',
+              },
+              {
+                actionType: 'popUpDismiss',
+                popUpView: 'selectView',
               },
               {
                 actionType: 'builtIn',
@@ -152,7 +167,6 @@ export default {
             style: {
               top: '0.12',
               left: '0.4',
-              width: '0.4',
               height: '0.2',
             },
             children: [
@@ -352,7 +366,7 @@ export default {
               },
               {
                 type: 'textField',
-                placeholder: 'Lin1',
+                placeholder: 'Line 1',
                 dataKey: 'profileObject.name.data.line1',
                 style: {
                   top: '0.15',
@@ -370,7 +384,7 @@ export default {
               },
               {
                 type: 'textField',
-                placeholder: 'Lin2',
+                placeholder: 'Line 2',
                 dataKey: 'profileObject.name.data.line2',
                 style: {
                   top: '0.19',

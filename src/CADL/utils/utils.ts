@@ -213,9 +213,11 @@ function isPopulated(item: string | Record<string, any>): boolean {
 function attachFns({
   cadlObject,
   dispatch,
+  force = false,
 }: {
   cadlObject: Record<string, any>
   dispatch: Function
+  force?: boolean
 }): Record<string, any> {
   //we need the pageName to use as a key to store the data
   //when using the dataKey
@@ -229,19 +231,23 @@ function attachFns({
     pageName,
     cadlObject,
     dispatch,
+    force,
   })
 
   function attachFnsHelper({
     pageName,
     cadlObject,
     dispatch,
+    force = false,
   }: {
     pageName: string
     cadlObject: Record<string, any>
     dispatch: Function
+    force?: boolean
   }): Record<string, any> {
     //traverse through the page object and look for the api keyword
     let output = cadlObject
+    if (pageName === 'Global' && !force) return output
     if (isObject(output)) {
       Object.keys(output).forEach((key) => {
         if (isObject(output[key])) {
