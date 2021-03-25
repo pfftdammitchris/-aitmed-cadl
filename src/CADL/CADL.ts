@@ -32,8 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import Settings from './__mocks__/Settings'
-// import ChatInviteeInfo from './__mocks__/ChatInviteeInfo'
+// import DisplayProfile from './__mocks__/DisplayProfile'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -518,8 +517,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'Settings') return _.cloneDeep(Settings)
-    // if (pageName === 'ChatInviteeInfo') return ChatInviteeInfo
+    // if (pageName === 'DisplayProfile') return _.cloneDeep(DisplayProfile)
 
     let pageCADL
     let pageUrl
@@ -979,9 +977,15 @@ export default class CADL extends EventEmitter {
       })
 
       const boundDispatch = this.dispatch.bind(this)
+      //Using force for Global object that needs to
+      //be processed since functions cannot be serialized
+      //in localstorage and Global is retrieved from localstorage on page refresh
       func = attachFns({
         cadlObject: populateAfterAttachingMyBaseUrl,
         dispatch: boundDispatch,
+        force: populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
+          ? true
+          : false,
       })
     }
     if (typeof func === 'function') {
