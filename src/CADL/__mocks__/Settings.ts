@@ -298,22 +298,21 @@ export default {
             onClick: [
               {
                 actionType: 'evalObject',
-                object: '..save',
-              },
-              {
-                actionType: 'evalObject',
-                object: '..update',
-              },
-              {
-                actionType: 'evalObject',
                 object: {
-                  '.Global._nonce@': {
-                    '=.builtIn.math.random': '',
-                  },
+                  if: [
+                    true,
+                    {
+                      actionType: 'evalObject',
+                      object: [
+                        {
+                          actionType: 'popUp',
+                          popUpView: 'inputVerificationCode',
+                          wait: true,
+                        },
+                      ],
+                    },
+                  ],
                 },
-              },
-              {
-                goto: 'MeetingRoomCreate',
               },
             ],
             style: {

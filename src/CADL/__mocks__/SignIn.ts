@@ -587,58 +587,22 @@ export default {
                   {
                     actionType: 'evalObject',
                     object: {
-                      '=.builtIn.string.concat': {
-                        dataIn: [
-                          '=.SignIn.formData.countryCode',
-                          ' ',
-                          '=.SignIn.formData.phoneNumber',
-                        ],
-                        dataOut: 'SignIn.apiData.phoneNumber',
-                      },
+                      if: [
+                        true,
+                        {
+                          actionType: 'evalObject',
+                          object: [
+                            { '=..verificationCode.edgeAPI.store': '' },
+                            {
+                              actionType: 'popUp',
+                              popUpView: 'inputVerificationCode',
+                              wait: true,
+                            },
+                          ],
+                        },
+                        'continue',
+                      ],
                     },
-                  },
-                  {
-                    actionType: 'evalObject',
-                    object: [
-                      {
-                        if: [
-                          '=.Global.currentUser.vertex.esk',
-                          {
-                            actionType: 'evalObject',
-                            object: '..save',
-                          },
-                          'continue',
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    actionType: 'evalObject',
-                    object: [
-                      {
-                        if: [
-                          '=.Global.currentUser.vertex.sk',
-                          {
-                            goto: 'MeetingRoomInvited',
-                          },
-                          {
-                            '=.SignIn.verificationCode.edgeAPI.store': '',
-                          },
-                        ],
-                      },
-                    ],
-                  },
-                  {
-                    actionType: 'evalObject',
-                    object: {
-                      '.Global._nonce@': {
-                        '=.builtIn.math.random': '',
-                      },
-                    },
-                  },
-                  {
-                    actionType: 'popUp',
-                    popUpView: 'inputVerificationCode',
                   },
                 ],
               },
