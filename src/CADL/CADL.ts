@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import DisplayProfile from './__mocks__/DisplayProfile'
+// import SignIn from './__mocks__/SignIn'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -517,7 +517,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'DisplayProfile') return _.cloneDeep(DisplayProfile)
+    // if (pageName === 'SignIn') return _.cloneDeep(SignIn)
 
     let pageCADL
     let pageUrl
@@ -746,13 +746,18 @@ export default class CADL extends EventEmitter {
       /**
        * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
        */
-      const populatedCommand = await this.dispatch({
+      let populatedCommand = await this.dispatch({
         type: 'populate-object',
         payload: {
           pageName,
           object: command,
         },
       })
+      if ('actionType' in populatedCommand) {
+        populatedCommand = {
+          actionType: populatedCommand,
+        }
+      }
 
       const commandKeys = Object.keys(populatedCommand)
       await asyncForEach(commandKeys, async (key) => {
@@ -822,6 +827,8 @@ export default class CADL extends EventEmitter {
         pageName,
         key: '=.builtIn.goto',
       })
+    } else if (key === 'actionType') {
+      results = commands[key]
     } else if (!key.startsWith('=')) {
       const shouldCopy =
         key.includes('builtIn') &&
