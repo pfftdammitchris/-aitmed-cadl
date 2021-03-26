@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SettingsUpdate from './__mocks__/Settings'
+import SettingsUpdate from './__mocks__/Settings'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -517,7 +517,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
+    if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
 
     let pageCADL
     let pageUrl
@@ -741,6 +741,7 @@ export default class CADL extends EventEmitter {
      *  {if:['.condition', ifTrue, ifFalse]}
      * ]
      */
+
     let results
     await asyncForEach(array, async (command) => {
       /**
@@ -829,7 +830,21 @@ export default class CADL extends EventEmitter {
         key: '=.builtIn.goto',
       })
     } else if (key === 'actionType') {
-      results = commands[key]
+      if (commands['actionType']['actionType'] === 'evalObject') {
+        if (typeof commands['actionType']['object'] === 'function') {
+          results = await commands['actionType']['object']()
+        } else if (isObject(commands['actionType']['object'])) {
+          results = await this.dispatch({
+            type: 'eval-object',
+            payload: {
+              updateObject: commands['actionType']['object'],
+              pageName,
+            },
+          })
+        }
+      } else {
+        results = commands[key]
+      }
     } else if (!key.startsWith('=')) {
       const shouldCopy =
         key.includes('builtIn') &&
