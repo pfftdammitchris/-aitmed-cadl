@@ -1,4 +1,4 @@
-import _, { isArray, isObject, isString } from 'lodash'
+import _, { isArray, isObject } from 'lodash'
 
 export default {
   remove({ object, key }) {
