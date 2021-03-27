@@ -15,7 +15,6 @@ export default {
     return humanizeDuration(unixTime * 1000)
   },
   concat(stringArr: string[]): string {
-    alert(1)
     if (Array.isArray(stringArr)) {
       return stringArr.join('')
     }
