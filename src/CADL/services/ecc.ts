@@ -34,6 +34,25 @@ export default {
     }
     return skBase64
   },
+  encryptAES({ key, message }) {
+    const secretKeyUInt8Array = store.level2SDK.utilServices.normalizeStringTo32BitArray(
+      key
+    )
+    const encryptedDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(
+      message
+    )
+
+    const sk = store.level2SDK.utilServices.sKeyEncrypt(
+      secretKeyUInt8Array,
+      encryptedDataUInt8Array
+    )
+
+    let skBase64
+    if (sk instanceof Uint8Array) {
+      skBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(sk)
+    }
+    return skBase64
+  },
   skCheck({ pk, sk }) {
     let pkUInt8Array = pk
     let skDataUInt8Array = sk
