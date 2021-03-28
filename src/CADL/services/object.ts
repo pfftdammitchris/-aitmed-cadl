@@ -22,7 +22,6 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
-      console.log(object[key])
       return object[key]
     }
     return
@@ -84,9 +83,9 @@ export default {
           authType = authList[arr] * 10000
         }
       })
-      if (auth[key]['edit'] === true)
+      if (auth[key]['create'] === true)
         authType += 4
-      if (auth[key]['invite'] === true)
+      if (auth[key]['edit'] === true)
         authType += 2
       if (auth[key]['review'] === true)
         authType += 1
