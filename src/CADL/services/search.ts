@@ -196,15 +196,29 @@ export default {
     console.log(body.hits.hits)
     return body.hits.hits
   },
+
   GetAllLonAndLat({ object }) {
     if (isArray(object)) {
       let re: Record<string, any> = []
       object.forEach(obj => {
         let st = obj["_source"]["location"].split(" ")
+        let address = obj["_source"]["address_street"] + " "
+          + obj["_source"]["address_city"] + " "
+          + obj["_source"]["address_state"] + " "
+          + obj["_source"]["address_zipCode"]
         let Lon = parseFloat(st[1].replace("(", ""))
         let Lat = parseFloat(st[2].replace(")", ""))
-        re.push([Lon, Lat])
+        re.push({
+          data: [Lon, Lat],
+          information: {
+            address: address,
+            Name: obj["_source"]["Name"],
+            Speciality: obj["_source"]["Speciality"],
+            Title: obj["_source"]["Title"],
+          }
+        })
       })
+      console.log("test transform", re)
       return re
     }
     return
