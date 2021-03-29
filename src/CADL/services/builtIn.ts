@@ -39,8 +39,12 @@ function builtIn({ pageName, apiObject, dispatch }) {
     try {
       if (store.env === 'test') {
         console.log(
-          `%cBuiltIn Fn:${pathArr} Request ', 'background: purple; color: white; display: block;`,
-          res
+          `%cBuiltIn Fn:${pathArr} Request `,
+          `background: purple; color: white; display: block;`,
+          {
+            ...input,
+            name: { ...currentVal.name, ...input },
+          }
         )
       }
       //TODO: make signature more generic
@@ -51,7 +55,8 @@ function builtIn({ pageName, apiObject, dispatch }) {
       res = data
       if (store.env === 'test') {
         console.log(
-          `%cBuiltIn Fn:${pathArr} Response ', 'background: purple; color: white; display: block;`,
+          `%cBuiltIn Fn:${pathArr} Response`,
+          `background: purple; color: white; display: block;`,
           res
         )
       }
