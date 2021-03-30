@@ -411,7 +411,7 @@ export default {
     })
 
     subtypelist.forEach(async (element) => {
-      createModel['subtype'] = element.subtype
+      createModel['subtype'] = element
       try {
         if (store.env === 'test') {
           console.log(
