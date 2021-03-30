@@ -25,7 +25,7 @@ function get({ pageName, apiObject, dispatch }) {
 
     let { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
       type: 'populate-object',
-      payload: { object: currentVal, pageName },
+      payload: { object: currentVal, pageName, copy: true },
     })
 
     nonce = _nonce
@@ -110,14 +110,14 @@ function create({ pageName, apiObject, dispatch }) {
   return async (name) => {
     const { dataKey, dataIn, dataOut } = _.cloneDeep(apiObject || {})
 
-    const { deat, id, ...currentVal } = await dispatch({
+    const { deat, ...currentVal } = await dispatch({
       type: 'get-data',
       payload: {
         dataKey: dataIn ? dataIn : dataKey,
         pageName,
       },
     })
-    let populatedCurrentVal = await dispatch({
+    let { id, ...populatedCurrentVal } = await dispatch({
       type: 'populate-object',
       payload: { object: currentVal, pageName, copy: true },
     })
