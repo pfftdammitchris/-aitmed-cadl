@@ -1,4 +1,5 @@
 import _, { isArray } from 'lodash'
+import store from '../../common/store'
 type connection = {
   name: string
   category: string
@@ -399,5 +400,44 @@ export default {
         return false
     }
     return false
+  },
+  /***
+ * 
+ */
+  async createBySubtype({ subtypelist, createModel }) {
+    console.log("test createBySubtype", {
+      subtypelist: subtypelist,
+      createModel: createModel
+    })
+
+    subtypelist.forEach(async (element) => {
+      createModel['subtype'] = element.subtype
+      try {
+        if (store.env === 'test') {
+          console.log(
+            '%cCreate Edge Request',
+            'background: purple; color: white; display: block;',
+            { ...createModel }
+          )
+        }
+
+        const { data } = await store.level2SDK.edgeServices.createEdge({
+          ...createModel,
+        })
+        if (store.env === 'test') {
+          console.log(
+            '%cCreate Edge Response',
+            'background: purple; color: white; display: block;',
+            data
+          )
+        }
+      } catch (error) {
+        throw error
+      }
+
+    })
+
+    return "test"
   }
+
 }
