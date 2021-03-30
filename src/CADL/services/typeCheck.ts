@@ -1,5 +1,5 @@
 export default {
-  phoneNumber({ phoneNumber, countryCode, toastMessage, style }) {
+  phoneNumber({ phoneNumber, countryCode }) {
     let validPhoneNumber
     if (phoneNumber.includes('-')) {
       validPhoneNumber = phoneNumber.replace(/-/g, '')
@@ -10,9 +10,7 @@ export default {
     if (countryCodeAndPhoneNumber.match(/^[+][0-9]+\s\d{10}$/)) {
       return true
     } else {
-      return {
-        toast: { message: toastMessage, style },
-      }
+      return false
     }
   },
 }
