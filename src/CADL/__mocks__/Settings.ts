@@ -30,6 +30,9 @@ export default {
       {
         '..formData.userName@': '=..myVertex.name.userName',
       },
+      {
+        '..myVertex.tage@': '0',
+      },
     ],
     myVertex: '.Global.currentUser.vertex',
     generalInfoTemp: {
@@ -64,8 +67,9 @@ export default {
       userName: 'JohnSmith',
       countryCode: '+x',
       phoneNumber: '8888888888',
-      password: 'xxx',
-      confirmPassword: 'xxx',
+      password: 'xxxxx...',
+      confirmPassword: 'xxxxx...',
+      code: '0',
     },
     updateApiData: {
       response: '',
@@ -79,6 +83,7 @@ export default {
       },
     },
     needvCode: false,
+    changedPassword: false,
     getvCodeData: {
       phoneNumber: '',
     },
@@ -86,7 +91,7 @@ export default {
       response: '',
       edge: {
         '.Edge': '',
-        type: 1010,
+        type: 1011,
         _nonce: '=.Global._nonce',
         name: {
           phone_number: '=..getvCodeData.phoneNumber',
@@ -120,6 +125,9 @@ export default {
         '.Global.currentUser.vertex@': '=..updateApiData.response.vertex',
       },
       {
+        '.Global.phoneNumber@': '=..formData.phoneNumber',
+      },
+      {
         actionType: 'evalObject',
         object: {
           '=.builtIn.string.concat': {
@@ -134,6 +142,18 @@ export default {
       },
     ],
     updateMyVertex: [
+      {
+        '..myVertex.name.firstName@': '=..formData.firstName',
+      },
+      {
+        '..myVertex.name.lastName@': '=..formData.lastName',
+      },
+      {
+        '..myVertex.name.userName@': '=..formData.userName',
+      },
+      {
+        '..myVertex.name.phoneNumber@': '=..getvCodeData.phoneNumber',
+      },
       {
         '..myVertex.tage@': '=..formData.code',
       },
@@ -152,10 +172,28 @@ export default {
         },
       },
       {
-        '.Global.currentUser.JWT@': '=..verificationCode.response.jwt',
+        '=..updateApiData.vertexAPI.store': '',
       },
       {
-        '=..updateApiData.vertexAPI.store': '',
+        if: [
+          {
+            '=.builtIn.string.equal': {
+              dataIn: {
+                string1: '=..updateApiData.response.code',
+                string2: 0,
+              },
+            },
+          },
+          {
+            actionType: 'evalObject',
+            object: '..update',
+          },
+          {
+            actionType: 'popUp',
+            popUpView: 'wrongCode',
+            wait: true,
+          },
+        ],
       },
     ],
     components: [
@@ -423,7 +461,7 @@ export default {
                 type: 'label',
                 textBoard: [
                   {
-                    text: 'Password:',
+                    text: 'New Password:',
                   },
                   {
                     text: '*',
@@ -440,7 +478,7 @@ export default {
               },
               {
                 type: 'textField',
-                dataKey: 'formData.vertex.name.password',
+                dataKey: 'formData.password',
                 style: {
                   top: '0.38',
                   left: '0.25',
@@ -476,7 +514,7 @@ export default {
               },
               {
                 type: 'textField',
-                dataKey: 'formData.vertex.name.confirmPassword',
+                dataKey: 'formData.confirmPassword',
                 style: {
                   top: '0.47',
                   left: '0.25',
@@ -541,13 +579,21 @@ export default {
                         '=.builtIn.string.equal': {
                           dataIn: {
                             string1: '=..formData.password',
-                            string2: 'xxx',
+                            string2: 'xxxxx...',
                           },
                         },
                       },
                       'continue',
                       {
-                        '..needvCode@': true,
+                        actionType: 'evalObject',
+                        object: [
+                          {
+                            '..needvCode@': true,
+                          },
+                          {
+                            '..changedPassword@': true,
+                          },
+                        ],
                       },
                     ],
                   },
@@ -603,6 +649,31 @@ export default {
                 object: [
                   {
                     if: [
+                      '=..changedPassword',
+                      {
+                        actionType: 'evalObject',
+                        object: [
+                          {
+                            '=.builtIn.eccNaCl.encryptAES': {
+                              dataIn: {
+                                key: '=..formData.password',
+                                message: '=..myVertex.sk',
+                              },
+                              dataOut: 'SettingsUpdate.myVertex.esk',
+                            },
+                          },
+                        ],
+                      },
+                      'continue',
+                    ],
+                  },
+                ],
+              },
+              {
+                actionType: 'evalObject',
+                object: [
+                  {
+                    if: [
                       '=..needvCode',
                       {
                         actionType: 'evalObject',
@@ -637,6 +708,9 @@ export default {
                     '=.builtIn.math.random': '',
                   },
                 },
+              },
+              {
+                goto: 'Settings',
               },
             ],
             style: {
