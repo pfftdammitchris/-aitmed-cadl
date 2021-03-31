@@ -168,6 +168,23 @@ export default {
     }
     return
   },
+  appendUnique({ newMessage, messages, uniqueKey }) {
+    if (isArray(messages)) {
+      if (newMessage && uniqueKey) {
+        let flag = false
+        messages.forEach(message => {
+          if (message[uniqueKey] == newMessage[uniqueKey]) {
+            flag = true
+          }
+        })
+        if (!flag) {
+          var cloned = _.cloneDeep(newMessage)
+          messages.push(cloned)
+        }
+      }
+    }
+    return
+  },
   has({ object, value }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
