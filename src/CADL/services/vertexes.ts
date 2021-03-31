@@ -162,7 +162,7 @@ function create({ pageName, apiObject, dispatch }) {
           }
         } else {
           if (options['type']) {
-            options['type'] = options?.type.toString()
+            options['type'] = parseInt(options?.type)
           }
           const { data } = await store.level2SDK.vertexServices.updateVertex({
             ...options,
@@ -185,6 +185,9 @@ function create({ pageName, apiObject, dispatch }) {
         throw error
       }
     } else {
+      if (options['type']) {
+        options['type'] = parseInt(options?.type)
+      }
       //TODO: check data store to see if object already exists. if it does call update instead to avoid poluting the database
       try {
         if (store.env === 'test') {
