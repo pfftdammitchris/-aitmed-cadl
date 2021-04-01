@@ -294,6 +294,52 @@ export default {
   },
 
   /**
+   * 
+   * @param year input year
+   * @param month input month
+   * @param today input today,this can generate today font color and backgroundcolor
+   * @param markDay Generate week time according this param
+   * @param color   font color of common date 
+   * @param backgroundColor  background color of common date
+   * @param todayColor  font color of today 
+   * @param todayBackgroundColor background color of today
+   * @returns 
+   * return data formate:
+   * [{year: 2021,month: 3,day: 28,weekDay: 'Su',color: '#000000', backgroundColor: '#ffffff'}]
+   */
+  miniWeeklyCalendarArray({ year, month, today, markDay, color, backgroundColor, todayColor, todayBackgroundColor }) {
+    if (year && month && today && markDay) {
+      today = parseInt(today)
+      year = parseInt(year)
+      month = parseInt(month)
+      markDay = parseInt(markDay)
+      let dataObject: Record<string, any> = []
+      let weeks = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+      const date = new Date(year, month - 1, markDay)
+      let currenWeekDay = date.getDay()
+      let d = new Date(date.getTime() - currenWeekDay * 24 * 60 * 60 * 1000)
+      for (let i = 0; i < 7; i++) {
+        let item = {
+          year: d.getFullYear(),
+          month: d.getMonth() + 1,
+          day: d.getDate(),
+          weekDay: weeks[d.getDay()],
+          color: color,
+          backgroundColor: backgroundColor
+        }
+        if (d.getDate() == today) {
+          item.color = todayColor
+          item.backgroundColor = todayBackgroundColor
+        }
+        dataObject.push(item)
+        d = new Date(d.getTime() + 24 * 60 * 60 * 1000)
+      }
+      return dataObject
+    }
+    return
+  }
+
+  /**
    * Add a height attribute to each item below the array 
    * @param object 
    * @returns 
