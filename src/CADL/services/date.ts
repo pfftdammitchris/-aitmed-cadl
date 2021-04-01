@@ -310,7 +310,16 @@ export default {
    * return data formate:
    * [{year: 2021,month: 3,day: 28,weekDay: 'Su',color: '#000000', backgroundColor: '#ffffff'}]
    */
-  miniWeeklyCalendarArray({ year, month, today, markDay, color, backgroundColor, todayColor, todayBackgroundColor }) {
+  miniWeeklyCalendarArray({
+    year,
+    month,
+    today,
+    markDay,
+    color,
+    backgroundColor,
+    todayColor,
+    todayBackgroundColor
+  }) {
     if (year && month && today && markDay) {
       today = parseInt(today)
       year = parseInt(year)
