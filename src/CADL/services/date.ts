@@ -342,6 +342,39 @@ export default {
     return
   },
 
+  NextWeek({ year, month, day }) {
+    console.log("next lastweek", {
+      year: year,
+      month: month,
+      day: day,
+    })
+    let date = new Date(year, month, day)
+    date = new Date(date.getTime() + 24 * 60 * 60 * 1000)
+    let res = {
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      day: date.getDate()
+    }
+    console.log("test lastweek", res)
+    return res
+  },
+  LastWeek({ year, month, day }) {
+    console.log("test lastweek", {
+      year: year,
+      month: month,
+      day: day,
+    })
+    let date = new Date(year, month, day)
+    date = new Date(date.getTime() - 24 * 60 * 60 * 1000)
+    let res = {
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      day: date.getDate()
+    }
+    console.log("test lastweek", res)
+    return res
+  },
+
   /**
    * Add a height attribute to each item below the array 
    * @param object 
@@ -362,10 +395,15 @@ export default {
   },
   ShowDateByNumber({ year, month, day }) {
     if (year && month && day) {
+      console.log("test ShowDateByNumber", {
+        year: year,
+        month: month,
+        day: day
+      })
       year = parseInt(year)
       month = parseInt(month)
       day = parseInt(day)
-      let date = new Date(year, month, day)
+      let date = new Date(year, month - 1, day)
       let months = [
         'January',
         'February',
