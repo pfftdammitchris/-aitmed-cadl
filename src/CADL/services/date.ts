@@ -340,7 +340,7 @@ export default {
       return dataObject
     }
     return
-  }
+  },
 
   /**
    * Add a height attribute to each item below the array 
