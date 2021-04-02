@@ -168,6 +168,23 @@ export default {
     }
     return
   },
+  appendUnique({ newMessage, messages, uniqueKey }) {
+    if (isArray(messages)) {
+      if (newMessage && uniqueKey) {
+        let flag = false
+        messages.forEach(message => {
+          if (message[uniqueKey] == newMessage[uniqueKey]) {
+            flag = true
+          }
+        })
+        if (!flag) {
+          var cloned = _.cloneDeep(newMessage)
+          messages.push(cloned)
+        }
+      }
+    }
+    return
+  },
   has({ object, value }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
@@ -188,7 +205,7 @@ export default {
     }
     return false
   },
-  AddWeek({ object, duration, index, key }) {
+  AddWeek({ object, duration, location, index, key }) {
     console.log(object, duration, index, key)
     if (typeof index == undefined) {
       console.log('index is undefined')
@@ -203,7 +220,7 @@ export default {
       return
     }
     // if (_.isArray(object)) {
-    var arr = { duration: duration, index: index, key: key }
+    var arr = { duration: duration, location: location, index: index, key: key }
     console.log(object.length)
     object[object.length] = arr
     return
