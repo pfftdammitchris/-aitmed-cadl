@@ -10,6 +10,7 @@ export interface NoteDocumentName {
   title: string
   nonce?: string
   user?: string
+  targetRoomName?: string
   tags: string[]
   edit_mode?: number
   type: string
