@@ -329,6 +329,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
     name: {
       title: name.title,
       nonce: name?.nonce,
+      targetRoomName: name?.targetRoomName,
       user: name?.user,
       type: contentType,
       data: content,

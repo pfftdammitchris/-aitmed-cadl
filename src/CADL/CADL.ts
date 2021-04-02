@@ -517,8 +517,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'UploadSharedDocuments')
-    //   return _.cloneDeep(UploadSharedDocuments)
+    // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
 
     let pageCADL
     let pageUrl
