@@ -205,7 +205,7 @@ export default {
     }
     return false
   },
-  AddWeek({ object, duration, index, key }) {
+  AddWeek({ object, duration, location, index, key }) {
     console.log(object, duration, index, key)
     if (typeof index == undefined) {
       console.log('index is undefined')
@@ -220,7 +220,7 @@ export default {
       return
     }
     // if (_.isArray(object)) {
-    var arr = { duration: duration, index: index, key: key }
+    var arr = { duration: duration, location: location, index: index, key: key }
     console.log(object.length)
     object[object.length] = arr
     return
