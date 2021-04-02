@@ -73,6 +73,9 @@ export default {
       if (n < 13 * 60) {
         let h = Math.floor(n / 60)
         let m = n % 60
+        if (h == 12) {
+          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+        }
         return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
@@ -294,6 +297,94 @@ export default {
   },
 
   /**
+   * 
+   * @param year input year
+   * @param month input month
+   * @param today input today,this can generate today font color and backgroundcolor
+   * @param markDay Generate week time according this param
+   * @param color   font color of common date 
+   * @param backgroundColor  background color of common date
+   * @param todayColor  font color of today 
+   * @param todayBackgroundColor background color of today
+   * @returns 
+   * return data formate:
+   * [{year: 2021,month: 3,day: 28,weekDay: 'Su',color: '#000000', backgroundColor: '#ffffff'}]
+   */
+  miniWeeklyCalendarArray({
+    year,
+    month,
+    today,
+    markDay,
+    color,
+    backgroundColor,
+    todayColor,
+    todayBackgroundColor
+  }) {
+    if (year && month && today && markDay) {
+      today = parseInt(today)
+      year = parseInt(year)
+      month = parseInt(month)
+      markDay = parseInt(markDay)
+      let dataObject: Record<string, any> = []
+      let weeks = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+      const date = new Date(year, month - 1, markDay)
+      let currenWeekDay = date.getDay()
+      let d = new Date(date.getTime() - currenWeekDay * 24 * 60 * 60 * 1000)
+      for (let i = 0; i < 7; i++) {
+        let item = {
+          year: d.getFullYear(),
+          month: d.getMonth() + 1,
+          day: d.getDate(),
+          weekDay: weeks[d.getDay()],
+          color: color,
+          backgroundColor: backgroundColor
+        }
+        if (d.getDate() == today) {
+          item.color = todayColor
+          item.backgroundColor = todayBackgroundColor
+        }
+        dataObject.push(item)
+        d = new Date(d.getTime() + 24 * 60 * 60 * 1000)
+      }
+      return dataObject
+    }
+    return
+  },
+
+  NextWeek({ year, month, day }) {
+    console.log("next lastweek", {
+      year: year,
+      month: month,
+      day: day,
+    })
+    let date = new Date(year, month, day)
+    date = new Date(date.getTime() + 24 * 60 * 60 * 1000)
+    let res = {
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      day: date.getDate()
+    }
+    console.log("test lastweek", res)
+    return res
+  },
+  LastWeek({ year, month, day }) {
+    console.log("test lastweek", {
+      year: year,
+      month: month,
+      day: day,
+    })
+    let date = new Date(year, month, day)
+    date = new Date(date.getTime() - 24 * 60 * 60 * 1000)
+    let res = {
+      year: date.getFullYear(),
+      month: date.getMonth(),
+      day: date.getDate()
+    }
+    console.log("test lastweek", res)
+    return res
+  },
+
+  /**
    * Add a height attribute to each item below the array 
    * @param object 
    * @returns 
@@ -313,10 +404,15 @@ export default {
   },
   ShowDateByNumber({ year, month, day }) {
     if (year && month && day) {
+      console.log("test ShowDateByNumber", {
+        year: year,
+        month: month,
+        day: day
+      })
       year = parseInt(year)
       month = parseInt(month)
       day = parseInt(day)
-      let date = new Date(year, month, day)
+      let date = new Date(year, month - 1, day)
       let months = [
         'January',
         'February',

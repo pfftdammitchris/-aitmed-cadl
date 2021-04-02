@@ -47,5 +47,20 @@ export default {
       }
     })
     return authDoc
+  },
+  addition({ num, step }) {
+    console.log("test addition", {
+      num: num,
+      step: step
+    })
+    num = parseInt(num)
+    step = parseInt(step)
+    return (num + step)
+  },
+  Subtraction({ num, step }) {
+    num = parseInt(num)
+    step = parseInt(step)
+    return (num - step)
   }
+
 }
