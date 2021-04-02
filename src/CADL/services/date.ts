@@ -352,35 +352,35 @@ export default {
   },
 
   NextWeek({ year, month, day }) {
-    console.log("next lastweek", {
+    console.log("test NextWeek2", {
       year: year,
       month: month,
       day: day,
     })
-    let date = new Date(year, month, day)
+    let date = new Date(year, month - 1, day)
     date = new Date(date.getTime() + 24 * 60 * 60 * 1000)
     let res = {
       year: date.getFullYear(),
-      month: date.getMonth(),
+      month: date.getMonth() + 1,
       day: date.getDate()
     }
-    console.log("test lastweek", res)
+    console.log("test NextWeek2", res)
     return res
   },
   LastWeek({ year, month, day }) {
-    console.log("test lastweek", {
+    console.log("test lastweek1", {
       year: year,
       month: month,
       day: day,
     })
-    let date = new Date(year, month, day)
+    let date = new Date(year, month - 1, day)
     date = new Date(date.getTime() - 24 * 60 * 60 * 1000)
     let res = {
       year: date.getFullYear(),
-      month: date.getMonth(),
+      month: date.getMonth() + 1,
       day: date.getDate()
     }
-    console.log("test lastweek", res)
+    console.log("test lastweek2", res)
     return res
   },
 
