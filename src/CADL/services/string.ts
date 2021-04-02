@@ -29,7 +29,7 @@ export default {
     }
     return
   },
-  getLength(str: string): number {
+  getLength(str: any): number {
     return str.toString().length
   },
   retainNumber({ value }): number {
