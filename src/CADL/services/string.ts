@@ -29,6 +29,9 @@ export default {
     }
     return
   },
+  getLength(str: string): number {
+    return str.toString().length
+  },
   retainNumber({ value }): number {
     return parseInt(value)
   },
