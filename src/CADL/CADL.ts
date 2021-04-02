@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SettingsUpdate from './__mocks__/Settings'
+// import UploadSharedDocuments from './__mocks__/UploadSharedDocuments'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'

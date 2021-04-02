@@ -9,8 +9,8 @@ export interface NoteDocumentDeat {
 export interface NoteDocumentName {
   title: string
   nonce?: string
-  user?: string
   targetRoomName?: string
+  user?: string
   tags: string[]
   edit_mode?: number
   type: string
@@ -44,6 +44,7 @@ export type CreateParams = {
   edge_id: string | Uint8Array
   title: string
   user?: string
+  targetRoomName?: string
   tags?: string[]
   type?: number
   dataType?: number
