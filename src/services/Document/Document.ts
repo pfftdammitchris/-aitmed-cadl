@@ -35,6 +35,7 @@ export const create: DocumentTypes.Create = async ({
   content,
   type,
   user,
+  targetRoomName,
   mediaType,
   dataType = 0,
   dTypeProps,
@@ -167,6 +168,9 @@ export const create: DocumentTypes.Create = async ({
   }
   if (user) {
     name.user = user
+  }
+  if (targetRoomName) {
+    name.targetRoomName = targetRoomName
   }
 
   // data must be base64 in name field
