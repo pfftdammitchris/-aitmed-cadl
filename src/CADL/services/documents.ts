@@ -232,56 +232,23 @@ function create({ pageName, apiObject, dispatch }) {
           )
         }
 
-        //Buffer check
-        const { pass: shouldPass, cacheIndex } = await dispatch({
-          type: 'set-api-buffer',
-          payload: {
-            apiObject: {
-              id,
-              edge_id: eid,
-              content: name?.data,
-              mediaType: name?.type,
-              title: name?.title,
-              user: name?.user,
-              tags: name?.tags,
-              type: restOfDocOptions?.type,
-              dTypeProps,
-              nonce: _nonce,
-            },
-          },
+        const response = await Document.update(id, {
+          edge_id: eid,
+          content: name?.data,
+          mediaType: name?.type,
+          title: name?.title,
+          tags: name?.tags,
+          user: name?.user,
+          type: restOfDocOptions?.type,
+          dTypeProps,
         })
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          const response = await Document.update(id, {
-            edge_id: eid,
-            content: name?.data,
-            mediaType: name?.type,
-            title: name?.title,
-            tags: name?.tags,
-            user: name?.user,
-            type: restOfDocOptions?.type,
-            dTypeProps,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data: response, cacheIndex },
-          })
-          res = response
-          if (store.env === 'test') {
-            console.log(
-              '%cUpdate Document Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        res = response
+        if (store.env === 'test') {
+          console.log(
+            '%cUpdate Document Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
@@ -310,54 +277,23 @@ function create({ pageName, apiObject, dispatch }) {
             }
           )
         }
-        //Buffer check
-        const { pass: shouldPass, cacheIndex } = await dispatch({
-          type: 'set-api-buffer',
-          payload: {
-            apiObject: {
-              edge_id: eid,
-              content: name?.data,
-              mediaType: name?.type,
-              user: name?.user,
-              title: name?.title,
-              type: restOfDocOptions?.type,
-              dTypeProps,
-              nonce: _nonce,
-            },
-          },
+        const response = await Document.create({
+          edge_id: eid,
+          content: name?.data,
+          paymentNonce: name?.nonce,
+          mediaType: name?.type,
+          title: name?.title,
+          user: name?.user,
+          type: restOfDocOptions?.type,
+          dTypeProps,
         })
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          const response = await Document.create({
-            edge_id: eid,
-            content: name?.data,
-            paymentNonce: name?.nonce,
-            mediaType: name?.type,
-            title: name?.title,
-            user: name?.user,
-            type: restOfDocOptions?.type,
-            dTypeProps,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data: response, cacheIndex },
-          })
-          res = response
-          if (store.env === 'test') {
-            console.log(
-              '%cCreate Document Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        res = response
+        if (store.env === 'test') {
+          console.log(
+            '%cCreate Document Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
