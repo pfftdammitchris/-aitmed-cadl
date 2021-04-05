@@ -494,6 +494,11 @@ export default {
       return res
     }
     return
-  }
-
+  },
+  concat({ array1, array2 }) {
+    if (isArray(array1) && isArray(array2)) {
+      return array1.concat(array2)
+    }
+    return
+  },
 }
