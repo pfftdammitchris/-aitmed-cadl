@@ -456,6 +456,49 @@ export default {
     }
 
     // return "test"
-  }
+  },
 
+  WeekSchedule({ planObject }) {
+    if (isArray(planObject)) {
+      console.log("test WeekSchedule", planObject)
+      let res: Record<string, any> = []
+      let len = 0
+      let weeks = [
+        'Sunday',
+        'Monday',
+        'Tuesday',
+        'Wednesday',
+        'Thursday',
+        'Friday',
+        'Saturday',
+      ]
+      for (let i = 0; i < 7; i++) {
+        if (Object.keys(planObject[i]).length == 0) {
+          res.push({
+            info: "not settings",
+            weekDay: weeks[i]
+          })
+        } else {
+          len = planObject[i].length
+          let info = ""
+          for (let j = 0; j < len; j++) {
+            info = info + " " + planObject[i][j]
+          }
+          res.push({
+            info: info,
+            weekDay: weeks[i]
+          })
+
+        }
+      }
+      return res
+    }
+    return
+  },
+  concat({ array1, array2 }) {
+    if (isArray(array1) && isArray(array2)) {
+      return array1.concat(array2)
+    }
+    return
+  },
 }
