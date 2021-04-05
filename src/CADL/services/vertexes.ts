@@ -144,42 +144,21 @@ function create({ pageName, apiObject, dispatch }) {
             { ...options, id }
           )
         }
-        //Buffer check
-        const { pass: shouldPass, cacheIndex } = await dispatch({
-          type: 'set-api-buffer',
-          payload: {
-            apiObject: { ...options, id },
-          },
+
+        if (options['type']) {
+          options['type'] = parseInt(options?.type)
+        }
+        const { data } = await store.level2SDK.vertexServices.updateVertex({
+          ...options,
+          id,
         })
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          if (options['type']) {
-            options['type'] = parseInt(options?.type)
-          }
-          const { data } = await store.level2SDK.vertexServices.updateVertex({
-            ...options,
-            id,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data, cacheIndex },
-          })
-          res = data
-          if (store.env === 'test') {
-            console.log(
-              '%cUpdate Vertex Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        res = data
+        if (store.env === 'test') {
+          console.log(
+            '%cUpdate Vertex Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
@@ -197,38 +176,18 @@ function create({ pageName, apiObject, dispatch }) {
             { ...options }
           )
         }
-        //Buffer check
-        const { pass: shouldPass, cacheIndex } = await dispatch({
-          type: 'set-api-buffer',
-          payload: {
-            apiObject: { ...options },
-          },
+
+        const response = await store.level2SDK.vertexServices.createVertex({
+          ...options,
         })
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          const response = await store.level2SDK.vertexServices.createVertex({
-            ...options,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data: response, cacheIndex },
-          })
-          res = response
-          if (store.env === 'test') {
-            console.log(
-              '%cCreate Vertex Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+
+        res = response
+        if (store.env === 'test') {
+          console.log(
+            '%cCreate Vertex Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
