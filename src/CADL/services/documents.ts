@@ -225,9 +225,11 @@ function create({ pageName, apiObject, dispatch }) {
               content: name?.data,
               mediaType: name?.type,
               title: name?.title,
-              user: name?.user,
+              targetRoomName: name?.targetRoomName,
               tags: name?.tags,
+              user: name?.user,
               type: restOfDocOptions?.type,
+              dTypeProps,
             }
           )
         }
@@ -237,6 +239,7 @@ function create({ pageName, apiObject, dispatch }) {
           content: name?.data,
           mediaType: name?.type,
           title: name?.title,
+          targetRoomName: name?.targetRoomName,
           tags: name?.tags,
           user: name?.user,
           type: restOfDocOptions?.type,
@@ -269,17 +272,21 @@ function create({ pageName, apiObject, dispatch }) {
             'background: purple; color: white; display: block;',
             {
               edge_id: eid,
-              content: name?.data ? name?.data : name,
+              content: name?.data,
+              targetRoomName: name?.targetRoomName,
+              paymentNonce: name?.nonce,
               mediaType: name?.type,
-              user: name?.user,
               title: name?.title,
+              user: name?.user,
               type: restOfDocOptions?.type,
+              dTypeProps,
             }
           )
         }
         const response = await Document.create({
           edge_id: eid,
           content: name?.data,
+          targetRoomName: name?.targetRoomName,
           paymentNonce: name?.nonce,
           mediaType: name?.type,
           title: name?.title,
