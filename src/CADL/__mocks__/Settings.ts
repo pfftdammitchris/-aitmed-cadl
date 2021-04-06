@@ -35,7 +35,7 @@ export default {
       },
     ],
     myVertex: '.Global.currentUser.vertex',
-    generalInfoTemp: {
+    infoTemp: {
       name: [
         {
           key: 'firstName',
@@ -69,7 +69,7 @@ export default {
       phoneNumber: '8888888888',
       password: 'xxxxx...',
       confirmPassword: 'xxxxx...',
-      code: '0',
+      code: '',
     },
     updateApiData: {
       response: '',
@@ -115,6 +115,20 @@ export default {
       },
       {
         '..myVertex.name.userName@': '=..formData.userName',
+      },
+      {
+        actionType: 'evalObject',
+        object: {
+          '=.builtIn.string.concat': {
+            dataIn: [
+              '=..formData.userName',
+              '=..formData.countryCode',
+              ' ',
+              '=..formData.phoneNumber',
+            ],
+            dataOut: 'SettingsUpdate.myVertex.uid',
+          },
+        },
       },
       {
         '=..updateApiData.vertexAPI.store': '',
@@ -180,6 +194,24 @@ export default {
             '=.builtIn.string.equal': {
               dataIn: {
                 string1: '=..updateApiData.response.code',
+                string2: 1031,
+              },
+            },
+          },
+          {
+            actionType: 'popUp',
+            popUpView: 'sameuserid',
+            wait: true,
+          },
+          'continue',
+        ],
+      },
+      {
+        if: [
+          {
+            '=.builtIn.string.equal': {
+              dataIn: {
+                string1: '=..updateApiData.response.code',
                 string2: 0,
               },
             },
@@ -206,6 +238,11 @@ export default {
         '.BaseCheckView': '',
         message: 'Password should be same',
         viewTag: 'samePassword',
+      },
+      {
+        '.BaseCheckView': '',
+        message: 'Username has been used',
+        viewTag: 'sameuserid',
       },
       {
         type: 'view',
@@ -238,15 +275,7 @@ export default {
             children: [
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: 'First Name:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: 'First Name:',
                 style: {
                   top: '0.05',
                   fontSize: '16',
@@ -274,15 +303,7 @@ export default {
               },
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: 'Last Name:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: 'Last Name:',
                 style: {
                   top: '0.05',
                   left: '0.45',
@@ -312,15 +333,7 @@ export default {
               },
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: 'Username:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: 'Username:',
                 style: {
                   top: '0.17',
                   fontSize: '16',
@@ -349,15 +362,7 @@ export default {
               },
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: 'Country:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: 'Country:',
                 style: {
                   top: '0.26',
                   fontSize: '16',
@@ -388,15 +393,7 @@ export default {
               },
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: 'Phone Number:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: 'Phone Number:',
                 style: {
                   top: '0.26',
                   left: '0.35',
@@ -459,15 +456,7 @@ export default {
               },
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: 'New Password:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: 'New Password:',
                 style: {
                   top: '0.38',
                   fontSize: '16',
@@ -495,18 +484,10 @@ export default {
               },
               {
                 type: 'label',
-                textBoard: [
-                  {
-                    text: ' Confirm Password:',
-                  },
-                  {
-                    text: '*',
-                    color: '0xD53C42',
-                  },
-                ],
+                text: ' Confirm Password:',
                 style: {
                   top: '0.47',
-                  fontSize: '14',
+                  fontSize: '16',
                   fontWeight: '400',
                   width: '0.25',
                   height: '0.03',

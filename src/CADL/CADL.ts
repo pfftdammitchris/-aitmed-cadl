@@ -32,7 +32,8 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import UploadSharedDocuments from './__mocks__/UploadSharedDocuments'
+// import SettingsUpdate from './__mocks__/Settings'
+// import MeetingDocumentsNotes from './__mocks__/MeetingDocumentsNotes'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -518,6 +519,8 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
     // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
+    // if (pageName === 'MeetingDocumentsNotes')
+    //   return _.cloneDeep(MeetingDocumentsNotes)
 
     let pageCADL
     let pageUrl
