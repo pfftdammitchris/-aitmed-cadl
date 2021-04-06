@@ -80,6 +80,9 @@ export default {
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
+        if (h == 12) {
+          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
+        }
         return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
