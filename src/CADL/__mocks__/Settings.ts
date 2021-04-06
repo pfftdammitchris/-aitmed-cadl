@@ -189,6 +189,14 @@ export default {
         '=..updateApiData.vertexAPI.store': '',
       },
       {
+        actionType: 'evalObject',
+        object: {
+          '.Global._nonce@': {
+            '=.builtIn.math.random': '',
+          },
+        },
+      },
+      {
         if: [
           {
             '=.builtIn.string.equal': {
@@ -212,20 +220,28 @@ export default {
             '=.builtIn.string.equal': {
               dataIn: {
                 string1: '=..updateApiData.response.code',
-                string2: 0,
+                string2: 112,
               },
             },
           },
           {
             actionType: 'evalObject',
-            object: '..update',
+            object: [
+              {
+                actionType: 'popUp',
+                popUpView: 'wrongCode',
+                wait: true,
+              },
+            ],
           },
           {
-            actionType: 'popUp',
-            popUpView: 'wrongCode',
-            wait: true,
+            actionType: 'evalObject',
+            object: '..update',
           },
         ],
+      },
+      {
+        goto: 'Settings',
       },
     ],
     components: [
