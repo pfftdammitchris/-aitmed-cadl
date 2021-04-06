@@ -196,7 +196,7 @@ export default {
       if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
-        let m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth()
+        let m = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)
         let d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay()
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
