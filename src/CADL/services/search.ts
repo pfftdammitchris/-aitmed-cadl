@@ -1,10 +1,11 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
+import { never_used } from 'immer/dist/internal'
 import _, { isArray } from 'lodash'
 // const node = 'http://44.192.21.229:9200'
 let client = new Client({ host: 'http://44.192.21.229:9200' })
 // let DEFAULT_ADDRESS = "92805"
-let SIZE = 20
+let SIZE = 100
 interface LatResponse {
   center: any[]
 }
@@ -222,5 +223,39 @@ export default {
       return re
     }
     return
-  }
+  },
+
+  SortBySpeciality({ object }) {
+    if (isArray(object)) {
+      console.log("test SortBySpeciality", object)
+      let re: Record<string, any> = []
+      object.forEach(obj => {
+        let i = 0
+        for (; i < re.length; i++) {
+          if (obj['_source']['Speciality'] == re[i]['Speciality']) {
+            re[i]['num'] = re[i]['num'] + 1
+            re[i]['data'].push(obj)
+            break
+          }
+        }
+        if (i == re.length) {
+          let item = {
+            Speciality: obj['_source']['Speciality'],
+            num: 1,
+            data: [obj]
+          }
+          // item.data.push(obj)
+          re.push(item)
+        }
+      })
+
+      for (let j = 0; j < re.length; j++) {
+        if (re[j]['Speciality'] == null) {
+          re[j]['Speciality'] = 'unknown'
+        }
+      }
+      return re
+    }
+    return
+  },
 }

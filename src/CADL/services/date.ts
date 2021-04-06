@@ -80,6 +80,9 @@ export default {
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
+        if (h == 12) {
+          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
+        }
         return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
@@ -193,7 +196,7 @@ export default {
       if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
-        let m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth()
+        let m = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)
         let d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay()
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
@@ -457,10 +460,23 @@ export default {
         workdays.forEach((d, index) => {
           if (d.indexOf('AM') != -1) {
             d = d.replace('AM', '')
+            let split_date = d.split(':')
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0]) + 12
+            } else {
+              form_date = parseInt(split_date[0])
+            }
+            d = form_date + ':' + split_date[1]
           } else if (d.indexOf('PM') != -1) {
             d = d.replace('PM', '')
             let split_date = d.split(':')
-            let form_date = parseInt(split_date[0]) + 12
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0])
+            } else {
+              form_date = parseInt(split_date[0]) + 12
+            }
             d = form_date + ':' + split_date[1]
           }
 
