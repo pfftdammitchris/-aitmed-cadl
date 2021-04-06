@@ -224,25 +224,22 @@ export default {
               },
             },
           },
+
           {
-            actionType: 'evalObject',
-            object: [
-              {
-                actionType: 'popUp',
-                popUpView: 'wrongCode',
-                wait: true,
-              },
-            ],
+            actionType: 'popUp',
+            popUpView: 'wrongCode',
+            wait: true,
           },
+
           {
             actionType: 'evalObject',
             object: '..update',
           },
         ],
       },
-      {
-        goto: 'Settings',
-      },
+      // {
+      //   goto: 'Settings',
+      // },
     ],
     components: [
       {
