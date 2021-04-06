@@ -460,10 +460,23 @@ export default {
         workdays.forEach((d, index) => {
           if (d.indexOf('AM') != -1) {
             d = d.replace('AM', '')
+            let split_date = d.split(':')
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0]) + 12
+            } else {
+              form_date = parseInt(split_date[0])
+            }
+            d = form_date + ':' + split_date[1]
           } else if (d.indexOf('PM') != -1) {
             d = d.replace('PM', '')
             let split_date = d.split(':')
-            let form_date = parseInt(split_date[0]) + 12
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0])
+            } else {
+              form_date = parseInt(split_date[0]) + 12
+            }
             d = form_date + ':' + split_date[1]
           }
 
