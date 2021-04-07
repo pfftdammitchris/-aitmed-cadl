@@ -1,5 +1,6 @@
 import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
+import { AnyArray } from 'immer/dist/internal'
 
 export default {
   formatTimer(time: number) {
@@ -81,5 +82,13 @@ export default {
       }
     }
     return false
+  },
+  /**
+   *
+   * @param str  phoneNumber
+   * @returns string
+   */
+  phoneNumberSplit({ phoneNumber, sign }): AnyArray {
+    return phoneNumber.toString().split(sign)
   },
 }
