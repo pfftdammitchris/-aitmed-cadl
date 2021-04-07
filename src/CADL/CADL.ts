@@ -32,7 +32,8 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SettingsUpdate from './__mocks__/Settings'
+// import SettingsUpdate from './__mocks__/SettingsUpdate'
+// import Settings from './__mocks__/Settings'
 // import TestChangeButtonColor from './__mocks__/TestChangeButtonColor'
 
 export default class CADL extends EventEmitter {
@@ -519,6 +520,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
     // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
+    // if (pageName === 'Settings') return _.cloneDeep(Settings)
     // if (pageName === 'TestChangeButtonColor')
     //   return _.cloneDeep(TestChangeButtonColor)
 
@@ -745,8 +747,9 @@ export default class CADL extends EventEmitter {
      * ]
      */
 
-    let results = []
+    let results
     await asyncForEach(array, async (command) => {
+      if (results && results?.actionType === 'popUp') return
       /**
        * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
        */
@@ -880,7 +883,8 @@ export default class CADL extends EventEmitter {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
-        isObject(commands[key]['dataIn']) &&
+        (isObject(commands[key]['dataIn']) ||
+          Array.isArray(commands[key]['dataIn'])) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       const populatedCommand = await this.dispatch({
