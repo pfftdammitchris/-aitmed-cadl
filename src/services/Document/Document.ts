@@ -36,6 +36,7 @@ export const create: DocumentTypes.Create = async ({
   type,
   user,
   targetRoomName,
+  fid,
   mediaType,
   dataType = 0,
   dTypeProps,
@@ -187,6 +188,7 @@ export const create: DocumentTypes.Create = async ({
       subtype: dType.value,
       name,
       size: blob.size,
+      fid,
     })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
@@ -197,6 +199,7 @@ export const create: DocumentTypes.Create = async ({
     })
   }
   const document: CommonTypes.Doc = response.data?.document
+  if (!document) return response
   const { deat } = document
 
   if (!dType.isOnServer && deat !== null && deat && deat.url && deat.sig) {

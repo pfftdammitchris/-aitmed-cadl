@@ -229,6 +229,7 @@ function create({ pageName, apiObject, dispatch }) {
               tags: name?.tags,
               user: name?.user,
               type: restOfDocOptions?.type,
+              fid: restOfDocOptions?.fid,
               dTypeProps,
             }
           )
@@ -243,6 +244,7 @@ function create({ pageName, apiObject, dispatch }) {
           tags: name?.tags,
           user: name?.user,
           type: restOfDocOptions?.type,
+          fid: restOfDocOptions?.fid,
           dTypeProps,
         })
         res = response
@@ -279,6 +281,7 @@ function create({ pageName, apiObject, dispatch }) {
               title: name?.title,
               user: name?.user,
               type: restOfDocOptions?.type,
+              fid: restOfDocOptions?.fid,
               dTypeProps,
             }
           )
@@ -292,6 +295,7 @@ function create({ pageName, apiObject, dispatch }) {
           title: name?.title,
           user: name?.user,
           type: restOfDocOptions?.type,
+          fid: restOfDocOptions?.fid,
           dTypeProps,
         })
         res = response

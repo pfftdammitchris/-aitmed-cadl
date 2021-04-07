@@ -32,7 +32,8 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import UploadSharedDocuments from './__mocks__/UploadSharedDocuments'
+// import SettingsUpdate from './__mocks__/Settings'
+// import TestChangeButtonColor from './__mocks__/TestChangeButtonColor'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -518,6 +519,8 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
     // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
+    // if (pageName === 'TestChangeButtonColor')
+    //   return _.cloneDeep(TestChangeButtonColor)
 
     let pageCADL
     let pageUrl
@@ -742,7 +745,7 @@ export default class CADL extends EventEmitter {
      * ]
      */
 
-    let results
+    let results = []
     await asyncForEach(array, async (command) => {
       /**
        * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
@@ -768,11 +771,15 @@ export default class CADL extends EventEmitter {
           key,
           pageName,
         })
-        if (results === undefined && result !== undefined) {
+        if (
+          (results === undefined && result !== undefined) ||
+          (isObject(result) && result?.actionType === 'popUp')
+        ) {
           results = result
         }
       })
     })
+
     return results
   }
 

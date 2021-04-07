@@ -46,7 +46,7 @@ export default {
     return
   },
   extract({ array, field }) {
-    let match: string[] = field.split(".")
+    let match: string[] = field.split('.')
     let result: string[] = []
     // let str: string = "array"
     // match.forEach(arr => {
@@ -54,21 +54,18 @@ export default {
     // })
     if (isArray(array)) {
       if (match.length === 1) {
-        array.forEach(array => {
+        array.forEach((array) => {
           result.push(array[match[0]])
-        });
-      }
-      else if (match.length === 2) {
-        array.forEach(arr => {
+        })
+      } else if (match.length === 2) {
+        array.forEach((arr) => {
           result.push(arr[match[0]][match[1]])
-        });
+        })
       }
-    }
-    else if (array) {
+    } else if (array) {
       if (match.length === 1) {
         result.push(array[match[0]])
-      }
-      else if (match.length === 2) {
+      } else if (match.length === 2) {
         result.push(array[match[0]][match[1]])
       }
     }
@@ -83,14 +80,11 @@ export default {
           authType = authList[arr] * 10000
         }
       })
-      if (auth[key]['create'] === true)
-        authType += 4
-      if (auth[key]['edit'] === true)
-        authType += 2
-      if (auth[key]['review'] === true)
-        authType += 1
+      if (auth[key]['create'] === true) authType += 4
+      if (auth[key]['edit'] === true) authType += 2
+      if (auth[key]['review'] === true) authType += 1
       result.push(parseInt(authType.toString(), 16))
     })
     return result
-  }
+  },
 }
