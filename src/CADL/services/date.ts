@@ -516,7 +516,10 @@ export default {
           axisLabel: {
             formatter: function (value) {
               var date = new Date(value)
-              return getzf(date.getHours()) + ':' + getzf(date.getMinutes())
+              if (date.getHours() % 4 == 0) {
+                return date.getHours() + ':' + getzf(date.getMinutes())
+              }
+              return
               function getzf(num) {
                 if (parseInt(num) < 10) {
                   num = '0' + num
