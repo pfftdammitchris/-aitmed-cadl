@@ -74,7 +74,7 @@ export default {
         let h = Math.floor(n / 60)
         let m = n % 60
         if (h == 12) {
-          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+          return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
         }
         return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
       } else {
@@ -83,7 +83,7 @@ export default {
         if (h == 12) {
           return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
         }
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+        return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
     let i: number = 0
@@ -490,7 +490,7 @@ export default {
           itemStyle: { normal: { color: '#2988E65f' } },
           value: [],
         }
-        item.value[0] = obj.index
+        item.value[0] = 6 - obj.index
         item.value[1] = start_time
         item.value[2] = end_time
         dataObject.push(item)
@@ -530,7 +530,7 @@ export default {
           },
         },
         yAxis: {
-          data: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          data: ['SA', 'FR', 'TH', 'WE', 'TU', 'MO', 'SU'],
         },
         series: [
           {
