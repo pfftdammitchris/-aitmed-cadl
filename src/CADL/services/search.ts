@@ -2,7 +2,7 @@ import { Client } from 'elasticsearch'
 import { get } from 'https'
 import _, { isArray } from 'lodash'
 // const node = 'http://44.192.21.229:9200'
-let client = new Client({ host: 'http://44.192.21.229:9200' })
+let client = new Client({ host: 'https://searchapi.aitmed.io' })
 // let DEFAULT_ADDRESS = "92805"
 let SIZE = 100
 interface LatResponse {
