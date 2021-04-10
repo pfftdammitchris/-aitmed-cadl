@@ -21,7 +21,11 @@ export default {
     return
   },
   get({ object, key }) {
+    console.log(object);
+    console.log(key)
     if (isObject(object)) {
+      console.log(object[key]);
+
       return object[key]
     }
     return
@@ -92,5 +96,17 @@ export default {
       result.push(parseInt(authType.toString(), 16))
     })
     return result
+  },
+  findTrue({ object }) {
+    let flag = 0
+    Object.keys(object).forEach(key => {
+      if (object[key] === true) {
+        flag = 1
+        return
+      }
+    })
+    if (flag === 1)
+      return true
+    return false
   }
 }

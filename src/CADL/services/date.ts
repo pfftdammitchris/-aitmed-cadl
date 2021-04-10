@@ -559,4 +559,7 @@ export default {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
     return months[month - 1]
   },
+  getDurationByMinute({ stime, etime }) {
+    return (etime - stime) / 60
+  }
 }
