@@ -1,6 +1,6 @@
 {
   "name": "@aitmed/cadl",
-  "version": "1.0.244",
+  "version": "1.0.251",
   "description": "A package with utilities to manage and process CADL files.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -67,7 +67,7 @@
     "dist"
   ],
   "dependencies": {
-    "@aitmed/ecos-lvl2-sdk": "^1.4.135",
+    "@aitmed/ecos-lvl2-sdk": "^1.4.137",
     "axios": "^0.19.2",
     "crypto-js": "^4.0.0",
     "dot-object": "^2.1.3",

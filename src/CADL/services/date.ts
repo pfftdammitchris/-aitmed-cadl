@@ -74,13 +74,16 @@ export default {
         let h = Math.floor(n / 60)
         let m = n % 60
         if (h == 12) {
-          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+          return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
         }
         return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+        if (h == 12) {
+          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
+        }
+        return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
     let i: number = 0
@@ -193,8 +196,8 @@ export default {
       if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
-        let m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth()
-        let d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay()
+        let m = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)
+        let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
         let duration_date = y + "-" + m + "-" + d + " " + start_date + "-" + end_date
@@ -457,10 +460,23 @@ export default {
         workdays.forEach((d, index) => {
           if (d.indexOf('AM') != -1) {
             d = d.replace('AM', '')
+            let split_date = d.split(':')
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0]) + 12
+            } else {
+              form_date = parseInt(split_date[0])
+            }
+            d = form_date + ':' + split_date[1]
           } else if (d.indexOf('PM') != -1) {
             d = d.replace('PM', '')
             let split_date = d.split(':')
-            let form_date = parseInt(split_date[0]) + 12
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0])
+            } else {
+              form_date = parseInt(split_date[0]) + 12
+            }
             d = form_date + ':' + split_date[1]
           }
 
@@ -474,7 +490,7 @@ export default {
           itemStyle: { normal: { color: '#2988E65f' } },
           value: [],
         }
-        item.value[0] = obj.index
+        item.value[0] = 6 - obj.index
         item.value[1] = start_time
         item.value[2] = end_time
         dataObject.push(item)
@@ -500,7 +516,10 @@ export default {
           axisLabel: {
             formatter: function (value) {
               var date = new Date(value)
-              return getzf(date.getHours()) + ':' + getzf(date.getMinutes())
+              if (date.getHours() % 4 == 0) {
+                return date.getHours() + ':' + getzf(date.getMinutes())
+              }
+              return
               function getzf(num) {
                 if (parseInt(num) < 10) {
                   num = '0' + num
@@ -511,7 +530,7 @@ export default {
           },
         },
         yAxis: {
-          data: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          data: ['SA', 'FR', 'TH', 'WE', 'TU', 'MO', 'SU'],
         },
         series: [
           {

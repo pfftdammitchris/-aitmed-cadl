@@ -42,6 +42,7 @@ export type NoteType =
 // Create
 export type CreateParams = {
   edge_id: string | Uint8Array
+  fid?: string | Uint8Array
   title: string
   user?: string
   targetRoomName?: string
