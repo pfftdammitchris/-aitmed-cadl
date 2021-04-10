@@ -405,43 +405,66 @@ export default {
     }
     return
   },
-  ShowDateByNumber({ year, month, day }) {
+  /**
+   * 
+   * @param year 
+   * @param month 
+   * @param day 
+   * @param formatType 
+   * The default date format is week month day, year (such as Saturday April 10, 2021)
+   * customized to YMD (year, month, day), and place the corresponding year, month, 
+   * and day according to the position of YMD (such as "YMD" corresponds to "2021 -04-10") 
+   * @returns 
+   */
+  ShowDateByNumber({ year, month, day, formatType = "" }) {
     if (year && month && day) {
-      console.log("test ShowDateByNumber", {
-        year: year,
-        month: month,
-        day: day
-      })
-      year = parseInt(year)
-      month = parseInt(month)
-      day = parseInt(day)
-      let date = new Date(year, month - 1, day)
-      let months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ]
-      let weeks = [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-      ]
-      return (
-        weeks[date.getDay()] + ' ' + months[month - 1] + ' ' + day + ',' + year
-      )
+      if (formatType == "" || typeof formatType == undefined) {
+        year = parseInt(year)
+        month = parseInt(month)
+        day = parseInt(day)
+        let date = new Date(year, month - 1, day)
+        let months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ]
+        let weeks = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ]
+        return (
+          weeks[date.getDay()] + ' ' + months[month - 1] + ' ' + day + ',' + year
+        )
+      } else if (typeof formatType == 'string') {
+        if (day < 10) {
+          day = "0" + day
+        }
+        if (month < 10) {
+          month = "0" + month
+        }
+        formatType.toUpperCase()
+        let re = formatType.replace("Y", year)
+        re = re.replace("M", month)
+        re = re.replace("D", day)
+
+
+        return re
+      }
+
     }
     return
   },
@@ -581,4 +604,6 @@ export default {
   getDurationByMinute({ stime, etime }) {
     return (etime - stime) / 60
   }
+
+
 }
