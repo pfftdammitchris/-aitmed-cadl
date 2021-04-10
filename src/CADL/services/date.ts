@@ -128,7 +128,7 @@ export default {
         dataObject.push({
           key: dataArray[i],
           color: '#ffffff',
-          backgroundColor: '#508CC7',
+          backgroundColor: '#2988e6',
         })
       } else {
         dataObject.push({
