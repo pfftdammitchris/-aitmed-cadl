@@ -9,6 +9,9 @@ export default {
   formatUnixtime_en(unixTime: number) {
     return moment(unixTime * 1000).format('lll')
   },
+  formatUnixtimeL_en(unixTime: number) {
+    return moment(unixTime * 1000).format('l')
+  },
   formatUnixtimeLT_en(unixTime: number) {
     return moment(unixTime * 1000).format('LT')
   },

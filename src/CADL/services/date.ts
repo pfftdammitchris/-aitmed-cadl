@@ -128,7 +128,7 @@ export default {
         dataObject.push({
           key: dataArray[i],
           color: '#ffffff',
-          backgroundColor: '#508CC7',
+          backgroundColor: '#2988e6',
         })
       } else {
         dataObject.push({
@@ -601,6 +601,9 @@ export default {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
     return months[month - 1]
   },
+  getDurationByMinute({ stime, etime }) {
+    return (etime - stime) / 60
+  }
 
 
 }

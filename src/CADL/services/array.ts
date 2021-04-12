@@ -433,9 +433,9 @@ export default {
   },
   isExist({ array, phoneNumber }) {
     let flag = 0
-    console.log(phoneNumber);
     if (isArray(array)) {
       array.forEach((arr) => {
+        console.log(arr)
         if (phoneNumber === arr['phone']) {
           flag = 1
           return
@@ -531,6 +531,19 @@ export default {
     }
     return
   },
+  getIdByUserName({ array, userName }) {
+    let id = ""
+    if (isArray(array)) {
+      array.forEach(arr => {
+        if (arr['name']['inviteeName'] === userName) {
+          id = arr['bvid']
+          return
+        }
+      })
+      return id
+    }
+    return
+  }
 
   /**
  * 
