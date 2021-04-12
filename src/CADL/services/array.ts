@@ -201,10 +201,10 @@ export default {
     }
     return
   },
-  addColor({ messages, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
+  addColor({ messages, id, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
     if (isArray(messages)) {
       for (let i = 0; i < messages.length; i++) {
-        if (i == 0) {
+        if (messages['id'] == id) {
           messages[i]['backgroundColor'] = currentBackgroundColor
           messages[i]['fontColor'] = currentFontColor
         } else {
@@ -543,7 +543,7 @@ export default {
       return id
     }
     return
-  }
+  },
 
   /**
  * 
@@ -571,12 +571,13 @@ export default {
     }
     return
   },
+
   /**
- * 
- * @param {*} object Modify the state of a field of this object
- * @param {*} key This is the field in the object, modify the state
- * @param {*} flag The state about to be modified true or false     true|false
- */
+   * 
+   * @param {*} object Modify the state of a field of this object
+   * @param {*} key This is the field in the object, modify the state
+   * @param {*} flag The state about to be modified true or false     true|false
+   */
   toggleStatus({ object, key, flag }) {
     if (isArray(object)) {
       object.forEach(obj => {
