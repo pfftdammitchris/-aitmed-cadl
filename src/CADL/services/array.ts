@@ -403,9 +403,9 @@ export default {
   },
   isExist({ array, phoneNumber }) {
     let flag = 0
-    console.log(phoneNumber);
     if (isArray(array)) {
       array.forEach((arr) => {
+        console.log(arr)
         if (phoneNumber === arr['phone']) {
           flag = 1
           return
@@ -501,4 +501,63 @@ export default {
     }
     return
   },
+  getIdByUserName({ array, userName }) {
+    let id = ""
+    if (isArray(array)) {
+      array.forEach(arr => {
+        if (arr['name']['inviteeName'] === userName) {
+          id = arr['bvid']
+          return
+        }
+      })
+      return id
+    }
+    return
+  }
+
+  /**
+ * 
+ * @param {*} parentObject Remove elements from this object
+ * @param {*} subObject Delete elements based on this object
+ * @param {*} key Determine whether the key is duplicate
+ */
+  removeByArray({ parentObject, subObject, key }) {
+    if (isArray(parentObject) && isArray(subObject)) {
+      console.log("test removeByArray1", {
+        parentObject: parentObject,
+        subObject: subObject,
+        key: key
+      })
+      for (let i = 0; i < parentObject.length; i++) {
+        for (let j = 0; j < subObject.length; j++) {
+          if (parentObject[i][key] == subObject[j][key]) {
+            console.log("test", subObject[j][key])
+            parentObject.splice(i, 1)
+          }
+        }
+      }
+      console.log("test removeByArray2", parentObject)
+      return parentObject
+    }
+    return
+  },
+  /**
+ * 
+ * @param {*} object Modify the state of a field of this object
+ * @param {*} key This is the field in the object, modify the state
+ * @param {*} flag The state about to be modified true or false     true|false
+ */
+  toggleStatus({ object, key, flag }) {
+    if (isArray(object)) {
+      object.forEach(obj => {
+        if (obj.hasOwnProperty(key)) {
+          obj[key] = flag
+        }
+      })
+      console.log("test toggleStatus", object)
+    }
+  },
+
+
+
 }
