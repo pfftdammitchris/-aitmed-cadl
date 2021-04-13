@@ -43,7 +43,6 @@ export default {
    * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
    */
   SortBy({ object, iterate, orders }) {
-    console.log('test sortBy: %s', iterate)
     if (isArray(object)) {
       return _.orderBy(object, iterate, orders)
     }
@@ -251,7 +250,6 @@ export default {
     }
     // if (_.isArray(object)) {
     var arr = { duration: duration, location: location, index: index, key: key }
-    console.log(object.length)
     object[object.length] = arr
     return
     // }
@@ -435,7 +433,6 @@ export default {
     let flag = 0
     if (isArray(array)) {
       array.forEach((arr) => {
-        console.log(arr)
         if (phoneNumber === arr['phone']) {
           flag = 1
           return
@@ -585,10 +582,28 @@ export default {
           obj[key] = flag
         }
       })
-      console.log("test toggleStatus", object)
     }
   },
-
-
-
+  getPage({ array, pageCount, currentPage }) {
+    let pageList: any[] = []
+    if (isArray(array) && array) {
+      let pageSum = Math.ceil(array.length / pageCount)
+      for (let i = 1; i <= pageSum; i++) {
+        let currentPage = (i - 1) * pageCount
+        let pageListItem: any[] = []
+        for (let j = currentPage; j < currentPage + pageCount; j++) {
+          if (array[j] === undefined)
+            break
+          pageListItem.push(array[j])
+        }
+        pageList.push(pageListItem)
+      }
+    }
+    return pageList[currentPage - 1]
+  },
+  getPageIndex({ array, pageCount, currentPage }) {
+    let indexList = Array.from(new Array(Math.ceil(array.length / pageCount) + 2).keys()).slice(1)
+    let index = _.chunk(indexList, pageCount)
+    return index[currentPage - 1]
+  }
 }
