@@ -52,6 +52,7 @@ export type CreateParams = {
   mediaType?: NoteType
   dTypeProps?: Record<string, any>
   paymentNonce?: string
+  jwt?: string
 } & DocumentUtilsTypes.ContentParams
 
 export interface Create {
