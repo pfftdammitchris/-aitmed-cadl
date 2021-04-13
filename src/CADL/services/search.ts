@@ -261,4 +261,28 @@ export default {
     }
     return
   },
+
+  processingSearchData({ object }) {
+    let path = ["avatar1.png", "avatar2.png", "avatar3.png", "avatar4.png"]
+    if (isArray(object)) {
+      object.forEach(obj => {
+        let randomNumber = Math.ceil(Math.random() * 10)
+        if (randomNumber >= 0 && randomNumber < 2.5) {
+          randomNumber = 0
+        } else if (randomNumber < 5 && randomNumber >= 2.5) {
+          randomNumber = 1
+        } else if (randomNumber >= 5 && randomNumber < 7.5) {
+          randomNumber = 2
+        } else {
+          randomNumber = 3
+        }
+        obj['path'] = path[randomNumber]
+        obj['address'] = obj['_source']['address_street'] + " " + obj['_source']['address_city'] + " " + obj['_source']['address_state']
+        if (obj['_source']['Speciality'] == null) {
+          obj['_source']['Speciality'] = "unknown"
+        }
+      })
+    }
+    return
+  }
 }
