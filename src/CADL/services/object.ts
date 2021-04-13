@@ -21,8 +21,6 @@ export default {
     return
   },
   get({ object, key }) {
-    console.log(object);
-    console.log(key)
     if (isObject(object)) {
       console.log(object[key]);
 

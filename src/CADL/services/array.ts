@@ -43,7 +43,6 @@ export default {
    * orders: Designated as "desc" in descending order, designated as "asc" in ascending order
    */
   SortBy({ object, iterate, orders }) {
-    console.log('test sortBy: %s', iterate)
     if (isArray(object)) {
       return _.orderBy(object, iterate, orders)
     }
@@ -168,18 +167,48 @@ export default {
     }
     return
   },
-  appendUnique({ newMessage, messages, uniqueKey }) {
+  appendUnique({ newMessage, messages, uniqueKey, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
+    // if (isArray(messages)) {
+    if (newMessage && uniqueKey) {
+      let flag = false
+      messages.forEach(message => {
+        if (message[uniqueKey] == newMessage[uniqueKey]) {
+          flag = true
+        }
+      })
+      if (!flag) {
+        var cloned = _.cloneDeep(newMessage)
+        messages.push(cloned)
+      }
+      //reverse
+      for (let j = 0; j < messages.length / 2; j++) {
+        let tmp = messages[j]
+        messages[j] = messages[messages.length - j - 1]
+        messages[messages.length - j - 1] = tmp
+      }
+      //add color
+      for (let i = 0; i < messages.length; i++) {
+        if (i == 0) {
+          messages[i]['backgroundColor'] = currentBackgroundColor
+          messages[i]['fontColor'] = currentFontColor
+        } else {
+          messages[i]['backgroundColor'] = backgroundColor
+          messages[i]['fontColor'] = fontColor
+        }
+      }
+    }
+    // }
+    // return
+  },
+  addColor({ messages, id, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
     if (isArray(messages)) {
-      if (newMessage && uniqueKey) {
-        let flag = false
-        messages.forEach(message => {
-          if (message[uniqueKey] == newMessage[uniqueKey]) {
-            flag = true
-          }
-        })
-        if (!flag) {
-          var cloned = _.cloneDeep(newMessage)
-          messages.push(cloned)
+      for (let i = 0; i < messages.length; i++) {
+        if (messages[i]['id'] == id) {
+          messages[i]['backgroundColor'] = currentBackgroundColor
+          messages[i]['fontColor'] = currentFontColor
+        } else {
+          messages[i]['backgroundColor'] = backgroundColor
+          messages[i]['fontColor'] = fontColor
         }
       }
     }
@@ -221,7 +250,6 @@ export default {
     }
     // if (_.isArray(object)) {
     var arr = { duration: duration, location: location, index: index, key: key }
-    console.log(object.length)
     object[object.length] = arr
     return
     // }
@@ -405,7 +433,6 @@ export default {
     let flag = 0
     if (isArray(array)) {
       array.forEach((arr) => {
-        console.log(arr)
         if (phoneNumber === arr['phone']) {
           flag = 1
           return
@@ -541,12 +568,13 @@ export default {
     }
     return
   },
+
   /**
- * 
- * @param {*} object Modify the state of a field of this object
- * @param {*} key This is the field in the object, modify the state
- * @param {*} flag The state about to be modified true or false     true|false
- */
+   * 
+   * @param {*} object Modify the state of a field of this object
+   * @param {*} key This is the field in the object, modify the state
+   * @param {*} flag The state about to be modified true or false     true|false
+   */
   toggleStatus({ object, key, flag }) {
     if (isArray(object)) {
       object.forEach(obj => {
@@ -554,10 +582,28 @@ export default {
           obj[key] = flag
         }
       })
-      console.log("test toggleStatus", object)
     }
   },
-
-
-
+  getPage({ array, pageCount, currentPage }) {
+    let pageList: any[] = []
+    if (isArray(array) && array) {
+      let pageSum = Math.ceil(array.length / pageCount)
+      for (let i = 1; i <= pageSum; i++) {
+        let currentPage = (i - 1) * pageCount
+        let pageListItem: any[] = []
+        for (let j = currentPage; j < currentPage + pageCount; j++) {
+          if (array[j] === undefined)
+            break
+          pageListItem.push(array[j])
+        }
+        pageList.push(pageListItem)
+      }
+    }
+    return pageList[currentPage - 1]
+  },
+  getPageIndex({ array, pageCount, currentPage }) {
+    let indexList = Array.from(new Array(Math.ceil(array.length / pageCount) + 2).keys()).slice(1)
+    let index = _.chunk(indexList, pageCount)
+    return index[currentPage - 1]
+  }
 }
