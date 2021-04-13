@@ -398,7 +398,7 @@ export default {
       // let heights = [30, 40, 50, 60, 70]
       object.forEach((obj) => {
         let span = (parseInt(obj.etime) - parseInt(obj.stime)) / 60
-        span = span * 1.5
+        span = (span * 1.5 < 20) ? 20 : (span * 1.5)
         obj.height = span + 'px'
       })
       return object
