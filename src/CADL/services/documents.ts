@@ -241,6 +241,7 @@ function create({ pageName, apiObject, dispatch }) {
               user: name?.user,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
+              jwt: restOfDocOptions?.jwt,
               dTypeProps,
             }
           )
@@ -256,6 +257,7 @@ function create({ pageName, apiObject, dispatch }) {
           user: name?.user,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
+          jwt: restOfDocOptions?.jwt,
           dTypeProps,
         })
         res = response
@@ -293,6 +295,7 @@ function create({ pageName, apiObject, dispatch }) {
               user: name?.user,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
+              jwt: restOfDocOptions?.jwt,
               dTypeProps,
             }
           )
@@ -307,6 +310,7 @@ function create({ pageName, apiObject, dispatch }) {
           user: name?.user,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
+          jwt: restOfDocOptions?.jwt,
           dTypeProps,
         })
         res = response
