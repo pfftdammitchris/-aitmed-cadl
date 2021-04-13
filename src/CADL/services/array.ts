@@ -167,18 +167,48 @@ export default {
     }
     return
   },
-  appendUnique({ newMessage, messages, uniqueKey }) {
+  appendUnique({ newMessage, messages, uniqueKey, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
+    // if (isArray(messages)) {
+    if (newMessage && uniqueKey) {
+      let flag = false
+      messages.forEach(message => {
+        if (message[uniqueKey] == newMessage[uniqueKey]) {
+          flag = true
+        }
+      })
+      if (!flag) {
+        var cloned = _.cloneDeep(newMessage)
+        messages.push(cloned)
+      }
+      //reverse
+      for (let j = 0; j < messages.length / 2; j++) {
+        let tmp = messages[j]
+        messages[j] = messages[messages.length - j - 1]
+        messages[messages.length - j - 1] = tmp
+      }
+      //add color
+      for (let i = 0; i < messages.length; i++) {
+        if (i == 0) {
+          messages[i]['backgroundColor'] = currentBackgroundColor
+          messages[i]['fontColor'] = currentFontColor
+        } else {
+          messages[i]['backgroundColor'] = backgroundColor
+          messages[i]['fontColor'] = fontColor
+        }
+      }
+    }
+    // }
+    // return
+  },
+  addColor({ messages, id, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
     if (isArray(messages)) {
-      if (newMessage && uniqueKey) {
-        let flag = false
-        messages.forEach(message => {
-          if (message[uniqueKey] == newMessage[uniqueKey]) {
-            flag = true
-          }
-        })
-        if (!flag) {
-          var cloned = _.cloneDeep(newMessage)
-          messages.push(cloned)
+      for (let i = 0; i < messages.length; i++) {
+        if (messages[i]['id'] == id) {
+          messages[i]['backgroundColor'] = currentBackgroundColor
+          messages[i]['fontColor'] = currentFontColor
+        } else {
+          messages[i]['backgroundColor'] = backgroundColor
+          messages[i]['fontColor'] = fontColor
         }
       }
     }
@@ -538,12 +568,13 @@ export default {
     }
     return
   },
+
   /**
- * 
- * @param {*} object Modify the state of a field of this object
- * @param {*} key This is the field in the object, modify the state
- * @param {*} flag The state about to be modified true or false     true|false
- */
+   * 
+   * @param {*} object Modify the state of a field of this object
+   * @param {*} key This is the field in the object, modify the state
+   * @param {*} flag The state about to be modified true or false     true|false
+   */
   toggleStatus({ object, key, flag }) {
     if (isArray(object)) {
       object.forEach(obj => {
