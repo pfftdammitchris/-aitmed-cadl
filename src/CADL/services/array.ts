@@ -571,7 +571,7 @@ export default {
     return pageList[currentPage - 1]
   },
   getPageIndex({ array, pageCount, currentPage }) {
-    let indexList = Array.from(new Array(array.length + 1).keys()).slice(1)
+    let indexList = Array.from(new Array(Math.ceil(array.length / pageCount) + 2).keys()).slice(1)
     let index = _.chunk(indexList, pageCount)
     return index[currentPage - 1]
   }
