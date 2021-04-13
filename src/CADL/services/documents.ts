@@ -151,6 +151,17 @@ function get({ pageName, apiObject, dispatch }) {
           res
         )
       }
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
@@ -311,6 +322,17 @@ function create({ pageName, apiObject, dispatch }) {
       }
     }
     if (res) {
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
