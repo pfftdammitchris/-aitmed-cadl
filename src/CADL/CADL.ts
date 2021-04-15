@@ -32,9 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SettingsUpdate from './__mocks__/SettingsUpdate'
-// import Settings from './__mocks__/Settings'
-// import TestChangeButtonColor from './__mocks__/TestChangeButtonColor'
+// import TestPage from './__mocks__/TestPage'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -519,10 +517,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
-    // if (pageName === 'Settings') return _.cloneDeep(Settings)
-    // if (pageName === 'TestChangeButtonColor')
-    //   return _.cloneDeep(TestChangeButtonColor)
+    // if (pageName === 'TestPage') return _.cloneDeep(TestPage)
 
     let pageCADL
     let pageUrl

@@ -151,6 +151,17 @@ function get({ pageName, apiObject, dispatch }) {
           res
         )
       }
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
@@ -230,6 +241,7 @@ function create({ pageName, apiObject, dispatch }) {
               user: name?.user,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
+              jwt: restOfDocOptions?.jwt,
               dTypeProps,
             }
           )
@@ -245,6 +257,7 @@ function create({ pageName, apiObject, dispatch }) {
           user: name?.user,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
+          jwt: restOfDocOptions?.jwt,
           dTypeProps,
         })
         res = response
@@ -282,6 +295,7 @@ function create({ pageName, apiObject, dispatch }) {
               user: name?.user,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
+              jwt: restOfDocOptions?.jwt,
               dTypeProps,
             }
           )
@@ -296,6 +310,7 @@ function create({ pageName, apiObject, dispatch }) {
           user: name?.user,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
+          jwt: restOfDocOptions?.jwt,
           dTypeProps,
         })
         res = response
@@ -311,6 +326,17 @@ function create({ pageName, apiObject, dispatch }) {
       }
     }
     if (res) {
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
