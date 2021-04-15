@@ -8,6 +8,11 @@ type connection = {
   favorite: boolean
   connectId: string
 }
+type index = {
+  key: number
+  fontColor: string
+  backgroundColor: string
+}
 export default {
   add({ object, value }) {
     if (isArray(object)) {
@@ -601,9 +606,23 @@ export default {
     }
     return pageList[currentPage - 1]
   },
-  getPageIndex({ array, pageCount, currentPage }) {
-    let indexList = Array.from(new Array(Math.ceil(array.length / pageCount) + 2).keys()).slice(1)
+  getPageIndex({ array, pageCount, currentPage, select }) {
+    let indexList = Array.from(new Array(Math.ceil(array.length / pageCount) + 1).keys()).slice(1)
     let index = _.chunk(indexList, pageCount)
-    return index[currentPage - 1]
+    let indexGroup: index[] = []
+    index[currentPage - 1].forEach(arr => {
+      let indexItem: index = {
+        key: 0,
+        fontColor: "0x000000",
+        backgroundColor: "0xFFFFFF"
+      }
+      if (select === arr) {
+        indexItem.fontColor = "0xFFFFFF"
+        indexItem.backgroundColor = "#003d68"
+      }
+      indexItem.key = arr
+      indexGroup.push(indexItem)
+    })
+    return indexGroup
   }
 }
