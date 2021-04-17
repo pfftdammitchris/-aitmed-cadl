@@ -22,7 +22,7 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
-      console.log(object[key]);
+      console.log(object[key])
 
       return object[key]
     }
@@ -47,13 +47,10 @@ export default {
     }
     return
   },
+  // 从多个数组中提取某一项
   extract({ array, field }) {
     let match: string[] = field.split('.')
     let result: string[] = []
-    // let str: string = "array"
-    // match.forEach(arr => {
-    //   str += "[\'" + arr + "\']"
-    // })
     if (isArray(array)) {
       if (match.length === 1) {
         array.forEach((array) => {
@@ -73,6 +70,38 @@ export default {
     }
     return result
   },
+  // 将数组中的指定项提取出来 ，已方便table打印
+  // extractArray({obj,arr}){
+  //   let resArray:any[] = []
+  //   arr.forEach((element:string) => {
+  //     if(element.indexOf('.') === -1){
+  //       // 说明没有点，直接返回
+  //       resArray[element] = obj[element]
+  //     }else{
+  //       let subtitle:any[] = element.split('.')
+  //       // 根据数据长度进行迭代
+  //       resArray[subtitle[subtitle.length-1]] = subtitle[JSON.parse(element)]
+  //     }
+  //   });
+  // }
+  extractArray({ obj, arr }) {
+    let resArray: any[] = []
+    arr.forEach((element: any) => {
+      let _data = obj
+      if (element.indexOf('.') === -1) {
+        resArray[element] = obj[element]
+      } else {
+        let subtitle: any[] = element.split('.')
+        subtitle.forEach((item) => {
+          if (_data[item]) {
+            _data = _data[item]
+          }
+        })
+        resArray[subtitle[subtitle.length - 1]] = _data
+      }
+    })
+    console.dir(resArray)
+  },
   authToSubType({ auth, authList }) {
     let result: number[] = []
     Object.keys(auth).forEach((key: any) => {
@@ -91,14 +120,13 @@ export default {
   },
   findTrue({ object }) {
     let flag = 0
-    Object.keys(object).forEach(key => {
+    Object.keys(object).forEach((key) => {
       if (object[key] === true) {
         flag = 1
         return
       }
     })
-    if (flag === 1)
-      return true
+    if (flag === 1) return true
     return false
-  }
+  },
 }
