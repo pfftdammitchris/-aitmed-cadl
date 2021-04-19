@@ -85,27 +85,31 @@ export default {
   //   });
   // }
   extractArray({ obj, arr }) {
-    let res = new Array()
-    obj.forEach(objItem => {
-      console.dir(objItem)
-      let resArray: any[] = []
-      arr.forEach((element: any) => {
-        let _data = objItem
-        if (element.indexOf('.') === -1) {
-          resArray[element] = objItem[element]
-        } else {
-          let subtitle: any[] = element.split('.')
-          subtitle.forEach((item) => {
-            if (_data[item]) {
-              _data = _data[item]
-            }
-          })
-          resArray[subtitle[subtitle.length - 1]] = _data
-        }
-      })
-      res.push(resArray)
-    });
-    return res
+    console.dir(obj)
+    if (isArray(obj)) {
+      let res = new Array()
+      obj.forEach(objItem => {
+        console.dir(objItem)
+        let resArray: any[] = []
+        arr.forEach((element: any) => {
+          let _data = objItem
+          if (element.indexOf('.') === -1) {
+            resArray[element] = objItem[element].toString()
+          } else {
+            let subtitle: any[] = element.split('.')
+            subtitle.forEach((item) => {
+              if (_data[item]) {
+                _data = _data[item]
+              }
+            })
+            resArray[subtitle[subtitle.length - 1]] = _data.toString()
+          }
+        })
+        res.push(resArray)
+      });
+      return res
+    }
+    return ''
   },
   authToSubType({ auth, authList }) {
     let result: number[] = []
