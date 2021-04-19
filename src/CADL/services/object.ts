@@ -98,7 +98,7 @@ export default {
           } else {
             let subtitle: any[] = element.split('.')
             subtitle.forEach((item) => {
-              if (_data[item]) {
+              if (_data[item] != null) {
                 _data = _data[item]
               }
             })
