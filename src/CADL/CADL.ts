@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SettingsUpdate from './__mocks__/Settings'
+// import ManageMeeting from './__mocks__/ManageMeeting'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -305,10 +305,10 @@ export default class CADL extends EventEmitter {
         },
       })
     }
-    let pageCADL = await this.getPage(pageName)
+    let pageCADL
     if (reload === false && this.root[pageName]) {
       //keep the current pageObject
-      pageCADL = { [pageName]: this.root[pageName] }
+      return
     } else {
       //refresh the pageObject
       pageCADL = await this.getPage(pageName)
@@ -517,7 +517,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // // if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
+    // if (pageName === 'ManageMeeting') return _.cloneDeep(ManageMeeting)
 
     let pageCADL
     let pageUrl
@@ -744,6 +744,7 @@ export default class CADL extends EventEmitter {
 
     let results
     await asyncForEach(array, async (command) => {
+      if (results && results?.actionType === 'popUp') return
       /**
        * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
        */
@@ -768,11 +769,15 @@ export default class CADL extends EventEmitter {
           key,
           pageName,
         })
-        if (results === undefined && result !== undefined) {
+        if (
+          (results === undefined && result !== undefined) ||
+          (isObject(result) && result?.actionType === 'popUp')
+        ) {
           results = result
         }
       })
     })
+
     return results
   }
 
@@ -873,7 +878,8 @@ export default class CADL extends EventEmitter {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
-        isObject(commands[key]['dataIn']) &&
+        (isObject(commands[key]['dataIn']) ||
+          Array.isArray(commands[key]['dataIn'])) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       const populatedCommand = await this.dispatch({

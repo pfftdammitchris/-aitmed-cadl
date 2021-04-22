@@ -22,6 +22,7 @@ function remove({ pageName, apiObject, dispatch }) {
 
     const { api, id, ...options } = populatedCurrentVal
     let res
+    //delete request must have have an id
     if (Array.isArray(id)) {
       id.forEach(async (element) => {
         try {
@@ -54,7 +55,6 @@ function remove({ pageName, apiObject, dispatch }) {
         }
       })
     }
-    //delete request must have have an id
     if (typeof (id) == 'string') {
       try {
         if (store.env === 'test') {
