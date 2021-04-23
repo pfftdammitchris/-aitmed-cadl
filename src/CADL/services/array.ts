@@ -8,6 +8,11 @@ type connection = {
   favorite: boolean
   connectId: string
 }
+type index = {
+  key: number
+  fontColor: string
+  backgroundColor: string
+}
 export default {
   add({ object, value }) {
     if (isArray(object)) {
@@ -167,11 +172,19 @@ export default {
     }
     return
   },
-  appendUnique({ newMessage, messages, uniqueKey, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
+  appendUnique({
+    newMessage,
+    messages,
+    uniqueKey,
+    currentBackgroundColor,
+    backgroundColor,
+    fontColor,
+    currentFontColor,
+  }) {
     // if (isArray(messages)) {
     if (newMessage && uniqueKey) {
       let flag = false
-      messages.forEach(message => {
+      messages.forEach((message) => {
         if (message[uniqueKey] == newMessage[uniqueKey]) {
           flag = true
         }
@@ -200,7 +213,14 @@ export default {
     // }
     // return
   },
-  addColor({ messages, id, currentBackgroundColor, backgroundColor, fontColor, currentFontColor }) {
+  addColor({
+    messages,
+    id,
+    currentBackgroundColor,
+    backgroundColor,
+    fontColor,
+    currentFontColor,
+  }) {
     if (isArray(messages)) {
       for (let i = 0; i < messages.length; i++) {
         if (messages[i]['id'] == id) {
@@ -438,20 +458,18 @@ export default {
           return
         }
       })
-      if (flag === 1)
-        return true
-      else
-        return false
+      if (flag === 1) return true
+      else return false
     }
     return false
   },
   /***
- * 
- */
+   *
+   */
   async createBySubtype({ subtypelist, createModel }) {
-    console.log("test createBySubtype", {
+    console.log('test createBySubtype', {
       subtypelist: subtypelist,
-      createModel: createModel
+      createModel: createModel,
     })
     if (Array.isArray(subtypelist)) {
       subtypelist.forEach(async (element) => {
@@ -478,7 +496,6 @@ export default {
         } catch (error) {
           throw error
         }
-
       })
     }
 
@@ -487,7 +504,7 @@ export default {
 
   WeekSchedule({ planObject }) {
     if (isArray(planObject)) {
-      console.log("test WeekSchedule", planObject)
+      console.log('test WeekSchedule', planObject)
       let res: Record<string, any> = []
       let len = 0
       let weeks = [
@@ -502,20 +519,19 @@ export default {
       for (let i = 0; i < 7; i++) {
         if (Object.keys(planObject[i]).length == 0) {
           res.push({
-            info: "not settings",
-            weekDay: weeks[i]
+            info: 'not settings',
+            weekDay: weeks[i],
           })
         } else {
           len = planObject[i].length
-          let info = ""
+          let info = ''
           for (let j = 0; j < len; j++) {
-            info = info + " " + planObject[i][j]
+            info = info + ' ' + planObject[i][j]
           }
           res.push({
             info: info,
-            weekDay: weeks[i]
+            weekDay: weeks[i],
           })
-
         }
       }
       return res
@@ -529,9 +545,9 @@ export default {
     return
   },
   getIdByUserName({ array, userName }) {
-    let id = ""
+    let id = ''
     if (isArray(array)) {
-      array.forEach(arr => {
+      array.forEach((arr) => {
         if (arr['name']['inviteeName'] === userName) {
           id = arr['bvid']
           return
@@ -543,41 +559,41 @@ export default {
   },
 
   /**
- * 
- * @param {*} parentObject Remove elements from this object
- * @param {*} subObject Delete elements based on this object
- * @param {*} key Determine whether the key is duplicate
- */
+   *
+   * @param {*} parentObject Remove elements from this object
+   * @param {*} subObject Delete elements based on this object
+   * @param {*} key Determine whether the key is duplicate
+   */
   removeByArray({ parentObject, subObject, key }) {
     if (isArray(parentObject) && isArray(subObject)) {
-      console.log("test removeByArray1", {
+      console.log('test removeByArray1', {
         parentObject: parentObject,
         subObject: subObject,
-        key: key
+        key: key,
       })
       for (let i = 0; i < parentObject.length; i++) {
         for (let j = 0; j < subObject.length; j++) {
           if (parentObject[i][key] == subObject[j][key]) {
-            console.log("test", subObject[j][key])
+            console.log('test', subObject[j][key])
             parentObject.splice(i, 1)
           }
         }
       }
-      console.log("test removeByArray2", parentObject)
+      console.log('test removeByArray2', parentObject)
       return parentObject
     }
     return
   },
 
   /**
-   * 
+   *
    * @param {*} object Modify the state of a field of this object
    * @param {*} key This is the field in the object, modify the state
    * @param {*} flag The state about to be modified true or false     true|false
    */
   toggleStatus({ object, key, flag }) {
     if (isArray(object)) {
-      object.forEach(obj => {
+      object.forEach((obj) => {
         if (obj.hasOwnProperty(key)) {
           obj[key] = flag
         }
@@ -592,8 +608,7 @@ export default {
         let currentPage = (i - 1) * pageCount
         let pageListItem: any[] = []
         for (let j = currentPage; j < currentPage + pageCount; j++) {
-          if (array[j] === undefined)
-            break
+          if (array[j] === undefined) break
           pageListItem.push(array[j])
         }
         pageList.push(pageListItem)
@@ -601,9 +616,36 @@ export default {
     }
     return pageList[currentPage - 1]
   },
-  getPageIndex({ array, pageCount, currentPage }) {
-    let indexList = Array.from(new Array(Math.ceil(array.length / pageCount) + 2).keys()).slice(1)
+  getPageIndex({ array, pageCount, currentPage, select }) {
+    let indexList = Array.from(
+      new Array(Math.ceil(array.length / pageCount) + 1).keys()
+    ).slice(1)
     let index = _.chunk(indexList, pageCount)
-    return index[currentPage - 1]
-  }
+    let indexGroup: index[] = []
+    index[currentPage - 1].forEach((arr) => {
+      let indexItem: index = {
+        key: 0,
+        fontColor: '0x000000',
+        backgroundColor: '0xFFFFFF',
+      }
+      if (select === arr) {
+        indexItem.fontColor = '0xFFFFFF'
+        indexItem.backgroundColor = '#003d68'
+      }
+      indexItem.key = arr
+      indexGroup.push(indexItem)
+    })
+    return indexGroup
+  },
+  elementUnique({ arr }) {
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = i + 1; j < arr.length; j++) {
+        if (arr[i] == arr[j]) {
+          arr.splice(j, 1)
+          j--
+        }
+      }
+    }
+    return arr
+  },
 }
