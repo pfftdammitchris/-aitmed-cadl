@@ -94,4 +94,8 @@ export default {
   phoneNumberSplit({ phoneNumber, sign }): AnyArray {
     return phoneNumber.toString().split(sign)
   },
+
+  judgeAllTrue({ str1, str2, str3 }) {
+    return str1 && str2 && str3
+  },
 }
