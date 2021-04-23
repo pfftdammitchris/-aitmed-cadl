@@ -9,6 +9,7 @@ export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
+    debugger
     let res
     const {
       api,
@@ -37,6 +38,7 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
+      debugger
 
       const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',

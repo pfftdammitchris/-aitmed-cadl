@@ -18,17 +18,21 @@ export default {
         '.MeetingDocumentsNotes.newNote.document.name.targetRoomName@':
           '=.Global.rootRoomInfo.edge.name.roomName',
       },
+      '..listData.get',
     ],
     save: [
       {
         '=.MeetingDocumentsNotes.newNote.docAPI.store': '',
+      },
+      {
+        '.MeetingDocumentsNotes.newChat.document.eid@':
+          '=.Global.VideoChatObjStore.reference.edge.id',
       },
     ],
     newNote: {
       document: {
         '.Document': '',
         eid: '.Global.VideoChatObjStore.reference.edge.refid',
-        fid: '.Global.VideoChatObjStore.reference.edge.refid',
         type: '.DocType.UploadFile',
         name: {
           title: '',
@@ -53,8 +57,9 @@ export default {
           '.DocAPI.get': '',
           api: 'rd',
           ids: ['.Global.VideoChatObjStore.reference.edge.refid'],
-          xfname: 'fid',
+          xfname: 'eid',
           type: '.DocType.UploadFile',
+          scondition: "name like '%application/json%'",
           maxcount: '1',
           obfname: 'mtime',
           dataKey: 'docResponse',
@@ -73,6 +78,47 @@ export default {
       error: '',
       jwt: '',
     },
+    newChat: {
+      document: {
+        '.Document': '',
+        eid: '',
+        type: '.DocType.MeetingNote',
+        name: {
+          title: '',
+          type: '..newChat.docAPI.store.subtype.mediaType',
+          data: {
+            note: '',
+          },
+          user: '.Global.currentUser.vertex.name.userName',
+        },
+        subtype: {
+          mediaType: 'text/plain',
+        },
+      },
+      docAPI: {
+        '.DocAPI': '',
+        store: {
+          api: 'cd',
+          dataKey: 'newChat.document',
+        },
+      },
+    },
+    listData: {
+      chatList: {
+        doc: [],
+      },
+      get: {
+        '.DocAPI.get': '',
+        api: 'rd',
+        dataKey: 'listData.chatList',
+        ids: ['.Global.VideoChatObjStore.reference.edge.id'],
+        xfname: 'eid',
+        type: '.DocType.MeetingNote',
+        obfname: 'mtime',
+        maxcount: '40',
+        _nonce: '=.Global._nonce',
+      },
+    },
     components: [
       {
         '.BaseCheckView': '',
@@ -84,19 +130,6 @@ export default {
       },
       {
         '.HeaderLeftButton': null,
-        onClick: [
-          {
-            actionType: 'evalObject',
-            object: {
-              '.Global._nonce@': {
-                '=.builtIn.math.random': '',
-              },
-            },
-          },
-          {
-            goto: 'VideoChat',
-          },
-        ],
       },
       {
         type: 'view',
@@ -113,9 +146,9 @@ export default {
             dataKey: 'newNote.document.name.title',
             style: {
               top: '0.01',
-              left: '0.15',
+              left: '0.1',
               height: '0.04',
-              width: '0.7',
+              width: '0.8',
               color: '0x000000ff',
               fontWeight: '200',
               fontSize: 13,
@@ -129,20 +162,109 @@ export default {
             },
           },
           {
+            type: 'scrollView',
+            viewTag: 'ChatList',
+            style: {
+              top: '0.08',
+              width: '1',
+              height: '0.71',
+              backgroundColor: '#ffffff',
+              overflow: 'scroll',
+            },
+            children: [
+              {
+                type: 'list',
+                contentType: 'listObject',
+                listObject: '..listData.chatList.doc',
+                iteratorVar: 'itemObject',
+                style: {
+                  top: '0',
+                  width: '0.9',
+                  height: '0.7',
+                },
+                children: [
+                  {
+                    type: 'listItem',
+                    itemObject: '',
+                    style: {
+                      left: '0',
+                      width: '0.9',
+                      height: '0.1',
+                      border: {
+                        style: '2',
+                      },
+                      borderWidth: '0.8',
+                      borderColor: '0x00000011',
+                      textAlign: {
+                        y: 'center',
+                      },
+                    },
+                    children: [
+                      {
+                        type: 'label',
+                        dataKey: 'itemObject.name.data.note',
+                        style: {
+                          left: '0.05',
+                          top: '0.02',
+                          width: '0.7',
+                          height: '0.02',
+                          fontSize: '13',
+                          fontWeight: '500',
+                          textAlign: {
+                            y: 'center',
+                          },
+                        },
+                      },
+                      {
+                        type: 'label',
+                        text: '10.30am',
+                        'text=func': '=.builtIn.string.formatUnixtimeLT_en',
+                        dataKey: 'itemObject.ctime',
+                        style: {
+                          color: '0x808080',
+                          left: '0.05',
+                          top: '0.06',
+                          width: '0.4',
+                          height: '0.02',
+                          fontSize: '12',
+                        },
+                      },
+                      {
+                        type: 'label',
+                        dataKey: 'itemObject.name.user',
+                        style: {
+                          color: '0x808080',
+                          left: '0.7',
+                          top: '0.05',
+                          width: '0.3',
+                          height: '0.02',
+                          fontSize: '12',
+                          textAlign: {
+                            y: 'center',
+                          },
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
             type: 'textView',
             isEditable: 'true',
             placeholder: 'Text Here',
-            dataKey: 'newNote.document.name.data.note',
+            dataKey: 'newChat.document.name.data.note',
             style: {
               textAlign: {
                 y: 'top',
                 x: 'left',
               },
               fontSize: '14',
-              left: '0.1',
-              top: '0.095',
-              width: '0.8',
-              height: '0.7',
+              left: '0.05',
+              top: '0.8',
+              width: '0.6',
+              height: '0.06',
               required: 'true',
               fontFamily: 'sans-serif',
               color: '0x000000ff',
@@ -154,12 +276,12 @@ export default {
           },
           {
             type: 'button',
-            text: 'Save',
+            text: 'Send',
             style: {
-              left: '0.15',
-              height: '0.05',
-              top: '0.84',
-              width: '0.7',
+              left: '0.7',
+              height: '0.07',
+              top: '0.8',
+              width: '0.3',
               backgroundColor: '0x388ecc',
               color: '0xffffff',
               borderRadius: 2,
@@ -197,14 +319,16 @@ export default {
               },
               {
                 actionType: 'evalObject',
-                object: {
-                  '.Global._nonce@': {
-                    '=.builtIn.math.random': '',
+                object: [
+                  {
+                    '=.MeetingDocumentsNotes.newChat.docAPI.store': '',
                   },
-                },
-              },
-              {
-                goto: 'VideoChat',
+                  {
+                    '.Global._nonce@': {
+                      '=.builtIn.math.random': '',
+                    },
+                  },
+                ],
               },
             ],
           },
