@@ -57,4 +57,13 @@ export default class FuzzyIndexCreator {
     }
     return arr.join('')
   }
+
+  toFuzzyHex(initMapping: string) {
+    let arr: string[] = []
+    for (let n = 0, l = initMapping.length; n < l; n++) {
+      let hex = Number(initMapping.charCodeAt(n)).toString(16)
+      arr.push(hex)
+    }
+    return arr.join('')
+  }
 }
