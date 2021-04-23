@@ -1,3 +1,4 @@
+import { replaceUint8ArrayWithBase64 } from 'CADL/utils'
 import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
 interface splitTime {
@@ -603,7 +604,10 @@ export default {
   },
   getDurationByMinute({ stime, etime }) {
     return (etime - stime) / 60
-  }
+  },
 
-
+  startMeeting({ stime }) {
+    if ((stime - 900) * 1000 >= new Date().getTime()) return true
+    return false
+  },
 }
