@@ -1,4 +1,3 @@
-import { replaceUint8ArrayWithBase64 } from 'CADL/utils'
 import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
 interface splitTime {
@@ -194,14 +193,18 @@ export default {
   },
   ShowTimeSpanFormat(object) {
     if (isObject(object)) {
-      if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
+      if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
-        let m = date.getMonth() + 1 > 10 ? date.getMonth() + 1 : "0" + (date.getMonth() + 1)
+        let m =
+          date.getMonth() + 1 > 10
+            ? date.getMonth() + 1
+            : '0' + (date.getMonth() + 1)
         let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
-        let duration_date = y + "-" + m + "-" + d + " " + start_date + "-" + end_date
+        let duration_date =
+          y + '-' + m + '-' + d + ' ' + start_date + '-' + end_date
         return duration_date
       }
       return
@@ -301,16 +304,16 @@ export default {
   },
 
   /**
-   * 
+   *
    * @param year input year
    * @param month input month
    * @param today input today,this can generate today font color and backgroundcolor
    * @param markDay Generate week time according this param
-   * @param color   font color of common date 
+   * @param color   font color of common date
    * @param backgroundColor  background color of common date
-   * @param todayColor  font color of today 
+   * @param todayColor  font color of today
    * @param todayBackgroundColor background color of today
-   * @returns 
+   * @returns
    * return data formate:
    * [{year: 2021,month: 3,day: 28,weekDay: 'Su',color: '#000000', backgroundColor: '#ffffff'}]
    */
@@ -322,7 +325,7 @@ export default {
     color,
     backgroundColor,
     todayColor,
-    todayBackgroundColor
+    todayBackgroundColor,
   }) {
     if (year && month && today && markDay) {
       today = parseInt(today)
@@ -330,7 +333,7 @@ export default {
       month = parseInt(month)
       markDay = parseInt(markDay)
       let dataObject: Record<string, any> = []
-      let weeks = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"]
+      let weeks = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
       const date = new Date(year, month - 1, markDay)
       let currenWeekDay = date.getDay()
       let d = new Date(date.getTime() - currenWeekDay * 24 * 60 * 60 * 1000)
@@ -341,7 +344,7 @@ export default {
           day: d.getDate(),
           weekDay: weeks[d.getDay()],
           color: color,
-          backgroundColor: backgroundColor
+          backgroundColor: backgroundColor,
         }
         if (d.getDate() == today) {
           item.color = todayColor
@@ -356,7 +359,7 @@ export default {
   },
 
   NextWeek({ year, month, day }) {
-    console.log("test NextWeek2", {
+    console.log('test NextWeek2', {
       year: year,
       month: month,
       day: day,
@@ -366,13 +369,13 @@ export default {
     let res = {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
-      day: date.getDate()
+      day: date.getDate(),
     }
-    console.log("test NextWeek2", res)
+    console.log('test NextWeek2', res)
     return res
   },
   LastWeek({ year, month, day }) {
-    console.log("test lastweek1", {
+    console.log('test lastweek1', {
       year: year,
       month: month,
       day: day,
@@ -382,16 +385,16 @@ export default {
     let res = {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
-      day: date.getDate()
+      day: date.getDate(),
     }
-    console.log("test lastweek2", res)
+    console.log('test lastweek2', res)
     return res
   },
 
   /**
-   * Add a height attribute to each item below the array 
-   * @param object 
-   * @returns 
+   * Add a height attribute to each item below the array
+   * @param object
+   * @returns
    */
   AddHeightByTimeSpan({ object }) {
     if (isArray(object)) {
@@ -399,7 +402,7 @@ export default {
       // let heights = [30, 40, 50, 60, 70]
       object.forEach((obj) => {
         let span = (parseInt(obj.etime) - parseInt(obj.stime)) / 60
-        span = (span * 1.5 < 20) ? 20 : (span * 1.5)
+        span = span * 1.5 < 20 ? 20 : span * 1.5
         obj.height = span + 'px'
       })
       return object
@@ -407,19 +410,19 @@ export default {
     return
   },
   /**
-   * 
-   * @param year 
-   * @param month 
-   * @param day 
-   * @param formatType 
+   *
+   * @param year
+   * @param month
+   * @param day
+   * @param formatType
    * The default date format is week month day, year (such as Saturday April 10, 2021)
-   * customized to YMD (year, month, day), and place the corresponding year, month, 
-   * and day according to the position of YMD (such as "YMD" corresponds to "2021 -04-10") 
-   * @returns 
+   * customized to YMD (year, month, day), and place the corresponding year, month,
+   * and day according to the position of YMD (such as "YMD" corresponds to "2021 -04-10")
+   * @returns
    */
-  ShowDateByNumber({ year, month, day, formatType = "" }) {
+  ShowDateByNumber({ year, month, day, formatType = '' }) {
     if (year && month && day) {
-      if (formatType == "" || typeof formatType == undefined) {
+      if (formatType == '' || typeof formatType == undefined) {
         year = parseInt(year)
         month = parseInt(month)
         day = parseInt(day)
@@ -448,24 +451,28 @@ export default {
           'Saturday',
         ]
         return (
-          weeks[date.getDay()] + ' ' + months[month - 1] + ' ' + day + ',' + year
+          weeks[date.getDay()] +
+          ' ' +
+          months[month - 1] +
+          ' ' +
+          day +
+          ',' +
+          year
         )
       } else if (typeof formatType == 'string') {
         if (day < 10) {
-          day = "0" + day
+          day = '0' + day
         }
         if (month < 10) {
-          month = "0" + month
+          month = '0' + month
         }
         formatType.toUpperCase()
-        let re = formatType.replace("Y", year)
-        re = re.replace("M", month)
-        re = re.replace("D", day)
-
+        let re = formatType.replace('Y', year)
+        re = re.replace('M', month)
+        re = re.replace('D', day)
 
         return re
       }
-
     }
     return
   },
@@ -599,7 +606,20 @@ export default {
   },
 
   transformMonth({ month }) {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sept',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
     return months[month - 1]
   },
   getDurationByMinute({ stime, etime }) {
