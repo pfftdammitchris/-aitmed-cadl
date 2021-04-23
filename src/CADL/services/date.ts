@@ -607,7 +607,7 @@ export default {
   },
 
   startMeeting({ stime }) {
-    if ((stime - 900) * 1000 >= new Date().getTime()) return true
+    if ((stime - 900) * 1000 <= new Date().getTime()) return true
     return false
   },
 }
