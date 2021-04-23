@@ -15,6 +15,8 @@ function get({ pageName, apiObject, dispatch }) {
     let requestOptions = {
       ...options,
     }
+    let sCondition = options?.sCondition
+
     let nonce
 
     //get current object name value
@@ -35,6 +37,8 @@ function get({ pageName, apiObject, dispatch }) {
       )
     }
     requestOptions = { ...requestOptions, ...populatedCurrentVal }
+    sCondition = populatedCurrentVal?.sCondition
+
     try {
       if (store.env === 'test') {
         console.log(
@@ -42,6 +46,9 @@ function get({ pageName, apiObject, dispatch }) {
           'background: purple; color: white; display: block;',
           { options: requestOptions }
         )
+      }
+      if (sCondition) {
+        requestOptions.scondition = sCondition
       }
       //Buffer check
       const { pass: shouldPass, cacheIndex } = await dispatch({
