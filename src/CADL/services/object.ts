@@ -94,7 +94,7 @@ export default {
         arr.forEach((element: any) => {
           let _data = objItem
           if (element.indexOf('.') === -1) {
-            resArray[element] = objItem[element].toString()
+            resArray[element] = _data[element]
           } else {
             let subtitle: any[] = element.split('.')
             subtitle.forEach((item) => {
