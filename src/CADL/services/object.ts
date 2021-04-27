@@ -128,14 +128,34 @@ export default {
     return result
   },
   findTrue({ object }) {
-    let flag = 0
+    let auth = {
+      Settings: false,
+      UserManagement: false,
+      Schedule: false
+    }
     Object.keys(object).forEach((key) => {
-      if (object[key] === true) {
-        flag = 1
-        return
-      }
+      Object.keys(object[key]).forEach((key1) => {
+        if ((key === "MFI" || key === "TDT") && (object[key][key1]) === true) {
+          auth.Settings = true
+          return
+        }
+        if ((key === "staff" || key === "patient" || key === "provider") && (object[key][key1]) === true) {
+          auth.UserManagement = true
+          return
+        }
+        if ((key === "scheduleInfo" || key === "PAT") && (object[key][key1]) === true) {
+          auth.Schedule = true
+          return
+        }
+      })
+      // console.log(object[key]);
+      // if (object[key] === true) {
+      //   flag = 1
+      //   return
+      // }
     })
-    if (flag === 1) return true
-    return false
+    // if (flag === 1) return true
+    // return false
+    return auth
   },
 }
