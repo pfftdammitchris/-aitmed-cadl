@@ -93,15 +93,10 @@ export default {
         let resArray: any[] = []
         arr.forEach((element: any) => {
           let _data = objItem
-          console.error(_data)
           if (element.indexOf('.') === -1) {
-<<<<<<< HEAD
             resArray[element] = _data.hasOwnProperty(element)
               ? _data[element]
               : ''
-=======
-            resArray[element] = _data[element]
->>>>>>> 2d19d0ea42a83c5d8426092241ebc64efa908605
           } else {
             let subtitle: any[] = element.split('.')
             subtitle.forEach((item) => {
