@@ -88,25 +88,26 @@ export default {
     console.dir(obj)
     if (isArray(obj)) {
       let res = new Array()
-      obj.forEach(objItem => {
+      obj.forEach((objItem) => {
         console.dir(objItem)
         let resArray: any[] = []
         arr.forEach((element: any) => {
           let _data = objItem
+          console.error(_data)
           if (element.indexOf('.') === -1) {
-            resArray[element] = objItem[element].toString()
+            resArray[element] = _data.hasOwnProperty(element)
+              ? _data[element]
+              : ''
           } else {
             let subtitle: any[] = element.split('.')
             subtitle.forEach((item) => {
-              if (_data[item] != null) {
-                _data = _data[item]
-              }
+              _data = _data.hasOwnProperty(item) ? _data[item] : ''
             })
             resArray[subtitle[subtitle.length - 1]] = _data.toString()
           }
         })
         res.push(resArray)
-      });
+      })
       return res
     }
     return ''
