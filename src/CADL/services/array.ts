@@ -648,4 +648,11 @@ export default {
     }
     return arr
   },
+  addProvider({ object, provider }) {
+    provider['name']['basicInfo'] = { medicalFacilityName: "current Provider" }
+    provider['isSelected'] = true
+    let cloned = _.cloneDeep(provider)
+    object.push(cloned)
+    return
+  },
 }
