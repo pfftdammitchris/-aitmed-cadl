@@ -1,11 +1,13 @@
 import FrontEndDB from '../FrontEndDB'
 export default class IndexRepository {
   public docTableDao
+  public indexTablesDao
   public userDB
 
   constructor(config) {
     this.userDB = new FrontEndDB().getDatabase(config)
     this.docTableDao = this.userDB.DocTableDao
+    this.indexTablesDao = this.userDB.IndexTablesDao
   }
 
   public getDocById(did) {

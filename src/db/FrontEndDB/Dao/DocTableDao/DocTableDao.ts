@@ -13,8 +13,23 @@ export default (db) => {
     return res
   }
 
-  function insertDoc() {
-    let sqlstr = `SELECT * FROM ecos_doc_table WHERE id = ${did} LIMIT 1`
+  function insertDoc({
+    ctime,
+    mtime,
+    atime,
+    atimes,
+    id,
+    name,
+    deat,
+    size,
+    fid,
+    eid,
+    bsig,
+    esig,
+    subtype,
+    type,
+  }) {
+    let sqlstr = `INSERT INTO ecos_doc_table VALUES (${ctime},${mtime},${atime},${atimes},${id},${name},${deat},${size},${fid},${eid},${bsig},${esig},${subtype},${type});`
     var res = db.exec(sqlstr)
     console.log(res)
     return res

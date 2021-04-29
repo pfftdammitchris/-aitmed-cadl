@@ -18,7 +18,7 @@
     "start:test": "npm-run-all --parallel serve:test watch ",
     "test": "jest",
     "test:CADL": "node --inspect node_modules/.bin/jest --watch --runInBand ./src/CADL/__tests__/ --watch",
-    "test:db": "jest --watch --runInBand ./src/db --watch",
+    "test:db": "jest --verbose --watch --runInBand ./src/db --watch",
     "bump-version": "npm version patch",
     "prepublish:public": "npm run build && npm run bump-version",
     "publish:public": "npm publish --access public",
