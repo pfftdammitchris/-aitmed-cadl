@@ -20,7 +20,7 @@ export default class FrontEndDB {
       let createEcosDocTable =
         'CREATE TABLE ecos_doc_table (ctime int, mtime int, atime int, atimes int, id char, name char,deat char, size int, fid char, eid char, bsig char, esig char, subtype int, type int);'
       let createIndexTable =
-        'CREATE TABLE index_tables (id int, fkey int, fuzzyKey char, initMapping char, kText char, docId char, docType int, score int);'
+        'CREATE TABLE index_tables (id char, fkey int, fuzzyKey char, initMapping char, kText char, docId char, docType int, score int);'
 
       frontEndDB.INSTANCE.run(createEcosDocTable)
       frontEndDB.INSTANCE.run(createIndexTable)

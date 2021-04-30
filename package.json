@@ -90,6 +90,6 @@
     "yaml": "^2.0.0-1"
   },
   "peerDependencies": {
-    "@aitmed/ecos-lvl2-sdk": "^1.4.139"
+    "@aitmed/ecos-lvl2-sdk": "^1.4.144"
   }
 }
