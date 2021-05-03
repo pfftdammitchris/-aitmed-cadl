@@ -655,4 +655,92 @@ export default {
     object.push(cloned)
     return
   },
+  /**
+   * 
+   * @param Object : Data to be processed
+   * @param timeLimit : Display the amount of data
+   * @param timeSpan : Process data based on month, week, and day
+   * @param increaseColor : Color when the rate of increase is positive
+   * @param decreaseColor : Color when the rate of increase is negative
+   * @returns 
+  */
+  handleData({ Object, timeLimit = 10, timeSpan = "day", increaseColor = "0x3DD598", decreaseColor = "0xF0142F" }) {
+    if (isArray(Object)) {
+      console.log("test handleData", Object)
+      let time = 24 * 60 * 60 * 1000
+      if (timeSpan == 'day') {
+        time = 1 * time
+      } else if (timeSpan == 'week') {
+        time = 7 * time
+      } else if (timeSpan == 'month') {
+        time = 30 * time
+      }
+      let data_x: Record<string, any> = []
+      let data_y: Record<string, any> = []
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+      let date = new Date()
+      // hard code
+      for (let i = 0; i < timeLimit; i++) {
+        let ctime, etime, name
+        if (timeSpan == 'day') {
+          ctime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+          etime = ctime + 24 * 60 * 60 * 1000
+          name = new Date(ctime).getFullYear() + "-" + new Date(ctime).getMonth() + "-" + new Date(ctime).getDate()
+        } else if (timeSpan == 'week') {
+          let d = new Date(date.getTime() - date.getDay() * 24 * 60 * 60 * 1000)
+          ctime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+          etime = ctime + 7 * 24 * 60 * 60 * 1000
+          name = new Date(ctime).getFullYear() + "-" + new Date(ctime).getMonth() + "-" + date.getDate()
+        } else if (timeSpan == 'month') {
+          let d = new Date(date.getTime() - (date.getDate() - 1) * 24 * 60 * 60 * 1000)
+          ctime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
+          let d2 = new Date(d.getFullYear(), d.getMonth(), 0);
+          let currentdays = d2.getDate();
+          etime = ctime + currentdays * 24 * 60 * 60 * 1000
+          name = new Date(ctime).getFullYear() + "-" + months[new Date(ctime).getMonth()]
+        }
+        let count = 0
+        Object.forEach(obj => {
+          if (obj.ctime * 1000 > ctime && obj.etime * 1000 < etime) {
+            count = count + 1
+          }
+        })
+        data_x.push(name)
+        data_y.push(count)
+        date = new Date(date.getTime() - time)
+      }
+      let currentNum = data_y[0]
+      let currentRadio
+      if (data_y[1] != 0) {
+        currentRadio = ((data_y[0] / data_y[1]) - 1) * 100
+      } else {
+        currentRadio = 0
+      }
+      let color, radioString
+      if (currentRadio >= 0) {
+        radioString = currentRadio.toFixed(2) + "%" + " ↑"
+        color = increaseColor
+      } else {
+        radioString = (-currentRadio).toFixed(2) + "%" + " ↓"
+        color = decreaseColor
+      }
+      console.log({
+        currentNum: currentNum,
+        currentRadio: currentRadio.toFixed(2),
+        radioString: radioString,
+        color: color
+      })
+      // Returned data format
+      return {
+        currentNum: currentNum,
+        currentRadio: currentRadio.toFixed(2),
+        radioString: radioString,
+        color: color,
+        data_x: data_x,
+        data_y: data_y
+      }
+    }
+    return
+
+  }
 }
