@@ -17,20 +17,53 @@ const retrieveVertex = async (
 }
 
 const retrieveEdge = async (
-  id: string | Uint8Array
+  id: string | Uint8Array,
+  docEsig: Uint8Array | string
 ): Promise<CommonTypes.Edge | null> => {
-  const response = await store.level2SDK.edgeServices
-    .retrieveEdge({
-      idList: [id],
-    })
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
-  return response &&
+  let filteredRes
+  let response
+  if (!docEsig) {
+    response = await store.level2SDK.edgeServices
+      .retrieveEdge({
+        idList: [id],
+      })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+  } else {
+    response = await store.level2SDK.edgeServices
+      .retrieveEdge({
+        idList: [],
+        options: {
+          xfname: 'bvid | evid',
+          maxcount: 200,
+        },
+      })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+  }
+  if (!docEsig) {
+    filteredRes =
+      response &&
+      response.data.edge &&
+      Array.isArray(response.data.edge) &&
+      response.data.edge.length > 0
+        ? response.data.edge[0]
+        : null
+  } else if (
+    docEsig &&
+    response &&
     response.data.edge &&
     Array.isArray(response.data.edge) &&
     response.data.edge.length > 0
-    ? response.data.edge[0]
-    : null
+  ) {
+    filteredRes = response.data.edge.filter(
+      (edge) =>
+        store.utils.idToBase64(edge.eid) === store.utils.idToBase64(docEsig)
+    )[0]
+  } else {
+    filteredRes = null
+  }
+  return filteredRes
 }
 
 const retrieveDocument = async (

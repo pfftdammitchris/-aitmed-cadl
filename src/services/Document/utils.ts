@@ -103,7 +103,9 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
 }) => {
   // Validate Edge
   const edge =
-    typeof _edge === 'undefined' ? await retrieveEdge(document.eid) : _edge
+    typeof _edge === 'undefined'
+      ? await retrieveEdge(document.eid, document.esig)
+      : _edge
   if (edge === null)
     throw new AiTmedError({
       name: 'UNKNOW_ERROR',
