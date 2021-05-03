@@ -28,7 +28,7 @@ export default {
     if (isArray(object)) {
       if (value) {
         var cloned = _.cloneDeep(value)
-        if (object[parseInt(index)] == null) {
+        if (object[parseInt(index)] == null || (Object.keys(object[parseInt(index)]).length === 0 && object[parseInt(index)].constructor === Object)) {
           let item_1 = new Array()
           item_1.push(cloned)
           object[parseInt(index)] = item_1
