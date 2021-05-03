@@ -701,7 +701,7 @@ export default {
         }
         let count = 0
         Object.forEach(obj => {
-          if (obj.ctime * 1000 > ctime && obj.etime * 1000 < etime) {
+          if (obj.ctime * 1000 > ctime && obj.ctime * 1000 < etime) {
             count = count + 1
           }
         })
