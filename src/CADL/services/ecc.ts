@@ -248,7 +248,7 @@ export default {
    * Checks whether an edge is encrypted or not.
    */
   async isEdgeEncrypted({ id }: { id: string }): Promise<boolean> {
-    const edge = await retrieveEdge(id)
+    const edge = await retrieveEdge(id, '')
     if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
 
     if (edge?.besak || edge?.eesak) return true
@@ -256,7 +256,7 @@ export default {
   },
 
   async getSAKFromEdge({ id }: { id: string }): Promise<string> {
-    const edge = await retrieveEdge(id)
+    const edge = await retrieveEdge(id, '')
     if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
 
     //WIP:
