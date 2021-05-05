@@ -1,5 +1,6 @@
 import store from '../store'
 import { CommonTypes } from '../../common/types'
+import { ecosObjType } from '../../utils'
 
 const retrieveVertex = async (
   id: Uint8Array | string
@@ -17,55 +18,50 @@ const retrieveVertex = async (
 }
 
 const retrieveEdge = async (
-  id: string | Uint8Array,
-  docEsig: Uint8Array | string
+  id: string | Uint8Array
 ): Promise<CommonTypes.Edge | null> => {
-  let filteredRes
   let response
-  if (!docEsig) {
-    response = await store.level2SDK.edgeServices
-      .retrieveEdge({
-        idList: [id],
-      })
-      .then(store.responseCatcher)
-      .catch(store.errorCatcher)
-  } else {
-    response = await store.level2SDK.edgeServices
-      .retrieveEdge({
-        idList: [],
-        options: {
-          xfname: 'bvid | evid',
-          maxcount: 200,
-        },
-      })
-      .then(store.responseCatcher)
-      .catch(store.errorCatcher)
-  }
-  if (!docEsig) {
-    filteredRes =
-      response &&
-      response.data.edge &&
-      Array.isArray(response.data.edge) &&
-      response.data.edge.length > 0
-        ? response.data.edge[0]
-        : null
-  } else if (
-    docEsig &&
-    response &&
+
+  response = await store.level2SDK.edgeServices
+    .retrieveEdge({
+      idList: [id],
+    })
+    .then(store.responseCatcher)
+    .catch(store.errorCatcher)
+  return response &&
     response.data.edge &&
     Array.isArray(response.data.edge) &&
     response.data.edge.length > 0
-  ) {
-    filteredRes = response.data.edge.filter(
-      (edge) =>
-        store.utils.idToBase64(edge.eid) === store.utils.idToBase64(docEsig)
-    )[0]
-  } else {
-    filteredRes = null
-  }
-  return filteredRes
+    ? response.data.edge[0]
+    : null
 }
 
+const retrieveAuthorizationEdge = async (
+  doc
+): Promise<CommonTypes.Edge | null> => {
+  let authEdgeId
+  if (ecosObjType(doc.eid) === 'EDGE') {
+    authEdgeId = doc.eid
+  } else {
+    authEdgeId = doc.esig
+  }
+
+  let response
+
+  response = await store.level2SDK.edgeServices
+    .retrieveEdge({
+      idList: [authEdgeId],
+    })
+    .then(store.responseCatcher)
+    .catch(store.errorCatcher)
+
+  return response &&
+    response.data.edge &&
+    Array.isArray(response.data.edge) &&
+    response.data.edge.length > 0
+    ? response.data.edge[0]
+    : null
+}
 const retrieveDocument = async (
   id: string | Uint8Array
 ): Promise<CommonTypes.Doc | null> => {
@@ -79,4 +75,9 @@ const retrieveDocument = async (
     ? response.data.document[0]
     : null
 }
-export { retrieveVertex, retrieveEdge, retrieveDocument }
+export {
+  retrieveVertex,
+  retrieveEdge,
+  retrieveDocument,
+  retrieveAuthorizationEdge,
+}
