@@ -22,8 +22,6 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
-      console.log(object[key])
-
       return object[key]
     }
     return
@@ -107,6 +105,8 @@ export default {
         })
         res.push(resArray)
       })
+      console.error(res);
+
       return res
     }
     return ''
@@ -158,4 +158,9 @@ export default {
     // return false
     return auth
   },
+  isEmpty({ object }) {
+    if (object === "")
+      return true
+    return false
+  }
 }
