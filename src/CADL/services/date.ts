@@ -5,6 +5,7 @@ interface splitTime {
   stime: number
   etime: number
   refid: string
+  bvid: string
 }
 
 export default {
@@ -160,6 +161,7 @@ export default {
                   (obj['stime'] + i * timeSlot * 60) * 1000
                 ).format('LT'),
                 refid: obj['id'],
+                bvid: obj['bvid']
               }
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
