@@ -742,5 +742,18 @@ export default {
     }
     return
 
-  }
+  },
+  transformNull({ dayObject }) {
+    if (isArray(dayObject)) {
+      for (let i = 0; i < dayObject.length; i++) {
+        if (Object.keys(dayObject[i]).length == 0) {
+          dayObject[i] = null
+        }
+
+      }
+
+    }
+  },
+
+
 }
