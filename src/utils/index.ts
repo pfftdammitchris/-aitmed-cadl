@@ -11,6 +11,25 @@ import {
 } from '../CADL/errors'
 import { CADLResponse } from '../common/Response'
 
+export function ecosObjType(id: string | Uint8Array): string {
+  if (typeof id === 'string') {
+    id = store.utils.idToUint8Array(id)
+  }
+  const identifier = (id[8] & 0xc0) >> 6
+
+  switch (identifier) {
+    case 0:
+      return 'VERTEX'
+    case 1:
+      return 'DOCUMENT'
+    case 2:
+      return 'EDGE'
+    case 1:
+      return 'FILE'
+    default:
+      return 'UNKNOWN'
+  }
+}
 export const compareUint8Arrays = (
   u8a1: Uint8Array,
   u8a2: Uint8Array
