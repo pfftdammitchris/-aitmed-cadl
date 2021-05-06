@@ -5,6 +5,7 @@ interface splitTime {
   stime: number
   etime: number
   refid: string
+  bvid: string
 }
 
 export default {
@@ -160,6 +161,7 @@ export default {
                   (obj['stime'] + i * timeSlot * 60) * 1000
                 ).format('LT'),
                 refid: obj['id'],
+                bvid: obj['bvid']
               }
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
@@ -629,5 +631,35 @@ export default {
   startMeeting({ stime }) {
     if ((stime - 900) * 1000 <= new Date().getTime()) return true
     return false
+  },
+  transformSelectWeek({ object }) {
+    if (isArray(object)) {
+      let selectWeek: Record<string, any> = []
+      let addWeek: Record<string, any> = []
+      let weeks = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
+      for (let i = 0; i < 7; i++) {
+        if (!(Object.keys(object[i]).length === 0 && object[i].constructor === Object)) {
+          selectWeek.push({
+            index: i,
+            key: weeks[i]
+          })
+          object[i].forEach(obj => {
+            addWeek.push({
+              duration: obj,
+              location: "",
+              index: i,
+              key: weeks[i]
+            })
+          })
+        }
+      }
+      return {
+        selectWeek: selectWeek,
+        addWeek: addWeek
+      }
+    }
+    return
+
+
   },
 }
