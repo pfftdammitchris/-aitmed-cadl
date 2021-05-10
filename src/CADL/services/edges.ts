@@ -247,7 +247,7 @@ function create({ pageName, apiObject, dispatch }) {
           ...mergedVal,
         })
         const isInviteEdge = data?.edge?.type === 1053
-        if (false) {
+        if (isInviteEdge) {
           const pkOfInviter = localStorage.getItem('pk')
           const skOfInviter = localStorage.getItem('sk')
           const {
