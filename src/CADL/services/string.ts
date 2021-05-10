@@ -95,7 +95,22 @@ export default {
     return phoneNumber.toString().split(sign)
   },
 
+  //judge whether all string equal 
+  judgeMultipleEqual(stringArr: string[]) {
+    for (let i = 1; i < stringArr.length; i++)
+      if (stringArr[i - 1] !== stringArr[i]) return false
+    return true
+  },
+
+  //judge whether all the request textfield is filled in 
+  judgeFillinAll(stringArr: string[]) {
+    for (let i = 0; i < stringArr.length; i++)
+      if (stringArr[i] == "") return true
+    return false
+  },
   judgeAllTrue({ str1, str2, str3 }) {
     return str1 && str2 && str3
   },
+
+
 }
