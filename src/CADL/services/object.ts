@@ -22,8 +22,6 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
-      console.log(object[key])
-
       return object[key]
     }
     return
@@ -88,25 +86,27 @@ export default {
     console.dir(obj)
     if (isArray(obj)) {
       let res = new Array()
-      obj.forEach(objItem => {
+      obj.forEach((objItem) => {
         console.dir(objItem)
         let resArray: any[] = []
         arr.forEach((element: any) => {
           let _data = objItem
           if (element.indexOf('.') === -1) {
-            resArray[element] = objItem[element].toString()
+            resArray[element] = _data.hasOwnProperty(element)
+              ? _data[element]
+              : ''
           } else {
             let subtitle: any[] = element.split('.')
             subtitle.forEach((item) => {
-              if (_data[item] != null) {
-                _data = _data[item]
-              }
+              _data = _data.hasOwnProperty(item) ? _data[item] : ''
             })
             resArray[subtitle[subtitle.length - 1]] = _data.toString()
           }
         })
         res.push(resArray)
-      });
+      })
+      console.error(res);
+
       return res
     }
     return ''
@@ -128,14 +128,39 @@ export default {
     return result
   },
   findTrue({ object }) {
-    let flag = 0
+    let auth = {
+      Settings: false,
+      UserManagement: false,
+      Schedule: false
+    }
     Object.keys(object).forEach((key) => {
-      if (object[key] === true) {
-        flag = 1
-        return
-      }
+      Object.keys(object[key]).forEach((key1) => {
+        if ((key === "MFI" || key === "TDT") && (object[key][key1]) === true) {
+          auth.Settings = true
+          return
+        }
+        if ((key === "staff" || key === "patient" || key === "provider") && (object[key][key1]) === true) {
+          auth.UserManagement = true
+          return
+        }
+        if ((key === "scheduleInfo" || key === "PAT") && (object[key][key1]) === true) {
+          auth.Schedule = true
+          return
+        }
+      })
+      // console.log(object[key]);
+      // if (object[key] === true) {
+      //   flag = 1
+      //   return
+      // }
     })
-    if (flag === 1) return true
-    return false
+    // if (flag === 1) return true
+    // return false
+    return auth
   },
+  isEmpty({ object }) {
+    if (object === "")
+      return true
+    return false
+  }
 }

@@ -1,5 +1,5 @@
 import AiTmedError from '../../common/AiTmedError'
-import { retrieveEdge } from '../../common/retrieve'
+import { retrieveAuthorizationEdge } from '../../common/retrieve'
 import store from '../../common/store'
 import { gzip, ungzip } from '../../utils'
 
@@ -104,7 +104,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
   // Validate Edge
   const edge =
     typeof _edge === 'undefined'
-      ? await retrieveEdge(document.eid, document.esig)
+      ? await retrieveAuthorizationEdge(document)
       : _edge
   if (edge === null)
     throw new AiTmedError({

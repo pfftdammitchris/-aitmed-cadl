@@ -47,7 +47,7 @@ export const create: DocumentTypes.Create = async ({
   if (!isPopulated(edge_id)) {
     throw new UnableToLocateValue(`Missing reference ${edge_id}`)
   }
-  const edge = await retrieveEdge(edge_id, '')
+  const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
   const dType = new DType()
   dType.dataType = dTypeProps?.dataType || dataType
@@ -262,9 +262,9 @@ export const update: any = async (
   // Get edge
   let edge
   if (typeof edge_id !== 'undefined') {
-    edge = await retrieveEdge(edge_id, document.esig)
+    edge = await retrieveEdge(edge_id)
   } else {
-    edge = await retrieveEdge(document.eid, document.esig)
+    edge = await retrieveEdge(document.eid)
   }
   if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
 
