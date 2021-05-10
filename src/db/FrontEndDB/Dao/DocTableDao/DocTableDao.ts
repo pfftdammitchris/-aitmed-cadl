@@ -23,8 +23,6 @@ export default (
       sqlstr += key + (index === dids.length - 1 ? ')' : ',')
       params[key] = did
     })
-    // console.log(dids)
-    console.log(sqlstr)
     let res = db.exec(sqlstr, params)
     return res
   }
@@ -47,9 +45,11 @@ export default (
   }
 
   function deleteDocById(did) {
-    let sqlstr = `DELETE FROM ecos_doc_table WHERE id = ${did}`
-    let res = db.exec(sqlstr)
-    console.log(res)
+    let sqlstr = `DELETE FROM ecos_doc_table WHERE id = :did`
+    let params = {
+      [':did']: did,
+    }
+    let res = db.exec(sqlstr, params)
     return res
   }
 
