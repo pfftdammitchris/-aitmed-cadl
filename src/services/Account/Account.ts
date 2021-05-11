@@ -74,7 +74,7 @@ export const create: AccountTypes.Create = async (
       password,
       verification_code,
       userInfo: { ...userInfo, phoneNumber: phone_number },
-      type,
+      type: typeof type === 'string' ? parseInt(type) : type,
     })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)

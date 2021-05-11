@@ -39,7 +39,7 @@ export interface Create {
     password: string,
     verification_code: number,
     userInfo: Record<string, any>,
-    type?: string | number
+    type: string | number
   ): Promise<Record<string, any>>
 }
 
