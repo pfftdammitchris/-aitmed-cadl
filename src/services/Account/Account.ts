@@ -11,36 +11,35 @@ import { retrieveVertex } from '../../common/retrieve'
  * @throws {UnableToMakeAnotherRequest} When the same request is made within 60secs
  * @returns Promise<string>
  */
-export const requestVerificationCode: AccountTypes.RequestVerificationCode = async (
-  phone_number
-) => {
-  if (store.noodlInstance) {
-    if (
-      store.noodlInstance.verificationRequest.timer > 0 &&
-      store.noodlInstance.verificationRequest.phoneNumber === phone_number
-    ) {
-      throw new UnableToMakeAnotherRequest(
-        'User must wait 60 sec to make another verification code request.'
-      )
-    } else {
-      store.noodlInstance.verificationRequest.timer = 60
-      store.noodlInstance.verificationRequest.phoneNumber = phone_number
-      const interval = setInterval(() => {
-        if (store.noodlInstance.verificationRequest.timer === 0) {
-          clearInterval(interval)
-        } else {
-          store.noodlInstance.verificationRequest.timer--
-        }
-      }, 1000)
+export const requestVerificationCode: AccountTypes.RequestVerificationCode =
+  async (phone_number) => {
+    if (store.noodlInstance) {
+      if (
+        store.noodlInstance.verificationRequest.timer > 0 &&
+        store.noodlInstance.verificationRequest.phoneNumber === phone_number
+      ) {
+        throw new UnableToMakeAnotherRequest(
+          'User must wait 60 sec to make another verification code request.'
+        )
+      } else {
+        store.noodlInstance.verificationRequest.timer = 60
+        store.noodlInstance.verificationRequest.phoneNumber = phone_number
+        const interval = setInterval(() => {
+          if (store.noodlInstance.verificationRequest.timer === 0) {
+            clearInterval(interval)
+          } else {
+            store.noodlInstance.verificationRequest.timer--
+          }
+        }, 1000)
+      }
     }
+    const response = await store.level2SDK.Account.requestVerificationCode({
+      phone_number,
+    })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+    return response && response.data && response.data?.verification_code
   }
-  const response = await store.level2SDK.Account.requestVerificationCode({
-    phone_number,
-  })
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
-  return response && response.data && response.data?.verification_code
-}
 
 /**
  * @param phone_number: string
@@ -51,7 +50,8 @@ export const create: AccountTypes.Create = async (
   phone_number,
   password,
   verification_code,
-  userInfo
+  userInfo,
+  type = 1
 ) => {
   const { code: statusCode, ...rest } = await getStatus()
   let userVertex
@@ -74,6 +74,7 @@ export const create: AccountTypes.Create = async (
       password,
       verification_code,
       userInfo: { ...userInfo, phoneNumber: phone_number },
+      type,
     })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
@@ -143,17 +144,15 @@ export const loginByPassword: AccountTypes.LoginByPassword = async (
  * @param phone_number: string
  * @param verification_code: string
  */
-export const loginByVerificationCode: AccountTypes.LoginByVerificationCode = async (
-  phone_number,
-  verification_code
-) => {
-  return await store.level2SDK.Account.loginNewDevice({
-    phone_number,
-    verification_code,
-  })
-    .then(store.responseCatcher)
-    .catch(store.errorCatcher)
-}
+export const loginByVerificationCode: AccountTypes.LoginByVerificationCode =
+  async (phone_number, verification_code) => {
+    return await store.level2SDK.Account.loginNewDevice({
+      phone_number,
+      verification_code,
+    })
+      .then(store.responseCatcher)
+      .catch(store.errorCatcher)
+  }
 
 /**
  * @returns Status
