@@ -48,6 +48,15 @@ export default {
     if (!name?.data) return
     if (typeof name?.data !== 'string') return
     if (!isPopulated(name?.data)) return
+
+    //checking that the string is not base64 encoded
+    if (
+      typeof name?.data === 'string' &&
+      !name?.data.match(
+        /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g
+      )
+    )
+      return note
     const blob = store.level2SDK.utilServices.base64ToBlob(
       name?.data,
       name?.type
