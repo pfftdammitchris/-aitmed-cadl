@@ -158,6 +158,14 @@ export default {
     // return false
     return auth
   },
+  setAuthAllTrue({ object }) {
+    Object.keys(object).forEach((key) => {
+      Object.keys(object[key]).forEach((key1) => {
+        object[key][key1] = true
+      })
+    })
+    return object
+  },
   isEmpty({ object }) {
     if (object === "")
       return true
