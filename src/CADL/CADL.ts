@@ -32,7 +32,8 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import ManageMeeting from './__mocks__/ManageMeeting'
+// import SignUp from './__mocks__/SignUp'
+// import CreateNewAccount from './__mocks__/CreateNewAccount'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -517,7 +518,8 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'ManageMeeting') return _.cloneDeep(ManageMeeting)
+    // if (pageName === 'SignUp') return _.cloneDeep(SignUp)
+    // if (pageName === 'CreateNewAccount') return _.cloneDeep(CreateNewAccount)
 
     let pageCADL
     let pageUrl
@@ -1048,6 +1050,9 @@ export default class CADL extends EventEmitter {
       func = func[1]
       await func()
     }
+    if (key.includes('goto')) {
+      results = { abort: true }
+    }
     return results
   }
 
@@ -1341,9 +1346,8 @@ export default class CADL extends EventEmitter {
             )
             const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
             if (timeDiff > limit) {
-              apiDispatchBufferObject[
-                hash
-              ].timestamp = currentTimestamp.toString()
+              apiDispatchBufferObject[hash].timestamp =
+                currentTimestamp.toString()
               pass = true
             } else {
               apiDispatchBufferObject[`${hash}FAILED_REPEAT`] = {
@@ -1489,7 +1493,7 @@ export default class CADL extends EventEmitter {
           gotoArgs = populatedTrueEffect['goto'].dataIn
         }
         await this.root.builtIn['goto'](gotoArgs)
-        return
+        return { abort: 'true' }
       } else if (
         isObject(ifTrueEffect) &&
         (Object.keys(ifTrueEffect)?.[0]?.includes('@') ||
@@ -1627,7 +1631,7 @@ export default class CADL extends EventEmitter {
             gotoArgs = populatedFalseEffect['goto'].dataIn
           }
           await this.root.builtIn['goto'](gotoArgs)
-          return
+          return { abort: true }
         }
       } else if (typeof ifFalseEffect === 'function') {
         await ifFalseEffect()
@@ -1851,13 +1855,8 @@ export default class CADL extends EventEmitter {
             isObject(populatedCommand) &&
             'actionType' in populatedCommand
           ) {
-            const {
-              actionType,
-              dataKey,
-              dataObject,
-              object,
-              funcName,
-            }: any = populatedCommand
+            const { actionType, dataKey, dataObject, object, funcName }: any =
+              populatedCommand
             switch (actionType) {
               case 'updateObject': {
                 await this.updateObject({ dataKey, dataObject })

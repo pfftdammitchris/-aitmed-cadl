@@ -59,14 +59,16 @@ export default {
           result.push(arr[match[0]][match[1]])
         })
       }
-    } else if (array) {
-      if (match.length === 1) {
-        result.push(array[match[0]])
-      } else if (match.length === 2) {
-        result.push(array[match[0]][match[1]])
-      }
+      return result
     }
-    return result
+    // } else if (array) {
+    //   if ((match.length === 1) && array[match[0]]) {
+    //     result.push(array[match[0]])
+    //   } else if ((match.length === 2) && array[match[0]][match[1]]) {
+    //     result.push(array[match[0]][match[1]])
+    //   }
+    // }
+    return
   },
   // 将数组中的指定项提取出来 ，已方便table打印
   // extractArray({obj,arr}){
@@ -158,9 +160,24 @@ export default {
     // return false
     return auth
   },
+  setAuthAllTrue({ object }) {
+    Object.keys(object).forEach((key) => {
+      Object.keys(object[key]).forEach((key1) => {
+        object[key][key1] = true
+      })
+    })
+    return object
+  },
   isEmpty({ object }) {
     if (object === "")
       return true
     return false
+  },
+  setByKey({ object, key, value }) {
+    Object.keys(object).forEach((item) => {
+      if (key === item)
+        object[item] = value
+    })
+    return
   }
 }
