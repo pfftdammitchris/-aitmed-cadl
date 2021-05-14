@@ -1050,6 +1050,9 @@ export default class CADL extends EventEmitter {
       func = func[1]
       await func()
     }
+    if (key.includes('goto')) {
+      results = { abort: true }
+    }
     return results
   }
 
@@ -1490,7 +1493,7 @@ export default class CADL extends EventEmitter {
           gotoArgs = populatedTrueEffect['goto'].dataIn
         }
         await this.root.builtIn['goto'](gotoArgs)
-        return
+        return { abort: 'true' }
       } else if (
         isObject(ifTrueEffect) &&
         (Object.keys(ifTrueEffect)?.[0]?.includes('@') ||
@@ -1628,7 +1631,7 @@ export default class CADL extends EventEmitter {
             gotoArgs = populatedFalseEffect['goto'].dataIn
           }
           await this.root.builtIn['goto'](gotoArgs)
-          return
+          return { abort: true }
         }
       } else if (typeof ifFalseEffect === 'function') {
         await ifFalseEffect()
