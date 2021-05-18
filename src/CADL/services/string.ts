@@ -112,5 +112,25 @@ export default {
     return str1 && str2 && str3
   },
 
+  judgesFillinAll(object) {
+    let isEmpty = false
+    Object.keys(object).forEach((x) => {
+      if (object[x] !== null && object[x] !== "") {
+        // console.log(Object.keys(object[x]))
+        Object.keys(object[x]).forEach((y) => {
+          if (object[x][y] == null || object[x][y] == "") {
+            console.log(object[x][y])
+            isEmpty = true
+            // return false
 
+          }
+        })
+
+      }
+    })
+    if (isEmpty) {
+      return false
+    }
+    return true
+  }
 }

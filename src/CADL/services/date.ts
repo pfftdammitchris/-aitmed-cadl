@@ -641,7 +641,11 @@ export default {
         if (!(Object.keys(object[i]).length === 0 && object[i].constructor === Object)) {
           selectWeek.push({
             index: i,
-            key: weeks[i]
+            key: weeks[i],
+            availableTime: {
+              timeStart: "",
+              timeEnd: ""
+            }
           })
           object[i].forEach(obj => {
             addWeek.push({
@@ -649,6 +653,7 @@ export default {
               location: "",
               index: i,
               key: weeks[i]
+
             })
           })
         }
