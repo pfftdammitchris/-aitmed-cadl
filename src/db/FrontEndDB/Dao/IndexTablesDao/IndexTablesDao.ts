@@ -1,3 +1,5 @@
+import store from '../../../../common/store'
+
 export default (db) => {
   return {
     getCount,
@@ -8,6 +10,7 @@ export default (db) => {
     getAllkTextByDid,
     getAllScoreByDid,
     getTypeById,
+    insertAll,
   }
   // Austin's suggestion, can both fuzzy search and extened search at the same time
   //select distinct kText from KeyID where (TO_HEX(fKey) like '%ins_hex%')   <- fuzzy search
@@ -16,8 +19,22 @@ export default (db) => {
 
   function getCount() {
     let sqlstr = 'SELECT COUNT(*) FROM index_tables'
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const res = db.exec(sqlstr)
+    return res
+  }
+
+  function insertAll(indexTableEntry) {
+    let sqlstr =
+      'INSERT INTO index_tables VALUES (:id, :fkey , :fuzzyKey, :initMapping , :kText , :docId , :docType , :score );'
+    let params = {}
+    for (let [key, val] of Object.entries(indexTableEntry)) {
+      if (val instanceof Uint8Array) {
+        params[`:${key}`] = store.level2SDK.utilServices.uint8ArrayToBase64(val)
+      } else {
+        params[`:${key}`] = val
+      }
+    }
+    let res = db.exec(sqlstr, params)
     return res
   }
 
@@ -34,72 +51,96 @@ export default (db) => {
     docTypeLow: number
     docTypeHigh: number
   }) {
-    let sqlstr = `SELECT * FROM index_tables WHERE" +
-        " printf('%X', fKey) LIKE '%'|| ${ins_hex} ||'%'" +
-        " OR kText LIKE ${kInput} || '%'`
+    let sqlstr =
+      'SELECT * FROM index_tables WHERE' +
+      " printf('%X', fKey) LIKE '%'|| :ins_hex ||'%'" +
+      " OR kText LIKE :kInput || '%'"
+    let params = { ':ins_hex': ins_hex, ':kInput': kInput }
     if (docType) {
-      sqlstr = `SELECT * FROM index_tables WHERE" +
-" docType = ${docType}" +
-" AND (" +
-"printf('%X', fKey) LIKE '%'|| ${ins_hex} ||'%'" +
-" OR " +
-"kText LIKE ${kInput} || '%'  )`
+      sqlstr =
+        'SELECT * FROM index_tables WHERE' +
+        ' docType = :docType' +
+        ' AND (' +
+        "printf('%X', fKey) LIKE '%'|| :ins_hex ||'%'" +
+        ' OR ' +
+        "kText LIKE :kInput || '%'  )"
+      params = {
+        ':docType': docType,
+        ':ins_hex': ins_hex,
+        ':kInput': kInput,
+      }
     } else if (docTypeLow && docTypeHigh) {
-      sqlstr = `SELECT * FROM index_tables WHERE" +
-            " docType BETWEEN ${docTypeLow} AND ${docTypeHigh}" +
-            " AND (" +
-            "printf('%X', fKey) LIKE '%'|| ${ins_hex} ||'%'" +
-            " OR " +
-            "kText LIKE ${kInput} || '%'  )`
+      sqlstr =
+        'SELECT * FROM index_tables WHERE' +
+        ' docType BETWEEN :docTypeLow AND :docTypeHigh' +
+        ' AND (' +
+        "printf('%X', fKey) LIKE '%'|| :ins_hex ||'%'" +
+        ' OR ' +
+        "kText LIKE :kInput || '%'  )"
+      params = {
+        ':docTypeLow': docTypeLow,
+        ':docTypeHigh': docTypeHigh,
+        ':ins_hex': ins_hex,
+        ':kInput': kInput,
+      }
     }
 
-    var res = db.exec(sqlstr)
+    const res = db.exec(sqlstr, params)
     console.log(res)
     return res
   }
 
   function getPIByDocId(did) {
-    let sqlstr = `SELECT * FROM index_tables WHERE docId = ${did}`
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const sqlstr = 'SELECT * FROM index_tables WHERE docId = :did'
+    const params = {
+      ':did': did,
+    }
+    const res = db.exec(sqlstr, params)
     return res
   }
 
   function deleteIndexByDocId(did) {
-    let sqlstr = `DELETE FROM index_tables WHERE docId = ${did}`
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const sqlstr = 'DELETE FROM index_tables WHERE docId = :did'
+    const params = {
+      ':did': did,
+    }
+    const res = db.exec(sqlstr, params)
     return res
   }
-  // @Insert
-  // void InsertAll(PersonalIndex... personalIndexTables);
 
   /*** for update to S3
    */
   function getAllDocId() {
-    let sqlstr = 'SELECT DISTINCT docId FROM index_tables'
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const sqlstr = 'SELECT DISTINCT docId FROM index_tables'
+    const res = db.exec(sqlstr)
     return res
   }
 
   function getAllkTextByDid(did) {
-    let sqlstr = `SELECT kText FROM index_tables WHERE docId = ${did} ORDER BY score`
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const sqlstr =
+      'SELECT kText FROM index_tables WHERE docId = :did ORDER BY score'
+    const params = {
+      ':did': did,
+    }
+    const res = db.exec(sqlstr, params)
     return res
   }
   function getAllScoreByDid(did) {
-    let sqlstr = `SELECT score FROM index_tables WHERE docId = ${did} ORDER By score`
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const sqlstr =
+      'SELECT score FROM index_tables WHERE docId = :did ORDER By score'
+    const params = {
+      ':did': did,
+    }
+    const res = db.exec(sqlstr, params)
     return res
   }
 
   function getTypeById(did) {
-    let sqlstr = `SELECT docType FROM index_tables WHERE docId = ${did}`
-    var res = db.exec(sqlstr)
-    console.log(res)
+    const sqlstr = 'SELECT docType FROM index_tables WHERE docId = :did'
+    const params = {
+      ':did': did,
+    }
+    const res = db.exec(sqlstr, params)
     return res
   }
 }
