@@ -45,9 +45,9 @@ export default {
       note = await documentToNote({ document: doc })
     }
     const { name } = note
-    if (!name?.data) return
-    if (typeof name?.data !== 'string') return
-    if (!isPopulated(name?.data)) return
+    if (!name?.data) return doc
+    if (typeof name?.data !== 'string') return doc
+    if (!isPopulated(name?.data)) return doc
 
     //checking that the string is not base64 encoded
     if (
