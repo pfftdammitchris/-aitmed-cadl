@@ -4,10 +4,42 @@ export default class IndexRepository {
   public indexTablesDao
   public userDB
 
-  constructor(config) {
-    this.userDB = new FrontEndDB().getDatabase(config)
+  constructor() {
+    this.userDB = new FrontEndDB()
+  }
+
+  public async getDataBase(config) {
+    await this.userDB.getDatabase(config)
     this.docTableDao = this.userDB.DocTableDao
     this.indexTablesDao = this.userDB.IndexTablesDao
+  }
+
+  public indexTableIsEmpty() {
+    return this.indexTablesDao.getCount() === 0
+  }
+
+  public insertIndexData(personalIndexTables) {
+    this.indexTablesDao.insertAll(personalIndexTables)
+  }
+
+  public getTypeById(did) {
+    return this.indexTablesDao.getTypeById(did)
+  }
+
+  public deleteIndexByDocId(did) {
+    this.indexTablesDao.deleteIndexByDocId(did)
+  }
+
+  public getPIByDocId(did) {
+    return this.indexTablesDao.getPIByDocId(did)
+  }
+
+  public getkTextByDid(docId) {
+    return this.indexTablesDao.getAllkTextByDid(docId)
+  }
+
+  public getAllDocId() {
+    return this.indexTablesDao.getAllDocId()
   }
 
   public getDocById(did) {

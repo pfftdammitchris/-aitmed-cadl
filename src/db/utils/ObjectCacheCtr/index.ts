@@ -1,1 +1,1 @@
-export {default} './ObjectCacheCtr'
+export { default } from './ObjectCacheCtr'

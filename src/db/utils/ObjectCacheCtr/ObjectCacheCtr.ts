@@ -1,6 +1,6 @@
 import sha256 from 'crypto-js/sha256'
 
-class ObjectCacheCtr {
+export default class ObjectCacheCtr {
   public retrieveDocFromCache(indexRepository, dataInStr: string) {
     let retrieveResult = []
 

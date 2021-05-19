@@ -20,7 +20,7 @@ export default (db) => {
   function getCount() {
     let sqlstr = 'SELECT COUNT(*) FROM index_tables'
     const res = db.exec(sqlstr)
-    return res
+    return res[0].values[0][0]
   }
 
   function insertAll(indexTableEntry) {
