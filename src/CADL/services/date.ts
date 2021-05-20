@@ -142,7 +142,16 @@ export default {
     // let dataJson = _.chunk(dataArray, 7);
     return dataObject
   },
-  splitByTimeSlot({ object2, timeSlot }) {
+  splitByTimeSlot({ object2, timeSlot, year, month, day }) {
+    let date = new Date()
+    date.setFullYear(year)
+    date.setMonth(month - 1)
+    date.setDate(day)
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    date.setUTCMilliseconds(0)
+    let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
     let array: any = {
       morning: [],
@@ -151,6 +160,10 @@ export default {
     if (isArray(object2)) {
       object2.forEach((obj) => {
         if (isObject(obj)) {
+          if (obj["stime"] < date.getTime() / 1000 && obj['etime'] > date.getTime() / 1000)
+            obj["stime"] = date.getTime() / 1000
+          if (obj['stime'] < anotherDay && obj['etime'] > anotherDay)
+            obj['etime'] = anotherDay
           if (timeSlot) {
             let i = 0
             do {
@@ -173,7 +186,7 @@ export default {
                 }
               }
               i += 1
-            } while (splitTimeItem['etime'] <= obj['etime'])
+            } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
           }
         }
       })
