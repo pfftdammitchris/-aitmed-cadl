@@ -192,7 +192,7 @@ export default {
       object.forEach((obj) => {
         let i = 0
         for (; i < re.length; i++) {
-          if (obj['_source']['Speciality'] == re[i]['Speciality']) {
+          if (obj['_source']['specialty'] == re[i]['Speciality']) {
             re[i]['num'] = re[i]['num'] + 1
             re[i]['data'].push(obj)
             break
@@ -200,7 +200,7 @@ export default {
         }
         if (i == re.length) {
           let item = {
-            Speciality: obj['_source']['Speciality'],
+            Speciality: obj['_source']['specialty'],
             num: 1,
             data: [obj],
           }
