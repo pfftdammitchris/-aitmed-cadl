@@ -363,8 +363,8 @@ export default {
     if (typeof array1 == 'string' || typeof array2 == 'string') {
       if (isArray(array1)) {
         array1.forEach((arr) => {
-          if (arr['subtype'] == 0) favorite1 = false
-          else favorite1 = true
+          if (arr['subtype'] == 5 || arr['subtype'] == 4) favorite1 = true
+          else favorite1 = false
           arrayItem = {
             name: arr['name']['inviterName'],
             category: arr['name']['inviterCategory'],
@@ -378,8 +378,8 @@ export default {
         return array
       } else if (isArray(array2)) {
         array2.forEach((arr) => {
-          if (arr['subtype'] == 0) favorite1 = false
-          else favorite1 = true
+          if (arr['subtype'] == 5 || arr['subtype'] == 3) favorite1 = true
+          else favorite1 = false
           arrayItem = {
             name: arr['name']['inviteeName'],
             category: arr['name']['inviteeCategory'],
@@ -396,8 +396,8 @@ export default {
       }
     } else {
       array1.forEach((arr) => {
-        if (arr['subtype'] == 0) favorite1 = false
-        else favorite1 = true
+        if (arr['subtype'] == 5 || arr['subtype'] == 4) favorite1 = true
+        else favorite1 = false
         arrayItem = {
           name: arr['name']['inviterName'],
           category: arr['name']['inviterCategory'],
@@ -409,8 +409,8 @@ export default {
         array.push(arrayItem)
       })
       array2.forEach((arr) => {
-        if (arr['subtype'] == 0) favorite1 = false
-        else favorite1 = true
+        if (arr['subtype'] == 5 || arr['subtype'] == 3) favorite1 = true
+        else favorite1 = false
         arrayItem = {
           name: arr['name']['inviteeName'],
           category: arr['name']['inviteeCategory'],
