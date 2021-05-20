@@ -424,7 +424,18 @@ export default {
       return array
     }
   },
-
+  getFavorites({ object }) {
+    let result: any[] = []
+    console.log(object)
+    if (isArray(object)) {
+      object.forEach((arr) => {
+        if (arr['favorite'] == true) {
+          result.push(arr)
+        }
+      })
+    }
+    return result
+  },
   getFirstItem({ array }) {
     if (isArray(array)) {
       return array[0]
