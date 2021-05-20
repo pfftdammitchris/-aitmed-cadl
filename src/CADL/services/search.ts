@@ -2,9 +2,10 @@ import { Client } from 'elasticsearch'
 import { get } from 'https'
 import _, { isArray } from 'lodash'
 // const node = 'http://44.192.21.229:9200'
-let client = new Client({ host: 'https://searchapi.aitmed.io' })
+let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
+// let client = new Client({ host: 'https://searchapi.aitmed.io' })
 // let DEFAULT_ADDRESS = "92805"
-let SIZE = 100
+// let SIZE = 100
 interface LatResponse {
   center: any[]
 }
@@ -88,18 +89,14 @@ export default {
     })
     return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug }
   },
-  async query({ cond = null, distance = 10000, carrier = null, pos = 92508 }) {
+  async query({ cond = null, distance = 30, carrier = null, pos = 92508 }) {
     console.log('test query', {
       cond: cond,
       distance: distance,
       carrier: carrier,
       pos: pos,
     })
-    let type = 'either',
-      size = SIZE
     let INDEX = 'doctors'
-    let office = true
-    let video = true
     let arr: any[] = []
     if (pos) {
       // let address
@@ -115,85 +112,45 @@ export default {
       )
       // arr = address
     }
-    if (type === 'office') {
-      video = false
-    } else if (type === 'video') {
-      office = false
-    } else if (type === 'either' || type === 'both') {
-    } else {
-      throw new Error('argument error')
-    }
     console.log('query zip code2', arr)
 
     let template = {
-      query: {
-        bool: {
-          must: [
-            {
-              geo_distance: {
-                distance: distance,
-                unit: 'mi',
-                location: arr,
-              },
-            },
-            {
-              match_phrase: {
-                carriers: carrier,
-              },
-            },
-
-            {
-              match: {
-                conditions: {
-                  query: cond,
-                },
-              },
-            },
-          ],
-          filter: [
-            {
-              term: {
-                office: office,
-              },
-            },
-            {
-              term: {
-                video: video,
-              },
-            },
-          ],
-        },
-      },
-      sort: [
-        {
-          _geo_distance: {
-            location: arr,
-            order: 'asc',
-            unit: 'mi',
-            distance_type: 'arc',
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "name^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
           },
-        },
-      ],
-      from: 0,
-      size: size,
-    }
-    if (!cond) {
-      template['query']['bool']['must'].splice(2, 1)
+          "filter": {
+            "geo_distance": {
+              "distance": distance + "mi",
+              "location": arr[1] + " , " + arr[0]
+            }
+          }
+        }
+      }
     }
 
-    if (!carrier) {
-      template['query']['bool']['must'].splice(1, 1)
-    }
-    if (type === 'either') {
-      delete template.query.bool.filter
-    }
     let body = await client.search({
       index: INDEX,
       body: template,
     })
     // console.log(carrier)
     // console.log(template.query.bool.must)
-    console.log(body.hits.hits)
+    console.log("test query", body.hits.hits)
     return body.hits.hits
   },
 
@@ -201,7 +158,7 @@ export default {
     if (isArray(object)) {
       let re: Record<string, any> = []
       object.forEach((obj) => {
-        let st = obj['_source']['location'].split(' ')
+        let st = obj['_source']['location'].split(',')
         let address =
           obj['_source']['address_street'] +
           ' ' +
@@ -210,15 +167,15 @@ export default {
           obj['_source']['address_state'] +
           ' ' +
           obj['_source']['address_zipCode']
-        let Lon = parseFloat(st[1].replace('(', ''))
-        let Lat = parseFloat(st[2].replace(')', ''))
+        let Lon = parseFloat(st[1])
+        let Lat = parseFloat(st[0])
         re.push({
           data: [Lon, Lat],
           information: {
             address: address,
-            Name: obj['_source']['Name'],
-            Speciality: obj['_source']['Speciality'],
-            Title: obj['_source']['Title'],
+            Name: obj['_source']['name'],
+            Speciality: obj['_source']['specialty'],
+            Title: obj['_source']['title'],
           },
         })
       })
