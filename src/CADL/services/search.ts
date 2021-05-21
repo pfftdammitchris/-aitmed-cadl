@@ -166,16 +166,17 @@ export default {
           ' ' +
           obj['_source']['address_state'] +
           ' ' +
-          obj['_source']['address_zipCode']
+          obj['_source']['address_zipcode']
         let Lon = parseFloat(st[1])
         let Lat = parseFloat(st[0])
         re.push({
           data: [Lon, Lat],
           information: {
             address: address,
-            Name: obj['_source']['name'],
-            Speciality: obj['_source']['specialty'],
-            Title: obj['_source']['title'],
+            name: obj['_source']['name'] + " " + obj['_source']['title'],
+            phoneNumber: obj['_source']['phone_number'],
+            speciality: obj['_source']['specialty'],
+            title: obj['_source']['title'],
           },
         })
       })
