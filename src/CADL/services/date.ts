@@ -157,6 +157,7 @@ export default {
       morning: [],
       afternoon: [],
     }
+    let nowtime = (new Date()).valueOf() / 1000
     if (isArray(object2)) {
       object2.forEach((obj) => {
         if (isObject(obj)) {
@@ -179,13 +180,15 @@ export default {
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
               } else {
-                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                  array.morning.push(splitTimeItem)
-                } else {
-                  array.afternoon.push(splitTimeItem)
+                if (splitTimeItem['stime'] >= nowtime) {
+                  if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                    array.morning.push(splitTimeItem)
+                  } else {
+                    array.afternoon.push(splitTimeItem)
+                  }
                 }
+                i += 1
               }
-              i += 1
             } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
           }
         }
