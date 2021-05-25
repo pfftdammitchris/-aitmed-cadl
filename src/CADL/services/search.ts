@@ -153,6 +153,126 @@ export default {
     console.log("test query", body.hits.hits)
     return body.hits.hits
   },
+  async queryByDate({ cond = null, distance = 30, carrier = null, pos = 92508, stime, etime }) {
+    console.log('test query', {
+      cond: cond,
+      distance: distance,
+      carrier: carrier,
+      pos: pos,
+      stime: stime,
+      etime: etime
+    })
+    let INDEX = 'doctors'
+    let arr: any[] = []
+    if (pos) {
+      // let address
+      await GetlatAndlon(pos).then(
+        (data: LatResponse) => {
+          arr[0] = data.center[0]
+          arr[1] = data.center[1]
+          console.log('query zip code1', data)
+        },
+        (err) => {
+          console.log('query error', err)
+        }
+      )
+      // arr = address
+    }
+    if (typeof stime == 'string' || typeof etime == 'string') {
+      let d = new Date()
+      let dateObject = new Date()
+      dateObject.setMonth(d.getMonth() + 1)
+      dateObject.setDate(d.getDate())
+      dateObject.setFullYear(d.getFullYear())
+      dateObject.setHours(0)
+      dateObject.setMinutes(0)
+      dateObject.setSeconds(0)
+      stime = Date.parse(dateObject.toString()) / 1000
+      etime = stime + 86400
+    }
+
+
+    console.log('query zip code2', { arr: arr, stime: stime, etime: etime })
+    let template =
+    {
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "name^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
+          },
+          "filter": [
+            {
+              "range": {
+                "avail": {
+                  "gte": stime,
+                  "lt": etime,
+                  "relation": "intersects"
+                }
+              }
+            },
+            {
+              "geo_distance": {
+                "distance": distance + "mi",
+                "location": arr[1] + " , " + arr[0]
+              }
+            }
+          ]
+        }
+      }
+    }
+    let template2 = {
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "name^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
+          },
+          "filter": {
+            "geo_distance": {
+              "distance": distance + "mi",
+              "location": arr[1] + " , " + arr[0]
+            }
+          }
+        }
+      }
+    }
+
+    let body = await client.search({
+      index: INDEX,
+      body: template,
+    })
+    // console.log(carrier)
+    // console.log(template.query.bool.must)
+    console.log("test query", body.hits.hits)
+    return body.hits.hits
+  },
 
   GetAllLonAndLat({ object }) {
     if (isArray(object)) {
@@ -166,16 +286,17 @@ export default {
           ' ' +
           obj['_source']['address_state'] +
           ' ' +
-          obj['_source']['address_zipCode']
+          obj['_source']['address_zipcode']
         let Lon = parseFloat(st[1])
         let Lat = parseFloat(st[0])
         re.push({
           data: [Lon, Lat],
           information: {
             address: address,
-            Name: obj['_source']['name'],
-            Speciality: obj['_source']['specialty'],
-            Title: obj['_source']['title'],
+            name: obj['_source']['name'] + " " + obj['_source']['title'],
+            phoneNumber: obj['_source']['phone_number'],
+            speciality: obj['_source']['specialty'],
+            title: obj['_source']['title'],
           },
         })
       })

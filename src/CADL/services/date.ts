@@ -157,6 +157,7 @@ export default {
       morning: [],
       afternoon: [],
     }
+    let nowtime = (new Date()).valueOf() / 1000
     if (isArray(object2)) {
       object2.forEach((obj) => {
         if (isObject(obj)) {
@@ -179,13 +180,15 @@ export default {
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
               } else {
-                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                  array.morning.push(splitTimeItem)
-                } else {
-                  array.afternoon.push(splitTimeItem)
+                if (splitTimeItem['stime'] >= nowtime) {
+                  if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                    array.morning.push(splitTimeItem)
+                  } else {
+                    array.afternoon.push(splitTimeItem)
+                  }
                 }
+                i += 1
               }
-              i += 1
             } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
           }
         }
@@ -342,6 +345,13 @@ export default {
     todayColor,
     todayBackgroundColor,
   }) {
+    console.log("test weekly", {
+      year: year,
+      month: month,
+      today: today,
+      markDay: markDay
+    })
+    if (typeof year == 'string' || typeof month == 'string' || typeof today == 'string' || typeof markDay == 'string') { return }
     if (year && month && today && markDay) {
       today = parseInt(today)
       year = parseInt(year)
@@ -418,6 +428,9 @@ export default {
       object.forEach((obj) => {
         let span = (parseInt(obj.etime) - parseInt(obj.stime)) / 60
         span = span * 1.5 < 20 ? 20 : span * 1.5
+        if (span >= 100) {
+          span = 100
+        }
         obj.height = span + 'px'
       })
       return object
@@ -436,6 +449,7 @@ export default {
    * @returns
    */
   ShowDateByNumber({ year, month, day, formatType = '' }) {
+    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { return }
     if (year && month && day) {
       if (formatType == '' || typeof formatType == undefined) {
         year = parseInt(year)
@@ -621,6 +635,8 @@ export default {
   },
 
   transformMonth({ month }) {
+    console.log("test transformMonth", { month: month })
+    if (typeof month == 'string') { return }
     const months = [
       'Jan',
       'Feb',
@@ -679,5 +695,15 @@ export default {
     return
 
 
+  },
+  isType({ parameter, type }) {
+    console.log("test isType", {
+      parameter: parameter,
+      type: type
+    })
+    if (typeof parameter == type) {
+      return true
+    }
+    return false
   },
 }
