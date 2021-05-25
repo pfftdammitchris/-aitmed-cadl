@@ -345,6 +345,13 @@ export default {
     todayColor,
     todayBackgroundColor,
   }) {
+    console.log("test weekly", {
+      year: year,
+      month: month,
+      today: today,
+      markDay: markDay
+    })
+    if (typeof year == 'string' || typeof month == 'string' || typeof today == 'string' || typeof markDay == 'string') { return }
     if (year && month && today && markDay) {
       today = parseInt(today)
       year = parseInt(year)
@@ -442,6 +449,7 @@ export default {
    * @returns
    */
   ShowDateByNumber({ year, month, day, formatType = '' }) {
+    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { break }
     if (year && month && day) {
       if (formatType == '' || typeof formatType == undefined) {
         year = parseInt(year)
@@ -627,6 +635,7 @@ export default {
   },
 
   transformMonth({ month }) {
+    if (typeof month == 'string') return
     const months = [
       'Jan',
       'Feb',

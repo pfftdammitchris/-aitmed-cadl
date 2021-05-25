@@ -153,6 +153,72 @@ export default {
     console.log("test query", body.hits.hits)
     return body.hits.hits
   },
+  async queryByDate({ cond = null, distance = 30, carrier = null, pos = 92508, stime, etime }) {
+    console.log('test query', {
+      cond: cond,
+      distance: distance,
+      carrier: carrier,
+      pos: pos,
+      stime: stime,
+      etime: etime
+    })
+    let INDEX = 'doctors'
+    let arr: any[] = []
+    if (pos) {
+      // let address
+      await GetlatAndlon(pos).then(
+        (data: LatResponse) => {
+          arr[0] = data.center[0]
+          arr[1] = data.center[1]
+          console.log('query zip code1', data)
+        },
+        (err) => {
+          console.log('query error', err)
+        }
+      )
+      // arr = address
+    }
+    console.log('query zip code2', arr)
+
+    let template = {
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "name^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
+          },
+          "filter": {
+            "geo_distance": {
+              "distance": distance + "mi",
+              "location": arr[1] + " , " + arr[0]
+            }
+          }
+        }
+      }
+    }
+
+    let body = await client.search({
+      index: INDEX,
+      body: template,
+    })
+    // console.log(carrier)
+    // console.log(template.query.bool.must)
+    console.log("test query", body.hits.hits)
+    return body.hits.hits
+  },
 
   GetAllLonAndLat({ object }) {
     if (isArray(object)) {
