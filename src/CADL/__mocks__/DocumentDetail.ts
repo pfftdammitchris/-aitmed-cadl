@@ -58,7 +58,7 @@ export default {
         type: '.DocType.MeetingNote',
         name: {
           title: '',
-          type: '..newChat.document.subtype.mediaType',
+          type: '=..newChat.document.subtype.mediaType',
           data: '',
           user: '.Global.currentUser.vertex.name.userName',
         },
