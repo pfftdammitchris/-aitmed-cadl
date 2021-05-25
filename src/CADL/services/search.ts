@@ -115,33 +115,29 @@ export default {
     console.log('query zip code2', arr)
 
     let template = {
-      "query": {
-        "bool": {
-          "must": {
-            "function_score": {
-              "query": {
-                "multi_match": {
-                  "query": cond,
-                  "type": "best_fields",
-                  "fields": [
-                    "specialty^3",
-                    "name^2",
-                    "symptom^1"
-                  ],
-                  "fuzziness": "AUTO",
-                  "prefix_length": 2
-                }
-              }
-            }
+      query: {
+        bool: {
+          must: {
+            function_score: {
+              query: {
+                multi_match: {
+                  query: cond,
+                  type: 'best_fields',
+                  fields: ['specialty^3', 'name^2', 'symptom^1'],
+                  fuzziness: 'AUTO',
+                  prefix_length: 2,
+                },
+              },
+            },
           },
-          "filter": {
-            "geo_distance": {
-              "distance": distance + "mi",
-              "location": arr[1] + " , " + arr[0]
-            }
-          }
-        }
-      }
+          filter: {
+            geo_distance: {
+              distance: distance + 'mi',
+              location: arr[1] + ' , ' + arr[0],
+            },
+          },
+        },
+      },
     }
 
     let body = await client.search({
@@ -150,17 +146,24 @@ export default {
     })
     // console.log(carrier)
     // console.log(template.query.bool.must)
-    console.log("test query", body.hits.hits)
+    console.log('test query', body.hits.hits)
     return body.hits.hits
   },
-  async queryByDate({ cond = null, distance = 30, carrier = null, pos = 92508, stime, etime }) {
+  async queryByDate({
+    cond = null,
+    distance = 30,
+    carrier = null,
+    pos = 92508,
+    stime,
+    etime,
+  }) {
     console.log('test query', {
       cond: cond,
       distance: distance,
       carrier: carrier,
       pos: pos,
       stime: stime,
-      etime: etime
+      etime: etime,
     })
     let INDEX = 'doctors'
     let arr: any[] = []
@@ -191,78 +194,72 @@ export default {
       etime = stime + 86400
     }
 
-
     console.log('query zip code2', { arr: arr, stime: stime, etime: etime })
-    let template =
-    {
-      "query": {
-        "bool": {
-          "must": {
-            "function_score": {
-              "query": {
-                "multi_match": {
-                  "query": cond,
-                  "type": "best_fields",
-                  "fields": [
-                    "specialty^3",
-                    "name^2",
-                    "symptom^1"
-                  ],
-                  "fuzziness": "AUTO",
-                  "prefix_length": 2
-                }
-              }
-            }
+    let template = {
+      query: {
+        bool: {
+          must: {
+            function_score: {
+              query: {
+                multi_match: {
+                  query: cond,
+                  type: 'best_fields',
+                  fields: ['specialty^3', 'name^2', 'symptom^1'],
+                  fuzziness: 'AUTO',
+                  prefix_length: 2,
+                },
+              },
+            },
           },
-          "filter": [
+          filter: [
             {
-              "range": {
-                "avail": {
-                  "gte": stime,
-                  "lt": etime,
-                  "relation": "intersects"
-                }
-              }
+              range: {
+                avail: {
+                  gte: stime,
+                  lt: etime,
+                  relation: 'intersects',
+                },
+              },
             },
             {
-              "geo_distance": {
-                "distance": distance + "mi",
-                "location": arr[1] + " , " + arr[0]
-              }
-            }
-          ]
-        }
-      }
+              geo_distance: {
+                distance: distance + 'mi',
+                location: arr[1] + ' , ' + arr[0],
+              },
+            },
+          ],
+        },
+      },
     }
-    let template2 = {
-      "query": {
-        "bool": {
-          "must": {
-            "function_score": {
-              "query": {
-                "multi_match": {
-                  "query": cond,
-                  "type": "best_fields",
-                  "fields": [
-                    "specialty^3",
-                    "name^2",
-                    "symptom^1"
-                  ],
-                  "fuzziness": "AUTO",
-                  "prefix_length": 2
-                }
-              }
-            }
-          },
-          "filter": {
-            "geo_distance": {
-              "distance": distance + "mi",
-              "location": arr[1] + " , " + arr[0]
-            }
-          }
-        }
-      }
-    }
+    // let template2 = {
+    //   "query": {
+    //     "bool": {
+    //       "must": {
+    //         "function_score": {
+    //           "query": {
+    //             "multi_match": {
+    //               "query": cond,
+    //               "type": "best_fields",
+    //               "fields": [
+    //                 "specialty^3",
+    //                 "name^2",
+    //                 "symptom^1"
+    //               ],
+    //               "fuzziness": "AUTO",
+    //               "prefix_length": 2
+    //             }
+    //           }
+    //         }
+    //       },
+    //       "filter": {
+    //         "geo_distance": {
+    //           "distance": distance + "mi",
+    //           "location": arr[1] + " , " + arr[0]
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
 
     let body = await client.search({
       index: INDEX,
@@ -270,7 +267,7 @@ export default {
     })
     // console.log(carrier)
     // console.log(template.query.bool.must)
-    console.log("test query", body.hits.hits)
+    console.log('test query', body.hits.hits)
     return body.hits.hits
   },
 
@@ -293,7 +290,7 @@ export default {
           data: [Lon, Lat],
           information: {
             address: address,
-            name: obj['_source']['name'] + " " + obj['_source']['title'],
+            name: obj['_source']['name'] + ' ' + obj['_source']['title'],
             phoneNumber: obj['_source']['phone_number'],
             speciality: obj['_source']['specialty'],
             title: obj['_source']['title'],
@@ -341,9 +338,9 @@ export default {
   },
 
   processingSearchData({ object }) {
-    let path = ["avatar1.png", "avatar2.png", "avatar3.png", "avatar4.png"]
+    let path = ['avatar1.png', 'avatar2.png', 'avatar3.png', 'avatar4.png']
     if (isArray(object)) {
-      object.forEach(obj => {
+      object.forEach((obj) => {
         let randomNumber = Math.ceil(Math.random() * 10)
         if (randomNumber >= 0 && randomNumber < 2.5) {
           randomNumber = 0
@@ -355,12 +352,17 @@ export default {
           randomNumber = 3
         }
         obj['path'] = path[randomNumber]
-        obj['address'] = obj['_source']['address_street'] + " " + obj['_source']['address_city'] + " " + obj['_source']['address_state']
+        obj['address'] =
+          obj['_source']['address_street'] +
+          ' ' +
+          obj['_source']['address_city'] +
+          ' ' +
+          obj['_source']['address_state']
         if (obj['_source']['Speciality'] == null) {
-          obj['_source']['Speciality'] = "unknown"
+          obj['_source']['Speciality'] = 'unknown'
         }
       })
     }
     return
-  }
+  },
 }
