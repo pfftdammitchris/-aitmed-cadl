@@ -449,7 +449,7 @@ export default {
    * @returns
    */
   ShowDateByNumber({ year, month, day, formatType = '' }) {
-    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { break }
+    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { return }
     if (year && month && day) {
       if (formatType == '' || typeof formatType == undefined) {
         year = parseInt(year)
@@ -635,7 +635,8 @@ export default {
   },
 
   transformMonth({ month }) {
-    if (typeof month == 'string') return
+    console.log("test transformMonth", { month: month })
+    if (typeof month == 'string') { return }
     const months = [
       'Jan',
       'Feb',
@@ -694,5 +695,15 @@ export default {
     return
 
 
+  },
+  isType({ parameter, type }) {
+    console.log("test isType", {
+      parameter: parameter,
+      type: type
+    })
+    if (typeof parameter == type) {
+      return true
+    }
+    return false
   },
 }
