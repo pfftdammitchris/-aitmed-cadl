@@ -33,7 +33,7 @@ import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
 // import SignUp from './__mocks__/SignUp'
-// import DocumentDetail from './__mocks__/DocumentDetail'
+// import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -244,7 +244,10 @@ export default class CADL extends EventEmitter {
           type: 'SET_ROOT_PROPERTIES',
           payload: {
             properties: {
-              Global: localStorageGlobalParsed,
+              Global: {
+                ...localStorageGlobalParsed,
+                globalRegister: this.root.Global.globalRegister,
+              },
             },
           },
         })
@@ -519,7 +522,7 @@ export default class CADL extends EventEmitter {
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
     // if (pageName === 'SignUp') return _.cloneDeep(SignUp)
-    // if (pageName === 'DocumentDetail') return _.cloneDeep(DocumentDetail)
+    // if (pageName === 'BaseDataModel') return _.cloneDeep(BaseDataModel)
 
     let pageCADL
     let pageUrl
@@ -1293,7 +1296,9 @@ export default class CADL extends EventEmitter {
         //only add the Global object if user is loggedIn
         const esk = localStorage.getItem('esk')
         if (esk) {
-          localStorage.setItem('Global', JSON.stringify(this.root?.Global))
+          const { globalRegister, ...restOfGlobalProperties } =
+            this.root?.Global
+          localStorage.setItem('Global', JSON.stringify(restOfGlobalProperties))
         }
         break
       }
