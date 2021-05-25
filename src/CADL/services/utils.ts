@@ -65,28 +65,28 @@ export default {
     name.data = blobUrl
     return note
   },
-
-  async prepareDocToPath(name) {
-    console.log("test prepareDocToPath", name)
-    const type = "image/png"
-    if (!name?.data) return
-    if (typeof name?.data !== 'string') return
-    if (!isPopulated(name?.data)) return
-    if (
-      typeof name?.data === 'string' &&
-      !name?.data.match(
-        /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g
-      )
-    ) return
-    const blob = store.level2SDK.utilServices.base64ToBlob(name?.data, type)
-    const blobUrl = URL.createObjectURL(blob)
-    // console.error(blobUrl, typeof blobUrl, typeof blob)
-    name.data = blobUrl
-    return blobUrl
-    // blob.then((response) => {
-    //   return URL.createObjectURL(response)
-    // })
-  },
+  //  please dont delete
+  // async prepareDocToPath(name) {
+  //   console.log("test prepareDocToPath", name)
+  //   const type = "image/png"
+  //   if (!name?.data) return
+  //   if (typeof name?.data !== 'string') return
+  //   if (!isPopulated(name?.data)) return
+  //   if (
+  //     typeof name?.data === 'string' &&
+  //     !name?.data.match(
+  //       /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g
+  //     )
+  //   ) return
+  //   const blob = store.level2SDK.utilServices.base64ToBlob(name?.data, type)
+  //   const blobUrl = URL.createObjectURL(blob)
+  //   // console.error(blobUrl, typeof blobUrl, typeof blob)
+  //   name.data = blobUrl
+  //   return blobUrl
+  //   // blob.then((response) => {
+  //   //   return URL.createObjectURL(response)
+  //   // })
+  // },
 
   alert({ value }) {
     alert(value)
