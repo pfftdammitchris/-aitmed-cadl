@@ -178,9 +178,63 @@ export default {
       )
       // arr = address
     }
-    console.log('query zip code2', arr)
+    if (typeof stime == 'string' || typeof etime == 'string') {
+      let d = new Date()
+      let dateObject = new Date()
+      dateObject.setMonth(d.getMonth() + 1)
+      dateObject.setDate(d.getDate())
+      dateObject.setFullYear(d.getFullYear())
+      dateObject.setHours(0)
+      dateObject.setMinutes(0)
+      dateObject.setSeconds(0)
+      stime = Date.parse(dateObject.toString()) / 1000
+      etime = stime + 86400
+    }
 
-    let template = {
+
+    console.log('query zip code2', { arr: arr, stime: stime, etime: etime })
+    let template =
+    {
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "name^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
+          },
+          "filter": [
+            {
+              "range": {
+                "avail": {
+                  "gte": stime,
+                  "lt": etime,
+                  "relation": "intersects"
+                }
+              }
+            },
+            {
+              "geo_distance": {
+                "distance": distance + "mi",
+                "location": arr[1] + " , " + arr[0]
+              }
+            }
+          ]
+        }
+      }
+    }
+    let template2 = {
       "query": {
         "bool": {
           "must": {
