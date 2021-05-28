@@ -105,7 +105,7 @@ export default {
   //judge whether all the request textfield is filled in 
   judgeFillinAll(stringArr: string[]) {
     for (let i = 0; i < stringArr.length; i++)
-      if (stringArr[i] == "") return true
+      if (stringArr[i] == "" || stringArr[i] == "-- --") return true
     return false
   },
   judgeAllTrue({ str1, str2, str3 }) {
