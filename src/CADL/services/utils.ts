@@ -81,7 +81,6 @@ export default {
     const blob = store.level2SDK.utilServices.base64ToBlob(name?.data, type)
     const blobUrl = URL.createObjectURL(blob)
     // console.error(blobUrl, typeof blobUrl, typeof blob)
-    console.log("test prepareDocToPath", blobUrl)
     name.data = blobUrl
     return blobUrl
     // blob.then((response) => {
