@@ -372,6 +372,7 @@ export default {
             phone: arr['name']['inviterPhoneNumber'],
             favorite: favorite1,
             connectId: arr['id'],
+            status: arr['name']['status'],
           }
           array.push(arrayItem)
         })
@@ -387,6 +388,7 @@ export default {
             phone: arr['name']['inviteePhoneNumber'],
             favorite: favorite1,
             connectId: arr['id'],
+            status: arr['name']['status'],
           }
           array.push(arrayItem)
         })
@@ -405,6 +407,7 @@ export default {
           phone: arr['name']['inviterPhoneNumber'],
           favorite: favorite1,
           connectId: arr['id'],
+          status: arr['name']['status'],
         }
         array.push(arrayItem)
       })
@@ -418,6 +421,7 @@ export default {
           phone: arr['name']['inviteePhoneNumber'],
           favorite: favorite1,
           connectId: arr['id'],
+          status: arr['name']['status'],
         }
         array.push(arrayItem)
       })
