@@ -58,13 +58,13 @@ export default {
     }
     let dateArray = date.split('-')
     dateArray[1] = parseInt(dateArray[1]) - 1
-    let dateObject = new Date()
-    dateObject.setMonth(dateArray[1])
-    dateObject.setDate(dateArray[2])
-    dateObject.setFullYear(dateArray[0])
-    dateObject.setHours(0)
-    dateObject.setMinutes(0)
-    dateObject.setSeconds(0)
+    let dateObject = new Date(dateArray[0], dateArray[1], dateArray[2])
+    // dateObject.setMonth(dateArray[1])
+    // dateObject.setDate(dateArray[2])
+    // dateObject.setFullYear(dateArray[0])
+    // dateObject.setHours(0)
+    // dateObject.setMinutes(0)
+    // dateObject.setSeconds(0)
     timeStamp.start = Date.parse(dateObject.toString()) / 1000
     timeStamp.end = timeStamp.start + 86400
     return timeStamp
