@@ -218,7 +218,7 @@ export default {
                 avail: {
                   gte: stime,
                   lt: etime,
-                  relation: 'intersects',
+                  relation: "contains",
                 },
               },
             },
