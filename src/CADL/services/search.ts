@@ -3,6 +3,7 @@ import { get } from 'https'
 import _, { isArray } from 'lodash'
 // const node = 'http://44.192.21.229:9200'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
+const INDEX = "doctors_v0.1"
 // let client = new Client({ host: 'https://searchapi.aitmed.io' })
 // let DEFAULT_ADDRESS = "92805"
 // let SIZE = 100
@@ -50,7 +51,7 @@ export default {
    */
   async suggest({ prefix }) {
     console.log('test suggest', prefix)
-    let INDEX = 'doctors'
+    // let INDEX = 'doctors_v0.1'
     const doc_sug: any[] = []
     const spe_sug: any[] = []
     const body = await client.search({
@@ -96,7 +97,7 @@ export default {
       carrier: carrier,
       pos: pos,
     })
-    let INDEX = 'doctors'
+    // let INDEX = 'doctors'
     let arr: any[] = []
     if (pos) {
       // let address
@@ -217,7 +218,7 @@ export default {
                 avail: {
                   gte: stime,
                   lt: etime,
-                  relation: 'intersects',
+                  relation: "contains",
                 },
               },
             },
