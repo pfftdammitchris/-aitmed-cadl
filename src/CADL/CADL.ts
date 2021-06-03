@@ -1148,12 +1148,33 @@ export default class CADL extends EventEmitter {
               mergedVal = data
             }
           }
+          let shouldReplace
+          if (isObject(mergedVal) && 'jwt' in mergedVal) {
+            if (
+              mergedVal.doc &&
+              Array.isArray(mergedVal.doc) &&
+              mergedVal.doc.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.edge &&
+              Array.isArray(mergedVal.edge) &&
+              mergedVal.edge.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.vertex &&
+              Array.isArray(mergedVal.vertex) &&
+              mergedVal.vertex.length === 0
+            )
+              shouldReplace = true
+          }
           this.newDispatch({
             type: 'SET_VALUE',
             payload: {
               dataKey: pathArr,
               value: mergedVal,
-              replace: true,
+              replace: shouldReplace,
             },
           })
         } else {
@@ -1175,14 +1196,34 @@ export default class CADL extends EventEmitter {
           } else {
             mergedVal = data
           }
-
+          let shouldReplace
+          if (isObject(mergedVal) && 'jwt' in mergedVal) {
+            if (
+              mergedVal.doc &&
+              Array.isArray(mergedVal.doc) &&
+              mergedVal.doc.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.edge &&
+              Array.isArray(mergedVal.edge) &&
+              mergedVal.edge.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.vertex &&
+              Array.isArray(mergedVal.vertex) &&
+              mergedVal.vertex.length === 0
+            )
+              shouldReplace = true
+          }
           this.newDispatch({
             type: 'SET_VALUE',
             payload: {
               pageName,
               dataKey: pathArr,
               value: mergedVal,
-              replace: true,
+              replace: shouldReplace,
             },
           })
         }
