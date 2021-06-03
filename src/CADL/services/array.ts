@@ -1,5 +1,6 @@
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
+import object from './object'
 type connection = {
   name: string
   category: string
@@ -372,6 +373,7 @@ export default {
             phone: arr['name']['inviterPhoneNumber'],
             favorite: favorite1,
             connectId: arr['id'],
+            status: arr['name']['status'],
           }
           array.push(arrayItem)
         })
@@ -387,6 +389,7 @@ export default {
             phone: arr['name']['inviteePhoneNumber'],
             favorite: favorite1,
             connectId: arr['id'],
+            status: arr['name']['status'],
           }
           array.push(arrayItem)
         })
@@ -405,6 +408,7 @@ export default {
           phone: arr['name']['inviterPhoneNumber'],
           favorite: favorite1,
           connectId: arr['id'],
+          status: arr['name']['status'],
         }
         array.push(arrayItem)
       })
@@ -418,6 +422,7 @@ export default {
           phone: arr['name']['inviteePhoneNumber'],
           favorite: favorite1,
           connectId: arr['id'],
+          status: arr['name']['status'],
         }
         array.push(arrayItem)
       })
@@ -762,9 +767,19 @@ export default {
         }
 
       }
-
     }
   },
-
+  isEmpty({ array }) {
+    let it = 0
+    array.forEach(element => {
+      if (typeof (element) == undefined || element == null || element.length == 0) {
+        it++
+      }
+    });
+    if (it >= 7)
+      return true
+    else
+      return false
+  }
 
 }
