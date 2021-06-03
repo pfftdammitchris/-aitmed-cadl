@@ -1,6 +1,6 @@
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
-import object from './object'
+// import object from './object'
 type connection = {
   name: string
   category: string
@@ -29,7 +29,11 @@ export default {
     if (isArray(object)) {
       if (value) {
         var cloned = _.cloneDeep(value)
-        if (object[parseInt(index)] == null || (Object.keys(object[parseInt(index)]).length === 0 && object[parseInt(index)].constructor === Object)) {
+        if (
+          object[parseInt(index)] == null ||
+          (Object.keys(object[parseInt(index)]).length === 0 &&
+            object[parseInt(index)].constructor === Object)
+        ) {
           let item_1 = new Array()
           item_1.push(cloned)
           object[parseInt(index)] = item_1
@@ -373,6 +377,7 @@ export default {
             phone: arr['name']['inviterPhoneNumber'],
             favorite: favorite1,
             connectId: arr['id'],
+            //@ts-ignore
             status: arr['name']['status'],
           }
           array.push(arrayItem)
@@ -389,6 +394,7 @@ export default {
             phone: arr['name']['inviteePhoneNumber'],
             favorite: favorite1,
             connectId: arr['id'],
+            //@ts-ignore
             status: arr['name']['status'],
           }
           array.push(arrayItem)
@@ -408,6 +414,7 @@ export default {
           phone: arr['name']['inviterPhoneNumber'],
           favorite: favorite1,
           connectId: arr['id'],
+          //@ts-ignore
           status: arr['name']['status'],
         }
         array.push(arrayItem)
@@ -422,6 +429,7 @@ export default {
           phone: arr['name']['inviteePhoneNumber'],
           favorite: favorite1,
           connectId: arr['id'],
+          //@ts-ignore
           status: arr['name']['status'],
         }
         array.push(arrayItem)
@@ -665,24 +673,30 @@ export default {
     return arr
   },
   addProvider({ object, provider }) {
-    provider['name']['basicInfo'] = { medicalFacilityName: "current Provider" }
+    provider['name']['basicInfo'] = { medicalFacilityName: 'current Provider' }
     provider['isSelected'] = true
     let cloned = _.cloneDeep(provider)
     object.push(cloned)
     return
   },
   /**
-   * 
+   *
    * @param Object : Data to be processed
    * @param timeLimit : Display the amount of data
    * @param timeSpan : Process data based on month, week, and day
    * @param increaseColor : Color when the rate of increase is positive
    * @param decreaseColor : Color when the rate of increase is negative
-   * @returns 
-  */
-  handleData({ Object, timeLimit = 10, timeSpan = "day", increaseColor = "0x3DD598", decreaseColor = "0xF0142F" }) {
+   * @returns
+   */
+  handleData({
+    Object,
+    timeLimit = 10,
+    timeSpan = 'day',
+    increaseColor = '0x3DD598',
+    decreaseColor = '0xF0142F',
+  }) {
     if (isArray(Object)) {
-      console.log("test handleData", Object)
+      console.log('test handleData', Object)
       let time = 24 * 60 * 60 * 1000
       if (timeSpan == 'day') {
         time = 1 * time
@@ -693,30 +707,62 @@ export default {
       }
       let data_x: Record<string, any> = []
       let data_y: Record<string, any> = []
-      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"]
+      const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sept',
+        'Oct',
+        'Nov',
+        'Dec',
+      ]
       let date = new Date()
       // hard code
       for (let i = 0; i < timeLimit; i++) {
         let ctime, etime, name
         if (timeSpan == 'day') {
-          ctime = new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime()
+          ctime = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate()
+          ).getTime()
           etime = ctime + 24 * 60 * 60 * 1000
-          name = new Date(ctime).getFullYear() + "-" + new Date(ctime).getMonth() + "-" + new Date(ctime).getDate()
+          name =
+            new Date(ctime).getFullYear() +
+            '-' +
+            new Date(ctime).getMonth() +
+            '-' +
+            new Date(ctime).getDate()
         } else if (timeSpan == 'week') {
           let d = new Date(date.getTime() - date.getDay() * 24 * 60 * 60 * 1000)
           ctime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
           etime = ctime + 7 * 24 * 60 * 60 * 1000
-          name = new Date(ctime).getFullYear() + "-" + new Date(ctime).getMonth() + "-" + date.getDate()
+          name =
+            new Date(ctime).getFullYear() +
+            '-' +
+            new Date(ctime).getMonth() +
+            '-' +
+            date.getDate()
         } else if (timeSpan == 'month') {
-          let d = new Date(date.getTime() - (date.getDate() - 1) * 24 * 60 * 60 * 1000)
+          let d = new Date(
+            date.getTime() - (date.getDate() - 1) * 24 * 60 * 60 * 1000
+          )
           ctime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
-          let d2 = new Date(d.getFullYear(), d.getMonth(), 0);
-          let currentdays = d2.getDate();
+          let d2 = new Date(d.getFullYear(), d.getMonth(), 0)
+          let currentdays = d2.getDate()
           etime = ctime + currentdays * 24 * 60 * 60 * 1000
-          name = new Date(ctime).getFullYear() + "-" + months[new Date(ctime).getMonth()]
+          name =
+            new Date(ctime).getFullYear() +
+            '-' +
+            months[new Date(ctime).getMonth()]
         }
         let count = 0
-        Object.forEach(obj => {
+        Object.forEach((obj) => {
           if (obj.ctime * 1000 > ctime && obj.ctime * 1000 < etime) {
             count = count + 1
           }
@@ -728,23 +774,23 @@ export default {
       let currentNum = data_y[0]
       let currentRadio
       if (data_y[1] != 0) {
-        currentRadio = ((data_y[0] / data_y[1]) - 1) * 100
+        currentRadio = (data_y[0] / data_y[1] - 1) * 100
       } else {
         currentRadio = 0
       }
       let color, radioString
       if (currentRadio >= 0) {
-        radioString = currentRadio.toFixed(2) + "%" + " ↑"
+        radioString = currentRadio.toFixed(2) + '%' + ' ↑'
         color = increaseColor
       } else {
-        radioString = (-currentRadio).toFixed(2) + "%" + " ↓"
+        radioString = (-currentRadio).toFixed(2) + '%' + ' ↓'
         color = decreaseColor
       }
       console.log({
         currentNum: currentNum,
         currentRadio: currentRadio.toFixed(2),
         radioString: radioString,
-        color: color
+        color: color,
       })
       // Returned data format
       return {
@@ -753,11 +799,10 @@ export default {
         radioString: radioString,
         color: color,
         data_x: data_x,
-        data_y: data_y
+        data_y: data_y,
       }
     }
     return
-
   },
   transformNull({ dayObject }) {
     if (isArray(dayObject)) {
@@ -765,21 +810,21 @@ export default {
         if (Object.keys(dayObject[i]).length == 0) {
           dayObject[i] = null
         }
-
       }
     }
   },
   isEmpty({ array }) {
     let it = 0
-    array.forEach(element => {
-      if (typeof (element) == undefined || element == null || element.length == 0) {
+    array.forEach((element) => {
+      if (
+        typeof element == undefined ||
+        element == null ||
+        element.length == 0
+      ) {
         it++
       }
-    });
-    if (it >= 7)
-      return true
-    else
-      return false
-  }
-
+    })
+    if (it >= 7) return true
+    else return false
+  },
 }
