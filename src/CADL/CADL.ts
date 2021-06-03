@@ -32,7 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SignUp from './__mocks__/SignUp'
+// import SignIn from './__mocks__/SignIn'
 // import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
@@ -521,7 +521,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'SignUp') return _.cloneDeep(SignUp)
+    // if (pageName === 'SignIn') return _.cloneDeep(SignIn)
     // if (pageName === 'BaseDataModel') return _.cloneDeep(BaseDataModel)
 
     let pageCADL
@@ -1153,6 +1153,7 @@ export default class CADL extends EventEmitter {
             payload: {
               dataKey: pathArr,
               value: mergedVal,
+              replace: true,
             },
           })
         } else {
@@ -1181,6 +1182,7 @@ export default class CADL extends EventEmitter {
               pageName,
               dataKey: pathArr,
               value: mergedVal,
+              replace: true,
             },
           })
         }
