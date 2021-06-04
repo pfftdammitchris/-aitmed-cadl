@@ -1,6 +1,5 @@
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
-import object from './object'
 type connection = {
   name: string
   category: string
@@ -8,6 +7,13 @@ type connection = {
   phone: string
   favorite: boolean
   connectId: string
+  status: string
+}
+type provider = {
+  name: string
+  NPI: string
+  address: string
+  providerId: string
 }
 type index = {
   key: number
@@ -780,6 +786,32 @@ export default {
       return true
     else
       return false
+  },
+  getProvider({ array }) {
+    let providerList: provider[] = []
+    if (isArray(array)) {
+      array.forEach((arr) => {
+        let provider: provider
+        if (arr['name']['data'] == null) {
+          provider = {
+            name: "",
+            NPI: "",
+            address: "",
+            providerId: arr['bsig']
+          }
+          providerList.push(provider)
+        } else {
+          provider = {
+            name: arr['name']['data']['firstName'] + arr['name']['data']['middleName'] + arr['name']['data']['lastName'],
+            NPI: arr['name']['data']['NPI'],
+            address: arr['name']['data']['address'],
+            providerId: arr['bsig']
+          }
+          providerList.push(provider)
+        }
+      })
+    }
+    return providerList
   }
 
 }

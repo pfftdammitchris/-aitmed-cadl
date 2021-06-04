@@ -177,16 +177,19 @@ export default {
                 refid: obj['id'],
                 bvid: obj['bvid']
               }
+              console.log(date.getTime())
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
               } else {
-                if (splitTimeItem['stime'] >= nowtime) {
-                  if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                    array.morning.push(splitTimeItem)
-                  } else {
-                    array.afternoon.push(splitTimeItem)
-                  }
+                // console.log(splitTimeItem['stime'])
+                // console.log(nowtime)
+                // if (splitTimeItem['stime'] >= nowtime) {
+                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                  array.morning.push(splitTimeItem)
+                } else {
+                  array.afternoon.push(splitTimeItem)
                 }
+                // }
                 i += 1
               }
             } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
