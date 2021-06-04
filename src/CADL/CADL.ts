@@ -1017,9 +1017,11 @@ export default class CADL extends EventEmitter {
       func = attachFns({
         cadlObject: populateAfterAttachingMyBaseUrl,
         dispatch: boundDispatch,
-        force: populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
-          ? true
-          : false,
+        force:
+          populateAfterAttachingMyBaseUrl['dataIn'] &&
+          populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
+            ? true
+            : false,
       })
     }
     if (typeof func === 'function') {
