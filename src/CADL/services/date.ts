@@ -5,6 +5,7 @@ interface splitTime {
   stime: number
   etime: number
   refid: string
+  bvid: string
 }
 
 export default {
@@ -57,13 +58,13 @@ export default {
     }
     let dateArray = date.split('-')
     dateArray[1] = parseInt(dateArray[1]) - 1
-    let dateObject = new Date()
-    dateObject.setMonth(dateArray[1])
-    dateObject.setDate(dateArray[2])
-    dateObject.setFullYear(dateArray[0])
-    dateObject.setHours(0)
-    dateObject.setMinutes(0)
-    dateObject.setSeconds(0)
+    let dateObject = new Date(dateArray[0], dateArray[1], dateArray[2])
+    // dateObject.setMonth(dateArray[1])
+    // dateObject.setDate(dateArray[2])
+    // dateObject.setFullYear(dateArray[0])
+    // dateObject.setHours(0)
+    // dateObject.setMinutes(0)
+    // dateObject.setSeconds(0)
     timeStamp.start = Date.parse(dateObject.toString()) / 1000
     timeStamp.end = timeStamp.start + 86400
     return timeStamp
@@ -73,11 +74,17 @@ export default {
       if (n < 13 * 60) {
         let h = Math.floor(n / 60)
         let m = n % 60
+        if (h == 12) {
+          return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+        }
         return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
       } else {
         let h = Math.floor((n - 12 * 60) / 60)
         let m = (n - 12 * 60) % 60
-        return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
+        if (h == 12) {
+          return `${`0${h}`.slice(-2)}:${`0${m}`.slice(-2)}AM`
+        }
+        return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
     let i: number = 0
@@ -122,7 +129,7 @@ export default {
         dataObject.push({
           key: dataArray[i],
           color: '#ffffff',
-          backgroundColor: '#508CC7',
+          backgroundColor: '#2988e6',
         })
       } else {
         dataObject.push({
@@ -135,15 +142,29 @@ export default {
     // let dataJson = _.chunk(dataArray, 7);
     return dataObject
   },
-  splitByTimeSlot({ object2, timeSlot }) {
+  splitByTimeSlot({ object2, timeSlot, year, month, day }) {
+    let date = new Date()
+    date.setFullYear(year)
+    date.setMonth(month - 1)
+    date.setDate(day)
+    date.setHours(0)
+    date.setMinutes(0)
+    date.setSeconds(0)
+    date.setUTCMilliseconds(0)
+    let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
     let array: any = {
       morning: [],
       afternoon: [],
     }
+    let nowtime = (new Date()).valueOf() / 1000
     if (isArray(object2)) {
       object2.forEach((obj) => {
         if (isObject(obj)) {
+          if (obj["stime"] < date.getTime() / 1000 && obj['etime'] > date.getTime() / 1000)
+            obj["stime"] = date.getTime() / 1000
+          if (obj['stime'] < anotherDay && obj['etime'] > anotherDay)
+            obj['etime'] = anotherDay
           if (timeSlot) {
             let i = 0
             do {
@@ -154,18 +175,21 @@ export default {
                   (obj['stime'] + i * timeSlot * 60) * 1000
                 ).format('LT'),
                 refid: obj['id'],
+                bvid: obj['bvid']
               }
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
               } else {
-                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                  array.morning.push(splitTimeItem)
-                } else {
-                  array.afternoon.push(splitTimeItem)
+                if (splitTimeItem['stime'] >= nowtime) {
+                  if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                    array.morning.push(splitTimeItem)
+                  } else {
+                    array.afternoon.push(splitTimeItem)
+                  }
                 }
+                i += 1
               }
-              i += 1
-            } while (splitTimeItem['etime'] <= obj['etime'])
+            } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
           }
         }
       })
@@ -187,14 +211,18 @@ export default {
   },
   ShowTimeSpanFormat(object) {
     if (isObject(object)) {
-      if (object.hasOwnProperty("stime") && object.hasOwnProperty("etime")) {
+      if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
-        let m = date.getMonth() > 10 ? date.getMonth() : "0" + date.getMonth()
-        let d = date.getDay() > 10 ? date.getDay() : "0" + date.getDay()
+        let m =
+          date.getMonth() + 1 > 10
+            ? date.getMonth() + 1
+            : '0' + (date.getMonth() + 1)
+        let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
-        let duration_date = y + "-" + m + "-" + d + " " + start_date + "-" + end_date
+        let duration_date =
+          y + '-' + m + '-' + d + ' ' + start_date + '-' + end_date
         return duration_date
       }
       return
@@ -225,6 +253,7 @@ export default {
     span = parseInt(span)
     year = parseInt(year)
     month = parseInt(month)
+    month = month
     let weeks = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA']
     let dataObject: Record<string, any> = []
     let isLeapYear =
@@ -293,9 +322,104 @@ export default {
   },
 
   /**
-   * Add a height attribute to each item below the array 
-   * @param object 
-   * @returns 
+   *
+   * @param year input year
+   * @param month input month
+   * @param today input today,this can generate today font color and backgroundcolor
+   * @param markDay Generate week time according this param
+   * @param color   font color of common date
+   * @param backgroundColor  background color of common date
+   * @param todayColor  font color of today
+   * @param todayBackgroundColor background color of today
+   * @returns
+   * return data formate:
+   * [{year: 2021,month: 3,day: 28,weekDay: 'Su',color: '#000000', backgroundColor: '#ffffff'}]
+   */
+  miniWeeklyCalendarArray({
+    year,
+    month,
+    today,
+    markDay,
+    color,
+    backgroundColor,
+    todayColor,
+    todayBackgroundColor,
+  }) {
+    console.log("test weekly", {
+      year: year,
+      month: month,
+      today: today,
+      markDay: markDay
+    })
+    if (typeof year == 'string' || typeof month == 'string' || typeof today == 'string' || typeof markDay == 'string') { return }
+    if (year && month && today && markDay) {
+      today = parseInt(today)
+      year = parseInt(year)
+      month = parseInt(month)
+      markDay = parseInt(markDay)
+      let dataObject: Record<string, any> = []
+      let weeks = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
+      const date = new Date(year, month - 1, markDay)
+      let currenWeekDay = date.getDay()
+      let d = new Date(date.getTime() - currenWeekDay * 24 * 60 * 60 * 1000)
+      for (let i = 0; i < 7; i++) {
+        let item = {
+          year: d.getFullYear(),
+          month: d.getMonth() + 1,
+          day: d.getDate(),
+          weekDay: weeks[d.getDay()],
+          color: color,
+          backgroundColor: backgroundColor,
+        }
+        if (d.getDate() == today) {
+          item.color = todayColor
+          item.backgroundColor = todayBackgroundColor
+        }
+        dataObject.push(item)
+        d = new Date(d.getTime() + 24 * 60 * 60 * 1000)
+      }
+      return dataObject
+    }
+    return
+  },
+
+  NextWeek({ year, month, day }) {
+    console.log('test NextWeek2', {
+      year: year,
+      month: month,
+      day: day,
+    })
+    let date = new Date(year, month - 1, day)
+    date = new Date(date.getTime() + 24 * 60 * 60 * 1000)
+    let res = {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+    }
+    console.log('test NextWeek2', res)
+    return res
+  },
+  LastWeek({ year, month, day }) {
+    console.log('test lastweek1', {
+      year: year,
+      month: month,
+      day: day,
+    })
+    let date = new Date(year, month - 1, day)
+    date = new Date(date.getTime() - 24 * 60 * 60 * 1000)
+    let res = {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate(),
+    }
+    console.log('test lastweek2', res)
+    return res
+  },
+
+  /**
+   * Add a height attribute to each item below the array
+   * @param object
+   * @returns
    */
   AddHeightByTimeSpan({ object }) {
     if (isArray(object)) {
@@ -303,45 +427,81 @@ export default {
       // let heights = [30, 40, 50, 60, 70]
       object.forEach((obj) => {
         let span = (parseInt(obj.etime) - parseInt(obj.stime)) / 60
-        span = span * 1.5
+        span = span * 1.5 < 20 ? 20 : span * 1.5
+        if (span >= 100) {
+          span = 100
+        }
         obj.height = span + 'px'
       })
       return object
     }
     return
   },
-  ShowDateByNumber({ year, month, day }) {
+  /**
+   *
+   * @param year
+   * @param month
+   * @param day
+   * @param formatType
+   * The default date format is week month day, year (such as Saturday April 10, 2021)
+   * customized to YMD (year, month, day), and place the corresponding year, month,
+   * and day according to the position of YMD (such as "YMD" corresponds to "2021 -04-10")
+   * @returns
+   */
+  ShowDateByNumber({ year, month, day, formatType = '' }) {
+    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { return }
     if (year && month && day) {
-      year = parseInt(year)
-      month = parseInt(month)
-      day = parseInt(day)
-      let date = new Date(year, month, day)
-      let months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December',
-      ]
-      let weeks = [
-        'Sunday',
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-      ]
-      return (
-        weeks[date.getDay()] + ' ' + months[month - 1] + ' ' + day + ',' + year
-      )
+      if (formatType == '' || typeof formatType == undefined) {
+        year = parseInt(year)
+        month = parseInt(month)
+        day = parseInt(day)
+        let date = new Date(year, month - 1, day)
+        let months = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ]
+        let weeks = [
+          'Sunday',
+          'Monday',
+          'Tuesday',
+          'Wednesday',
+          'Thursday',
+          'Friday',
+          'Saturday',
+        ]
+        return (
+          weeks[date.getDay()] +
+          ' ' +
+          months[month - 1] +
+          ' ' +
+          day +
+          ',' +
+          year
+        )
+      } else if (typeof formatType == 'string') {
+        if (day < 10) {
+          day = '0' + day
+        }
+        if (month < 10) {
+          month = '0' + month
+        }
+        formatType.toUpperCase()
+        let re = formatType.replace('Y', year)
+        re = re.replace('M', month)
+        re = re.replace('D', day)
+
+        return re
+      }
     }
     return
   },
@@ -360,10 +520,23 @@ export default {
         workdays.forEach((d, index) => {
           if (d.indexOf('AM') != -1) {
             d = d.replace('AM', '')
+            let split_date = d.split(':')
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0]) + 12
+            } else {
+              form_date = parseInt(split_date[0])
+            }
+            d = form_date + ':' + split_date[1]
           } else if (d.indexOf('PM') != -1) {
             d = d.replace('PM', '')
             let split_date = d.split(':')
-            let form_date = parseInt(split_date[0]) + 12
+            let form_date
+            if (parseInt(split_date[0]) == 12) {
+              form_date = parseInt(split_date[0])
+            } else {
+              form_date = parseInt(split_date[0]) + 12
+            }
             d = form_date + ':' + split_date[1]
           }
 
@@ -377,7 +550,7 @@ export default {
           itemStyle: { normal: { color: '#2988E65f' } },
           value: [],
         }
-        item.value[0] = obj.index
+        item.value[0] = 6 - obj.index
         item.value[1] = start_time
         item.value[2] = end_time
         dataObject.push(item)
@@ -403,7 +576,10 @@ export default {
           axisLabel: {
             formatter: function (value) {
               var date = new Date(value)
-              return getzf(date.getHours()) + ':' + getzf(date.getMinutes())
+              if (date.getHours() % 4 == 0) {
+                return date.getHours() + ':' + getzf(date.getMinutes())
+              }
+              return
               function getzf(num) {
                 if (parseInt(num) < 10) {
                   num = '0' + num
@@ -414,7 +590,7 @@ export default {
           },
         },
         yAxis: {
-          data: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+          data: ['SA', 'FR', 'TH', 'WE', 'TU', 'MO', 'SU'],
         },
         series: [
           {
@@ -456,5 +632,78 @@ export default {
       return option
     }
     return
+  },
+
+  transformMonth({ month }) {
+    console.log("test transformMonth", { month: month })
+    if (typeof month == 'string') { return }
+    const months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sept',
+      'Oct',
+      'Nov',
+      'Dec',
+    ]
+    return months[month - 1]
+  },
+  getDurationByMinute({ stime, etime }) {
+    return (etime - stime) / 60
+  },
+
+  startMeeting({ stime }) {
+    if ((stime - 900) * 1000 <= new Date().getTime()) return true
+    return false
+  },
+  transformSelectWeek({ object }) {
+    if (isArray(object)) {
+      let selectWeek: Record<string, any> = []
+      let addWeek: Record<string, any> = []
+      let weeks = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
+      for (let i = 0; i < 7; i++) {
+        if (!(Object.keys(object[i]).length === 0 && object[i].constructor === Object)) {
+          selectWeek.push({
+            index: i,
+            key: weeks[i],
+            availableTime: {
+              timeStart: "",
+              timeEnd: ""
+            }
+          })
+          object[i].forEach(obj => {
+            addWeek.push({
+              duration: obj,
+              location: "",
+              index: i,
+              key: weeks[i]
+
+            })
+          })
+        }
+      }
+      return {
+        selectWeek: selectWeek,
+        addWeek: addWeek
+      }
+    }
+    return
+
+
+  },
+  isType({ parameter, type }) {
+    console.log("test isType", {
+      parameter: parameter,
+      type: type
+    })
+    if (typeof parameter == type) {
+      return true
+    }
+    return false
   },
 }

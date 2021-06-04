@@ -32,7 +32,8 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-import SettingsUpdate from './__mocks__/Settings'
+// import SignIn from './__mocks__/SignIn'
+// import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
   private _cadlVersion: 'test' | 'stable'
@@ -243,7 +244,10 @@ export default class CADL extends EventEmitter {
           type: 'SET_ROOT_PROPERTIES',
           payload: {
             properties: {
-              Global: localStorageGlobalParsed,
+              Global: {
+                ...localStorageGlobalParsed,
+                globalRegister: this.root.Global.globalRegister,
+              },
             },
           },
         })
@@ -305,10 +309,10 @@ export default class CADL extends EventEmitter {
         },
       })
     }
-    let pageCADL = await this.getPage(pageName)
+    let pageCADL
     if (reload === false && this.root[pageName]) {
       //keep the current pageObject
-      pageCADL = { [pageName]: this.root[pageName] }
+      return
     } else {
       //refresh the pageObject
       pageCADL = await this.getPage(pageName)
@@ -517,7 +521,8 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    if (pageName === 'SettingsUpdate') return _.cloneDeep(SettingsUpdate)
+    // if (pageName === 'SignIn') return _.cloneDeep(SignIn)
+    // if (pageName === 'BaseDataModel') return _.cloneDeep(BaseDataModel)
 
     let pageCADL
     let pageUrl
@@ -744,6 +749,7 @@ export default class CADL extends EventEmitter {
 
     let results
     await asyncForEach(array, async (command) => {
+      if (results && results?.actionType === 'popUp') return
       /**
        * object is being populated before running every command. This is done to ensure that the new change from a previous command is made available to the subsequent commands
        */
@@ -768,11 +774,15 @@ export default class CADL extends EventEmitter {
           key,
           pageName,
         })
-        if (results === undefined && result !== undefined) {
+        if (
+          (results === undefined && result !== undefined) ||
+          (isObject(result) && result?.actionType === 'popUp')
+        ) {
           results = result
         }
       })
     })
+
     return results
   }
 
@@ -873,7 +883,8 @@ export default class CADL extends EventEmitter {
       const shouldCopy =
         key.includes('builtIn') &&
         'dataIn' in commands[key] &&
-        isObject(commands[key]['dataIn']) &&
+        (isObject(commands[key]['dataIn']) ||
+          Array.isArray(commands[key]['dataIn'])) &&
         !('object' in commands[key]['dataIn']) &&
         !('array' in commands[key]['dataIn'])
       const populatedCommand = await this.dispatch({
@@ -1006,9 +1017,11 @@ export default class CADL extends EventEmitter {
       func = attachFns({
         cadlObject: populateAfterAttachingMyBaseUrl,
         dispatch: boundDispatch,
-        force: populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
-          ? true
-          : false,
+        force:
+          populateAfterAttachingMyBaseUrl['dataIn'] &&
+          populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
+            ? true
+            : false,
       })
     }
     if (typeof func === 'function') {
@@ -1041,6 +1054,9 @@ export default class CADL extends EventEmitter {
     } else if (Array.isArray(func)) {
       func = func[1]
       await func()
+    }
+    if (key.includes('goto')) {
+      results = { abort: true }
     }
     return results
   }
@@ -1134,11 +1150,33 @@ export default class CADL extends EventEmitter {
               mergedVal = data
             }
           }
+          let shouldReplace
+          if (isObject(mergedVal) && 'jwt' in mergedVal) {
+            if (
+              mergedVal.doc &&
+              Array.isArray(mergedVal.doc) &&
+              mergedVal.doc.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.edge &&
+              Array.isArray(mergedVal.edge) &&
+              mergedVal.edge.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.vertex &&
+              Array.isArray(mergedVal.vertex) &&
+              mergedVal.vertex.length === 0
+            )
+              shouldReplace = true
+          }
           this.newDispatch({
             type: 'SET_VALUE',
             payload: {
               dataKey: pathArr,
               value: mergedVal,
+              replace: shouldReplace,
             },
           })
         } else {
@@ -1160,13 +1198,34 @@ export default class CADL extends EventEmitter {
           } else {
             mergedVal = data
           }
-
+          let shouldReplace
+          if (isObject(mergedVal) && 'jwt' in mergedVal) {
+            if (
+              mergedVal.doc &&
+              Array.isArray(mergedVal.doc) &&
+              mergedVal.doc.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.edge &&
+              Array.isArray(mergedVal.edge) &&
+              mergedVal.edge.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.vertex &&
+              Array.isArray(mergedVal.vertex) &&
+              mergedVal.vertex.length === 0
+            )
+              shouldReplace = true
+          }
           this.newDispatch({
             type: 'SET_VALUE',
             payload: {
               pageName,
               dataKey: pathArr,
               value: mergedVal,
+              replace: shouldReplace,
             },
           })
         }
@@ -1282,7 +1341,9 @@ export default class CADL extends EventEmitter {
         //only add the Global object if user is loggedIn
         const esk = localStorage.getItem('esk')
         if (esk) {
-          localStorage.setItem('Global', JSON.stringify(this.root?.Global))
+          const { globalRegister, ...restOfGlobalProperties } =
+            this.root?.Global
+          localStorage.setItem('Global', JSON.stringify(restOfGlobalProperties))
         }
         break
       }
@@ -1335,9 +1396,8 @@ export default class CADL extends EventEmitter {
             )
             const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
             if (timeDiff > limit) {
-              apiDispatchBufferObject[
-                hash
-              ].timestamp = currentTimestamp.toString()
+              apiDispatchBufferObject[hash].timestamp =
+                currentTimestamp.toString()
               pass = true
             } else {
               apiDispatchBufferObject[`${hash}FAILED_REPEAT`] = {
@@ -1483,7 +1543,7 @@ export default class CADL extends EventEmitter {
           gotoArgs = populatedTrueEffect['goto'].dataIn
         }
         await this.root.builtIn['goto'](gotoArgs)
-        return
+        return { abort: 'true' }
       } else if (
         isObject(ifTrueEffect) &&
         (Object.keys(ifTrueEffect)?.[0]?.includes('@') ||
@@ -1621,7 +1681,7 @@ export default class CADL extends EventEmitter {
             gotoArgs = populatedFalseEffect['goto'].dataIn
           }
           await this.root.builtIn['goto'](gotoArgs)
-          return
+          return { abort: true }
         }
       } else if (typeof ifFalseEffect === 'function') {
         await ifFalseEffect()
@@ -1845,13 +1905,8 @@ export default class CADL extends EventEmitter {
             isObject(populatedCommand) &&
             'actionType' in populatedCommand
           ) {
-            const {
-              actionType,
-              dataKey,
-              dataObject,
-              object,
-              funcName,
-            }: any = populatedCommand
+            const { actionType, dataKey, dataObject, object, funcName }: any =
+              populatedCommand
             switch (actionType) {
               case 'updateObject': {
                 await this.updateObject({ dataKey, dataObject })

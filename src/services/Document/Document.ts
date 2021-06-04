@@ -35,10 +35,13 @@ export const create: DocumentTypes.Create = async ({
   content,
   type,
   user,
+  targetRoomName,
+  fid,
   mediaType,
   dataType = 0,
   dTypeProps,
   paymentNonce,
+  jwt,
 }) => {
   //check if eid has been dereferenced
   if (!isPopulated(edge_id)) {
@@ -168,6 +171,9 @@ export const create: DocumentTypes.Create = async ({
   if (user) {
     name.user = user
   }
+  if (targetRoomName) {
+    name.targetRoomName = targetRoomName
+  }
 
   // data must be base64 in name field
   if (dType.isOnServer) {
@@ -183,6 +189,8 @@ export const create: DocumentTypes.Create = async ({
       subtype: dType.value,
       name,
       size: blob.size,
+      fid,
+      jwt,
     })
     .then(store.responseCatcher)
     .catch(store.errorCatcher)
@@ -193,6 +201,7 @@ export const create: DocumentTypes.Create = async ({
     })
   }
   const document: CommonTypes.Doc = response.data?.document
+  if (!document) return response
   const { deat } = document
 
   if (!dType.isOnServer && deat !== null && deat && deat.url && deat.sig) {
@@ -243,7 +252,7 @@ export const retrieve = async (id, _edge) => {
  */
 export const update: any = async (
   id,
-  { edge_id, title, content, mediaType, tags, type, dTypeProps }
+  { edge_id, title, content, mediaType, tags, type, dTypeProps, jwt }
 ) => {
   // Get original document
   const document = await retrieveDocument(id)
@@ -290,7 +299,7 @@ export const update: any = async (
     // Does not need to update content
     params.name = name
     response = await store.level2SDK.documentServices
-      .updateDocument({ ...params, subtype: dType.value })
+      .updateDocument({ ...params, subtype: dType.value, jwt })
       .then(store.responseCatcher)
       .catch(store.errorCatcher)
     if (!response || response.code !== 0) {
@@ -387,6 +396,7 @@ export const update: any = async (
       name: params.name,
       size: blob.size,
       type,
+      jwt,
     })
     if (!response || response.code !== 0) {
       throw new AiTmedError({

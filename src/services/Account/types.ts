@@ -38,7 +38,8 @@ export interface Create {
     phone_number: string,
     password: string,
     verification_code: number,
-    userInfo: Record<string, any>
+    userInfo: Record<string, any>,
+    type: string | number
   ): Promise<Record<string, any>>
 }
 

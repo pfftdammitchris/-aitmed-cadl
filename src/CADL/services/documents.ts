@@ -15,13 +15,10 @@ function get({ pageName, apiObject, dispatch }) {
       dataKey,
       dataIn,
       dataOut,
-      id,
-      ids,
+
       subtype,
       ...options
     } = _.cloneDeep(apiObject || {})
-
-    let idList = ids ? ids : id ? [id] : ['']
 
     let requestOptions = {
       ...options,
@@ -30,18 +27,18 @@ function get({ pageName, apiObject, dispatch }) {
     let type = options?.type
     let sCondition = options?.sCondition
     let nonce
-
+    let idList
     if (dataIn) {
       //get current object name value
       const currentVal = await dispatch({
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
-
-      const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
+      const { deat, id, ids, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
         payload: { object: currentVal, pageName, copy: true },
       })
+      idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       if (!isPopulated(id)) {
         throw new UnableToLocateValue(
@@ -49,18 +46,16 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
-      idList = Array.isArray(id) ? [...id] : [id]
       requestOptions = populatedCurrentVal
       maxcount = populatedCurrentVal?.maxcount
       type = populatedCurrentVal?.type
       sCondition = populatedCurrentVal?.sCondition
-    } else if (options.id) {
-      idList = Array.isArray(options.id) ? [...options.id] : [options.id]
     } else {
-      const { deat, _nonce, ...populatedCurrentVal } = await dispatch({
+      const { deat, _nonce, id, ids, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
         payload: { object: requestOptions, pageName },
       })
+      idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       requestOptions = populatedCurrentVal
     }
@@ -151,6 +146,17 @@ function get({ pageName, apiObject, dispatch }) {
           res
         )
       }
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
@@ -225,63 +231,37 @@ function create({ pageName, apiObject, dispatch }) {
               content: name?.data,
               mediaType: name?.type,
               title: name?.title,
-              user: name?.user,
+              targetRoomName: name?.targetRoomName,
               tags: name?.tags,
+              user: name?.user,
               type: restOfDocOptions?.type,
+              fid: restOfDocOptions?.fid,
+              jwt: restOfDocOptions?.jwt,
+              dTypeProps,
             }
           )
         }
 
-        //Buffer check
-        const { pass: shouldPass, cacheIndex } = await dispatch({
-          type: 'set-api-buffer',
-          payload: {
-            apiObject: {
-              id,
-              edge_id: eid,
-              content: name?.data,
-              mediaType: name?.type,
-              title: name?.title,
-              user: name?.user,
-              tags: name?.tags,
-              type: restOfDocOptions?.type,
-              dTypeProps,
-              nonce: _nonce,
-            },
-          },
+        const response = await Document.update(id, {
+          edge_id: eid,
+          content: name?.data,
+          mediaType: name?.type,
+          title: name?.title,
+          targetRoomName: name?.targetRoomName,
+          tags: name?.tags,
+          user: name?.user,
+          type: restOfDocOptions?.type,
+          fid: restOfDocOptions?.fid,
+          jwt: restOfDocOptions?.jwt,
+          dTypeProps,
         })
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          const response = await Document.update(id, {
-            edge_id: eid,
-            content: name?.data,
-            mediaType: name?.type,
-            title: name?.title,
-            tags: name?.tags,
-            user: name?.user,
-            type: restOfDocOptions?.type,
-            dTypeProps,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data: response, cacheIndex },
-          })
-          res = response
-          if (store.env === 'test') {
-            console.log(
-              '%cUpdate Document Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        res = response
+        if (store.env === 'test') {
+          console.log(
+            '%cUpdate Document Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
@@ -302,68 +282,56 @@ function create({ pageName, apiObject, dispatch }) {
             'background: purple; color: white; display: block;',
             {
               edge_id: eid,
-              content: name?.data ? name?.data : name,
+              content: name?.data,
+              targetRoomName: name?.targetRoomName,
+              paymentNonce: name?.nonce,
               mediaType: name?.type,
-              user: name?.user,
               title: name?.title,
+              user: name?.user,
               type: restOfDocOptions?.type,
+              fid: restOfDocOptions?.fid,
+              jwt: restOfDocOptions?.jwt,
+              dTypeProps,
             }
           )
         }
-        //Buffer check
-        const { pass: shouldPass, cacheIndex } = await dispatch({
-          type: 'set-api-buffer',
-          payload: {
-            apiObject: {
-              edge_id: eid,
-              content: name?.data,
-              mediaType: name?.type,
-              user: name?.user,
-              title: name?.title,
-              type: restOfDocOptions?.type,
-              dTypeProps,
-              nonce: _nonce,
-            },
-          },
+        const response = await Document.create({
+          edge_id: eid,
+          content: name?.data,
+          targetRoomName: name?.targetRoomName,
+          paymentNonce: name?.nonce,
+          mediaType: name?.type,
+          title: name?.title,
+          user: name?.user,
+          type: restOfDocOptions?.type,
+          fid: restOfDocOptions?.fid,
+          jwt: restOfDocOptions?.jwt,
+          dTypeProps,
         })
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          const response = await Document.create({
-            edge_id: eid,
-            content: name?.data,
-            paymentNonce: name?.nonce,
-            mediaType: name?.type,
-            title: name?.title,
-            user: name?.user,
-            type: restOfDocOptions?.type,
-            dTypeProps,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data: response, cacheIndex },
-          })
-          res = response
-          if (store.env === 'test') {
-            console.log(
-              '%cCreate Document Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        res = response
+        if (store.env === 'test') {
+          console.log(
+            '%cCreate Document Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
       }
     }
     if (res) {
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object

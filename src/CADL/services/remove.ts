@@ -23,7 +23,39 @@ function remove({ pageName, apiObject, dispatch }) {
     const { api, id, ...options } = populatedCurrentVal
     let res
     //delete request must have have an id
-    if (id) {
+    if (Array.isArray(id)) {
+      id.forEach(async (element) => {
+        try {
+          if (store.env === 'test') {
+            console.log(
+              '%cDelete Object Request',
+              'background: purple; color: white; display: block;',
+              { ...options, id: element }
+            )
+          }
+          //Buffer check
+          const shouldPass = setAPIBuffer({
+            api: 'dx',
+            element,
+          })
+          if (!shouldPass) return
+          const { data } = await store.level2SDK.commonServices.deleteRequest([
+            element,
+          ])
+          res = data
+          if (store.env === 'test') {
+            console.log(
+              '%cDelete Object Response',
+              'background: purple; color: white; display: block;',
+              res
+            )
+          }
+        } catch (error) {
+          throw error
+        }
+      })
+    }
+    if (typeof (id) == 'string') {
       try {
         if (store.env === 'test') {
           console.log(

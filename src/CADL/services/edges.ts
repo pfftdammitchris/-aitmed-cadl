@@ -134,7 +134,17 @@ function get({ pageName, apiObject, dispatch }) {
           res
         )
       }
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
 
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object
@@ -198,13 +208,6 @@ function create({ pageName, apiObject, dispatch }) {
     //if there is an id present
     //it is treated as un update request
     if (id && !id.startsWith('.')) {
-      //Buffer check
-      const { pass: shouldPass, cacheIndex } = await dispatch({
-        type: 'set-api-buffer',
-        payload: {
-          apiObject: { ...mergedVal, id },
-        },
-      })
       try {
         if (store.env === 'test') {
           console.log(
@@ -213,46 +216,24 @@ function create({ pageName, apiObject, dispatch }) {
             { ...mergedVal, id }
           )
         }
-        //Buffer check
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
-            )
-          }
-        } else {
-          const { data } = await store.level2SDK.edgeServices.updateEdge({
-            ...mergedVal,
-            id,
-          })
-          await dispatch({
-            type: 'set-cache',
-            payload: { data, cacheIndex },
-          })
-          res = data
 
-          if (store.env === 'test') {
-            console.log(
-              '%cUpdate Edge Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        const { data } = await store.level2SDK.edgeServices.updateEdge({
+          ...mergedVal,
+          id,
+        })
+        res = data
+
+        if (store.env === 'test') {
+          console.log(
+            '%cUpdate Edge Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
       }
     } else {
-      //Buffer check
-      const { pass: shouldPass, cacheIndex } = await dispatch({
-        type: 'set-api-buffer',
-        payload: {
-          apiObject: { ...mergedVal },
-        },
-      })
       try {
         if (store.env === 'test') {
           console.log(
@@ -261,97 +242,83 @@ function create({ pageName, apiObject, dispatch }) {
             { ...mergedVal }
           )
         }
-        if (!shouldPass) {
-          res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
-          if (store.env === 'test') {
-            console.log(
-              `%cUsing Cached Data for`,
-              'background:#7268A6; color: white; display: block;',
-              apiObject
+
+        const { data } = await store.level2SDK.edgeServices.createEdge({
+          ...mergedVal,
+        })
+        const isInviteEdge = data?.edge?.type === 1053
+        if (isInviteEdge) {
+          const pkOfInviter = localStorage.getItem('pk')
+          const skOfInviter = localStorage.getItem('sk')
+          const {
+            data: { edge },
+          } = await store.level2SDK.edgeServices.retrieveEdge({
+            idList: [data?.edge?.refid],
+          })
+          const rootEdge = edge[0]
+          let rootEdgeBesak = rootEdge?.besak
+          if (!rootEdge?.besak) {
+            const besak = store.level2SDK.commonServices.generateEsak(
+              pkOfInviter
             )
+            const {
+              data: updatedRootEdgeRes,
+            } = await store.level2SDK.edgeServices.updateEdge({
+              id: rootEdge.eid,
+              type: 40000,
+              besak,
+              name: rootEdge.name,
+            })
+
+            if (updatedRootEdgeRes?.edge) rootEdgeBesak = besak
+          }
+          let pkOfInviterToUint8Array, skOfInviterToUint8Array
+          if (pkOfInviter && skOfInviter) {
+            pkOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+              pkOfInviter
+            )
+            skOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+              skOfInviter
+            )
+          }
+          const sak = store.level2SDK.utilServices.aKeyDecrypt(
+            pkOfInviterToUint8Array,
+            skOfInviterToUint8Array,
+            rootEdgeBesak
+          )
+          const inviteEdge = data?.edge
+          const pkOfInvitee = inviteEdge.deat.evPK
+            ? inviteEdge.deat.evPK
+            : inviteEdge.deat.eePK
+          const pkOfInviteeToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
+            pkOfInvitee
+          )
+          if (sak) {
+            const eesak = store.level2SDK.utilServices.aKeyEncrypt(
+              pkOfInviteeToUint8Array,
+              skOfInviterToUint8Array,
+              sak
+            )
+            const {
+              data: updatedInviteEdgeRes,
+            } = await store.level2SDK.edgeServices.updateEdge({
+              id: inviteEdge.eid,
+              type: 1053,
+              eesak,
+              name: inviteEdge.name,
+            })
+            res = updatedInviteEdgeRes
           }
         } else {
-          const { data } = await store.level2SDK.edgeServices.createEdge({
-            ...mergedVal,
-          })
-          const isInviteEdge = data?.edge?.type === 1053
-          if (isInviteEdge) {
-            const pkOfInviter = localStorage.getItem('pk')
-            const skOfInviter = localStorage.getItem('sk')
-            const {
-              data: { edge },
-            } = await store.level2SDK.edgeServices.retrieveEdge({
-              idList: [data?.edge?.refid],
-            })
-            const rootEdge = edge[0]
-            let rootEdgeBesak = rootEdge?.besak
-            if (!rootEdge?.besak) {
-              const besak = store.level2SDK.commonServices.generateEsak(
-                pkOfInviter
-              )
-              const {
-                data: updatedRootEdgeRes,
-              } = await store.level2SDK.edgeServices.updateEdge({
-                id: rootEdge.eid,
-                type: 40000,
-                besak,
-                name: rootEdge.name,
-              })
+          res = data
+        }
 
-              if (updatedRootEdgeRes?.edge) rootEdgeBesak = besak
-            }
-            let pkOfInviterToUint8Array, skOfInviterToUint8Array
-            if (pkOfInviter && skOfInviter) {
-              pkOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-                pkOfInviter
-              )
-              skOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-                skOfInviter
-              )
-            }
-            const sak = store.level2SDK.utilServices.aKeyDecrypt(
-              pkOfInviterToUint8Array,
-              skOfInviterToUint8Array,
-              rootEdgeBesak
-            )
-            const inviteEdge = data?.edge
-            const pkOfInvitee = inviteEdge.deat.evPK
-              ? inviteEdge.deat.evPK
-              : inviteEdge.deat.eePK
-            const pkOfInviteeToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-              pkOfInvitee
-            )
-            if (sak) {
-              const eesak = store.level2SDK.utilServices.aKeyEncrypt(
-                pkOfInviteeToUint8Array,
-                skOfInviterToUint8Array,
-                sak
-              )
-              const {
-                data: updatedInviteEdgeRes,
-              } = await store.level2SDK.edgeServices.updateEdge({
-                id: inviteEdge.eid,
-                type: 1053,
-                eesak,
-                name: inviteEdge.name,
-              })
-              res = updatedInviteEdgeRes
-            }
-          } else {
-            res = data
-          }
-          await dispatch({
-            type: 'set-cache',
-            payload: { res, cacheIndex },
-          })
-
-          if (store.env === 'test') {
-            console.log(
-              '%cCreate Edge Response',
-              'background: purple; color: white; display: block;',
-              res
-            )
-          }
+        if (store.env === 'test') {
+          console.log(
+            '%cCreate Edge Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
         }
       } catch (error) {
         throw error
@@ -359,6 +326,17 @@ function create({ pageName, apiObject, dispatch }) {
     }
     if (res) {
       res.edge = replaceEidWithId(res.edge)
+      if (res.jwt) {
+        //update Global jwt
+        await dispatch({
+          type: 'update-data',
+
+          payload: {
+            dataKey: 'Global.currentUser.JWT',
+            data: res.jwt,
+          },
+        })
+      }
       await dispatch({
         type: 'update-data',
         //TODO: handle case for data is an array or an object

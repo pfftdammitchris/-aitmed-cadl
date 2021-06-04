@@ -39,19 +39,24 @@ function builtIn({ pageName, apiObject, dispatch }) {
     try {
       if (store.env === 'test') {
         console.log(
-          `%cBuiltIn Fn:${pathArr} Request ', 'background: purple; color: white; display: block;`,
-          res
+          `%cBuiltIn Fn:${pathArr} Request `,
+          `background: purple; color: white; display: block;`,
+          {
+            ...currentVal,
+            ...input,
+          }
         )
       }
       //TODO: make signature more generic
       const data = await builtInFn({
+        ...currentVal,
         ...input,
-        name: { ...currentVal.name, ...input },
       })
       res = data
       if (store.env === 'test') {
         console.log(
-          `%cBuiltIn Fn:${pathArr} Response ', 'background: purple; color: white; display: block;`,
+          `%cBuiltIn Fn:${pathArr} Response`,
+          `background: purple; color: white; display: block;`,
           res
         )
       }
@@ -101,20 +106,21 @@ export default function builtInFns(dispatch?: Function) {
     math,
     FCM,
     payment,
-    async createNewAccount({ name }) {
-      const { phoneNumber, password, userName, firstName, lastName } = name
+    async createNewAccount(args) {
+      const { phoneNumber, password, userName, firstName, lastName } = args.name
       let validPhoneNumber
       if (phoneNumber.includes('-')) {
         validPhoneNumber = phoneNumber.replace(/-/g, '')
       } else {
         validPhoneNumber = phoneNumber
       }
-      validPhoneNumber = name.countryCode + ' ' + validPhoneNumber
+      validPhoneNumber = args.name.countryCode + ' ' + validPhoneNumber
       const data = await Account.create(
         validPhoneNumber,
         password,
-        name?.verificationCode,
-        { userName, firstName, lastName }
+        args.name?.verificationCode,
+        { userName, firstName, lastName },
+        args.type
       )
       let sk = localStorage.getItem('sk')
       if (dispatch) {
@@ -232,9 +238,8 @@ export default function builtInFns(dispatch?: Function) {
       return string1 === string2
     },
     async downloadFromS3(url) {
-      const response = await store.level2SDK.documentServices.downloadDocumentFromS3(
-        { url }
-      )
+      const response =
+        await store.level2SDK.documentServices.downloadDocumentFromS3({ url })
       return response?.data
     },
     cleanLocalStorage() {
