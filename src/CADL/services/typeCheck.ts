@@ -13,4 +13,14 @@ export default {
       return false
     }
   },
+
+  userName(userName: string) {
+    let len = userName.length
+    if (len > 5 && len < 17) {
+      return true
+    } else {
+      return false
+    }
+  },
 }
+
