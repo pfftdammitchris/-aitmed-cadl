@@ -987,12 +987,15 @@ export default class CADL extends EventEmitter {
     const pathArr = trimPath.split('.')
     let func = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
     if (isObject(func)) {
+      if ('dataKey' in func) {
+        func = { ...func, dataIn: func.dataKey, dataOut: func.dataKey }
+        delete func.dataKey
+      }
       const populateWithRoot = populateObject({
         source: func,
         lookFor: '.',
         locations: [this.root, this.root[pageName]],
       })
-
       const populateWithSelf = populateObject({
         source: populateWithRoot,
         lookFor: '..',
@@ -1019,7 +1022,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
