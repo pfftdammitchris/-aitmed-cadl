@@ -143,14 +143,14 @@ export default {
     return dataObject
   },
   splitByTimeSlot({ object2, timeSlot, year, month, day }) {
-    let date = new Date()
-    date.setFullYear(year)
-    date.setMonth(month - 1)
-    date.setDate(day)
-    date.setHours(0)
-    date.setMinutes(0)
-    date.setSeconds(0)
-    date.setUTCMilliseconds(0)
+    let date = new Date(year, month - 1, day)
+    // date.setFullYear(year)
+    // date.setMonth(month - 1)
+    // date.setDate(day)
+    // date.setHours(0)
+    // date.setMinutes(0)
+    // date.setSeconds(0)
+    // date.setUTCMilliseconds(0)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
     let array: any = {
