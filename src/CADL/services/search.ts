@@ -166,7 +166,6 @@ export default {
       stime: stime,
       etime: etime,
     })
-    let INDEX = 'doctors'
     let arr: any[] = []
     if (pos) {
       // let address
@@ -218,7 +217,7 @@ export default {
                 avail: {
                   gte: stime,
                   lt: etime,
-                  relation: "contains",
+                  relation: "intersects",
                 },
               },
             },
@@ -232,37 +231,9 @@ export default {
         },
       },
     }
-    // let template2 = {
-    //   "query": {
-    //     "bool": {
-    //       "must": {
-    //         "function_score": {
-    //           "query": {
-    //             "multi_match": {
-    //               "query": cond,
-    //               "type": "best_fields",
-    //               "fields": [
-    //                 "specialty^3",
-    //                 "name^2",
-    //                 "symptom^1"
-    //               ],
-    //               "fuzziness": "AUTO",
-    //               "prefix_length": 2
-    //             }
-    //           }
-    //         }
-    //       },
-    //       "filter": {
-    //         "geo_distance": {
-    //           "distance": distance + "mi",
-    //           "location": arr[1] + " , " + arr[0]
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+    console.log("test query", template)
 
-    let body = await client.search({
+    const body = await client.search({
       index: INDEX,
       body: template,
     })
