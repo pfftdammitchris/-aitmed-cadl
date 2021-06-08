@@ -987,12 +987,15 @@ export default class CADL extends EventEmitter {
     const pathArr = trimPath.split('.')
     let func = _.get(this.root, pathArr) || _.get(this.root[pageName], pathArr)
     if (isObject(func)) {
+      if ('dataKey' in func) {
+        func = { ...func, dataIn: func.dataKey, dataOut: func.dataKey }
+        delete func.dataKey
+      }
       const populateWithRoot = populateObject({
         source: func,
         lookFor: '.',
         locations: [this.root, this.root[pageName]],
       })
-
       const populateWithSelf = populateObject({
         source: populateWithRoot,
         lookFor: '..',
@@ -1017,9 +1020,12 @@ export default class CADL extends EventEmitter {
       func = attachFns({
         cadlObject: populateAfterAttachingMyBaseUrl,
         dispatch: boundDispatch,
-        force: populateAfterAttachingMyBaseUrl['dataIn'].includes('Global')
-          ? true
-          : false,
+        force:
+          populateAfterAttachingMyBaseUrl['dataIn'] &&
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            ? true
+            : false,
       })
     }
     if (typeof func === 'function') {
@@ -1148,12 +1154,33 @@ export default class CADL extends EventEmitter {
               mergedVal = data
             }
           }
+          let shouldReplace
+          if (isObject(mergedVal) && 'jwt' in mergedVal) {
+            if (
+              mergedVal.doc &&
+              Array.isArray(mergedVal.doc) &&
+              mergedVal.doc.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.edge &&
+              Array.isArray(mergedVal.edge) &&
+              mergedVal.edge.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.vertex &&
+              Array.isArray(mergedVal.vertex) &&
+              mergedVal.vertex.length === 0
+            )
+              shouldReplace = true
+          }
           this.newDispatch({
             type: 'SET_VALUE',
             payload: {
               dataKey: pathArr,
               value: mergedVal,
-              replace: true,
+              replace: shouldReplace,
             },
           })
         } else {
@@ -1175,14 +1202,34 @@ export default class CADL extends EventEmitter {
           } else {
             mergedVal = data
           }
-
+          let shouldReplace
+          if (isObject(mergedVal) && 'jwt' in mergedVal) {
+            if (
+              mergedVal.doc &&
+              Array.isArray(mergedVal.doc) &&
+              mergedVal.doc.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.edge &&
+              Array.isArray(mergedVal.edge) &&
+              mergedVal.edge.length === 0
+            )
+              shouldReplace = true
+            if (
+              mergedVal.vertex &&
+              Array.isArray(mergedVal.vertex) &&
+              mergedVal.vertex.length === 0
+            )
+              shouldReplace = true
+          }
           this.newDispatch({
             type: 'SET_VALUE',
             payload: {
               pageName,
               dataKey: pathArr,
               value: mergedVal,
-              replace: true,
+              replace: shouldReplace,
             },
           })
         }
