@@ -827,4 +827,15 @@ export default {
     if (it >= 7) return true
     else return false
   },
+  selectOneToArr({ arr, key }) {
+    let arr1: Array<any> = new Array
+    for (let i = 0; i < arr.length; i++)
+      arr1.push(arr[i][key])
+    return arr1
+  },
+  matchInArray({ arr, value, key, key1 }) {
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i][key] == value) return arr[i][key1]
+    }
+  },
 }
