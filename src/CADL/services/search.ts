@@ -324,12 +324,16 @@ export default {
           randomNumber = 3
         }
         obj['path'] = path[randomNumber]
+        obj['fullname'] =
+          obj['_source']['name'] +
+          ', ' +
+          obj['_source']['title']
         obj['address'] =
-          obj['_source']['address_street'] +
-          ' ' +
           obj['_source']['address_city'] +
+          ', ' +
+          obj['_source']['address_state'] +
           ' ' +
-          obj['_source']['address_state']
+          obj['_source']['address_zipcode']
         if (obj['_source']['Speciality'] == null) {
           obj['_source']['Speciality'] = 'unknown'
         }
