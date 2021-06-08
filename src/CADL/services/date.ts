@@ -143,26 +143,29 @@ export default {
     return dataObject
   },
   splitByTimeSlot({ object2, timeSlot, year, month, day }) {
-    let date = new Date()
-    date.setFullYear(year)
-    date.setMonth(month - 1)
-    date.setDate(day)
-    date.setHours(0)
-    date.setMinutes(0)
-    date.setSeconds(0)
-    date.setUTCMilliseconds(0)
+    let date = new Date(year, month - 1, day)
+    // date.setFullYear(year)
+    // date.setMonth(month - 1)
+    // date.setDate(day)
+    // date.setHours(0)
+    // date.setMinutes(0)
+    // date.setSeconds(0)
+    // date.setUTCMilliseconds(0)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
     let array: any = {
       morning: [],
       afternoon: [],
     }
-    let nowtime = (new Date()).valueOf() / 1000
+    let nowtime = new Date().valueOf() / 1000
     if (isArray(object2)) {
       object2.forEach((obj) => {
         if (isObject(obj)) {
-          if (obj["stime"] < date.getTime() / 1000 && obj['etime'] > date.getTime() / 1000)
-            obj["stime"] = date.getTime() / 1000
+          if (
+            obj['stime'] < date.getTime() / 1000 &&
+            obj['etime'] > date.getTime() / 1000
+          )
+            obj['stime'] = date.getTime() / 1000
           if (obj['stime'] < anotherDay && obj['etime'] > anotherDay)
             obj['etime'] = anotherDay
           if (timeSlot) {
@@ -175,21 +178,76 @@ export default {
                   (obj['stime'] + i * timeSlot * 60) * 1000
                 ).format('LT'),
                 refid: obj['id'],
-                bvid: obj['bvid']
+                bvid: obj['bvid'],
               }
+              console.log(date.getTime())
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
               } else {
-                if (splitTimeItem['stime'] >= nowtime) {
-                  if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                    array.morning.push(splitTimeItem)
-                  } else {
-                    array.afternoon.push(splitTimeItem)
-                  }
+                // console.log(splitTimeItem['stime'])
+                // console.log(nowtime)
+                // if (splitTimeItem['stime'] >= nowtime) {
+                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                  array.morning.push(splitTimeItem)
+                } else {
+                  array.afternoon.push(splitTimeItem)
+                }
+                // }
+                i += 1
+              }
+            } while (
+              splitTimeItem['etime'] <= obj['etime'] &&
+              splitTimeItem['etime'] <= anotherDay
+            )
+          }
+        }
+      })
+      return array
+    }
+    return array
+  },
+  splitTime({ object2, timeSlot, year, month, day }) {
+    let date = new Date(year, month - 1, day)
+    let anotherDay = date.getTime() / 1000 + 86400
+    let splitTimeItem: splitTime
+    let array: any = []
+    if (isArray(object2)) {
+      object2.forEach((obj) => {
+        if (isObject(obj)) {
+          if (
+            obj['stime'] < date.getTime() / 1000 &&
+            obj['etime'] > date.getTime() / 1000
+          )
+            obj['stime'] = date.getTime() / 1000
+          if (obj['stime'] < anotherDay && obj['etime'] > anotherDay)
+            obj['etime'] = anotherDay
+          if (timeSlot) {
+            let i = 0
+            do {
+              splitTimeItem = {
+                stime: obj['stime'] + i * timeSlot * 60,
+                etime: obj['stime'] + (i + 1) * timeSlot * 60,
+                showTime: moment(
+                  (obj['stime'] + i * timeSlot * 60) * 1000
+                ).format('LT'),
+                refid: obj['id'],
+                bvid: obj['bvid'],
+              }
+              console.log(date.getTime())
+              if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
+                continue
+              } else {
+                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                  array.push(splitTimeItem)
+                } else {
+                  array.push(splitTimeItem)
                 }
                 i += 1
               }
-            } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
+            } while (
+              splitTimeItem['etime'] <= obj['etime'] &&
+              splitTimeItem['etime'] <= anotherDay
+            )
           }
         }
       })
@@ -345,13 +403,20 @@ export default {
     todayColor,
     todayBackgroundColor,
   }) {
-    console.log("test weekly", {
+    console.log('test weekly', {
       year: year,
       month: month,
       today: today,
-      markDay: markDay
+      markDay: markDay,
     })
-    if (typeof year == 'string' || typeof month == 'string' || typeof today == 'string' || typeof markDay == 'string') { return }
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof today == 'string' ||
+      typeof markDay == 'string'
+    ) {
+      return
+    }
     if (year && month && today && markDay) {
       today = parseInt(today)
       year = parseInt(year)
@@ -449,7 +514,13 @@ export default {
    * @returns
    */
   ShowDateByNumber({ year, month, day, formatType = '' }) {
-    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { return }
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof day == 'string'
+    ) {
+      return
+    }
     if (year && month && day) {
       if (formatType == '' || typeof formatType == undefined) {
         year = parseInt(year)
@@ -635,8 +706,10 @@ export default {
   },
 
   transformMonth({ month }) {
-    console.log("test transformMonth", { month: month })
-    if (typeof month == 'string') { return }
+    console.log('test transformMonth', { month: month })
+    if (typeof month == 'string') {
+      return
+    }
     const months = [
       'Jan',
       'Feb',
@@ -667,39 +740,41 @@ export default {
       let addWeek: Record<string, any> = []
       let weeks = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
       for (let i = 0; i < 7; i++) {
-        if (!(Object.keys(object[i]).length === 0 && object[i].constructor === Object)) {
+        if (
+          !(
+            Object.keys(object[i]).length === 0 &&
+            object[i].constructor === Object
+          )
+        ) {
           selectWeek.push({
             index: i,
             key: weeks[i],
             availableTime: {
-              timeStart: "",
-              timeEnd: ""
-            }
+              timeStart: '',
+              timeEnd: '',
+            },
           })
-          object[i].forEach(obj => {
+          object[i].forEach((obj) => {
             addWeek.push({
               duration: obj,
-              location: "",
+              location: '',
               index: i,
-              key: weeks[i]
-
+              key: weeks[i],
             })
           })
         }
       }
       return {
         selectWeek: selectWeek,
-        addWeek: addWeek
+        addWeek: addWeek,
       }
     }
     return
-
-
   },
   isType({ parameter, type }) {
-    console.log("test isType", {
+    console.log('test isType', {
       parameter: parameter,
-      type: type
+      type: type,
     })
     if (typeof parameter == type) {
       return true
