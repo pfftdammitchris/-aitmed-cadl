@@ -10,6 +10,7 @@ type connection = {
   connectId: string
   status: string
 }
+//@ts-ignore
 type provider = {
   name: string
   NPI: string
