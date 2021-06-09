@@ -157,6 +157,7 @@ export default {
       morning: [],
       afternoon: [],
     }
+    //@ts-ignore
     let nowtime = new Date().valueOf() / 1000
     if (isArray(object2)) {
       object2.forEach((obj) => {
