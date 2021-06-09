@@ -61,36 +61,15 @@ export default {
       }
       return result
     }
-    // } else if (array) {
-    //   if ((match.length === 1) && array[match[0]]) {
-    //     result.push(array[match[0]])
-    //   } else if ((match.length === 2) && array[match[0]][match[1]]) {
-    //     result.push(array[match[0]][match[1]])
-    //   }
-    // }
     return
   },
-  // 将数组中的指定项提取出来 ，已方便table打印
-  // extractArray({obj,arr}){
-  //   let resArray:any[] = []
-  //   arr.forEach((element:string) => {
-  //     if(element.indexOf('.') === -1){
-  //       // 说明没有点，直接返回
-  //       resArray[element] = obj[element]
-  //     }else{
-  //       let subtitle:any[] = element.split('.')
-  //       // 根据数据长度进行迭代
-  //       resArray[subtitle[subtitle.length-1]] = subtitle[JSON.parse(element)]
-  //     }
-  //   });
-  // }
+
   extractArray({ obj, arr }) {
-    console.dir(obj)
     if (isArray(obj)) {
       let res = new Array()
       obj.forEach((objItem) => {
         console.dir(objItem)
-        let resArray: any[] = []
+        let resArray: any = {}
         arr.forEach((element: any) => {
           let _data = objItem
           if (element.indexOf('.') === -1) {
@@ -107,7 +86,7 @@ export default {
         })
         res.push(resArray)
       })
-      console.error(res);
+      console.error(res)
 
       return res
     }
@@ -133,19 +112,25 @@ export default {
     let auth = {
       Settings: false,
       UserManagement: false,
-      Schedule: false
+      Schedule: false,
     }
     Object.keys(object).forEach((key) => {
       Object.keys(object[key]).forEach((key1) => {
-        if ((key === "MFI" || key === "TDT") && (object[key][key1]) === true) {
+        if ((key === 'MFI' || key === 'TDT') && object[key][key1] === true) {
           auth.Settings = true
           return
         }
-        if ((key === "staff" || key === "patient" || key === "provider") && (object[key][key1]) === true) {
+        if (
+          (key === 'staff' || key === 'patient' || key === 'provider') &&
+          object[key][key1] === true
+        ) {
           auth.UserManagement = true
           return
         }
-        if ((key === "scheduleInfo" || key === "PAT") && (object[key][key1]) === true) {
+        if (
+          (key === 'scheduleInfo' || key === 'PAT') &&
+          object[key][key1] === true
+        ) {
           auth.Schedule = true
           return
         }
@@ -169,15 +154,13 @@ export default {
     return object
   },
   isEmpty({ object }) {
-    if (object === "")
-      return true
+    if (object === '') return true
     return false
   },
   setByKey({ object, key, value }) {
     Object.keys(object).forEach((item) => {
-      if (key === item)
-        object[item] = value
+      if (key === item) object[item] = value
     })
     return
-  }
+  },
 }
