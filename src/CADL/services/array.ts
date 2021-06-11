@@ -10,6 +10,7 @@ type connection = {
   connectId: string
   status: string
 }
+//@ts-ignore
 type provider = {
   name: string
   NPI: string
@@ -534,8 +535,13 @@ export default {
   },
 
   WeekSchedule({ planObject }) {
-    if (isArray(planObject)) {
+    if (store._env == 'test') {
       console.log('test WeekSchedule', planObject)
+    }
+    if (planObject == null || typeof planObject == undefined || planObject.length == 0) {
+      return
+    }
+    if (isArray(planObject)) {
       let res: Record<string, any> = []
       let len = 0
       let weeks = [

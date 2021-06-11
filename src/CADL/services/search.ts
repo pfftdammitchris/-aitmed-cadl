@@ -3,7 +3,7 @@ import { get } from 'https'
 import _, { isArray } from 'lodash'
 // const node = 'http://44.192.21.229:9200'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
-const INDEX = "doctors_v0.1"
+const INDEX = "doctors_v0.3"
 // let client = new Client({ host: 'https://searchapi.aitmed.io' })
 // let DEFAULT_ADDRESS = "92805"
 // let SIZE = 100
