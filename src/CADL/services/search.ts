@@ -1,6 +1,7 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
 import _, { isArray } from 'lodash'
+import store from '../../common/store'
 // const node = 'http://44.192.21.229:9200'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
 const INDEX = "doctors_v0.3"
@@ -173,10 +174,15 @@ export default {
         (data: LatResponse) => {
           arr[0] = data.center[0]
           arr[1] = data.center[1]
-          console.log('query zip code1', data)
         },
         (err) => {
-          console.log('query error', err)
+          if (store.env === 'test') {
+            console.log(
+              '%cError',
+              'background: purple; color: white; display: block;',
+              err
+            )
+          }
         }
       )
       // arr = address
@@ -196,42 +202,61 @@ export default {
 
     console.log('query zip code2', { arr: arr, stime: stime, etime: etime })
     let template = {
-      query: {
-        bool: {
-          must: {
-            function_score: {
-              query: {
-                multi_match: {
-                  query: cond,
-                  type: 'best_fields',
-                  fields: ['specialty^3', 'name^2', 'symptom^1'],
-                  fuzziness: 'AUTO',
-                  prefix_length: 2,
-                },
-              },
-            },
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "fullName^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
           },
-          filter: [
-            {
-              range: {
-                avail: {
-                  gte: stime,
-                  lt: etime,
-                  relation: "intersects",
-                },
-              },
-            },
-            {
-              geo_distance: {
-                distance: distance + 'mi',
-                location: arr[1] + ' , ' + arr[0],
-              },
-            },
-          ],
-        },
-      },
+          "filter": {
+            "nested": {
+              "path": "availByLocation",
+              "query": {
+                "bool": {
+                  "filter": [
+                    {
+                      "terms": {
+                        "availByLocation.visitType": ["Office", "Telemedicine"]
+                      }
+                    },
+                    {
+                      "range": {
+                        "availByLocation.avail": {
+                          "gte": stime,
+                          "lt": etime,
+                          "relation": "intersects"
+                        }
+                      }
+                    },
+                    {
+                      "geo_distance": {
+                        "distance": distance + "mi",
+                        "availByLocation.location.geoCode": arr[1] + ' , ' + arr[0]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
-    console.log("test query", template)
+
+
 
     const body = await client.search({
       index: INDEX,
@@ -239,7 +264,13 @@ export default {
     })
     // console.log(carrier)
     // console.log(template.query.bool.must)
-    console.log('test query', body.hits.hits)
+    if (store.env === 'test') {
+      console.log(
+        '%cGet Search response',
+        'background: purple; color: white; display: block;',
+        { index: INDEX, response: body.hits.hits }
+      )
+    }
     return body.hits.hits
   },
 
@@ -247,23 +278,23 @@ export default {
     if (isArray(object)) {
       let re: Record<string, any> = []
       object.forEach((obj) => {
-        let st = obj['_source']['location'].split(',')
+        let st = obj['_source']['availByLocation'][0]['location']['geoCode'].split(',')
         let address =
-          obj['_source']['address_street'] +
+          obj['_source']['availByLocation'][0]['location']['address']['street'] +
           ' ' +
-          obj['_source']['address_city'] +
+          obj['_source']['availByLocation'][0]['location']['address']['city'] +
           ' ' +
-          obj['_source']['address_state'] +
+          obj['_source']['availByLocation'][0]['location']['address']['state'] +
           ' ' +
-          obj['_source']['address_zipcode']
+          obj['_source']['availByLocation'][0]['location']['address']['zipCode']
         let Lon = parseFloat(st[1])
         let Lat = parseFloat(st[0])
         re.push({
           data: [Lon, Lat],
           information: {
             address: address,
-            name: obj['_source']['name'] + ' ' + obj['_source']['title'],
-            phoneNumber: obj['_source']['phone_number'],
+            name: obj['_source']['fullName'] + ' ' + obj['_source']['title'],
+            phoneNumber: obj['_source']['phone'],
             speciality: obj['_source']['specialty'],
             title: obj['_source']['title'],
           },
@@ -324,16 +355,17 @@ export default {
           randomNumber = 3
         }
         obj['path'] = path[randomNumber]
-        obj['fullname'] =
-          obj['_source']['name'] +
+        obj['fullName'] =
+          obj['_source']['fullName'] +
           ', ' +
           obj['_source']['title']
         obj['address'] =
-          obj['_source']['address_city'] +
-          ', ' +
-          obj['_source']['address_state'] +
+          obj['_source']['availByLocation'][0]['location']['address']['city'] +
           ' ' +
-          obj['_source']['address_zipcode']
+          obj['_source']['availByLocation'][0]['location']['address']['state'] +
+          ' ' +
+          obj['_source']['availByLocation'][0]['location']['address']['zipCode']
+        obj['street'] = obj['_source']['availByLocation'][0]['location']['address']['street']
         if (obj['_source']['Speciality'] == null) {
           obj['_source']['Speciality'] = 'unknown'
         }
