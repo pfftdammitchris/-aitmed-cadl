@@ -342,34 +342,50 @@ export default {
 
   processingSearchData({ object }) {
     let path = ['avatar1.png', 'avatar2.png', 'avatar3.png', 'avatar4.png']
+    let re: Record<string, any> = []
     if (isArray(object)) {
       object.forEach((obj) => {
-        let randomNumber = Math.ceil(Math.random() * 10)
-        if (randomNumber >= 0 && randomNumber < 2.5) {
-          randomNumber = 0
-        } else if (randomNumber < 5 && randomNumber >= 2.5) {
-          randomNumber = 1
-        } else if (randomNumber >= 5 && randomNumber < 7.5) {
-          randomNumber = 2
-        } else {
-          randomNumber = 3
+        let map = new Map()
+        for (let i = 0; i < obj['_source']['availByLocation'].length; i++) {
+          let location = obj['_source']['availByLocation'][i]['location']
+          let key = obj['_source']['availByLocation'][i]['location']['geoCode']
+          if (map.has(key)) {
+            map.set(key, map.get(key))
+          } else {
+            map.set(key, 1)
+            let item = obj
+            let randomNumber = Math.ceil(Math.random() * 10)
+            if (randomNumber >= 0 && randomNumber < 2.5) {
+              randomNumber = 0
+            } else if (randomNumber < 5 && randomNumber >= 2.5) {
+              randomNumber = 1
+            } else if (randomNumber >= 5 && randomNumber < 7.5) {
+              randomNumber = 2
+            } else {
+              randomNumber = 3
+            }
+            item['path'] = path[randomNumber]
+            item['fullName'] =
+              item['_source']['fullName'] +
+              ', ' +
+              item['_source']['title']
+            item['address'] =
+              location['address']['city'] +
+              ', ' +
+              location['address']['state'] +
+              ' ' +
+              location['address']['zipCode']
+            item['street'] = location['address']['street']
+            if (obj['_source']['specialty'] == null) {
+              obj['_source']['specialty'] = 'unknown'
+            }
+            re.push(item)
+          }
         }
-        obj['path'] = path[randomNumber]
-        obj['fullName'] =
-          obj['_source']['fullName'] +
-          ', ' +
-          obj['_source']['title']
-        obj['address'] =
-          obj['_source']['availByLocation'][0]['location']['address']['city'] +
-          ' ' +
-          obj['_source']['availByLocation'][0]['location']['address']['state'] +
-          ' ' +
-          obj['_source']['availByLocation'][0]['location']['address']['zipCode']
-        obj['street'] = obj['_source']['availByLocation'][0]['location']['address']['street']
-        if (obj['_source']['Speciality'] == null) {
-          obj['_source']['Speciality'] = 'unknown'
-        }
+
+
       })
+      return re
     }
     return
   },
