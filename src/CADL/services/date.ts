@@ -234,10 +234,10 @@ export default {
                 refid: obj['id'],
                 bvid: obj['bvid'],
               }
-              console.log(date.getTime())
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
                 continue
               } else {
+
                 if (splitTimeItem['showTime'].indexOf('AM') != -1) {
                   array.push(splitTimeItem)
                 } else {
