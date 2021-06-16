@@ -67,7 +67,7 @@ export default {
   },
   //  please dont delete
   prepareDocToPath(name) {
-    if (!name?.data || typeof name == 'string') { return "./ava.png" }
+    if (!name?.data || typeof name == 'string') { return "../cadl/admin/assets/ava.png" }
     const type = name?.type
     if (!name?.data) return
     if (typeof name?.data !== 'string') return
