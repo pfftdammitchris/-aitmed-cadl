@@ -16,13 +16,10 @@ function get({ pageName, apiObject, dispatch }) {
       dataKey,
       dataIn,
       dataOut,
-      id,
-      ids,
+
       subtype,
       ...options
     } = _.cloneDeep(apiObject || {})
-
-    let idList = ids ? ids : id ? [id] : ['']
 
     let requestOptions = {
       ...options,
@@ -31,19 +28,18 @@ function get({ pageName, apiObject, dispatch }) {
     let type = options?.type
     let sCondition = options?.sCondition
     let nonce
-
+    let idList
     if (dataIn) {
       //get current object name value
       const currentVal = await dispatch({
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
-      debugger
-
-      const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
+      const { deat, id, ids, _nonce, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
         payload: { object: currentVal, pageName, copy: true },
       })
+      idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       if (!isPopulated(id)) {
         throw new UnableToLocateValue(
@@ -51,18 +47,16 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
-      idList = Array.isArray(id) ? [...id] : [id]
       requestOptions = populatedCurrentVal
       maxcount = populatedCurrentVal?.maxcount
       type = populatedCurrentVal?.type
       sCondition = populatedCurrentVal?.sCondition
-    } else if (options.id) {
-      idList = Array.isArray(options.id) ? [...options.id] : [options.id]
     } else {
-      const { deat, _nonce, ...populatedCurrentVal } = await dispatch({
+      const { deat, _nonce, id, ids, ...populatedCurrentVal } = await dispatch({
         type: 'populate-object',
         payload: { object: requestOptions, pageName },
       })
+      idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       requestOptions = populatedCurrentVal
     }

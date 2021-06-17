@@ -92,6 +92,76 @@ export default {
     expireTime: '24hr',
   },
   Global: {
+    ecosDocObj: '',
+    globalRegister: [
+      {
+        type: 'register',
+        onEvent: 'FCMOnTokenReceive',
+        emit: {
+          dataKey: {
+            var: 'onEvent',
+          },
+          actions: [
+            {
+              '=.builtIn.FCM.getFCMToken': {
+                dataIn: {
+                  token: '$var',
+                },
+                dataOut: 'FirebaseToken.edge.name.accessToken',
+              },
+            },
+            {
+              '=.builtIn.FCM.getAPPID': {
+                dataIn: {
+                  appName: '=.AppName',
+                },
+                dataOut: 'FirebaseToken.edge.evid',
+              },
+            },
+            {
+              '=.builtIn.FCM.getFCMTokenSHA256Half': {
+                dataIn: {
+                  token: '$var',
+                },
+                dataOut: 'FirebaseToken.edge.refid',
+              },
+            },
+            '=.FirebaseToken.edgeAPI.store',
+          ],
+        },
+      },
+      {
+        type: 'register',
+        onEvent: 'onNewEcosDoc',
+        emit: {
+          dataKey: {
+            var: 'did',
+          },
+          actions: [
+            {
+              '=.builtIn.ecos.getDoc': {
+                dataIn: {
+                  docId: '$var',
+                },
+                dataOut: 'Global.ecosDocObj',
+              },
+            },
+            {
+              if: [
+                {
+                  '=.builtIn.utils.isOnPage': {
+                    dataIn: 'MeetingChat',
+                  },
+                },
+                '=.MeetingChat.onNewMessageToDisplay',
+                'continue',
+              ],
+            },
+          ],
+        },
+      },
+    ],
+    newAccountFlag: '1',
     currentDateTime: '=.builtIn.currentDateTime',
     currentUser: {
       response: null,
@@ -132,7 +202,7 @@ export default {
         type: 40000,
         bvid: '.Global.currentUser.vertex.id',
         name: {
-          roomName: 'New room',
+          title: 'New room',
           videoProvider: '.Global.currentUser.vertex.name.userName',
         },
       },
@@ -168,11 +238,15 @@ export default {
     DocReference: {
       document: '',
     },
+    DocChat: {
+      document: '',
+    },
     DocProfile: {
       document: '',
     },
     popUpMessage: '',
     timer: 0,
+    timeScondition: '',
   },
   CountryCode: ['+1', '+52', '+86', '+965'],
   DocType: {
@@ -182,11 +256,12 @@ export default {
     Contact: '513',
     ContactFav: '515',
     GetAllContact: 'type in (513,515)',
-    GetAllDocument: 'type in(1025,1537)',
+    GetAllDocument: 'D.type=1025',
     GetFavContact: 'type=515',
     UploadFile: '1025',
     InboxMessage: '1281',
     MeetingNote: '1537',
+    Index: '1793',
     PatientChart: '25601',
     VitalSigns: '28161',
     VitalQuestionnaire: '30721',
@@ -221,6 +296,7 @@ export default {
     Accept: '1060',
     Email: '10002',
     Folder: '66560',
+    GetMyEdge: 'E.type>9999 AND E.type<40001',
   },
   VertexType: {
     User: '1',

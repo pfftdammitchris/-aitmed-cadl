@@ -24,7 +24,7 @@ export default class FrontEndDB {
       let createIndexTable =
         'CREATE TABLE index_tables (id char, fkey int, fuzzyKey char, initMapping char, kText char, docId char, docType int, score int);'
       let createApiHashTable =
-        'CREATE TABLE api_hash_table (api_input_hash char, api_result char);'
+        'CREATE TABLE api_hash_table (api_input_hash char, resultId char);'
 
       frontEndDB.INSTANCE.run(createEcosDocTable)
       frontEndDB.INSTANCE.run(createIndexTable)

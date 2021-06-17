@@ -45,9 +45,9 @@ export default {
       note = await documentToNote({ document: doc })
     }
     const { name } = note
-    if (!name?.data) return
-    if (typeof name?.data !== 'string') return
-    if (!isPopulated(name?.data)) return
+    if (!name?.data) return doc
+    if (typeof name?.data !== 'string') return doc
+    if (!isPopulated(name?.data)) return doc
 
     //checking that the string is not base64 encoded
     if (
@@ -64,6 +64,28 @@ export default {
     const blobUrl = URL.createObjectURL(blob)
     name.data = blobUrl
     return note
+  },
+  //  please dont delete
+  prepareDocToPath(name) {
+    if (!name?.data || typeof name == 'string') { return "./ava.png" }
+    const type = name?.type
+    if (!name?.data) return
+    if (typeof name?.data !== 'string') return
+    if (!isPopulated(name?.data)) return
+    if (
+      typeof name?.data === 'string' &&
+      !name?.data.match(
+        /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g
+      )
+    ) return
+    const blob = store.level2SDK.utilServices.base64ToBlob(name?.data, type)
+    const blobUrl = URL.createObjectURL(blob)
+    // console.error(blobUrl, typeof blobUrl, typeof blob)
+    name.data = blobUrl
+    return blobUrl
+    // blob.then((response) => {
+    //   return URL.createObjectURL(response)
+    // })
   },
 
   alert({ value }) {

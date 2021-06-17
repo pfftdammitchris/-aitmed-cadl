@@ -105,12 +105,32 @@ export default {
   //judge whether all the request textfield is filled in 
   judgeFillinAll(stringArr: string[]) {
     for (let i = 0; i < stringArr.length; i++)
-      if (stringArr[i] == "") return true
+      if (stringArr[i] == "" || stringArr[i] == "-- --") return true
     return false
   },
   judgeAllTrue({ str1, str2, str3 }) {
     return str1 && str2 && str3
   },
 
+  judgesFillinAll(object) {
+    let isEmpty = false
+    Object.keys(object).forEach((x) => {
+      if (object[x] !== null && object[x] !== "") {
+        // console.log(Object.keys(object[x]))
+        Object.keys(object[x]).forEach((y) => {
+          if (object[x][y] == null || object[x][y] == "") {
+            console.log(object[x][y])
+            isEmpty = true
+            // return false
 
+          }
+        })
+
+      }
+    })
+    if (isEmpty) {
+      return false
+    }
+    return true
+  }
 }

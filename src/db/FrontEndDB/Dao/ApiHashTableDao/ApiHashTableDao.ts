@@ -10,15 +10,18 @@ export default (db) => {
     const params = {
       ':api_input_hash': apiInputHash,
     }
-    const res = db.exec(sqlstr, params)
-    return res[0].values[0][0]
+    let res = db.exec(sqlstr, params)
+    if (res.length) {
+      res = res[0].values[0]
+    }
+    return res
   }
   function insertApiResult(apiInputHash, apiResult) {
     const sqlstr =
       'INSERT INTO api_hash_table VALUES (:api_input_hash, :api_result );'
     const params = {
       ':api_input_hash': apiInputHash,
-      ':api_result': JSON.stringify(apiResult),
+      ':api_result': apiResult,
     }
 
     const res = db.exec(sqlstr, params)
@@ -31,7 +34,10 @@ export default (db) => {
     const params = {
       ':api_input_hash': apiInputHash,
     }
-    const res = db.exec(sqlstr, params)
-    return res[0].values[0][0]
+    let res = db.exec(sqlstr, params)
+    if (res.length) {
+      res = res[0].values[0][0]
+    }
+    return res
   }
 }
