@@ -4,6 +4,7 @@ import babel from 'rollup-plugin-babel'
 import json from 'rollup-plugin-json'
 import external from 'rollup-plugin-peer-deps-external'
 import nodePolyfills from 'rollup-plugin-node-polyfills';
+import copy from 'rollup-plugin-copy'
 import pkg from './package.json'
 
 const extensions = ['.js', '.ts']
@@ -97,7 +98,13 @@ export default [
 				runtimeHelpers: true,
 				extensions,
 			}),
+			json(),
 			nodePolyfills(),
+			copy({
+				targets: [
+					{ src: 'node_modules/sql.js/dist/sql-wasm.wasm', dest: 'test_public' },
+				]
+			})
 		],
 	}
 ];
