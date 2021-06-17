@@ -116,30 +116,51 @@ export default {
     }
     console.log('query zip code2', arr)
 
-    let template = {
-      query: {
-        bool: {
-          must: {
-            function_score: {
-              query: {
-                multi_match: {
-                  query: cond,
-                  type: 'best_fields',
-                  fields: ['specialty^3', 'name^2', 'symptom^1'],
-                  fuzziness: 'AUTO',
-                  prefix_length: 2,
-                },
-              },
-            },
+    let template =
+    {
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^3",
+                    "fullName^2",
+                    "symptom^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
           },
-          filter: {
-            geo_distance: {
-              distance: distance + 'mi',
-              location: arr[1] + ' , ' + arr[0],
-            },
-          },
-        },
-      },
+          "filter": {
+            "nested": {
+              "path": "availByLocation",
+              "query": {
+                "bool": {
+                  "filter": [
+                    {
+                      "terms": {
+                        "availByLocation.visitType": ["Office", "Telemedicine"]
+                      }
+                    },
+                    {
+                      "geo_distance": {
+                        "distance": distance + "mi",
+                        "availByLocation.location.geoCode": arr[1] + ' , ' + arr[0]
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
     }
 
     let body = await client.search({
