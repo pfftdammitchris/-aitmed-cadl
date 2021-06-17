@@ -25,9 +25,9 @@ export const produceEncryptData: DocumentUtilsTypes.ProduceEncryptData = async (
 ) => {
   // Make sure data is Uint8Array
   let data: Uint8Array =
-      _data instanceof Blob
-        ? await store.level2SDK.utilServices.blobToUint8Array(_data)
-        : _data,
+    _data instanceof Blob
+      ? await store.level2SDK.utilServices.blobToUint8Array(_data)
+      : _data,
     isEncrypt = false
   if (typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver) {
     /* Encryption */
@@ -38,7 +38,7 @@ export const produceEncryptData: DocumentUtilsTypes.ProduceEncryptData = async (
         data
       )
       isEncrypt = true
-    } catch (error) {}
+    } catch (error) { }
   }
   return { data, isEncrypt }
 }
@@ -170,8 +170,8 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
         data = dType.isBinary
           ? (response.data as Uint8Array)
           : await store.level2SDK.utilServices.base64ToUint8Array(
-              response.data as string
-            )
+            response.data as string
+          )
       } else {
         throw 'deat.url is missing'
       }
@@ -182,7 +182,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
     const edgeHasBesak = edge.besak && edge.besak !== ''
     const edgeHasEesak = edge.eesak && edge.eesak !== ''
     let inviteEdge
-    if (edge.type === 40000) {
+    if (edge.type > 9999) {
       const vidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
         edge.bvid
       )
