@@ -403,9 +403,17 @@ export default {
             re.push(item)
           }
         }
-
-
       })
+      let obj = {}
+      re = re.reduce((item, next) => {
+        if (!obj[next._id]) {
+          item.push(next)
+          obj[next._id] = true
+        }
+        return item
+      }, []);
+      // console.log("cmq---------------------", re, typeof (re))
+      // console.log("cmq---------------------", re, typeof (obj))
       return re
     }
     return
