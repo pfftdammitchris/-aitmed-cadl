@@ -550,8 +550,8 @@ export default {
         let stime = dayStart.valueOf()
         let eday = year + "-" + month + "-" + (day + 1)
         let etime = (new Date(eday)).valueOf()
-        let s = stime.toString().substr(0, 10)
-        let e = etime.toString().substr(0, 10)
+        let s = parseInt(stime.toString().substr(0, 10))
+        let e = parseInt(etime.toString().substr(0, 10))
         return (
           [s, e]
         )
@@ -585,12 +585,13 @@ export default {
         year = parseInt(year)
         month = parseInt(month)
         day = parseInt(day)
-        let strTime = year + "-" + month + "-" + (day + 1)
+        let strTime = year + "-" + month + "-" + day
         let dayStart = new Date(strTime)
-        let etime = dayStart.valueOf()
-        var stime = etime - (24 * 60 * 60)
-        let s = stime.toString().substr(0, 10)
-        let e = etime.toString().substr(0, 10)
+        let stime = dayStart.valueOf()
+        let eday = year + "-" + month + "-" + (day + 1)
+        let etime = (new Date(eday)).valueOf()
+        let s = parseInt(stime.toString().substr(0, 10))
+        let e = parseInt(etime.toString().substr(0, 10))
         return (
           [s, e]
         )
