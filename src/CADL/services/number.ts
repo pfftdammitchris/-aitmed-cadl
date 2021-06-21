@@ -69,5 +69,11 @@ export default {
       return true
     else
       return false
-  }
+  },
+  hexAnd({ intOne, hexTwo }) {
+    return intOne & hexTwo
+  },
+  hexOr({ intOne, hexTwo }) {
+    return intOne | hexTwo
+  },
 }
