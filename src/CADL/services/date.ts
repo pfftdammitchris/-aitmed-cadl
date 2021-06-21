@@ -157,12 +157,16 @@ export default {
       morning: [],
       afternoon: [],
     }
-    let nowtime = (new Date()).valueOf() / 1000
+    //@ts-ignore
+    let nowtime = new Date().valueOf() / 1000
     if (isArray(object2)) {
       object2.forEach((obj) => {
         if (isObject(obj)) {
-          if (obj["stime"] < date.getTime() / 1000 && obj['etime'] > date.getTime() / 1000)
-            obj["stime"] = date.getTime() / 1000
+          if (
+            obj['stime'] < date.getTime() / 1000 &&
+            obj['etime'] > date.getTime() / 1000
+          )
+            obj['stime'] = date.getTime() / 1000
           if (obj['stime'] < anotherDay && obj['etime'] > anotherDay)
             obj['etime'] = anotherDay
           if (timeSlot) {
@@ -175,7 +179,7 @@ export default {
                   (obj['stime'] + i * timeSlot * 60) * 1000
                 ).format('LT'),
                 refid: obj['id'],
-                bvid: obj['bvid']
+                bvid: obj['bvid'],
               }
               console.log(date.getTime())
               if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
@@ -192,7 +196,59 @@ export default {
                 // }
                 i += 1
               }
-            } while (splitTimeItem['etime'] <= obj['etime'] && splitTimeItem['etime'] <= anotherDay)
+            } while (
+              splitTimeItem['etime'] <= obj['etime'] &&
+              splitTimeItem['etime'] <= anotherDay
+            )
+          }
+        }
+      })
+      return array
+    }
+    return array
+  },
+  splitTime({ object2, timeSlot, year, month, day }) {
+    let date = new Date(year, month - 1, day)
+    let anotherDay = date.getTime() / 1000 + 86400
+    let splitTimeItem: splitTime
+    let array: any = []
+    if (isArray(object2)) {
+      object2.forEach((obj) => {
+        if (isObject(obj)) {
+          if (
+            obj['stime'] < date.getTime() / 1000 &&
+            obj['etime'] > date.getTime() / 1000
+          )
+            obj['stime'] = date.getTime() / 1000
+          if (obj['stime'] < anotherDay && obj['etime'] > anotherDay)
+            obj['etime'] = anotherDay
+          if (timeSlot) {
+            let i = 0
+            do {
+              splitTimeItem = {
+                stime: obj['stime'] + i * timeSlot * 60,
+                etime: obj['stime'] + (i + 1) * timeSlot * 60,
+                showTime: moment(
+                  (obj['stime'] + i * timeSlot * 60) * 1000
+                ).format('LT'),
+                refid: obj['id'],
+                bvid: obj['bvid'],
+              }
+              if (obj['etime'] - splitTimeItem['stime'] < timeSlot * 60) {
+                continue
+              } else {
+
+                if (splitTimeItem['showTime'].indexOf('AM') != -1) {
+                  array.push(splitTimeItem)
+                } else {
+                  array.push(splitTimeItem)
+                }
+                i += 1
+              }
+            } while (
+              splitTimeItem['etime'] <= obj['etime'] &&
+              splitTimeItem['etime'] <= anotherDay
+            )
           }
         }
       })
@@ -206,6 +262,24 @@ export default {
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
         let duration_date = start_date + ' - ' + end_date
+        return duration_date
+      }
+      return
+    }
+    return
+  },
+  ShowTimeDate(object) {
+    if (isObject(object)) {
+      if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
+        let date = new Date(object['stime'] * 1000)
+        let y = date.getFullYear()
+        let m =
+          date.getMonth() + 1 > 10
+            ? date.getMonth() + 1
+            : '0' + (date.getMonth() + 1)
+        let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
+        let duration_date =
+          y + '-' + m + '-' + d
         return duration_date
       }
       return
@@ -348,13 +422,20 @@ export default {
     todayColor,
     todayBackgroundColor,
   }) {
-    console.log("test weekly", {
+    console.log('test weekly', {
       year: year,
       month: month,
       today: today,
-      markDay: markDay
+      markDay: markDay,
     })
-    if (typeof year == 'string' || typeof month == 'string' || typeof today == 'string' || typeof markDay == 'string') { return }
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof today == 'string' ||
+      typeof markDay == 'string'
+    ) {
+      return
+    }
     if (year && month && today && markDay) {
       today = parseInt(today)
       year = parseInt(year)
@@ -451,8 +532,94 @@ export default {
    * and day according to the position of YMD (such as "YMD" corresponds to "2021 -04-10")
    * @returns
    */
+  ShowRightTime({ year, month, day, formatType = '' }) {
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof day == 'string'
+    ) {
+      return
+    }
+    if (year && month && day) {
+      if (formatType == '' || typeof formatType == undefined) {
+        year = parseInt(year)
+        month = parseInt(month)
+        day = parseInt(day)
+        let strTime = year + "-" + month + "-" + day
+        let dayStart = new Date(strTime)
+        let stime = dayStart.valueOf()
+        let eday = year + "-" + month + "-" + (day + 1)
+        let etime = (new Date(eday)).valueOf()
+        let s = stime.toString().substr(0, 10)
+        let e = etime.toString().substr(0, 10)
+        return (
+          [s, e]
+        )
+      } else if (typeof formatType == 'string') {
+        if (day < 10) {
+          day = '0' + day
+        }
+        if (month < 10) {
+          month = '0' + month
+        }
+        formatType.toUpperCase()
+        let re = formatType.replace('Y', year)
+        re = re.replace('M', month)
+        re = re.replace('D', day)
+
+        return re
+      }
+    }
+    return
+  },
+  ShowLeftTime({ year, month, day, formatType = '' }) {
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof day == 'string'
+    ) {
+      return
+    }
+    if (year && month && day) {
+      if (formatType == '' || typeof formatType == undefined) {
+        year = parseInt(year)
+        month = parseInt(month)
+        day = parseInt(day)
+        let strTime = year + "-" + month + "-" + (day + 1)
+        let dayStart = new Date(strTime)
+        let etime = dayStart.valueOf()
+        var stime = etime - (24 * 60 * 60)
+        let s = stime.toString().substr(0, 10)
+        let e = etime.toString().substr(0, 10)
+        return (
+          [s, e]
+        )
+
+      } else if (typeof formatType == 'string') {
+        if (day < 10) {
+          day = '0' + day
+        }
+        if (month < 10) {
+          month = '0' + month
+        }
+        formatType.toUpperCase()
+        let re = formatType.replace('Y', year)
+        re = re.replace('M', month)
+        re = re.replace('D', day)
+
+        return re
+      }
+    }
+    return
+  },
   ShowDateByNumber({ year, month, day, formatType = '' }) {
-    if (typeof year == 'string' || typeof month == 'string' || typeof day == 'string') { return }
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof day == 'string'
+    ) {
+      return
+    }
     if (year && month && day) {
       if (formatType == '' || typeof formatType == undefined) {
         year = parseInt(year)
@@ -638,8 +805,10 @@ export default {
   },
 
   transformMonth({ month }) {
-    console.log("test transformMonth", { month: month })
-    if (typeof month == 'string') { return }
+    console.log('test transformMonth', { month: month })
+    if (typeof month == 'string') {
+      return
+    }
     const months = [
       'Jan',
       'Feb',
@@ -670,39 +839,41 @@ export default {
       let addWeek: Record<string, any> = []
       let weeks = ['Su', 'M', 'T', 'W', 'Th', 'F', 'Sa']
       for (let i = 0; i < 7; i++) {
-        if (!(Object.keys(object[i]).length === 0 && object[i].constructor === Object)) {
+        if (
+          !(
+            Object.keys(object[i]).length === 0 &&
+            object[i].constructor === Object
+          )
+        ) {
           selectWeek.push({
             index: i,
             key: weeks[i],
             availableTime: {
-              timeStart: "",
-              timeEnd: ""
-            }
+              timeStart: '',
+              timeEnd: '',
+            },
           })
-          object[i].forEach(obj => {
+          object[i].forEach((obj) => {
             addWeek.push({
               duration: obj,
-              location: "",
+              location: '',
               index: i,
-              key: weeks[i]
-
+              key: weeks[i],
             })
           })
         }
       }
       return {
         selectWeek: selectWeek,
-        addWeek: addWeek
+        addWeek: addWeek,
       }
     }
     return
-
-
   },
   isType({ parameter, type }) {
-    console.log("test isType", {
+    console.log('test isType', {
       parameter: parameter,
-      type: type
+      type: type,
     })
     if (typeof parameter == type) {
       return true

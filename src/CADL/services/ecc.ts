@@ -4,8 +4,8 @@ import { sha256 } from 'hash.js'
 import { retrieveEdge } from '../../common/retrieve'
 
 export default {
-  signature(message: string): string {
-    const sig = store.level2SDK.utilServices.signature(message)
+  signature({ message, eskSign, sk }: { message: any; eskSign: any; sk: any }) {
+    const sig = store.level2SDK.utilServices.signature({ message, eskSign, sk })
     return sig
   },
   verifySignature(signature: string, pkSign: string): boolean {
@@ -16,12 +16,10 @@ export default {
     return isValid
   },
   decryptAES({ key, message }) {
-    const secretKeyUInt8Array = store.level2SDK.utilServices.normalizeStringTo32BitArray(
-      key
-    )
-    const encryptedDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      message
-    )
+    const secretKeyUInt8Array =
+      store.level2SDK.utilServices.normalizeStringTo32BitArray(key)
+    const encryptedDataUInt8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(message)
 
     const sk = store.level2SDK.utilServices.sKeyDecrypt(
       secretKeyUInt8Array,
@@ -35,12 +33,10 @@ export default {
     return skBase64
   },
   encryptAES({ key, message }) {
-    const secretKeyUInt8Array = store.level2SDK.utilServices.normalizeStringTo32BitArray(
-      key
-    )
-    const encryptedDataUInt8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      message
-    )
+    const secretKeyUInt8Array =
+      store.level2SDK.utilServices.normalizeStringTo32BitArray(key)
+    const encryptedDataUInt8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(message)
 
     const sk = store.level2SDK.utilServices.sKeyEncrypt(
       secretKeyUInt8Array,
@@ -112,9 +108,8 @@ export default {
     } else {
       pkToUint8Array = pk
     }
-    const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      secretKey
-    )
+    const skToUint8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(secretKey)
     const symmetricKey = store.level2SDK.utilServices.generateSKey()
     const partialKey = symmetricKey.slice(0, 16)
 
@@ -164,12 +159,10 @@ export default {
     } else {
       esakUint8Array = esak
     }
-    const pkToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      publicKey
-    )
-    const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      secretKey
-    )
+    const pkToUint8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(publicKey)
+    const skToUint8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(secretKey)
     const partialKey = store.level2SDK.utilServices.aKeyDecrypt(
       pkToUint8Array,
       skToUint8Array,
@@ -223,12 +216,10 @@ export default {
     } else {
       esakUint8Array = esak
     }
-    const pkToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      publicKey
-    )
-    const skToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-      secretKey
-    )
+    const pkToUint8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(publicKey)
+    const skToUint8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(secretKey)
     const partialKey = store.level2SDK.utilServices.aKeyDecrypt(
       pkToUint8Array,
       skToUint8Array,
@@ -236,9 +227,8 @@ export default {
     )
     const sak = sha256().update(partialKey).digest()
     const sakUint8Array = new Uint8Array(sak)
-    const sakBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-      sakUint8Array
-    )
+    const sakBase64 =
+      store.level2SDK.utilServices.uint8ArrayToBase64(sakUint8Array)
     return sakBase64
   },
   /**

@@ -71,6 +71,10 @@ function get({ pageName, apiObject, dispatch }) {
           )
         }
       } else {
+        if (requestOptions.sCondition) {
+          requestOptions.scondition = requestOptions.sCondition
+          delete requestOptions.sCondition
+        }
         const { data } = await store.level2SDK.vertexServices.retrieveVertex({
           idList: [id],
           options: requestOptions,
