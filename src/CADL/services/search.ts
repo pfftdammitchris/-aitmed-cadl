@@ -46,6 +46,7 @@ let GetlatAndlon = (query) => {
 export default {
   async transformGeo({ query }) {
     let arr: any[] = []
+    query = query.replace("#", "")
     if (query) {
       // let address
       await GetlatAndlon(query).then(
