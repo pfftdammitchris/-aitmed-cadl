@@ -43,6 +43,25 @@ let GetlatAndlon = (query) => {
   return promise
 }
 export default {
+  async transformGeo({ query }) {
+    let arr: any[] = []
+    if (query) {
+      // let address
+      await GetlatAndlon(query).then(
+        (data: LatResponse) => {
+          arr[1] = data.center[0]
+          arr[0] = data.center[1]
+          console.log('query zip code1', data)
+        },
+        (err) => {
+          console.log('query error', err)
+        }
+      )
+      // arr = address
+      return arr
+    }
+    return
+  },
   /**
    * 以prefix为前缀查询搜索建议，返回doctor_suggestion: []，speciality_suggestion 分别是推荐的医生姓名和科室名
    * 数据无重复，最大10条
