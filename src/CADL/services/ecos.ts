@@ -36,7 +36,6 @@ export default {
         note?.name?.type
       )
     }
-    console.log("姚凯", content)
     const sharedDoc = await Document.create({
       content,
       targetRoomName,
