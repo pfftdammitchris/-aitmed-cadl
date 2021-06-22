@@ -2,7 +2,6 @@ import store from '../../common/store'
 import { documentToNote } from '../../services/Document'
 import { retrieveDocument } from '../../common/retrieve'
 import Document from '../../services/Document'
-import { identity } from 'lodash'
 
 export default {
   async shareDoc({ sourceDoc, targetEdgeID, targetRoomName }) {

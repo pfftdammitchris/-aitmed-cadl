@@ -1,4 +1,4 @@
-import _, { isArray, isObject } from 'lodash'
+import _, { isArray } from 'lodash'
 import store from '../../common/store'
 // import object from './object'
 type connection = {
@@ -538,7 +538,11 @@ export default {
     if (store._env == 'test') {
       console.log('test WeekSchedule', planObject)
     }
-    if (planObject == null || typeof planObject == undefined || planObject.length == 0) {
+    if (
+      planObject == null ||
+      typeof planObject == undefined ||
+      planObject.length == 0
+    ) {
       return
     }
     if (isArray(planObject)) {
