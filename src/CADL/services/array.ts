@@ -1,4 +1,4 @@
-import _, { isArray } from 'lodash'
+import _, { isArray, isObject } from 'lodash'
 import store from '../../common/store'
 // import object from './object'
 type connection = {
