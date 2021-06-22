@@ -532,6 +532,87 @@ export default {
    * and day according to the position of YMD (such as "YMD" corresponds to "2021 -04-10")
    * @returns
    */
+  ShowRightTime({ year, month, day, formatType = '' }) {
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof day == 'string'
+    ) {
+      return
+    }
+    if (year && month && day) {
+      if (formatType == '' || typeof formatType == undefined) {
+        year = parseInt(year)
+        month = parseInt(month)
+        day = parseInt(day)
+        let strTime = year + "-" + month + "-" + day
+        let dayStart = new Date(strTime)
+        let stime = dayStart.valueOf()
+        let eday = year + "-" + month + "-" + (day + 1)
+        let etime = (new Date(eday)).valueOf()
+        let s = parseInt(stime.toString().substr(0, 10))
+        let e = parseInt(etime.toString().substr(0, 10))
+        return (
+          [s, e]
+        )
+      } else if (typeof formatType == 'string') {
+        if (day < 10) {
+          day = '0' + day
+        }
+        if (month < 10) {
+          month = '0' + month
+        }
+        formatType.toUpperCase()
+        let re = formatType.replace('Y', year)
+        re = re.replace('M', month)
+        re = re.replace('D', day)
+
+        return re
+      }
+    }
+    return
+  },
+  ShowLeftTime({ year, month, day, formatType = '' }) {
+    if (
+      typeof year == 'string' ||
+      typeof month == 'string' ||
+      typeof day == 'string'
+    ) {
+      return
+    }
+    if (year && month && day) {
+      if (formatType == '' || typeof formatType == undefined) {
+        year = parseInt(year)
+        month = parseInt(month)
+        day = parseInt(day)
+        let strTime = year + "-" + month + "-" + day
+        let dayStart = new Date(strTime)
+        let stime = dayStart.valueOf()
+        let eday = year + "-" + month + "-" + (day + 1)
+        let etime = (new Date(eday)).valueOf()
+        let s = parseInt(stime.toString().substr(0, 10))
+        let e = parseInt(etime.toString().substr(0, 10))
+        return (
+          [s, e]
+        )
+
+      } else if (typeof formatType == 'string') {
+        if (day < 10) {
+          day = '0' + day
+        }
+        if (month < 10) {
+          month = '0' + month
+        }
+        formatType.toUpperCase()
+        let re = formatType.replace('Y', year)
+        re = re.replace('M', month)
+        re = re.replace('D', day)
+
+        return re
+      }
+    }
+    return
+  },
   ShowDateByNumber({ year, month, day, formatType = '' }) {
     if (
       typeof year == 'string' ||

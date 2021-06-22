@@ -538,7 +538,11 @@ export default {
     if (store._env == 'test') {
       console.log('test WeekSchedule', planObject)
     }
-    if (planObject == null || typeof planObject == undefined || planObject.length == 0) {
+    if (
+      planObject == null ||
+      typeof planObject == undefined ||
+      planObject.length == 0
+    ) {
       return
     }
     if (isArray(planObject)) {
@@ -675,15 +679,7 @@ export default {
     return indexGroup
   },
   elementUnique({ arr }) {
-    for (let i = 0; i < arr.length; i++) {
-      for (let j = i + 1; j < arr.length; j++) {
-        if (arr[i] == arr[j]) {
-          arr.splice(j, 1)
-          j--
-        }
-      }
-    }
-    return arr
+    return new Set(arr)
   },
   addProvider({ object, provider }) {
     provider['name']['basicInfo'] = { medicalFacilityName: 'current Provider' }
