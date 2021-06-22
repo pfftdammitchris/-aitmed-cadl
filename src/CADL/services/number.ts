@@ -70,6 +70,19 @@ export default {
     else
       return false
   },
+  inhx({ intHex, index, hex }): number {
+    if (((intHex >> (index - 1)) & 1) !== hex) {
+      if (hex === 1) {
+        intHex += Math.pow(2, index - 1)
+      }
+      else {
+        intHex -= Math.pow(2, index - 1)
+      }
+      return intHex;
+    } else {
+      return intHex;
+    }
+  },
   hexAnd({ intOne, hexTwo }) {
     return intOne & hexTwo
   },
