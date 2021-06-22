@@ -82,5 +82,11 @@ export default {
     } else {
       return intHex;
     }
-  }
+  },
+  hexAnd({ intOne, hexTwo }) {
+    return intOne & hexTwo
+  },
+  hexOr({ intOne, hexTwo }) {
+    return intOne | hexTwo
+  },
 }
