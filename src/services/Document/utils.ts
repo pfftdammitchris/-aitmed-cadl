@@ -182,10 +182,9 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
     const edgeHasBesak = edge.besak && edge.besak !== ''
     const edgeHasEesak = edge.eesak && edge.eesak !== ''
     let inviteEdge
-    if (edge.type === 40000) {
-      const vidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-        edge.bvid
-      )
+    if (edge.type > 9999) {
+      const vidUint8ArrayToBase64 =
+        store.level2SDK.utilServices.uint8ArrayToBase64(edge.bvid)
       if (vidUint8ArrayToBase64 !== vid) {
         //we have to fetch invite edge to get eesak
         const { data } = await store.level2SDK.edgeServices.retrieveEdge({
@@ -197,9 +196,8 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
         })
         const { edge: invites } = data
         const inviteEdgeArray = invites.filter((invite) => {
-          const evidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-            invite.evid
-          )
+          const evidUint8ArrayToBase64 =
+            store.level2SDK.utilServices.uint8ArrayToBase64(invite.evid)
 
           return evidUint8ArrayToBase64 === vid
         })
@@ -230,11 +228,10 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
       }
       let publicKeyOfSender: string
       if (inviteEdge) {
-        const {
-          data: inviterVertexResponse,
-        } = await store.level2SDK.vertexServices.retrieveVertex({
-          idList: [inviteEdge?.bvid],
-        })
+        const { data: inviterVertexResponse } =
+          await store.level2SDK.vertexServices.retrieveVertex({
+            idList: [inviteEdge?.bvid],
+          })
         const inviterVertex = inviterVertexResponse?.vertex?.[0]
         publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
           inviterVertex?.pk
@@ -249,11 +246,10 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
           console.log(error)
         }
       } else if (!isCurrentUserCreatorOfEdge) {
-        const {
-          data: creatorOfEdgeResponse,
-        } = await store.level2SDK.vertexServices.retrieveVertex({
-          idList: [edge?.bvid],
-        })
+        const { data: creatorOfEdgeResponse } =
+          await store.level2SDK.vertexServices.retrieveVertex({
+            idList: [edge?.bvid],
+          })
         const creatorOfEdgeVertex = creatorOfEdgeResponse?.vertex?.[0]
         publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
           creatorOfEdgeVertex?.pk
@@ -300,14 +296,15 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
       content = await new Response(blob).text()
     } else if (blob.type === 'application/json') {
       const jsonStr = await new Response(blob).text()
-      try {
-        content = JSON.parse(jsonStr)
-      } catch (error) {
-        throw new AiTmedError({
-          name: 'UNKNOW_ERROR',
-          message: 'Document -> utils -> documentToNote -> JSON.parse failed',
-        })
-      }
+      content = jsonStr
+      // try {
+      //   content = JSON.parse(jsonStr)
+      // } catch (error) {
+      //   throw new AiTmedError({
+      //     name: 'UNKNOW_ERROR',
+      //     message: 'Document -> utils -> documentToNote -> JSON.parse failed',
+      //   })
+      // }
     } else {
       content = blob
     }

@@ -50,7 +50,6 @@ describe('IndexRepository', () => {
   beforeEach(async () => {
     const config = {
       locateFile: (filename) => {
-        debugger
         return `./node_modules/sql.js/dist/${filename}`
       },
     }

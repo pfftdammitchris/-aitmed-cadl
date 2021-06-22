@@ -1,4 +1,4 @@
-class CheckStopWord {
+export default class CheckStopWord {
   private stopWords: string =
     "a about above after again against all am an and any are aren't as " +
     "at be because been before being below between both but by can't cannot could couldn't " +
@@ -15,7 +15,7 @@ class CheckStopWord {
 
   private stopWordMap: Record<string, any> = {}
 
-  CheckStopWord() {
+  constructor() {
     let stopWordList: string[] = this.stopWords.split(' ')
     stopWordList.forEach((word) => {
       this.stopWordMap[word] = true

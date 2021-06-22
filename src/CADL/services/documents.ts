@@ -9,7 +9,6 @@ export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
-    debugger
     let res
     const {
       api,
@@ -308,6 +307,7 @@ function create({ pageName, apiObject, dispatch }) {
           fid: restOfDocOptions?.fid,
           jwt: restOfDocOptions?.jwt,
           dTypeProps,
+          dispatch,
         })
         res = response
         if (store.env === 'test') {
@@ -349,6 +349,10 @@ function create({ pageName, apiObject, dispatch }) {
           newVal: res,
           dataKey: dataOut ? dataOut : dataKey,
         },
+      })
+      await dispatch({
+        type: 'insert-to-index-table',
+        payload: { doc: res.doc },
       })
     }
     return res

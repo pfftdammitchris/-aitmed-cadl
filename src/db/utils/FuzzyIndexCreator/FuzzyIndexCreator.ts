@@ -48,7 +48,7 @@ export default class FuzzyIndexCreator {
     return indexStr
   }
 
-  toFuzzyInt64(initMapping: string) {
+  public toFuzzyInt64(initMapping: string) {
     let asciiChar = [
       ' ',
       'a',
@@ -82,36 +82,8 @@ export default class FuzzyIndexCreator {
       '}',
     ]
     let hexMapping = [
-      0,
-      1,
-      2,
-      11,
-      3,
-      1,
-      4,
-      5,
-      0,
-      1,
-      6,
-      7,
-      8,
-      9,
-      9,
-      1,
-      2,
-      10,
-      8,
-      11,
-      3,
-      1,
-      12,
-      12,
-      11,
-      1,
-      11,
-      13,
-      14,
-      15,
+      0, 1, 2, 11, 3, 1, 4, 5, 0, 1, 6, 7, 8, 9, 9, 1, 2, 10, 8, 11, 3, 1, 12,
+      12, 11, 1, 11, 13, 14, 15,
     ]
     let returnvalue = JSBI.BigInt(0)
     for (let i = 0; i < Math.min(initMapping.length, 16); i++) {
