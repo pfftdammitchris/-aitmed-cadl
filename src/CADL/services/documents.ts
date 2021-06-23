@@ -8,6 +8,7 @@ import { UnableToLocateValue } from '../errors'
 export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
+  debugger
   return async () => {
     let res
     const {
@@ -131,6 +132,7 @@ function get({ pageName, apiObject, dispatch }) {
             delete rawResponse.document
           })
           .catch((err) => {
+            debugger
             console.log(err)
           })
         await dispatch({

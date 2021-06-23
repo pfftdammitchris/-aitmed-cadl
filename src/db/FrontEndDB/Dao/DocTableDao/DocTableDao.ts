@@ -1,4 +1,5 @@
 import store from '../../../../common/store'
+import { isObject } from '../../../../utils'
 export default (
   db
 ): {
@@ -32,7 +33,7 @@ export default (
       'INSERT INTO ecos_doc_table VALUES (:ctime, :mtime, :atime, :atimes, :id, :name, :deat, :size, :fid, :eid, :bsig, :esig, :subtype, :type);'
     let params = {}
     for (let [key, val] of Object.entries(doc)) {
-      if (key === 'name' || key === 'subtype') {
+      if (isObject(val)) {
         params[`:${key}`] = JSON.stringify(val)
       } else if (val instanceof Uint8Array) {
         params[`:${key}`] = store.level2SDK.utilServices.uint8ArrayToBase64(val)
