@@ -1100,34 +1100,34 @@ export default class CADL extends EventEmitter {
       }
       case 'insert-to-index-table': {
         const doc = action.payload.doc
-        let content = doc.name
-        const contentAfterExtraction = basicExtraction(content)
-        const fuzzyIndexCreator = new FuzzyIndexCreator()
-        let docId = doc.id
-        if (docId instanceof Uint8Array) {
-          docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
-        }
-        debugger
-        for (let key of contentAfterExtraction) {
-          const initialMapping = fuzzyIndexCreator.initialMapping(key)
-          const fKey = fuzzyIndexCreator.toFuzzyInt64(initialMapping)
-          const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
-          this._indexRepository.insertIndexData({
-            kText: key,
-            docId,
-            docType: doc.type,
-            fuzzyKey: initialMapping,
-            initMapping: initialMapping,
-            fKey,
-            fKeyHex,
-          })
+        for (let item of doc) {
+          let content = item.name
+          const contentAfterExtraction = basicExtraction(content)
+          const fuzzyIndexCreator = new FuzzyIndexCreator()
+          let docId = item.id
+          if (docId instanceof Uint8Array) {
+            docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
+          }
+          for (let key of contentAfterExtraction) {
+            const initialMapping = fuzzyIndexCreator.initialMapping(key)
+            const fKey = fuzzyIndexCreator.toFuzzyInt64(initialMapping)
+            const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
+            this._indexRepository.insertIndexData({
+              kText: key,
+              docId,
+              docType: doc.type,
+              fuzzyKey: initialMapping,
+              initMapping: initialMapping,
+              fKey,
+              fKeyHex,
+            })
+          }
+          console.log(docId)
+          console.log(this._indexRepository.getPIByDocId(docId))
+          console.log(this._indexRepository.getkTextByDid(docId))
+          console.log(this._indexRepository.getAllDocId())
         }
 
-        console.log(docId)
-        console.log(this._indexRepository.getPIByDocId(docId))
-        console.log(this._indexRepository.getkTextByDid(docId))
-        console.log(this._indexRepository.getAllDocId())
-        debugger
         break
       }
       case 'update-map': {

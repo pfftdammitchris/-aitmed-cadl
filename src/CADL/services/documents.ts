@@ -109,6 +109,10 @@ function get({ pageName, apiObject, dispatch }) {
             rawResponse = res.data
             return Promise.all(
               res?.data?.document.map(async (document) => {
+                await dispatch({
+                  type: 'insert-to-object-table',
+                  payload: { doc: document },
+                })
                 //decrypt data
                 if (document?.deat?.url) {
                   //skip files that are in S3
@@ -173,6 +177,10 @@ function get({ pageName, apiObject, dispatch }) {
           newVal: res,
           dataKey: dataOut ? dataOut : dataKey,
         },
+      })
+      await dispatch({
+        type: 'insert-to-index-table',
+        payload: { doc: res },
       })
     }
     return res
@@ -352,7 +360,7 @@ function create({ pageName, apiObject, dispatch }) {
       })
       await dispatch({
         type: 'insert-to-index-table',
-        payload: { doc: res.doc },
+        payload: { doc: [res.doc] },
       })
     }
     return res
