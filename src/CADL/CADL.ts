@@ -1092,7 +1092,10 @@ export default class CADL extends EventEmitter {
         if (!cachedDoc.length) {
           this._indexRepository.cacheDoc(doc)
         }
-        console.log(this._indexRepository.getDocById(docId))
+        console.log(
+          'this is the cached doc',
+          this._indexRepository.getDocById(docId)
+        )
         break
       }
       case 'insert-to-index-table': {
@@ -1120,7 +1123,6 @@ export default class CADL extends EventEmitter {
           })
         }
 
-        
         console.log(docId)
         console.log(this._indexRepository.getPIByDocId(docId))
         console.log(this._indexRepository.getkTextByDid(docId))
