@@ -1,11 +1,45 @@
 import FrontEndDB from '../../'
+import FuzzyIndexCreator from '../../../utils/FuzzyIndexCreator'
 describe('IndexTableDao', () => {
+  const input = 'hello'
+  const fuzzyCreator = new FuzzyIndexCreator()
+  const initMapping = fuzzyCreator.initialMapping(input)
+  const fuzzyInd = fuzzyCreator.toFuzzyHex(initMapping)
+  const fkey = fuzzyCreator.toFuzzyInt64(initMapping)
+
+  const input2 = 'walrus'
+  const initMapping2 = fuzzyCreator.initialMapping(input2)
+  const fuzzyInd2 = fuzzyCreator.toFuzzyHex(initMapping2)
+  const fkey2 = fuzzyCreator.toFuzzyInt64(initMapping2)
   let ind1 = {
     id: 1,
-    fkey: 'red',
-    fuzzyKey: 'fsdfds',
-    initMapping: 'fsdfds',
-    kText: 'lloo',
+    fkey,
+    ins_hex: fuzzyInd,
+    fuzzyKey: initMapping,
+    initMapping: initMapping,
+    kText: 'hello',
+    docId: 'olol',
+    docType: 'fdsf',
+    score: 9,
+  }
+  let ind2 = {
+    id: 2,
+    fkey,
+    ins_hex: fuzzyInd,
+    fuzzyKey: initMapping,
+    initMapping: initMapping,
+    kText: 'hello',
+    docId: 'olol',
+    docType: 'fdsf',
+    score: 9,
+  }
+  let ind3 = {
+    id: 3,
+    fkey: fkey2,
+    ins_hex: fuzzyInd2,
+    fuzzyKey: initMapping2,
+    initMapping: initMapping2,
+    kText: 'walrus',
     docId: 'olol',
     docType: 'fdsf',
     score: 9,
@@ -92,16 +126,30 @@ describe('IndexTableDao', () => {
     })
   })
 
-  xdescribe('extendAndFuzzySearch', () => {
+  describe('extendAndFuzzySearch', () => {
     it('should get the docType of the doc with given id', () => {
       frontEndDb.IndexTablesDao.insertAll(ind1)
+      frontEndDb.IndexTablesDao.insertAll(ind2)
+      frontEndDb.IndexTablesDao.insertAll(ind3)
       const res = frontEndDb.IndexTablesDao.getCount()
-      expect(res).toEqual(1)
+      expect(res).toEqual(3)
+      const input = 'hello'
+      const fuzzyCreator = new FuzzyIndexCreator()
+      const initMapping = fuzzyCreator.initialMapping(input)
+      const fuzzyInd = fuzzyCreator.toFuzzyHex(initMapping)
+
+      const input2 = 'walrus'
+      const initMapping2 = fuzzyCreator.initialMapping(input2)
+      const fuzzyInd2 = fuzzyCreator.toFuzzyHex(initMapping2)
       const res2 = frontEndDb.IndexTablesDao.extendAndFuzzySearch({
-        kInput: 'lo',
-        ins_hex: 'lo',
+        kInput: 'walrus',
+        ins_hex: fuzzyInd2,
       })
-      expect(res2[0].values[0][0]).toEqual('fdsf')
+      // const res2 = frontEndDb.IndexTablesDao.extendAndFuzzySearch({
+      //   kInput: 'hello',
+      //   ins_hex: fuzzyInd,
+      // })
+      expect(res2).toEqual(1)
     })
   })
 })

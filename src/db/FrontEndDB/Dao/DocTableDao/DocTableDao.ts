@@ -14,6 +14,7 @@ export default (
     let sqlstr = 'SELECT * FROM ecos_doc_table WHERE id = :did LIMIT 1'
     let params = { ':did': did }
     let res = db.exec(sqlstr, params)
+    debugger
     return res
   }
   function getDocByIds(dids) {
@@ -30,19 +31,21 @@ export default (
 
   function insertDoc(doc) {
     let sqlstr =
-      'INSERT INTO ecos_doc_table VALUES (:ctime, :mtime, :atime, :atimes, :id, :name, :deat, :size, :fid, :eid, :bsig, :esig, :subtype, :type);'
+      'INSERT INTO ecos_doc_table VALUES (:ctime, :mtime, :atime, :atimes, :id, :name, :deat, :size, :fid, :eid, :bsig, :esig, :subtype, :type, :tage);'
     let params = {}
     for (let [key, val] of Object.entries(doc)) {
-      if (isObject(val)) {
-        params[`:${key}`] = JSON.stringify(val)
-      } else if (val instanceof Uint8Array) {
+      if (val instanceof Uint8Array) {
         params[`:${key}`] = store.level2SDK.utilServices.uint8ArrayToBase64(val)
+      } else if (isObject(val)) {
+        params[`:${key}`] = JSON.stringify(val)
       } else {
         params[`:${key}`] = val
       }
     }
     debugger
+
     let res = db.exec(sqlstr, params)
+    debugger
     return res
   }
 
