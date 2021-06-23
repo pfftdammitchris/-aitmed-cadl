@@ -4,7 +4,7 @@ import { retrieveDocument } from '../../common/retrieve'
 import Document from '../../services/Document'
 
 export default {
-  async shareDoc({ sourceDoc, targetEdgeID, targetRoomName }) {
+  async shareDoc({ sourceDoc, targetEdgeID, targetRoomName, targetFileID }) {
     const document = await retrieveDocument(sourceDoc.id)
     const note = await documentToNote({ document })
     let content = note?.name?.data
@@ -22,6 +22,7 @@ export default {
       type: note?.type,
       edge_id: targetEdgeID,
       mediaType: note?.name?.type,
+      fid: targetFileID,
     })
     return sharedDoc
   },
@@ -47,7 +48,12 @@ export default {
     })
     return sharedDoc
   },
-  async shareDocList({ sourceDocList, targetEdgeID, targetRoomName }) {
+  async shareDocList({
+    sourceDocList,
+    targetEdgeID,
+    targetRoomName,
+    targetFileID,
+  }) {
     // let sharedDocList = new array();
     for (let i = 0; i < sourceDocList.length; i++) {
       const document = await retrieveDocument(sourceDocList[i].id)
@@ -67,6 +73,7 @@ export default {
         type: note?.type,
         edge_id: targetEdgeID,
         mediaType: note?.name?.type,
+        fid: targetFileID,
       })
       // sharedDocList[i] = sharedDoc
       // return sharedDoc
