@@ -682,7 +682,7 @@ export default {
     return new Set(arr)
   },
   addProvider({ object, provider }) {
-    provider['name']['basicInfo'] = { medicalFacilityName: 'current Provider' }
+    provider['name']['basicInfo'] = { medicalFacilityName: 'Me' }
     provider['isSelected'] = true
     let cloned = _.cloneDeep(provider)
     object.push(cloned)
