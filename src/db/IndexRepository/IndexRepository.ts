@@ -8,6 +8,9 @@ export default class IndexRepository {
     this.userDB = new FrontEndDB()
   }
 
+  // public search(input:string){
+
+  // }
   public async getDataBase(config) {
     await this.userDB.getDatabase(config)
     this.docTableDao = this.userDB.DocTableDao
