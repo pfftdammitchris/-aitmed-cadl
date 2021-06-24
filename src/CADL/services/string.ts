@@ -27,9 +27,9 @@ export default {
   equal({ string1, string2 }): boolean {
     return string1 === string2
   },
-  getFirstChar(string: string): string | void {
-    if (string) {
-      return string.charAt(0).toUpperCase()
+  getFirstChar(value: string): string | void {
+    if (value) {
+      return value.charAt(0).toUpperCase()
     }
     return
   },
