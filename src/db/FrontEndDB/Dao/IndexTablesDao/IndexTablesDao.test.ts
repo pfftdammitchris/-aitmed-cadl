@@ -149,6 +149,7 @@ describe('IndexTableDao', () => {
       //   kInput: 'hello',
       //   ins_hex: fuzzyInd,
       // })
+      console.log(res2[0].values)
       expect(res2).toEqual(1)
     })
   })

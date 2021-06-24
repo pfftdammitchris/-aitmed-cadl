@@ -1,4 +1,6 @@
 import FrontEndDB from '../FrontEndDB'
+import FuzzyIndexCreator from '../utils/FuzzyIndexCreator'
+
 export default class IndexRepository {
   public docTableDao
   public indexTablesDao
@@ -8,9 +10,37 @@ export default class IndexRepository {
     this.userDB = new FrontEndDB()
   }
 
-  // public search(input:string){
-
-  // }
+  public search(input: string) {
+    const fuzzyCreator = new FuzzyIndexCreator()
+    const initMapping = fuzzyCreator.initialMapping(input)
+    const fuzzyInd = fuzzyCreator.toFuzzyHex(initMapping)
+    const res = this.indexTablesDao.extendAndFuzzySearch({
+      kInput: input,
+      ins_hex: fuzzyInd,
+    })
+    let docs: any[] = []
+    docs = this.getDocsByIds(res[0].values)
+    let returnDocs: any[] = []
+    for (let doc of docs) {
+      if (doc.length) {
+        console.log('this is doc from inside search', JSON.stringify(doc))
+        const obj: any = {}
+        const { columns, values } = doc[0]
+        for (let i = 0; i < columns.length; i++) {
+          let prop = columns[i]
+          let val = values[0][i]
+          if (['deat', 'name'].includes(prop)) {
+            obj[prop] = JSON.parse(val)
+          } else {
+            obj[prop] = val
+          }
+        }
+        returnDocs.push(obj)
+      }
+    }
+    console.log('this is returnDocs from inside search', JSON.stringify(returnDocs))
+    return returnDocs
+  }
   public async getDataBase(config) {
     await this.userDB.getDatabase(config)
     this.docTableDao = this.userDB.DocTableDao
@@ -64,7 +94,7 @@ export default class IndexRepository {
   public getDocsByIds(relatedDocsIds) {
     let result = []
     for (let did of relatedDocsIds) {
-      result.push(this.docTableDao.getDocById(did))
+      result.push(this.docTableDao.getDocById(did[0]))
     }
     return result
   }

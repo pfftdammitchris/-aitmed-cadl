@@ -52,7 +52,8 @@ export default (db) => {
     docTypeHigh: number
   }) {
     let sqlstr =
-      'SELECT * FROM index_tables WHERE' +
+      'SELECT docId FROM index_tables WHERE' +
+      //'SELECT' + " docId " + 'FROM index_tables WHERE' +
       " printf('%X', fKey) LIKE '%'|| :ins_hex ||'%'" +
       " OR kText LIKE :kInput || '%'"
     let params = { ':ins_hex': ins_hex, ':kInput': kInput }
