@@ -59,6 +59,11 @@ export default {
           result.push(arr[match[0]][match[1]])
         })
       }
+      else if (match.length === 3) {
+        array.forEach((arr) => {
+          result.push(arr[match[0]][match[1]][match[2]])
+        })
+      }
       return result
     }
     return
