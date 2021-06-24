@@ -67,6 +67,7 @@ export const create: DocumentTypes.Create = async ({
     !!+dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
 
   // Encryption
+  dType.isEncrypted = !!+dTypeProps?.isEncrypted
   let esak: Uint8Array | string = ''
   let publicKeyOfSender: string = ''
   const creatorOfEdge =
@@ -84,10 +85,17 @@ export const create: DocumentTypes.Create = async ({
   const isInviteEdge = edge?.type === 40000
 
   if (isCurrentUserCreatorOfEdge) {
-    if (edge.besak && !!+dTypeProps?.isEncrypted) {
+    if (
+      edge.besak &&
+      (!!+dTypeProps?.isEncrypted || dTypeProps?.isEncrypted === 'undefined')
+    ) {
+      dType.isEncrypted = true
+
       esak = edge.besak
       publicKeyOfSender = publicKeyOfCurrentUser
     } else if (!edge.besak && !!+dTypeProps?.isEncrypted) {
+      dType.isEncrypted = true
+
       let updatedEdge
       publicKeyOfSender = publicKeyOfCurrentUser
       esak = ecc.generateESAK({ pk: publicKeyOfCurrentUser })
@@ -117,9 +125,8 @@ export const create: DocumentTypes.Create = async ({
     })
     const { edge: invites } = data
     const inviteEdgeArray = invites.filter((invite) => {
-      const evidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-        invite.evid
-      )
+      const evidUint8ArrayToBase64 =
+        store.level2SDK.utilServices.uint8ArrayToBase64(invite.evid)
 
       return evidUint8ArrayToBase64 === currentUserVid
     })
@@ -132,35 +139,38 @@ export const create: DocumentTypes.Create = async ({
       esak = ''
     }
 
-    const {
-      data: creatorOfEdgeResponse,
-    } = await store.level2SDK.vertexServices.retrieveVertex({
-      idList: [edge?.bvid],
-    })
+    const { data: creatorOfEdgeResponse } =
+      await store.level2SDK.vertexServices.retrieveVertex({
+        idList: [edge?.bvid],
+      })
     const inviterVertex = creatorOfEdgeResponse?.vertex?.[0]
     publicKeyOfSender = inviterVertex?.deat?.pk
   } else if (isCurrentUserOnEvidOfEdge) {
-    if (edge.eesak && !!+dTypeProps?.isEncrypted) {
+    if (
+      edge.eesak &&
+      (!!+dTypeProps?.isEncrypted || dTypeProps?.isEncrypted === 'undefined')
+    ) {
+      dType.isEncrypted = true
       esak = edge.eesak
 
-      const {
-        data: creatorOfEdgeResponse,
-      } = await store.level2SDK.vertexServices.retrieveVertex({
-        idList: [edge?.bvid],
-      })
+      const { data: creatorOfEdgeResponse } =
+        await store.level2SDK.vertexServices.retrieveVertex({
+          idList: [edge?.bvid],
+        })
       const creatorOfEdgeVertex = creatorOfEdgeResponse?.vertex?.[0]
       publicKeyOfSender = creatorOfEdgeVertex?.deat?.pk
     }
   }
 
-  const { data, isEncrypt } = await produceEncryptData(
-    gzipData,
-    esak,
-    publicKeyOfSender
-  )
-  dType.isEncrypted = isEncrypt
+  let returnDataInUint8Array = gzipData
+  if (dType.isEncrypted) {
+    const { data } = await produceEncryptData(gzipData, esak, publicKeyOfSender)
+    returnDataInUint8Array = data
+  }
 
-  const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(data)
+  const bs64Data = await store.level2SDK.utilServices.uint8ArrayToBase64(
+    returnDataInUint8Array
+  )
   dType.isBinary = false
 
   const name: DocumentTypes.NoteDocumentName = {
@@ -327,18 +337,16 @@ export const update: any = async (
     if (edge.besak && edge.sig) {
       esak = edge.besak
       if (edge.sig instanceof Uint8Array) {
-        publicKeyOfSender = await store.level2SDK.utilServices.uint8ArrayToBase64(
-          edge.sig
-        )
+        publicKeyOfSender =
+          await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
       } else {
         publicKeyOfSender = edge.sig
       }
     } else if (edge.eesak && edge.sig) {
       esak = edge.eesak
       if (edge.sig instanceof Uint8Array) {
-        publicKeyOfSender = await store.level2SDK.utilServices.uint8ArrayToBase64(
-          edge.sig
-        )
+        publicKeyOfSender =
+          await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
       } else {
         publicKeyOfSender = edge.sig
       }

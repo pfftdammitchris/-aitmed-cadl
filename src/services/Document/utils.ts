@@ -117,29 +117,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
   const deat: DocumentTypes.NoteDocumentDeat | null = document.deat
 
   // DType
-  const isOldDataStructure =
-    typeof name.isOnS3 !== 'undefined' ||
-    typeof name.isGzip !== 'undefined' ||
-    typeof name.isBinary !== 'undefined' ||
-    typeof name.isEncrypt !== 'undefined' ||
-    typeof name.edit_mode !== 'undefined'
-
-  const dType = isOldDataStructure ? new DType() : new DType(document.subtype)
-
-  if (isOldDataStructure) {
-    if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3
-    else dType.isOnServer = true
-
-    if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip
-    if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary
-    if (typeof name.isEncrypt !== 'undefined')
-      dType.isEncrypted = name.isEncrypt
-
-    if (typeof name.edit_mode !== 'undefined')
-      dType.isEditable = !!name.edit_mode
-
-    dType.setMediaType(name.type)
-  }
+  const dType = new DType(document.subtype)
 
   // Get data
   let content: string | Blob | Record<any, any> | null = null,
@@ -299,10 +277,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
       try {
         content = JSON.parse(jsonStr)
       } catch (error) {
-        throw new AiTmedError({
-          name: 'UNKNOW_ERROR',
-          message: 'Document -> utils -> documentToNote -> JSON.parse failed',
-        })
+        content = jsonStr
       }
     } else {
       content = blob
