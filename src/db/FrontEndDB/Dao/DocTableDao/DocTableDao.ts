@@ -32,7 +32,7 @@ export default (
       'INSERT INTO ecos_doc_table VALUES (:ctime, :mtime, :atime, :atimes, :id, :name, :deat, :size, :fid, :eid, :bsig, :esig, :subtype, :type);'
     let params = {}
     for (let [key, val] of Object.entries(doc)) {
-      if (key === 'name') {
+      if (key === 'name' || key === 'subtype') {
         params[`:${key}`] = JSON.stringify(val)
       } else if (val instanceof Uint8Array) {
         params[`:${key}`] = store.level2SDK.utilServices.uint8ArrayToBase64(val)
@@ -40,6 +40,7 @@ export default (
         params[`:${key}`] = val
       }
     }
+    debugger
     let res = db.exec(sqlstr, params)
     return res
   }

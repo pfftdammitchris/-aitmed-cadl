@@ -80,7 +80,6 @@ describe('ApiHasTable', () => {
   beforeEach(async () => {
     var config = {
       locateFile: (filename) => {
-        debugger
         return `./node_modules/sql.js/dist/${filename}`
       },
     }

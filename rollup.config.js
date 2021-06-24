@@ -47,8 +47,7 @@ export default [
 				runtimeHelpers: true,
 				extensions,
 			}),
-			nodePolyfills()
-
+			nodePolyfills(),
 		]
 	},
 	{

@@ -42,6 +42,10 @@ export default class IndexRepository {
     return this.indexTablesDao.getAllDocId()
   }
 
+  public getAllDocByFkey({ kInput, ins_hex }) {
+    return this.indexTablesDao.extendAndFuzzySearch({ kInput, ins_hex })
+  }
+
   public getDocById(did) {
     return this.docTableDao.getDocById(did)
   }

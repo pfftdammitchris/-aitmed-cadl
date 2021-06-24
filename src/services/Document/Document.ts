@@ -42,6 +42,7 @@ export const create: DocumentTypes.Create = async ({
   dTypeProps,
   paymentNonce,
   jwt,
+  dispatch,
 }) => {
   //check if eid has been dereferenced
   if (!isPopulated(edge_id)) {
@@ -117,9 +118,8 @@ export const create: DocumentTypes.Create = async ({
     })
     const { edge: invites } = data
     const inviteEdgeArray = invites.filter((invite) => {
-      const evidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-        invite.evid
-      )
+      const evidUint8ArrayToBase64 =
+        store.level2SDK.utilServices.uint8ArrayToBase64(invite.evid)
 
       return evidUint8ArrayToBase64 === currentUserVid
     })
@@ -132,22 +132,20 @@ export const create: DocumentTypes.Create = async ({
       esak = ''
     }
 
-    const {
-      data: creatorOfEdgeResponse,
-    } = await store.level2SDK.vertexServices.retrieveVertex({
-      idList: [edge?.bvid],
-    })
+    const { data: creatorOfEdgeResponse } =
+      await store.level2SDK.vertexServices.retrieveVertex({
+        idList: [edge?.bvid],
+      })
     const inviterVertex = creatorOfEdgeResponse?.vertex?.[0]
     publicKeyOfSender = inviterVertex?.deat?.pk
   } else if (isCurrentUserOnEvidOfEdge) {
     if (edge.eesak && !!+dTypeProps?.isEncrypted) {
       esak = edge.eesak
 
-      const {
-        data: creatorOfEdgeResponse,
-      } = await store.level2SDK.vertexServices.retrieveVertex({
-        idList: [edge?.bvid],
-      })
+      const { data: creatorOfEdgeResponse } =
+        await store.level2SDK.vertexServices.retrieveVertex({
+          idList: [edge?.bvid],
+        })
       const creatorOfEdgeVertex = creatorOfEdgeResponse?.vertex?.[0]
       publicKeyOfSender = creatorOfEdgeVertex?.deat?.pk
     }
@@ -213,6 +211,7 @@ export const create: DocumentTypes.Create = async ({
 
   //TODO: convert document type to be read like documentToNote
   //type has to be converted in order to use filter
+  await dispatch({ type: 'insert-to-object-table', payload: { doc: document } })
   const note = await documentToNote({ document })
 
   return {
@@ -327,18 +326,16 @@ export const update: any = async (
     if (edge.besak && edge.sig) {
       esak = edge.besak
       if (edge.sig instanceof Uint8Array) {
-        publicKeyOfSender = await store.level2SDK.utilServices.uint8ArrayToBase64(
-          edge.sig
-        )
+        publicKeyOfSender =
+          await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
       } else {
         publicKeyOfSender = edge.sig
       }
     } else if (edge.eesak && edge.sig) {
       esak = edge.eesak
       if (edge.sig instanceof Uint8Array) {
-        publicKeyOfSender = await store.level2SDK.utilServices.uint8ArrayToBase64(
-          edge.sig
-        )
+        publicKeyOfSender =
+          await store.level2SDK.utilServices.uint8ArrayToBase64(edge.sig)
       } else {
         publicKeyOfSender = edge.sig
       }

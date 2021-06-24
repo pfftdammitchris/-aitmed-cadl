@@ -9,7 +9,6 @@ export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
-    debugger
     let res
     const {
       api,
@@ -110,6 +109,10 @@ function get({ pageName, apiObject, dispatch }) {
             rawResponse = res.data
             return Promise.all(
               res?.data?.document.map(async (document) => {
+                await dispatch({
+                  type: 'insert-to-object-table',   //yuhan
+                  payload: { doc: document },
+                })
                 //decrypt data
                 if (document?.deat?.url) {
                   //skip files that are in S3
@@ -174,6 +177,10 @@ function get({ pageName, apiObject, dispatch }) {
           newVal: res,
           dataKey: dataOut ? dataOut : dataKey,
         },
+      })
+      await dispatch({
+        type: 'insert-to-index-table',
+        payload: { doc: res },
       })
     }
     return res
@@ -308,6 +315,7 @@ function create({ pageName, apiObject, dispatch }) {
           fid: restOfDocOptions?.fid,
           jwt: restOfDocOptions?.jwt,
           dTypeProps,
+          dispatch,
         })
         res = response
         if (store.env === 'test') {
@@ -349,6 +357,10 @@ function create({ pageName, apiObject, dispatch }) {
           newVal: res,
           dataKey: dataOut ? dataOut : dataKey,
         },
+      })
+      await dispatch({
+        type: 'insert-to-index-table',
+        payload: { doc: [res.doc] },
       })
     }
     return res

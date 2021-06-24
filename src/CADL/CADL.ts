@@ -32,7 +32,10 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import SignIn from './__mocks__/SignIn'
+import FuzzyIndexCreator from '../db/utils/FuzzyIndexCreator'
+import basicExtraction from '../db/utils/KeyExtraction/BasicAlgorithm'
+import IndexRepository from '../db/IndexRepository'
+// import InboxContacts from './__mocks__/InboxContacts'
 // import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
@@ -48,6 +51,8 @@ export default class CADL extends EventEmitter {
   private _aspectRatio: number
   private _map: Record<string, any>
   private _config: Record<string, any>
+  private _dbConfig: any
+  private _indexRepository: IndexRepository
   public verificationRequest = {
     timer: 0,
     phoneNumber: '',
@@ -59,7 +64,7 @@ export default class CADL extends EventEmitter {
    * @param CADLARGS.configUrl
    * @param CADLARGS.cadlVersion 'test' | 'stable'
    */
-  constructor({ configUrl, cadlVersion, aspectRatio }: CADLARGS) {
+  constructor({ configUrl, cadlVersion, aspectRatio, dbConfig }: CADLARGS) {
     super()
     //replace default arguments
     store.env = cadlVersion
@@ -69,6 +74,8 @@ export default class CADL extends EventEmitter {
     if (aspectRatio) {
       this.aspectRatio = aspectRatio
     }
+    this._dbConfig = dbConfig
+    this._indexRepository = new IndexRepository()
   }
 
   /**
@@ -102,6 +109,9 @@ export default class CADL extends EventEmitter {
         error
       )
     }
+
+    //initialize sqlite db
+    await this._indexRepository.getDataBase(this._dbConfig)
 
     const {
       web = { cadlVersion: '' },
@@ -521,7 +531,7 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'SignIn') return _.cloneDeep(SignIn)
+    // if (pageName === 'InboxContacts') return _.cloneDeep(InboxContacts)
     // if (pageName === 'BaseDataModel') return _.cloneDeep(BaseDataModel)
 
     let pageCADL
@@ -1022,8 +1032,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1071,6 +1081,55 @@ export default class CADL extends EventEmitter {
    */
   private async dispatch(action: { type: string; payload?: any }) {
     switch (action.type) {
+      case 'insert-to-object-table': {   //yuhan
+        const doc = action.payload.doc
+        let docId = doc.id
+        if (docId instanceof Uint8Array) {
+          docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
+        }
+        const cachedDoc = this._indexRepository.getDocById(docId)
+        debugger
+        if (!cachedDoc.length) {
+          this._indexRepository.cacheDoc(doc)
+        }
+        console.log(
+          'this is the cached doc',
+          this._indexRepository.getDocById(docId)
+        )
+        break
+      }
+      case 'insert-to-index-table': {
+        const doc = action.payload.doc
+        for (let item of doc) {
+          let content = item.name
+          const contentAfterExtraction = basicExtraction(content)
+          const fuzzyIndexCreator = new FuzzyIndexCreator()
+          let docId = item.id
+          if (docId instanceof Uint8Array) {
+            docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
+          }
+          for (let key of contentAfterExtraction) {
+            const initialMapping = fuzzyIndexCreator.initialMapping(key)
+            const fKey = fuzzyIndexCreator.toFuzzyInt64(initialMapping)
+            const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
+            this._indexRepository.insertIndexData({
+              kText: key,
+              docId,
+              docType: doc.type,
+              fuzzyKey: initialMapping,
+              initMapping: initialMapping,
+              fKey,
+              fKeyHex,
+            })
+          }
+          console.log(docId)
+          console.log(this._indexRepository.getPIByDocId(docId))
+          console.log(this._indexRepository.getkTextByDid(docId))
+          console.log(this._indexRepository.getAllDocId())
+        }
+
+        break
+      }
       case 'update-map': {
         //TODO: consider adding update-page-map
         this.map = dot.dot(this.root)
