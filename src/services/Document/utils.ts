@@ -117,29 +117,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
   const deat: DocumentTypes.NoteDocumentDeat | null = document.deat
 
   // DType
-  const isOldDataStructure =
-    typeof name.isOnS3 !== 'undefined' ||
-    typeof name.isGzip !== 'undefined' ||
-    typeof name.isBinary !== 'undefined' ||
-    typeof name.isEncrypt !== 'undefined' ||
-    typeof name.edit_mode !== 'undefined'
-
-  const dType = isOldDataStructure ? new DType() : new DType(document.subtype)
-
-  if (isOldDataStructure) {
-    if (typeof name.isOnS3 !== 'undefined') dType.isOnServer = !name.isOnS3
-    else dType.isOnServer = true
-
-    if (typeof name.isGzip !== 'undefined') dType.isGzip = name.isGzip
-    if (typeof name.isBinary !== 'undefined') dType.isBinary = name.isBinary
-    if (typeof name.isEncrypt !== 'undefined')
-      dType.isEncrypted = name.isEncrypt
-
-    if (typeof name.edit_mode !== 'undefined')
-      dType.isEditable = !!name.edit_mode
-
-    dType.setMediaType(name.type)
-  }
+  const dType = new DType(document.subtype)
 
   // Get data
   let content: string | Blob | Record<any, any> | null = null,
@@ -182,10 +160,9 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
     const edgeHasBesak = edge.besak && edge.besak !== ''
     const edgeHasEesak = edge.eesak && edge.eesak !== ''
     let inviteEdge
-    if (edge.type === 40000) {
-      const vidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-        edge.bvid
-      )
+    if (edge.type > 9999) {
+      const vidUint8ArrayToBase64 =
+        store.level2SDK.utilServices.uint8ArrayToBase64(edge.bvid)
       if (vidUint8ArrayToBase64 !== vid) {
         //we have to fetch invite edge to get eesak
         const { data } = await store.level2SDK.edgeServices.retrieveEdge({
@@ -197,9 +174,8 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
         })
         const { edge: invites } = data
         const inviteEdgeArray = invites.filter((invite) => {
-          const evidUint8ArrayToBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(
-            invite.evid
-          )
+          const evidUint8ArrayToBase64 =
+            store.level2SDK.utilServices.uint8ArrayToBase64(invite.evid)
 
           return evidUint8ArrayToBase64 === vid
         })
@@ -230,11 +206,10 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
       }
       let publicKeyOfSender: string
       if (inviteEdge) {
-        const {
-          data: inviterVertexResponse,
-        } = await store.level2SDK.vertexServices.retrieveVertex({
-          idList: [inviteEdge?.bvid],
-        })
+        const { data: inviterVertexResponse } =
+          await store.level2SDK.vertexServices.retrieveVertex({
+            idList: [inviteEdge?.bvid],
+          })
         const inviterVertex = inviterVertexResponse?.vertex?.[0]
         publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
           inviterVertex?.pk
@@ -249,11 +224,10 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
           console.log(error)
         }
       } else if (!isCurrentUserCreatorOfEdge) {
-        const {
-          data: creatorOfEdgeResponse,
-        } = await store.level2SDK.vertexServices.retrieveVertex({
-          idList: [edge?.bvid],
-        })
+        const { data: creatorOfEdgeResponse } =
+          await store.level2SDK.vertexServices.retrieveVertex({
+            idList: [edge?.bvid],
+          })
         const creatorOfEdgeVertex = creatorOfEdgeResponse?.vertex?.[0]
         publicKeyOfSender = store.level2SDK.utilServices.uint8ArrayToBase64(
           creatorOfEdgeVertex?.pk
@@ -303,10 +277,7 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
       try {
         content = JSON.parse(jsonStr)
       } catch (error) {
-        throw new AiTmedError({
-          name: 'UNKNOW_ERROR',
-          message: 'Document -> utils -> documentToNote -> JSON.parse failed',
-        })
+        content = jsonStr
       }
     } else {
       content = blob
