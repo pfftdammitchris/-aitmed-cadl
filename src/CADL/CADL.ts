@@ -2215,6 +2215,7 @@ export default class CADL extends EventEmitter {
   }
 
   private initRawRoot(root) {
+    //@ts-ignore
     return produce(root, (draft) => {})
   }
 
