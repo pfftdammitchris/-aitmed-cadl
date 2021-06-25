@@ -846,4 +846,14 @@ export default {
       if (arr[i][key] == value) return arr[i][key1]
     }
   },
+  vuetify({ arrfy }): number[] | boolean {
+    if (arrfy.indexOf('[') != -1 && arrfy.indexOf(']') != -1) {
+      let arrfyLast: number[] = arrfy.substr(1, arrfy.length - 2).split(',').map(Number);
+      return arrfyLast;
+    }
+    return false;
+  },
+  toString({ arr }) {
+    return ("(" + arr.toString() + ")")
+  }
 }
