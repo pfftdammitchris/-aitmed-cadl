@@ -852,5 +852,8 @@ export default {
       return arrfyLast;
     }
     return false;
+  },
+  toString({ arr }) {
+    return ("(" + arr.toString() + ")")
   }
 }
