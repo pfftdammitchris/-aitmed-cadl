@@ -8,18 +8,11 @@ import { UnableToLocateValue } from '../errors'
 export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
-  debugger
   return async () => {
     let res
-    const {
-      api,
-      dataKey,
-      dataIn,
-      dataOut,
-
-      subtype,
-      ...options
-    } = _.cloneDeep(apiObject || {})
+    const { api, dataKey, dataIn, dataOut, subtype, ...options } = _.cloneDeep(
+      apiObject || {}
+    )
 
     let requestOptions = {
       ...options,
@@ -35,10 +28,20 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
-      const { deat, id, ids, _nonce, ...populatedCurrentVal } = await dispatch({
-        type: 'populate-object',
-        payload: { object: currentVal, pageName, copy: true },
-      })
+      const { deat, id, ids, _nonce, ObjType, key, ...populatedCurrentVal } =
+        await dispatch({
+          type: 'populate-object',
+          payload: { object: currentVal, pageName, copy: true },
+        })
+
+      if (ObjType && ObjType === 3) {
+        const res = dispatch({
+          type: 'search-cache',
+          payload: { key },
+        })
+        debugger
+      }
+
       idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       if (!isPopulated(id)) {
@@ -111,7 +114,7 @@ function get({ pageName, apiObject, dispatch }) {
             return Promise.all(
               res?.data?.document.map(async (document) => {
                 await dispatch({
-                  type: 'insert-to-object-table',   //yuhan
+                  type: 'insert-to-object-table', //yuhan
                   payload: { doc: document },
                 })
                 //decrypt data
@@ -132,7 +135,6 @@ function get({ pageName, apiObject, dispatch }) {
             delete rawResponse.document
           })
           .catch((err) => {
-            debugger
             console.log(err)
           })
         await dispatch({

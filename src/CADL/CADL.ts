@@ -1032,8 +1032,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1081,14 +1081,19 @@ export default class CADL extends EventEmitter {
    */
   private async dispatch(action: { type: string; payload?: any }) {
     switch (action.type) {
-      case 'insert-to-object-table': {   //yuhan
+      case 'search-cache': {
+        const key = action.payload.key
+        const res = this._indexRepository.search(key)
+        return res
+      }
+      case 'insert-to-object-table': {
+        //yuhan
         const doc = action.payload.doc
         let docId = doc.id
         if (docId instanceof Uint8Array) {
           docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
         }
         const cachedDoc = this._indexRepository.getDocById(docId)
-        debugger
         if (!cachedDoc.length) {
           this._indexRepository.cacheDoc(doc)
         }
@@ -1099,7 +1104,8 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'insert-to-index-table': {
-        const doc = action.payload.doc
+        const doc = action.payload.doc.doc
+        debugger
         for (let item of doc) {
           let content = item.name
           const contentAfterExtraction = basicExtraction(content)
@@ -1114,8 +1120,9 @@ export default class CADL extends EventEmitter {
             const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
             this._indexRepository.insertIndexData({
               kText: key,
+              id: docId,
               docId,
-              docType: doc.type,
+              docType: item.type,
               fuzzyKey: initialMapping,
               initMapping: initialMapping,
               fKey,
