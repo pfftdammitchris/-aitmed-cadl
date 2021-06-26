@@ -34,12 +34,35 @@ function get({ pageName, apiObject, dispatch }) {
           payload: { object: currentVal, pageName, copy: true },
         })
 
-      if (ObjType && ObjType === 3) {
-        const res = dispatch({
+      if (ObjType && ObjType === 3 && key) {
+        let res = []
+        const searchResponse = await dispatch({
           type: 'search-cache',
           payload: { key },
         })
-        debugger
+        if (searchResponse.length) {
+          const decryptedDocs = searchResponse.map(async (doc) => {
+            const decryptedDoc = await documentToNote({ document: doc })
+            return decryptedDoc
+          })
+          await Promise.all(decryptedDocs)
+            .then((decryptedDataResults) => {
+              res = decryptedDataResults
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
+        await dispatch({
+          type: 'update-data',
+          //TODO: handle case for data is an array or an object
+          payload: {
+            pageName,
+            dataKey: dataOut ? dataOut : dataKey,
+            data: { doc: res, searchResult: true },
+          },
+        })
+        return
       }
 
       idList = ids ? ids : id ? [id] : ['']

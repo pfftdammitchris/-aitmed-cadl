@@ -46,6 +46,7 @@ export default class CADL extends EventEmitter {
   private _myBaseUrl: string
   private _assetsUrl: string
   private _root: Record<string, any> = this.initRoot({})
+  private _rawRoot: Record<string, any> = this.initRawRoot({})
   private _initCallQueue: any[]
   private _designSuffix: Record<string, any>
   private _aspectRatio: number
@@ -130,7 +131,7 @@ export default class CADL extends EventEmitter {
 
     //set cadlEndpoint
     let cadlEndpointUrl = `${this.cadlBaseUrl}${cadlMain}`
-    let cadlEndpoint = await this.defaultObject(cadlEndpointUrl)
+    let { cadlObject: cadlEndpoint } = await this.defaultObject(cadlEndpointUrl)
 
     this.cadlEndpoint = cadlEndpoint
 
@@ -184,7 +185,9 @@ export default class CADL extends EventEmitter {
         switch (pageName) {
           case 'BaseDataModel': {
             if (BaseDataModel) break
-            const rawBaseDataModel = await this.getPage('BaseDataModel')
+            const { pageCADL: rawBaseDataModel } = await this.getPage(
+              'BaseDataModel'
+            )
             const processedBaseDataModel = this.processPopulate({
               source: rawBaseDataModel,
               lookFor: ['.', '..', '=', '~'],
@@ -195,11 +198,12 @@ export default class CADL extends EventEmitter {
                 properties: processedBaseDataModel,
               },
             })
+
             break
           }
           case 'BaseCSS': {
             if (BaseCSS) break
-            const rawBaseCSS = await this.getPage('BaseCSS')
+            const { pageCADL: rawBaseCSS } = await this.getPage('BaseCSS')
             const processedBaseCSS = this.processPopulate({
               source: rawBaseCSS,
               lookFor: ['.', '..', '=', '~'],
@@ -212,7 +216,7 @@ export default class CADL extends EventEmitter {
           }
           case 'BasePage': {
             if (BasePage) break
-            const rawBasePage = await this.getPage('BasePage')
+            const { pageCADL: rawBasePage } = await this.getPage('BasePage')
             const processedBasePage = this.processPopulate({
               source: rawBasePage,
               lookFor: ['.', '..', '=', '~'],
@@ -224,7 +228,7 @@ export default class CADL extends EventEmitter {
             break
           }
           default: {
-            const rawPage = await this.getPage(pageName)
+            const { pageCADL: rawPage } = await this.getPage(pageName)
             const processedRawPage = this.processPopulate({
               source: rawPage,
               lookFor: ['.', '..', '=', '~'],
@@ -325,7 +329,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      pageCADL = await this.getPage(pageName)
+      ;({ pageCADL } = await this.getPage(pageName))
     }
 
     if (this.root[pageName] && reload) {
@@ -531,10 +535,11 @@ export default class CADL extends EventEmitter {
    */
   public async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
-    // if (pageName === 'InboxContacts') return _.cloneDeep(InboxContacts)
+    // if (pageName === 'AddDocuments') return _.cloneDeep(AddDocuments)
     // if (pageName === 'BaseDataModel') return _.cloneDeep(BaseDataModel)
 
     let pageCADL
+    let pageYAML
     let pageUrl
     if (pageName.startsWith('~')) {
       if (!this.myBaseUrl) {
@@ -548,11 +553,21 @@ export default class CADL extends EventEmitter {
     }
     try {
       let url = `${pageUrl}${pageName}_en.yml`
-      pageCADL = await this.defaultObject(url)
+      const { cadlObject, cadlYAML } = await this.defaultObject(url)
+      pageCADL = cadlObject
+      pageYAML = cadlYAML
     } catch (error) {
       throw error
     }
-    return pageCADL
+    if (pageCADL) {
+      this.rawRootDispatch({
+        type: 'SET_ROOT_PROPERTIES',
+        payload: {
+          properties: { [pageName]: pageYAML },
+        },
+      })
+    }
+    return { pageCADL, pageYAML }
   }
 
   /**
@@ -582,7 +597,7 @@ export default class CADL extends EventEmitter {
       throw new UnableToParseYAML(`Unable to parse yaml for ${url}`, error)
     }
 
-    return cadlObject
+    return { cadlObject, cadlYAML }
   }
 
   /**
@@ -1105,7 +1120,6 @@ export default class CADL extends EventEmitter {
       }
       case 'insert-to-index-table': {
         const doc = action.payload.doc.doc
-        debugger
         for (let item of doc) {
           let content = item.name
           const contentAfterExtraction = basicExtraction(content)
@@ -1127,6 +1141,7 @@ export default class CADL extends EventEmitter {
               initMapping: initialMapping,
               fKey,
               fKeyHex,
+              score: 0,
             })
           }
           console.log(docId)
@@ -2265,6 +2280,11 @@ export default class CADL extends EventEmitter {
     })
   }
 
+  private initRawRoot(root) {
+    //@ts-ignore
+    return produce(root, (draft) => {})
+  }
+
   public newDispatch(action) {
     if (!isObject(action)) {
       throw new Error('Actions must be plain objects')
@@ -2278,6 +2298,44 @@ export default class CADL extends EventEmitter {
     this.root = this.reducer(this.root, action)
 
     return action
+  }
+
+  public rawRootDispatch(action) {
+    if (!isObject(action)) {
+      throw new Error('Actions must be plain objects')
+    }
+
+    if (typeof action.type === 'undefined') {
+      throw new Error('Action types cannot be undefined.')
+    }
+
+    this.rawRoot = this.rawRootReducer(this.rawRoot, action)
+
+    return action
+  }
+
+  private rawRootReducer(state = this.rawRoot, action) {
+    return produce(state, (draft) => {
+      switch (action.type) {
+        case 'SET_ROOT_PROPERTIES': {
+          const { properties } = action.payload
+          for (let [key, val] of Object.entries(properties)) {
+            _.set(draft, key, val)
+          }
+          break
+        }
+        case 'DELETE_PAGE': {
+          const { pageName } = action.payload
+          delete draft[pageName]
+          break
+        }
+
+        case 'EDIT_DRAFT': {
+          const { callback } = action.payload
+          callback(draft)
+        }
+      }
+    })
   }
 
   private reducer(state = this.root, action) {
@@ -2295,8 +2353,16 @@ export default class CADL extends EventEmitter {
               currVal = _.get(state[pageName], dataKey)
             }
           }
+          //Reference to the array of documents needs to be kept the same
+          //Currently Response from get doc merges with search response
+          //The api response should replace the search response in the array
           if (isObject(currVal) && isObject(newVal)) {
-            newVal = _.merge(currVal, newVal)
+            if ('searchResult' in newVal) {
+              currVal.doc.length = 0
+              currVal.doc.push(...newVal.doc)
+            } else {
+              newVal = _.merge(currVal, newVal)
+            }
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
             currVal.length = 0
             currVal.push(...newVal)
@@ -2519,6 +2585,13 @@ export default class CADL extends EventEmitter {
 
   public set root(root) {
     this._root = root || {}
+  }
+  public get rawRoot() {
+    return this._rawRoot
+  }
+
+  public set rawRoot(rawRoot) {
+    this._rawRoot = rawRoot || {}
   }
 
   set apiVersion(apiVersion) {

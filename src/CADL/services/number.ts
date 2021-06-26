@@ -89,4 +89,29 @@ export default {
   hexOr({ intOne, hexTwo }) {
     return intOne | hexTwo
   },
+
+  hx({ iniLen, localArr, binaryArr }): number[] | boolean {
+    if (localArr.length === binaryArr.length) {
+      let equals: any;
+      let pushArr: number[] = [];
+      for (let index = 0; index < Math.pow(2, iniLen) - 1; index++) {
+        equals = 0;
+        for (let indx = 0; indx <= localArr.length - 1; indx++) {
+          if (((index >> (localArr[indx] - 1)) & 1) === binaryArr[indx]) {
+            equals++;
+          } else {
+            break;
+          }
+        }
+        if (equals === localArr.length) {
+          pushArr.push(index);
+
+        }
+      }
+      return pushArr;
+    }
+    return false;
+
+  }
+
 }

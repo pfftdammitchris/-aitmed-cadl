@@ -1,4 +1,5 @@
 import CheckStopWord from './CheckStopWord'
+import { isObject } from '../../../utils'
 
 export default function extract(content: any) {
   const { data, type, title, user, targetRoomName } = content
@@ -9,6 +10,13 @@ export default function extract(content: any) {
     !data.match(/^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g)
   ) {
     contentArr.push(...data.split(/\W+/))
+  }
+  if (isObject(data)) {
+    const { isFavorite, ...restOfProps } = data
+    for (let [key, val] of Object.entries(restOfProps)) {
+      contentArr.push(...key.split(/\W+/))
+      contentArr.push(...val.split(/\W+/))
+    }
   }
   if (type) {
     contentArr.push(...type.split(/\W+/))
@@ -33,8 +41,8 @@ export default function extract(content: any) {
   }, {})
 
   let result: string[] = []
-  for (let [key, val] of Object.entries(wordMap)) {
-    if (val === 1) result.push(key)
+  for (let key of Object.keys(wordMap)) {
+    result.push(key)
   }
   return result
 }

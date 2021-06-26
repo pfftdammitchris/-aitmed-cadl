@@ -22,7 +22,7 @@ export default class FrontEndDB {
       let createEcosDocTable =
         'CREATE TABLE ecos_doc_table (ctime int, mtime int, atime int, atimes int, id char, name char,deat char, size int, fid char, eid char, bsig char, esig char, subtype int, type int, tage int);'
       let createIndexTable =
-        'CREATE TABLE index_tables (id char, fkey int, fuzzyKey char, initMapping char, kText char, docId char, docType int, score int,fKeyHex char);'
+        'CREATE TABLE index_tables (id char, fKey int, fuzzyKey char, initMapping char, kText char, docId char, docType int, score int,fKeyHex char);'
       let createApiHashTable =
         'CREATE TABLE api_hash_table (api_input_hash char, resultId char);'
 

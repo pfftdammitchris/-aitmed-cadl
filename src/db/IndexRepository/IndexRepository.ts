@@ -11,6 +11,7 @@ export default class IndexRepository {
   }
 
   public search(input: string) {
+    if (!input) return
     const fuzzyCreator = new FuzzyIndexCreator()
     const initMapping = fuzzyCreator.initialMapping(input)
     const fuzzyInd = fuzzyCreator.toFuzzyHex(initMapping)
@@ -19,6 +20,7 @@ export default class IndexRepository {
       ins_hex: fuzzyInd,
     })
     let docs: any[] = []
+    if (!res.length) return docs
     docs = this.getDocsByIds(res[0].values)
     let returnDocs: any[] = []
     for (let doc of docs) {
@@ -38,7 +40,10 @@ export default class IndexRepository {
         returnDocs.push(obj)
       }
     }
-    console.log('this is returnDocs from inside search', JSON.stringify(returnDocs))
+    console.log(
+      'this is returnDocs from inside search',
+      JSON.stringify(returnDocs)
+    )
     return returnDocs
   }
   public async getDataBase(config) {
