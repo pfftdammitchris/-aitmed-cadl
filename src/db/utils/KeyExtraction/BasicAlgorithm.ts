@@ -31,7 +31,6 @@ export default function extract(content: any) {
     contentArr.push(...targetRoomName.split(/\W+/))
   }
   const checkStopWord = new CheckStopWord()
-  console.log('this is contentarr', contentArr)
   const wordMap = contentArr.reduce((acc, word) => {
     const currWord = word.toLowerCase()
     if (currWord && !checkStopWord.isStopWord(currWord)) {

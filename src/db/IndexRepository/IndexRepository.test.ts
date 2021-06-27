@@ -10,9 +10,9 @@ describe('IndexRepository', () => {
   )
   let docId2 = store.level2SDK.utilServices.uint8ArrayToBase64(
     new Uint8Array([
-      137, 233, 149, 162, 86, 51, 79, 174, 70, 117, 236, 109, 213, 32, 243,
-      57,
-    ]))
+      137, 233, 149, 162, 86, 51, 79, 174, 70, 117, 236, 109, 213, 32, 243, 57,
+    ])
+  )
   let doc = {
     atime: 1619137372,
     atimes: 1,
@@ -164,7 +164,6 @@ describe('IndexRepository', () => {
       expect(res).toEqual(false)
       indexRepository.deleteIndexByDocId('olol')
       const res1 = indexRepository.indexTableIsEmpty()
-      console.log(res1)
       expect(res1).toEqual(true)
     })
   })
@@ -220,7 +219,6 @@ describe('IndexRepository', () => {
     it('should return all docs with given ids', () => {
       indexRepository.cacheDoc(doc)
       const res = indexRepository.getDocsByIds([[doc.id]])
-      console.log(res)
       expect(res[0][0]).toBeTruthy()
     })
   })
@@ -232,7 +230,6 @@ describe('IndexRepository', () => {
       indexRepository.cacheDoc(doc)
       indexRepository.cacheDoc(doc2)
       const res = indexRepository.search('walrus')
-      console.log('this is search log', res)
       expect(res[0].id).toEqual('iemVolYzT65Gdext1SDzOQ==')
     })
   })

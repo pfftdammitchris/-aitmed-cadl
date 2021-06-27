@@ -58,7 +58,6 @@ export default (
   function getDocsByPageId(pageId) {
     let sqlstr = `SELECT * FROM ecos_doc_table WHERE pageId = ${pageId}`
     let res = db.exec(sqlstr)
-    console.log(res)
     return res
   }
 }

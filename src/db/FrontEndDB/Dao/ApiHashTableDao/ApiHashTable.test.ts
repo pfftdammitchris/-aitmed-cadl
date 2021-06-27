@@ -101,7 +101,6 @@ describe('ApiHasTable', () => {
       const apiInputHash = sha256(JSON.stringify(doc)).toString()
       frontEndDb.ApiHashTableDao.insertApiResult(apiInputHash, doc.id)
       let res = frontEndDb.ApiHashTableDao.getApiResult(apiInputHash)
-      console.log(res)
       expect(res).toEqual(doc.id)
     })
   })

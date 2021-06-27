@@ -86,7 +86,6 @@ export default (db) => {
       }
     }
     const res = db.exec(sqlstr, params)
-    console.log(res)
     return res
   }
 

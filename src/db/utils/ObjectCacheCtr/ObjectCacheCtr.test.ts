@@ -99,7 +99,6 @@ describe('ObjectCacheCtr', () => {
         doc.id
       )
       const res2 = objectCacheCtr.retrieveDocFromCache(frontEndDb, apiInputStr)
-      console.log(res2)
       expect(res2).toBeTruthy()
     })
   })

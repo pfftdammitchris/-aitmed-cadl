@@ -1108,14 +1108,12 @@ export default class CADL extends EventEmitter {
         if (docId instanceof Uint8Array) {
           docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
         }
+        const isInObjectCache = this._indexRepository.getDocById(docId)
+        if (isInObjectCache.length) return
         const cachedDoc = this._indexRepository.getDocById(docId)
         if (!cachedDoc.length) {
           this._indexRepository.cacheDoc(doc)
         }
-        console.log(
-          'this is the cached doc',
-          this._indexRepository.getDocById(docId)
-        )
         break
       }
       case 'insert-to-index-table': {
@@ -1144,10 +1142,6 @@ export default class CADL extends EventEmitter {
               score: 0,
             })
           }
-          console.log(docId)
-          console.log(this._indexRepository.getPIByDocId(docId))
-          console.log(this._indexRepository.getkTextByDid(docId))
-          console.log(this._indexRepository.getAllDocId())
         }
 
         break
@@ -2353,13 +2347,21 @@ export default class CADL extends EventEmitter {
               currVal = _.get(state[pageName], dataKey)
             }
           }
-          //Reference to the array of documents needs to be kept the same
-          //Currently Response from get doc merges with search response
-          //The api response should replace the search response in the array
+
+          /**
+           * CHECK HERE FOR DOC REFERENCE ISSUES
+           *  */
           if (isObject(currVal) && isObject(newVal)) {
-            if ('searchResult' in newVal) {
-              currVal.doc.length = 0
-              currVal.doc.push(...newVal.doc)
+            if ('doc' in newVal) {
+              if (!Array.isArray(currVal.doc)) {
+                currVal.doc = []
+                currVal.doc.push(...newVal.doc)
+              } else if ('id' in currVal) {
+                newVal = _.merge(currVal, newVal.doc)
+              } else {
+                currVal.doc.length = 0
+                currVal.doc.push(...newVal.doc)
+              }
             } else {
               newVal = _.merge(currVal, newVal)
             }

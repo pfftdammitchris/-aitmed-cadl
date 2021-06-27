@@ -21,11 +21,19 @@ export default class IndexRepository {
     })
     let docs: any[] = []
     if (!res.length) return docs
-    docs = this.getDocsByIds(res[0].values)
+
+    const { values } = res[0]
+    const flattenValues = values.reduce((acc, id) => {
+      if (!acc.includes(id[0])) {
+        acc.push(id[0])
+      }
+      return acc
+    }, [])
+    docs = this.getDocsByIds(flattenValues)
+
     let returnDocs: any[] = []
     for (let doc of docs) {
       if (doc.length) {
-        console.log('this is doc from inside search', JSON.stringify(doc))
         const obj: any = {}
         const { columns, values } = doc[0]
         for (let i = 0; i < columns.length; i++) {
@@ -40,10 +48,7 @@ export default class IndexRepository {
         returnDocs.push(obj)
       }
     }
-    console.log(
-      'this is returnDocs from inside search',
-      JSON.stringify(returnDocs)
-    )
+
     return returnDocs
   }
   public async getDataBase(config) {
@@ -99,7 +104,7 @@ export default class IndexRepository {
   public getDocsByIds(relatedDocsIds) {
     let result = []
     for (let did of relatedDocsIds) {
-      result.push(this.docTableDao.getDocById(did[0]))
+      result.push(this.docTableDao.getDocById(did))
     }
     return result
   }
