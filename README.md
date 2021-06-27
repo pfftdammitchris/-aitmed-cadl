@@ -142,6 +142,21 @@ resolved -skip: items to skip while parsing through source file -withFns: a bool
 true or false that denotes whether or not to populate the functions
 -pageName: name of the noodl page
 
+#### CADL.dispatch
+
+This function handles the updating of the state(i.e noodl.root) as a result of 
+return values from apis or builtIn fns.This function is
+bounded to the noodl/cadl instance and called within the builtIn fns and the 
+object services (document, edges, vertexes). Within this function you will see 
+the logic for 'eval-object.' 
+
+#### CADL.newDispatch
+
+This is a lower level dispatch function that gets called to directly affect the
+state of the noodl.root through SET_VALUE, DELETE_VALUE, SET_ROOT_PROPERTIES, 
+SET_LOCAL_PROPERTIES.
+
+
 ## Methods That Can Be Accessed Through CADL/NOODL:
 
 ### These functions can be accessed through builtInFns, which are attached to root as root.builtIn
