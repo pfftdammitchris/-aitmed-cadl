@@ -77,6 +77,8 @@ export default {
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
+    let sortspe: any[] = []
+    let sortsym: any[] = []
     let body = await client.search({
       index: INDEX,
       body: {
@@ -115,15 +117,19 @@ export default {
         }
       }
     })
-    console.log('test suggest', body)
-    console.log("曹梦琪---------", body_1)
+    sortspe = body_1.suggest.speciality_suggestion[0].options.sort(function (a, b) {
+      return a._source.score - b._source.score
+    })
+    sortsym = body_1.suggest.symptom_suggestion[0].options.sort(function (a, b) {
+      return a._source.score - b._source.score
+    })
     for (let s of body.suggest.doctor_suggestion[0].options) {
       doc_sug.push(s.text)
     }
-    for (let s of body_1.suggest.speciality_suggestion[0].options) {
+    for (let s of sortspe) {
       spe_sug.push(s.text)
     }
-    for (let s of body_1.suggest.symptom_suggestion[0].options) {
+    for (let s of sortsym) {
       sym_sug.push(s.text)
     }
     console.log('test suggest', {
