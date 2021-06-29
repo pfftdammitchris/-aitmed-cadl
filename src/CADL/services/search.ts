@@ -72,46 +72,68 @@ export default {
    */
   async suggest({ prefix }) {
     console.log('test suggest', prefix)
-    // let INDEX = 'doctors_v0.1'
-    const doc_sug: any[] = []
-    const spe_sug: any[] = []
-    const body = await client.search({
+    let INDEX = 'doctors_v0.4'
+    let TEXT_INDEX = "test_doctors"
+    let doc_sug: any[] = []
+    let spe_sug: any[] = []
+    let sym_sug: any[] = []
+    let body = await client.search({
       index: INDEX,
       body: {
-        suggest: {
-          speciality_suggestion: {
-            prefix: prefix,
-            completion: {
-              field: 'Speciality',
-              skip_duplicates: true,
-              size: 10,
-            },
+        "suggest": {
+          "doctor_suggestion": {
+            "prefix": prefix,
+            "completion": {
+              "field": "suggest",
+              "skip_duplicates": true,
+              "size": 10
+            }
+          }
+        }
+      }
+    })
+    let body_1 = await client.search({
+      index: TEXT_INDEX,
+      body: {
+        "suggest": {
+          "speciality_suggestion": {
+            "prefix": prefix,
+            "completion": {
+              "field": "specialty",
+              "skip_duplicates": true,
+              "size": 10
+            }
           },
-          doctor_suggestion: {
-            prefix: prefix,
-            completion: {
-              field: 'Name',
-              skip_duplicates: true,
-              size: 10,
-            },
-          },
-        },
-      },
+          "symptom_suggestion": {
+            "prefix": prefix,
+            "completion": {
+              "field": "symptom",
+              "skip_duplicates": true,
+              "size": 10
+            }
+          }
+        }
+      }
     })
     console.log('test suggest', body)
-    for (const s of body.suggest.doctor_suggestion[0].options) {
+    console.log("曹梦琪---------", body_1)
+    for (let s of body.suggest.doctor_suggestion[0].options) {
       doc_sug.push(s.text)
     }
-    for (const s of body.suggest.speciality_suggestion[0].options) {
+    for (let s of body_1.suggest.speciality_suggestion[0].options) {
       spe_sug.push(s.text)
+    }
+    for (let s of body_1.suggest.symptom_suggestion[0].options) {
+      sym_sug.push(s.text)
     }
     console.log('test suggest', {
       doctor_suggestion: doc_sug,
       speciality_suggestion: spe_sug,
+      symptom_suggestion: sym_sug,
     })
-    return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug }
+    return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug, symptom_suggestion: sym_sug }
   },
-  async query({ cond = null, distance = 30, carrier = null, pos = 92508 }) {
+  async query({ cond = null, distance = 30, carrier = null, pos = 92508, type = 1 }) {
     console.log('test query', {
       cond: cond,
       distance: distance,
@@ -136,7 +158,7 @@ export default {
     }
     console.log('query zip code2', arr)
 
-    let template =
+    let template: any =
     {
       "query": {
         "bool": {
@@ -182,7 +204,12 @@ export default {
         }
       }
     }
-
+    if (type == 2) {
+      template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Office']
+    } else if (type == 3) {
+      template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Telemedicine']
+    }
+    console.log("test template", template)
     let body = await client.search({
       index: INDEX,
       body: template,
@@ -192,6 +219,7 @@ export default {
     console.log('test query', body.hits.hits)
     return body.hits.hits
   },
+
   async queryByDate({
     cond = null,
     distance = 30,
@@ -199,6 +227,7 @@ export default {
     pos = 92508,
     stime,
     etime,
+    type = 1
   }) {
     console.log('test query', {
       cond: cond,
@@ -242,7 +271,7 @@ export default {
     }
 
     console.log('query zip code2', { arr: arr, stime: stime, etime: etime })
-    let template = {
+    let template: any = {
       "query": {
         "bool": {
           "must": {
@@ -297,7 +326,12 @@ export default {
       }
     }
 
-
+    if (type == 2) {
+      template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Office']
+    } else if (type == 3) {
+      template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Telemedicine']
+    }
+    console.log("test template", template)
 
     const body = await client.search({
       index: INDEX,

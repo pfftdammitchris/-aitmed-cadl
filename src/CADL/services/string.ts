@@ -132,5 +132,23 @@ export default {
       return false
     }
     return true
+  },
+  strLenx(address: Object): string {
+    let newStr: string = ''
+    let len: number = 0;
+    for (let val of (Object as any).values(address)) {
+      if (val !== '') {
+        len++;
+        if (len === 2 || len === 4) {
+          newStr += val + ' ';
+          continue;
+        }
+        newStr += val + ',';
+      }
+    }
+    if (newStr === '') {
+      return '';
+    }
+    return newStr.substr(0, newStr.length - 1);
   }
 }
