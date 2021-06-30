@@ -329,7 +329,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      ;({ pageCADL } = await this.getPage(pageName))
+      ; ({ pageCADL } = await this.getPage(pageName))
     }
 
     if (this.root[pageName] && reload) {
@@ -1047,8 +1047,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1099,6 +1099,7 @@ export default class CADL extends EventEmitter {
       case 'search-cache': {
         const key = action.payload.key
         const res = this._indexRepository.search(key)
+        debugger
         return res
       }
       case 'insert-to-object-table': {
@@ -1131,17 +1132,24 @@ export default class CADL extends EventEmitter {
             const fKey = fuzzyIndexCreator.toFuzzyInt64(initialMapping)
             const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
             this._indexRepository.insertIndexData({
+              // kText: key,
+              // id: docId,
+              // docId,
+              // docType: item.type,
+              // fuzzyKey: initialMapping,
+              // initMapping: initialMapping,
+              // fKey,
+              // fKeyHex,
+              // score: 0,
               kText: key,
-              id: docId,
               docId,
               docType: item.type,
-              fuzzyKey: initialMapping,
-              initMapping: initialMapping,
               fKey,
-              fKeyHex,
               score: 0,
             })
+            console.log('insert to index table!!!', fKey, initialMapping, fKeyHex)
           }
+          debugger
         }
 
         break
@@ -2276,7 +2284,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => {})
+    return produce(root, (draft) => { })
   }
 
   public newDispatch(action) {

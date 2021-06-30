@@ -25,7 +25,8 @@ export default (db) => {
 
   function insertAll(indexTableEntry) {
     let sqlstr =
-      'INSERT INTO index_tables VALUES (:id, :fKey , :fuzzyKey, :initMapping , :kText , :docId , :docType , :score, :fKeyHex );'
+      // 'INSERT INTO index_tables VALUES (:id, :fKey , :fuzzyKey, :initMapping , :kText , :docId , :docType , :score, :fKeyHex );'
+      'INSERT INTO index_tables VALUES (:fKey , :kText , :docId , :docType , :score );'
     let params = {}
     for (let [key, val] of Object.entries(indexTableEntry)) {
       if (val instanceof Uint8Array) {

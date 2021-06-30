@@ -14,6 +14,7 @@ export default (
     let sqlstr = 'SELECT * FROM ecos_doc_table WHERE id = :did LIMIT 1'
     let params = { ':did': did }
     let res = db.exec(sqlstr, params)
+    debugger
     return res
   }
   function getDocByIds(dids) {

@@ -20,9 +20,13 @@ export default class FrontEndDB {
       const SQL = await initSqlJs(config)
       frontEndDB.INSTANCE = new SQL.Database()
       let createEcosDocTable =
-        'CREATE TABLE ecos_doc_table (ctime int, mtime int, atime int, atimes int, id char, name char,deat char, size int, fid char, eid char, bsig char, esig char, subtype int, type int, tage int);'
+        'CREATE TABLE ecos_doc_table (ctime int, mtime int, atime int, atimes int, id char not null primary key, \
+          name char,deat char, size int, fid char, eid char, bsig char, esig char, subtype int, type int, tage int);'
+      // let createIndexTable =
+      //   'CREATE TABLE index_tables (id integer char, fkey int, fuzzyKey char, initMapping char, kText char, \
+      //     docId char, docType int, score int,fKeyHex char);'
       let createIndexTable =
-        'CREATE TABLE index_tables (id char, fkey int, fuzzyKey char, initMapping char, kText char, docId char, docType int, score int,fKeyHex char);'
+        'CREATE TABLE index_tables (fkey int, kText char, docId char, docType int, score int);'
 
       /**
        * NOT YET USED
