@@ -319,7 +319,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      ;({ pageCADL } = await this.getPage(pageName))
+      ; ({ pageCADL } = await this.getPage(pageName))
     }
 
     if (this.root[pageName] && reload) {
@@ -452,7 +452,7 @@ export default class CADL extends EventEmitter {
       const FIRST_processComponents = this.processPopulate({
         source: processedPage,
         lookFor: ['.', '..', '_', '~'],
-        skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
+        skip: ['update', 'check', 'init', 'formData', 'dataIn', 'style', ...skip],
         withFns: true,
         pageName,
       })
@@ -469,6 +469,7 @@ export default class CADL extends EventEmitter {
           'init',
           'formData',
           'dataIn',
+          'style',
           ...skip,
         ],
         withFns: true,
@@ -1037,8 +1038,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -2216,7 +2217,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => {})
+    return produce(root, (draft) => { })
   }
 
   public newDispatch(action) {

@@ -589,8 +589,8 @@ export default {
     let id = ''
     if (isArray(array)) {
       array.forEach((arr) => {
-        if (arr['name']['inviteeName'] === userName) {
-          id = arr['bvid']
+        if (arr['name']['data']['fullName'] === userName) {
+          id = arr['bsig']
           return
         }
       })
