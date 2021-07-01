@@ -42,6 +42,7 @@ export const create: DocumentTypes.Create = async ({
   dTypeProps,
   paymentNonce,
   jwt,
+  dispatch,
 }) => {
   //check if eid has been dereferenced
   if (!isPopulated(edge_id)) {
@@ -223,8 +224,9 @@ export const create: DocumentTypes.Create = async ({
 
   //TODO: convert document type to be read like documentToNote
   //type has to be converted in order to use filter
+  await dispatch({ type: 'insert-to-object-table', payload: { doc: document } })
   const note = await documentToNote({ document })
-
+  // createdoc id-obj update
   return {
     jwt: response?.data?.jwt,
     error: response?.data?.error,
@@ -425,7 +427,7 @@ export const update: any = async (
     const doc = await retrieveDocument(updatedDocument.id)
     note = await documentToNote({ document: doc })
   }
-
+  // update obj
   // return new note
   return {
     jwt: response?.data?.jwt,
