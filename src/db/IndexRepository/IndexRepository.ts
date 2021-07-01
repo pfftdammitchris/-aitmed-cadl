@@ -20,7 +20,6 @@ export default class IndexRepository {
       ins_hex: fuzzyInd,
     })
     console.log('fuzzysearch', input, res)
-    debugger
 
     let docs: any[] = []
     if (!res.length) return docs

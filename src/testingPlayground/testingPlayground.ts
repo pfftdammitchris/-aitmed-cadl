@@ -8,7 +8,6 @@ import initSqlJs from 'sql.js'
 export default (async function () {
   const config = {
     locateFile: (filename) => {
-      debugger
       return `./${filename}`
     },
   }

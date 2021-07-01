@@ -1099,7 +1099,6 @@ export default class CADL extends EventEmitter {
       case 'search-cache': {
         const key = action.payload.key
         const res = this._indexRepository.search(key)
-        debugger
         return res
       }
       case 'insert-to-object-table': {
@@ -1149,7 +1148,7 @@ export default class CADL extends EventEmitter {
             })
             console.log('insert to index table!!!', fKey, initialMapping, fKeyHex)
           }
-          debugger
+
         }
 
         break
