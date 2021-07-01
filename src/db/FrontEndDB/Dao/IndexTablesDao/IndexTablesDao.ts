@@ -67,6 +67,7 @@ export default (db) => {
         ' OR ' +
         "kText LIKE :kInput || '%'  )"
       params = {
+        //@ts-ignore
         ':docType': docType,
         ':ins_hex': ins_hex,
         ':kInput': kInput,
@@ -80,6 +81,7 @@ export default (db) => {
         ' OR ' +
         "kText LIKE :kInput || '%'  )"
       params = {
+        //@ts-ignore
         ':docTypeLow': docTypeLow,
         ':docTypeHigh': docTypeHigh,
         ':ins_hex': ins_hex,

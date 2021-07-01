@@ -104,7 +104,7 @@ export default class IndexRepository {
   }
 
   public getDocsByIds(relatedDocsIds) {
-    let result = []
+    let result: any[] = []
     for (let did of relatedDocsIds) {
       result.push(this.docTableDao.getDocById(did))
     }

@@ -35,7 +35,7 @@ function get({ pageName, apiObject, dispatch }) {
         })
 
       if (ObjType && ObjType === 3 && key) {
-        let res = []
+        let res: any[] = []
         const searchResponse = await dispatch({
           type: 'search-cache',
           payload: { key },
