@@ -485,7 +485,7 @@ export default {
     let flag = 0
     if (isArray(array)) {
       array.forEach((arr) => {
-        if (phoneNumber === arr['phone']) {
+        if (phoneNumber === arr['name']['data']['phone']) {
           flag = 1
           return
         }
@@ -589,8 +589,8 @@ export default {
     let id = ''
     if (isArray(array)) {
       array.forEach((arr) => {
-        if (arr['name']['inviteeName'] === userName) {
-          id = arr['bvid']
+        if (arr['name']['data']['fullName'] === userName) {
+          id = arr['bsig']
           return
         }
       })
