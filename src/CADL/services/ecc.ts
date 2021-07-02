@@ -5,7 +5,6 @@ import { retrieveEdge } from '../../common/retrieve'
 
 export default {
   signature({ message, eskSign, sk }: { message: any; eskSign: any; sk: any }) {
-    debugger
     let sig: string = ""
     //yuhan 7/2/2021 without esksign cannot generate sig
     if (!eskSign || eskSign.length < 100) {
