@@ -1119,9 +1119,11 @@ export default class CADL extends EventEmitter {
       }
       case 'insert-to-index-table': {
         const doc = action.payload.doc.doc
+        debugger
         for (let item of doc) {
           let content = item.name
           const contentAfterExtraction = basicExtraction(content)
+          debugger
           const fuzzyIndexCreator = new FuzzyIndexCreator()
           let docId = item.id
           if (docId instanceof Uint8Array) {
@@ -2344,9 +2346,11 @@ export default class CADL extends EventEmitter {
     return produce(state, (draft) => {
       switch (action.type) {
         case 'SET_VALUE': {
+          debugger
           const { pageName, dataKey, value, replace } = action.payload
           let currVal
           let newVal = value
+          debugger
           if (!replace) {
             //used to merge new value to existing value ref
             if (typeof pageName === 'undefined') {
@@ -2359,27 +2363,36 @@ export default class CADL extends EventEmitter {
           /**
            * CHECK HERE FOR DOC REFERENCE ISSUES
            *  */
+          debugger
+          console.log('Cadl set value line:2367', action.payload)
           if (isObject(currVal) && isObject(newVal)) {
             if ('doc' in newVal) {
               if (!Array.isArray(currVal.doc)) {
                 currVal.doc = []
                 currVal.doc.push(...newVal.doc)
+                debugger
               } else if ('id' in currVal) {
                 newVal = _.merge(currVal, newVal.doc)
+                debugger
               } else {
                 currVal.doc.length = 0
                 currVal.doc.push(...newVal.doc)
+                debugger
               }
             } else {
               newVal = _.merge(currVal, newVal)
+              debugger
             }
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
             currVal.length = 0
             currVal.push(...newVal)
+            debugger
           } else if (typeof pageName === 'undefined') {
             _.set(draft, dataKey, newVal)
+            debugger
           } else {
             _.set(draft[pageName], dataKey, newVal)
+            debugger
           }
           break
         }

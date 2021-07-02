@@ -226,7 +226,6 @@ function create({ pageName, apiObject, dispatch }) {
         pageName,
       },
     })
-
     const { deat, id, _nonce, ...populatedCurrentVal } = await dispatch({
       type: 'populate-object',
       payload: { object: currentVal, pageName },
@@ -330,6 +329,7 @@ function create({ pageName, apiObject, dispatch }) {
             }
           )
         }
+
         const response = await Document.create({
           edge_id: eid,
           content: name?.data,
@@ -344,6 +344,7 @@ function create({ pageName, apiObject, dispatch }) {
           dTypeProps,
           dispatch,
         })
+
         res = response
         if (store.env === 'test') {
           console.log(
@@ -367,6 +368,7 @@ function create({ pageName, apiObject, dispatch }) {
             data: res.jwt,
           },
         })
+
       }
       await dispatch({
         type: 'update-data',
