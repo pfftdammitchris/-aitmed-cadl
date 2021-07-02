@@ -177,6 +177,8 @@ export default {
       }
     }
     return objNew;
-  }
-
+  },
+  getObjKey({ objects }): string[] {
+    return Object.keys(objects);
+  },
 }
