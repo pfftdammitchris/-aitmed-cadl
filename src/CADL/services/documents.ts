@@ -10,15 +10,9 @@ export { get, create }
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
     let res
-    const {
-      api,
-      dataKey,
-      dataIn,
-      dataOut,
-
-      subtype,
-      ...options
-    } = _.cloneDeep(apiObject || {})
+    const { api, dataKey, dataIn, dataOut, subtype, ...options } = _.cloneDeep(
+      apiObject || {}
+    )
 
     let requestOptions = {
       ...options,
@@ -34,10 +28,43 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'get-data',
         payload: { pageName, dataKey: dataIn ? dataIn : dataKey },
       })
-      const { deat, id, ids, _nonce, ...populatedCurrentVal } = await dispatch({
-        type: 'populate-object',
-        payload: { object: currentVal, pageName, copy: true },
-      })
+      const { deat, id, ids, _nonce, ObjType, key, ...populatedCurrentVal } =
+        await dispatch({
+          type: 'populate-object',
+          payload: { object: currentVal, pageName, copy: true },
+        })
+
+      if (ObjType && ObjType === 3 && key) {
+        let res: any[] = []
+        const searchResponse = await dispatch({
+          type: 'search-cache',
+          payload: { key },
+        })
+        if (searchResponse.length) {
+          const decryptedDocs = searchResponse.map(async (doc) => {
+            const decryptedDoc = await documentToNote({ document: doc })
+            return decryptedDoc
+          })
+          await Promise.all(decryptedDocs)
+            .then((decryptedDataResults) => {
+              res = decryptedDataResults
+            })
+            .catch((error) => {
+              console.log(error)
+            })
+        }
+        await dispatch({
+          type: 'update-data',
+          //TODO: handle case for data is an array or an object
+          payload: {
+            pageName,
+            dataKey: dataOut ? dataOut : dataKey,
+            data: { doc: res, searchResult: true },
+          },
+        })
+        return
+      }
+
       idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       if (!isPopulated(id)) {
@@ -109,6 +136,10 @@ function get({ pageName, apiObject, dispatch }) {
             rawResponse = res.data
             return Promise.all(
               res?.data?.document.map(async (document) => {
+                await dispatch({
+                  type: 'insert-to-object-table', //yuhan
+                  payload: { doc: document },
+                })
                 //decrypt data
                 if (document?.deat?.url) {
                   //skip files that are in S3
@@ -173,6 +204,10 @@ function get({ pageName, apiObject, dispatch }) {
           newVal: res,
           dataKey: dataOut ? dataOut : dataKey,
         },
+      })
+      await dispatch({
+        type: 'insert-to-index-table',
+        payload: { doc: res },
       })
     }
     return res
@@ -307,6 +342,7 @@ function create({ pageName, apiObject, dispatch }) {
           fid: restOfDocOptions?.fid,
           jwt: restOfDocOptions?.jwt,
           dTypeProps,
+          dispatch,
         })
         res = response
         if (store.env === 'test') {
@@ -348,6 +384,10 @@ function create({ pageName, apiObject, dispatch }) {
           newVal: res,
           dataKey: dataOut ? dataOut : dataKey,
         },
+      })
+      await dispatch({
+        type: 'insert-to-index-table',
+        payload: { doc: [res.doc] },
       })
     }
     return res

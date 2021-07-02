@@ -53,6 +53,7 @@ export type CreateParams = {
   dTypeProps?: Record<string, any>
   paymentNonce?: string
   jwt?: string
+  dispatch?: Function
 } & DocumentUtilsTypes.ContentParams
 
 export interface Create {

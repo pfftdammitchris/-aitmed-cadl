@@ -37,6 +37,7 @@ export default {
     return
   },
 
+  //decrypt
   async prepareDoc({ doc }: { doc: Record<string, any> }) {
     let note
     if (isObject(doc.subtype)) {
