@@ -32,10 +32,7 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-import FuzzyIndexCreator from '../db/utils/FuzzyIndexCreator'
-import basicExtraction from '../db/utils/KeyExtraction/BasicAlgorithm'
-import IndexRepository from '../db/IndexRepository'
-// import InboxContacts from './__mocks__/InboxContacts'
+// import AddDocuments from './__mocks__/AddDocuments'
 // import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
@@ -52,8 +49,6 @@ export default class CADL extends EventEmitter {
   private _aspectRatio: number
   private _map: Record<string, any>
   private _config: Record<string, any>
-  private _dbConfig: any
-  private _indexRepository: IndexRepository
   public verificationRequest = {
     timer: 0,
     phoneNumber: '',
@@ -65,7 +60,7 @@ export default class CADL extends EventEmitter {
    * @param CADLARGS.configUrl
    * @param CADLARGS.cadlVersion 'test' | 'stable'
    */
-  constructor({ configUrl, cadlVersion, aspectRatio, dbConfig }: CADLARGS) {
+  constructor({ configUrl, cadlVersion, aspectRatio }: CADLARGS) {
     super()
     //replace default arguments
     store.env = cadlVersion
@@ -75,8 +70,6 @@ export default class CADL extends EventEmitter {
     if (aspectRatio) {
       this.aspectRatio = aspectRatio
     }
-    this._dbConfig = dbConfig
-    this._indexRepository = new IndexRepository()
   }
 
   /**
@@ -110,9 +103,6 @@ export default class CADL extends EventEmitter {
         error
       )
     }
-
-    //initialize sqlite db
-    await this._indexRepository.getDataBase(this._dbConfig)
 
     const {
       web = { cadlVersion: '' },
@@ -1096,82 +1086,13 @@ export default class CADL extends EventEmitter {
    * @param action
    */
   private async dispatch(action: { type: string; payload?: any }) {
-
-    console.log('dispatch action type!!!', action.type)
     switch (action.type) {
-      case 'search-cache': {
-        break
-        console.log('search cache payload!!!', action.payload)
-        const key = action.payload.key
-        const res = this._indexRepository.search(key)
-        return res
-      }
-      case 'insert-to-object-table': {
-        //yuhan
-        break
-        console.log('insert object payload!!!', action.payload)
-        const doc = action.payload.doc
-        let docId = doc.id
-        if (docId instanceof Uint8Array) {
-          docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
-        }
-        const isInObjectCache = this._indexRepository.getDocById(docId)
-        if (isInObjectCache.length) return
-        const cachedDoc = this._indexRepository.getDocById(docId)
-        if (!cachedDoc.length) {
-          this._indexRepository.cacheDoc(doc)
-        }
-
-        break
-      }
-      case 'insert-to-index-table': {
-        break
-        console.log('insert index payload!!!', action.payload)
-        const doc = action.payload.doc.doc
-
-        for (let item of doc) {
-          let content = item.name
-          const contentAfterExtraction = basicExtraction(content)
-
-          const fuzzyIndexCreator = new FuzzyIndexCreator()
-          let docId = item.id
-          if (docId instanceof Uint8Array) {
-            docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
-          }
-          for (let key of contentAfterExtraction) {
-            const initialMapping = fuzzyIndexCreator.initialMapping(key)
-            const fKey = fuzzyIndexCreator.toFuzzyInt64(initialMapping)
-            const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
-            this._indexRepository.insertIndexData({
-              // kText: key,
-              // id: docId,
-              // docId,
-              // docType: item.type,
-              // fuzzyKey: initialMapping,
-              // initMapping: initialMapping,
-              // fKey,
-              // fKeyHex,
-              // score: 0,
-              kText: key,
-              docId,
-              docType: item.type,
-              fKey,
-              score: 0,
-            })
-            //console.log('insert to index table!!!', fKey, initialMapping, fKeyHex)
-          }
-
-        }
-
-        break
-      }
       case 'update-map': {
         //TODO: consider adding update-page-map
         this.map = dot.dot(this.root)
         break
       }
       case 'populate': {
-
         const { pageName } = action.payload
         const pageObjectCopy = _.cloneDeep(this.root[pageName])
         const boundDispatch = this.dispatch.bind(this)
@@ -2356,11 +2277,9 @@ export default class CADL extends EventEmitter {
     return produce(state, (draft) => {
       switch (action.type) {
         case 'SET_VALUE': {
-
           const { pageName, dataKey, value, replace } = action.payload
           let currVal
           let newVal = value
-
           if (!replace) {
             //used to merge new value to existing value ref
             if (typeof pageName === 'undefined') {
@@ -2369,40 +2288,15 @@ export default class CADL extends EventEmitter {
               currVal = _.get(state[pageName], dataKey)
             }
           }
-
-          /**
-           * CHECK HERE FOR DOC REFERENCE ISSUES
-           *  */
-
-          console.log('Cadl set value line:2367', action.payload)
           if (isObject(currVal) && isObject(newVal)) {
-            if ('doc' in newVal) {
-              if (!Array.isArray(currVal.doc)) {
-                currVal.doc = []
-                currVal.doc.push(...newVal.doc)
-
-              } else if ('id' in currVal) {
-                newVal = _.merge(currVal, newVal.doc)
-
-              } else {
-                currVal.doc.length = 0
-                currVal.doc.push(...newVal.doc)
-
-              }
-            } else {
-              newVal = _.merge(currVal, newVal)
-
-            }
+            newVal = _.merge(currVal, newVal)
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
             currVal.length = 0
             currVal.push(...newVal)
-
           } else if (typeof pageName === 'undefined') {
             _.set(draft, dataKey, newVal)
-
           } else {
             _.set(draft[pageName], dataKey, newVal)
-
           }
           break
         }
