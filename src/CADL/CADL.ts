@@ -1096,14 +1096,20 @@ export default class CADL extends EventEmitter {
    * @param action
    */
   private async dispatch(action: { type: string; payload?: any }) {
+
+    console.log('dispatch action type!!!', action.type)
     switch (action.type) {
       case 'search-cache': {
+        break
+        console.log('search cache payload!!!', action.payload)
         const key = action.payload.key
         const res = this._indexRepository.search(key)
         return res
       }
       case 'insert-to-object-table': {
         //yuhan
+        break
+        console.log('insert object payload!!!', action.payload)
         const doc = action.payload.doc
         let docId = doc.id
         if (docId instanceof Uint8Array) {
@@ -1115,9 +1121,12 @@ export default class CADL extends EventEmitter {
         if (!cachedDoc.length) {
           this._indexRepository.cacheDoc(doc)
         }
+
         break
       }
       case 'insert-to-index-table': {
+        break
+        console.log('insert index payload!!!', action.payload)
         const doc = action.payload.doc.doc
 
         for (let item of doc) {
@@ -1149,7 +1158,7 @@ export default class CADL extends EventEmitter {
               fKey,
               score: 0,
             })
-            console.log('insert to index table!!!', fKey, initialMapping, fKeyHex)
+            //console.log('insert to index table!!!', fKey, initialMapping, fKeyHex)
           }
 
         }
@@ -1162,6 +1171,7 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'populate': {
+
         const { pageName } = action.payload
         const pageObjectCopy = _.cloneDeep(this.root[pageName])
         const boundDispatch = this.dispatch.bind(this)
