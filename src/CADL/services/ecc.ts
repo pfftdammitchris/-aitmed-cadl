@@ -5,7 +5,12 @@ import { retrieveEdge } from '../../common/retrieve'
 
 export default {
   signature({ message, eskSign, sk }: { message: any; eskSign: any; sk: any }) {
-    const sig = store.level2SDK.utilServices.signature({ message, eskSign, sk })
+    let sig: string = ""
+    //yuhan 7/2/2021 without esksign cannot generate sig
+    if (!eskSign || eskSign.length < 100) {
+      return sig
+    }
+    sig = store.level2SDK.utilServices.signature({ message, eskSign, sk })
     return sig
   },
   verifySignature(signature: string, pkSign: string): boolean {
