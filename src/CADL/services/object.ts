@@ -168,4 +168,17 @@ export default {
     })
     return
   },
+  getObjValueAndKey({ objects, objStr }): Object {
+    let arr: Array<any> = Object.keys(objects);
+    let objNew: { [k: string]: any } = {};
+    for (let index = 0; index < arr.length; index++) {
+      if (objStr[index] in objects) {
+        objNew[objStr[index]] = objects[objStr[index]];
+      }
+    }
+    return objNew;
+  },
+  getObjKey({ objects }): string[] {
+    return Object.keys(objects);
+  },
 }

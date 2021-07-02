@@ -77,14 +77,14 @@ export default {
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
-    let sortspe: any[] = []
-    let sortsym: any[] = []
+    let len = prefix.length
+    let color = ""
     let body = await client.search({
       index: INDEX,
       body: {
         "suggest": {
           "doctor_suggestion": {
-            "prefix": prefix,
+            "text": prefix,
             "completion": {
               "field": "suggest",
               "skip_duplicates": true,
@@ -99,131 +99,82 @@ export default {
       body: {
         "suggest": {
           "speciality_suggestion": {
-            "prefix": prefix,
+            "text": prefix,
             "completion": {
               "field": "specialty",
               "skip_duplicates": true,
-              "size": 10
+              "size": 5
             }
           },
           "symptom_suggestion": {
-            "prefix": prefix,
+            "text": prefix,
             "completion": {
               "field": "symptom",
               "skip_duplicates": true,
-              "size": 10
+              "size": 8
             }
           }
         }
       }
     })
-    sortspe = body_1.suggest.speciality_suggestion[0].options.sort(function (a, b) {
-      return a._source.score - b._source.score
-    })
-    sortsym = body_1.suggest.symptom_suggestion[0].options.sort(function (a, b) {
-      return a._source.score - b._source.score
-    })
     for (let s of body.suggest.doctor_suggestion[0].options) {
-      doc_sug.push(s.text)
+      let strLen = (s.text).indexOf(prefix) + 1
+      let sum = strLen + len
+      let str = (s.text).substring(strLen, sum)
+      let otherStr = (s.text).substring(sum, s.length)
+      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+        color = "0xca1e36"
+        s["color"] = color
+        s["id"] = s._id
+        s["hightStr"] = str
+        s["otherStr"] = otherStr
+      } else {
+        color = "0x143459"
+        s["color"] = color
+      }
+      doc_sug.push(s)
     }
-    for (let s of sortspe) {
-      spe_sug.push(s.text)
+    for (let s of body_1.suggest.speciality_suggestion[0].options) {
+      let strLen = (s.text).indexOf(prefix) + 1
+      let sum = strLen + len
+      let str = (s.text).substring(strLen, sum)
+      let otherStr = (s.text).substring(sum, s.length)
+      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+        color = "0xca1e36"
+        s["color"] = color
+        s["id"] = s._id
+        s["hightStr"] = str
+        s["otherStr"] = otherStr
+      } else {
+        color = "0x143459"
+        s["color"] = color
+      }
+      spe_sug.push(s)
     }
-    for (let s of sortsym) {
-      sym_sug.push(s.text)
+    for (let s of body_1.suggest.symptom_suggestion[0].options) {
+      let strLen = (s.text).indexOf(prefix)
+      let sum = strLen + len
+      let str = (s.text).substring(strLen, sum)
+      s["text"] = (s.text).replace(/^\s+|\s+$/g, '')
+      let otherStr = (s.text).substring(sum - 1, s.length)
+      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+        color = "0xca1e36"
+        s["color"] = color
+        s["id"] = s._id
+        s["hightStr"] = str
+        s["otherStr"] = otherStr
+      } else {
+        color = "0x143459"
+        s["color"] = color
+      }
+      sym_sug.push(s)
     }
     console.log('test suggest', {
       doctor_suggestion: doc_sug,
       speciality_suggestion: spe_sug,
-      symptom_suggestion: sym_sug,
+      symptom_suggestion: Array.from(new Set(sym_sug)),
     })
-    return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug, symptom_suggestion: sym_sug }
-  },
-  async query({ cond = null, distance = 30, carrier = null, pos = 92508, type = 1 }) {
-    console.log('test query', {
-      cond: cond,
-      distance: distance,
-      carrier: carrier,
-      pos: pos,
-    })
-    // let INDEX = 'doctors'
-    let arr: any[] = []
-    if (pos) {
-      // let address
-      await GetlatAndlon(pos).then(
-        (data: LatResponse) => {
-          arr[0] = data.center[0]
-          arr[1] = data.center[1]
-          console.log('query zip code1', data)
-        },
-        (err) => {
-          console.log('query error', err)
-        }
-      )
-      // arr = address
-    }
-    console.log('query zip code2', arr)
-
-    let template: any =
-    {
-      "query": {
-        "bool": {
-          "must": {
-            "function_score": {
-              "query": {
-                "multi_match": {
-                  "query": cond,
-                  "type": "best_fields",
-                  "fields": [
-                    "specialty^3",
-                    "fullName^2",
-                    "symptom^1"
-                  ],
-                  "fuzziness": "AUTO",
-                  "prefix_length": 2
-                }
-              }
-            }
-          },
-          "filter": {
-            "nested": {
-              "path": "availByLocation",
-              "query": {
-                "bool": {
-                  "filter": [
-                    {
-                      "terms": {
-                        "availByLocation.visitType": ["Office", "Telemedicine"]
-                      }
-                    },
-                    {
-                      "geo_distance": {
-                        "distance": distance + "mi",
-                        "availByLocation.location.geoCode": arr[1] + ' , ' + arr[0]
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-    if (type == 2) {
-      template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Office']
-    } else if (type == 3) {
-      template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Telemedicine']
-    }
-    console.log("test template", template)
-    let body = await client.search({
-      index: INDEX,
-      body: template,
-    })
-    // console.log(carrier)
-    // console.log(template.query.bool.must)
-    console.log('test query', body.hits.hits)
-    return body.hits.hits
+    return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug, symptom_suggestion: Array.from(new Set(sym_sug)) }
   },
 
   async queryByDate({
