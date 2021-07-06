@@ -28,10 +28,12 @@ export default (
     return res
   }
 
+  //Todo: save by id and object
   function insertDoc(doc) {
     let sqlstr =
       'INSERT INTO ecos_doc_table VALUES (:ctime, :mtime, :atime, :atimes, :id, :name, :deat, :size, :fid, :eid, :bsig, :esig, :subtype, :type, :tage);'
     let params = {}
+    console.log('insertdoc!!', doc)
     for (let [key, val] of Object.entries(doc)) {
       if (val instanceof Uint8Array) {
         params[`:${key}`] = store.level2SDK.utilServices.uint8ArrayToBase64(val)
