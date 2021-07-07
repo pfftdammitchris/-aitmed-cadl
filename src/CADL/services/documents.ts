@@ -9,6 +9,7 @@ export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
+
     let res
     const { api, dataKey, dataIn, dataOut, subtype, ...options } = _.cloneDeep(
       apiObject || {}
@@ -22,6 +23,7 @@ function get({ pageName, apiObject, dispatch }) {
     let sCondition = options?.sCondition
     let nonce
     let idList
+    let objtype
     if (dataIn) {
       //get current object name value
       const currentVal = await dispatch({
@@ -64,7 +66,7 @@ function get({ pageName, apiObject, dispatch }) {
         })
         return
       }
-
+      objtype = ObjType
       idList = ids ? ids : id ? [id] : ['']
       nonce = _nonce
       if (!isPopulated(id)) {
@@ -95,6 +97,10 @@ function get({ pageName, apiObject, dispatch }) {
     }
     if (sCondition) {
       requestOptions.scondition = sCondition
+    }
+    console.log("test doc get", objtype)
+    if (objtype) {
+      requestOptions.ObjType = objtype
     }
     //Buffer check
     const { pass: shouldPass, cacheIndex } = await dispatch({
