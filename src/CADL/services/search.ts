@@ -11,14 +11,56 @@ const INDEX = "doctors_v0.3"
 interface LatResponse {
   center: any[]
 }
-
+/**
+ * Load similar addresses based on input text
+ * Help function for suggestaddress
+ * @param query 
+ * @returns 
+ */
+let GetQuery = (query) => {
+  let promise = new Promise((res, rej) => {
+    let path =
+      '/geocoding/v5/mapbox.places/' +
+      query +
+      '.json?access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
+    let options = {
+      // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
+      host: 'api.mapbox.com',
+      path: path,
+    }
+    get(options, function (http_res) {
+      // initialize the container for our data
+      let data = ''
+      http_res.on('data', function (chunk) {
+        data += chunk
+      })
+      // console.log(http_res.statusCode)
+      http_res.on('end', function () {
+        let JsonData: any = JSON.parse(data)
+        let response = JsonData.features
+        res({
+          response
+        })
+      })
+    }).on('error', function (e) {
+      rej(e)
+    })
+  })
+  return promise
+}
+/**
+ * Convert query to latitude and longitude
+ * Help function for transformGeo
+ * @param query address or poss
+ * @returns [latitude,longitude]
+ */
 let GetlatAndlon = (query) => {
   let promise = new Promise((res, rej) => {
     let path =
       '/geocoding/v5/mapbox.places/' +
       query +
       '.json?access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
-    var options = {
+    let options = {
       // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
       host: 'api.mapbox.com',
       path: path,
@@ -44,6 +86,11 @@ let GetlatAndlon = (query) => {
   return promise
 }
 export default {
+  /**
+   * Get the latitude and longitude of the most similar address based on the address input
+   * @param query
+   * @returns 
+   */
   async transformGeo({ query }) {
     let arr: any[] = []
     query = query.replace("#", "")
@@ -61,6 +108,45 @@ export default {
       )
       // arr = address
       return arr
+    }
+    return
+  },
+  async queryInsurance({ id }) {
+    let template: any = {
+      "query": {
+        "match": {
+          "_id": id
+        }
+      }
+    }
+    const body = await client.search({
+      index: "test_doctors",
+      body: template,
+    })
+    return body.hits.hits
+  },
+  /**
+   * Get all related addresses of query
+   * @param query 
+   * @returns 
+   */
+  async suggestAddress({ query }) {
+    // let arr: any[] = []
+    query = query.replace("#", "")
+    let response: any = []
+    if (query) {
+      // let address
+      await GetQuery(query).then(
+        (data) => {
+          response = data
+        },
+        (err) => {
+          console.log('query error', err)
+        }
+      )
+      // arr = address
+      console.log("test suggest adress", response)
+      return response['response']
     }
     return
   },
@@ -177,6 +263,17 @@ export default {
     return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug, symptom_suggestion: Array.from(new Set(sym_sug)) }
   },
 
+  /**
+   * 
+   * @param cond   => Search term
+   * @param distance =>  Query range
+   * @param carrier => Insurance
+   * @param pos => address
+   * @param stime => start time
+   * @param etime  => end stime
+   * @param type => 1: office and telemedicine  2:office, 3: telemedicine
+   * @returns 
+   */
   async queryByDate({
     cond = null,
     distance = 30,
@@ -306,6 +403,11 @@ export default {
     return body.hits.hits
   },
 
+  /**
+   * Process the data into the data type used by the map
+   * @param object
+   * @returns 
+   */
   GetAllLonAndLat({ object }) {
     if (isArray(object)) {
       let re: Record<string, any> = []
@@ -338,6 +440,11 @@ export default {
     return
   },
 
+  /**
+   * Process the Speciality in the data
+   * @param object 
+   * @returns 
+   */
   SortBySpeciality({ object }) {
     if (isArray(object)) {
       console.log('test SortBySpeciality', object)
@@ -372,6 +479,11 @@ export default {
     return
   },
 
+  /**
+   * Process data to facilitate the use of page UI
+   * @param object
+   * @returns 
+   */
   processingSearchData({ object }) {
     let path = ['avatar1.png', 'avatar2.png', 'avatar3.png', 'avatar4.png']
     let re: Record<string, any> = []
