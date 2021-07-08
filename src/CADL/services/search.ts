@@ -133,19 +133,20 @@ export default {
   async suggestAddress({ query }) {
     // let arr: any[] = []
     query = query.replace("#", "")
+    let response: any = []
     if (query) {
       // let address
       await GetQuery(query).then(
-        (data: LatResponse) => {
-          console.log("test suggest", data)
-          return data['response']
+        (data) => {
+          response = data
         },
         (err) => {
           console.log('query error', err)
         }
       )
       // arr = address
-      return
+      console.log("test suggest adress", response)
+      return response['response']
     }
     return
   },
