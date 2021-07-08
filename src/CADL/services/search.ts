@@ -111,7 +111,20 @@ export default {
     }
     return
   },
-
+  async queryInsurance({ id }) {
+    let template: any = {
+      "query": {
+        "match": {
+          "_id": id
+        }
+      }
+    }
+    const body = await client.search({
+      index: "test_doctors",
+      body: template,
+    })
+    return body.hits.hits
+  },
   /**
    * Get all related addresses of query
    * @param query 
@@ -124,7 +137,8 @@ export default {
       // let address
       await GetQuery(query).then(
         (data: LatResponse) => {
-          return data
+          console.log("test suggest", data)
+          return data['response']
         },
         (err) => {
           console.log('query error', err)
