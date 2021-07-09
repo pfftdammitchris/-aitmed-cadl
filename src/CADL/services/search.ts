@@ -85,6 +85,34 @@ let GetlatAndlon = (query) => {
   })
   return promise
 }
+
+let Description = (query) => {
+  let promise = new Promise((res, rej) => {
+    let path =
+      '/api/icd10cm/v3/search?sf=code,name&df=code,name&maxList=20&terms=' +
+      query
+    let options = {
+      host: 'clinicaltables.nlm.nih.gov',
+      path: path,
+    }
+    get(options, function (http_res) {
+      let data = ''
+      http_res.on('data', function (chunk) {
+        data += chunk
+      })
+      http_res.on('end', function () {
+        let JsonData: any = JSON.parse(data)
+        // let response = JsonData.features[0].center
+        res({
+          center: JsonData,
+        })
+      })
+    }).on('error', function (e) {
+      rej(e)
+    })
+  })
+  return promise
+}
 export default {
   /**
    * Get the latitude and longitude of the most similar address based on the address input
@@ -107,6 +135,22 @@ export default {
         }
       )
       // arr = address
+      return arr
+    }
+    return
+  },
+  async queryCode({ query }) {
+    let arr: any[] = []
+    if (query) {
+      await Description(query).then(
+        (data: LatResponse) => {
+          arr[0] = data.center[3]
+          console.log('query cmq', data)
+        },
+        (err) => {
+          console.log('query error', err)
+        }
+      )
       return arr
     }
     return
@@ -278,7 +322,7 @@ export default {
     cond = null,
     distance = 30,
     carrier = null,
-    pos = 92508,
+    pos = 92805,
     stime,
     etime,
     type = 1
@@ -309,7 +353,6 @@ export default {
           }
         }
       )
-      // arr = address
     }
     if (typeof stime == 'string' || typeof etime == 'string') {
       let d = new Date()
@@ -374,6 +417,11 @@ export default {
                   ]
                 }
               }
+            }
+          },
+          "should": {
+            "term": {
+              "insurance.plan": carrier
             }
           }
         }
