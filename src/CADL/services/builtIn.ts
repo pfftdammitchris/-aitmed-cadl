@@ -222,7 +222,7 @@ export default function builtInFns(dispatch?: Function) {
     },
     isIOS() {
       if (typeof window !== 'undefined') {
-        const userAgent = navigator.userAgent || navigator.vendor
+        const userAgent = window.navigator.userAgent || window.navigator.vendor
         if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
           return true
         }
@@ -231,7 +231,7 @@ export default function builtInFns(dispatch?: Function) {
     },
     isAndroid() {
       if (typeof window !== 'undefined') {
-        const userAgent = navigator.userAgent || navigator.vendor
+        const userAgent = window.navigator.userAgent || window.navigator.vendor
         if (/android/i.test(userAgent)) {
           return true
         }
