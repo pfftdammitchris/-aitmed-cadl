@@ -855,5 +855,5 @@ export default {
   },
   toString({ arr }) {
     return ("(" + arr.toString() + ")")
-  }
+  },
 }
