@@ -1,6 +1,6 @@
 {
   "name": "@aitmed/cadl",
-  "version": "1.0.297",
+  "version": "1.0.301",
   "description": "A package with utilities to manage and process CADL files.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -19,9 +19,9 @@
     "test": "jest",
     "test:CADL": "node --inspect node_modules/.bin/jest --watch --runInBand ./src/CADL/__tests__/ --watch",
     "test:db": "jest --verbose --watch --runInBand ./src/db --watch",
-    "bump-version": "npm version patch",
+    "bump-version": "npm version patch -f",
     "prepublish:public": "npm run build && npm run bump-version",
-    "publish:public": "npm publish --access public",
+    "publish:public": "npm publish -f",
     "postpublish:public": "git push"
   },
   "repository": {

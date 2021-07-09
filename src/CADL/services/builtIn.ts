@@ -44,7 +44,7 @@ function builtIn({ pageName, apiObject, dispatch }) {
           {
             ...currentVal,
             ...input,
-          }
+          },
         )
       }
       //TODO: make signature more generic
@@ -57,7 +57,7 @@ function builtIn({ pageName, apiObject, dispatch }) {
         console.log(
           `%cBuiltIn Fn:${pathArr} Response`,
           `background: purple; color: white; display: block;`,
-          res
+          res,
         )
       }
     } catch (error) {
@@ -120,7 +120,7 @@ export default function builtInFns(dispatch?: Function) {
         password,
         args.name?.verificationCode,
         { userName, firstName, lastName },
-        args.type
+        args.type,
       )
       let sk = localStorage.getItem('sk')
       if (dispatch) {
@@ -146,7 +146,7 @@ export default function builtInFns(dispatch?: Function) {
       const data = await Account.login(
         validPhoneNumber,
         password,
-        verificationCode
+        verificationCode,
       )
       let sk = localStorage.getItem('sk')
       if (dispatch) {
@@ -221,16 +221,20 @@ export default function builtInFns(dispatch?: Function) {
       return res
     },
     isIOS() {
-      const userAgent = navigator.userAgent || navigator.vendor
-      if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-        return true
+      if (typeof window !== 'undefined') {
+        const userAgent = window.navigator.userAgent || window.navigator.vendor
+        if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+          return true
+        }
       }
       return false
     },
     isAndroid() {
-      const userAgent = navigator.userAgent || navigator.vendor
-      if (/android/i.test(userAgent)) {
-        return true
+      if (typeof window !== 'undefined') {
+        const userAgent = window.navigator.userAgent || window.navigator.vendor
+        if (/android/i.test(userAgent)) {
+          return true
+        }
       }
       return false
     },
