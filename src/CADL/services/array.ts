@@ -856,4 +856,59 @@ export default {
   toString({ arr }) {
     return ("(" + arr.toString() + ")")
   },
+
+  /**
+   * select key from array
+   * @param array
+   * @param path  path to key
+   * @returns 
+   */
+  getKeyByArray({ array, path }) {
+    if (isArray(array) && path) {
+      let items = path.split(".")
+      let res: any[] = []
+      array.forEach(element => {
+        let key = element
+        items.forEach(item => {
+          key = key[item]
+        })
+        res.push(key)
+      })
+      return res
+    }
+    return
+  },
+  /**
+   * Query a key with the same value in the object array
+   * ?Whether to consider multiple identical matches？
+   * @param array  => object array to select
+   * @param matchPath => path of matching key 
+   * @param selectpath => path of selecting path 
+   * @param value => match value
+   * @returns 
+   */
+  SelectKeyByArray({ array, matchPath, selectpath, value }) {
+    if (isArray(array) && matchPath && selectpath && value) {
+      let matchItems = matchPath.split(".")
+      let selectItems = selectpath.split(".")
+      array.forEach(element => {
+
+        let matchKey = element
+        matchItems.forEach(item => {
+          matchKey = matchKey[item]
+        })
+
+        if (matchKey == value) {
+          let selectKey = element
+          selectItems.forEach(item => {
+            selectKey = matchKey[item]
+          })
+          return selectKey
+        }
+        return
+      })
+      // return res
+    }
+    return
+  },
 }
