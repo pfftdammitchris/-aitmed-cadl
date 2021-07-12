@@ -291,9 +291,12 @@ export const update: any = async (
   // Update name
   const name: DocumentTypes.NoteDocumentName = document.name
   if (typeof title !== 'undefined') name.title = title
-  if (typeof tags !== 'undefined') {
+  if (typeof tags !== 'undefined' && Array.isArray(name.tags) && Array.isArray(tags)) {
     const tagsSet = new Set([...name.tags, ...tags])
     name.tags = Array.from(tagsSet)
+  }
+  if (typeof tags !== 'undefined' && (!Array.isArray(name.tags) || !Array.isArray(tags))) {
+    name.tags = []
   }
 
   // DType
