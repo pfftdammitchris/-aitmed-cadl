@@ -1,5 +1,8 @@
 import _, { isArray, isObject } from 'lodash'
-
+type keyValue = {
+  key: string
+  value: string
+}
 export default {
   remove({ object, key }) {
     if (isObject(object)) {
@@ -180,5 +183,28 @@ export default {
   },
   getObjKey({ objects }): string[] {
     return Object.keys(objects);
+  },
+  getObjWithKV({ object }) {
+    var arr: keyValue[] = [];
+    let o: keyValue
+    for (let i in object) {
+      o = {
+        key: i,
+        value: object[i]
+      }
+      arr.push(o);
+    }
+    return arr
+  },
+  setProperty({ obj, label, text, arr, valueArr, errorArr }) {
+    for (let index = 0; index < obj.length; index++) {
+      for (let i in arr) {
+        if (obj[index][label] === text) {
+          obj[index][arr[i]] = valueArr[i];
+        } else {
+          obj[index][arr[i]] = errorArr[i];
+        }
+      }
+    }
   },
 }
