@@ -112,6 +112,12 @@ export default {
     }
     return false;
 
+  },
+
+  generate16Dkey(): string {
+    let max: number = 9999999999999999
+    let key: number = Math.floor(Math.random() * max)
+    return key.toString()
   }
 
 }
