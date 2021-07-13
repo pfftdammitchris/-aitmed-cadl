@@ -678,8 +678,8 @@ export default {
     })
     return indexGroup
   },
-  elementUnique({ arr }) {
-    return new Set(arr)
+  elementUnique({ arr }: { arr: string[] }): string[] {
+    return Array.from(new Set(arr));
   },
   addProvider({ object, provider }) {
     provider['name']['basicInfo'] = { medicalFacilityName: 'Me' }
