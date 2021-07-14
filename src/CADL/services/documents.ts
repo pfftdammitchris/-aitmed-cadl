@@ -98,7 +98,7 @@ function get({ pageName, apiObject, dispatch }) {
     if (sCondition) {
       requestOptions.scondition = sCondition
     }
-    console.log("test doc get", objtype)
+
     if (objtype) {
       requestOptions.ObjType = objtype
     }
@@ -344,6 +344,8 @@ function create({ pageName, apiObject, dispatch }) {
           mediaType: name?.type,
           title: name?.title,
           user: name?.user,
+          sesk: name?.sesk,
+          aesk: name?.aesk,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
           jwt: restOfDocOptions?.jwt,
