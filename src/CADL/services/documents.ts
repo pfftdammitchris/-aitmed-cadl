@@ -98,7 +98,7 @@ function get({ pageName, apiObject, dispatch }) {
     if (sCondition) {
       requestOptions.scondition = sCondition
     }
-    console.log("test doc get", objtype)
+
     if (objtype) {
       requestOptions.ObjType = objtype
     }

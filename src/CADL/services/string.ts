@@ -24,6 +24,11 @@ export default {
     }
     return ''
   },
+  split16Dkey(key: string): string[] {
+    if (key.length !== 16) return []
+    let keyArray: string[] = []
+    return keyArray.concat(key.substring(0, 4), key.substring(4, 8), key.substring(8, 12), key.substring(12))
+  },
   equal({ string1, string2 }): boolean {
     return string1 === string2
   },

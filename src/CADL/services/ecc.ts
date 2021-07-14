@@ -20,6 +20,7 @@ export default {
     )
     return isValid
   },
+
   decryptAES({ key, message }) {
     const secretKeyUInt8Array =
       store.level2SDK.utilServices.normalizeStringTo32BitArray(key)
@@ -53,6 +54,31 @@ export default {
       skBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(sk)
     }
     return skBase64
+  },
+
+  decryptASK({ sendPk, recvSk, eData }) {
+    const pkUInt8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(sendPk)
+    const skUInt8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(recvSk)
+
+    return store.level2SDK.utilServices.aKeyDecrypt_str(
+      pkUInt8Array,
+      skUInt8Array,
+      eData
+    )
+  },
+  encryptASK({ recvPk, sendSk, data }) {
+    const pkUInt8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(recvPk)
+    const skUInt8Array =
+      store.level2SDK.utilServices.base64ToUint8Array(sendSk)
+
+    return store.level2SDK.utilServices.aKeyEncrypt_str(
+      pkUInt8Array,
+      skUInt8Array,
+      data
+    )
   },
   skCheck({ pk, sk }) {
     let pkUInt8Array = pk
