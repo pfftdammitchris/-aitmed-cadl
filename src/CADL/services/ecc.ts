@@ -45,23 +45,18 @@ export default {
     return skBase64
   },
   encryptAES({ key, message }) {
-    debugger
     const secretKeyUInt8Array =
       store.level2SDK.utilServices.normalizeStringTo32BitArray(key)
-    debugger
     const encryptedDataUInt8Array =
       store.level2SDK.utilServices.base64ToUint8Array(message)
-    debugger
     const sk = store.level2SDK.utilServices.sKeyEncrypt(
       secretKeyUInt8Array,
       encryptedDataUInt8Array
     )
-    debugger
     let skBase64
     if (sk instanceof Uint8Array) {
       skBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(sk)
     }
-    debugger
     return skBase64
   },
 
