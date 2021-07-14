@@ -177,7 +177,7 @@ export default {
       s = s * 6378.137 // EARTH_RADIUS
       s = Math.round(s * 10000) / 10000 //输出为公里
       console.log("test distance", s)
-      return s + " mi"
+      return s.toFixed(2) + " km"
     }
     return
 
