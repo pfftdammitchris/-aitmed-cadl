@@ -162,7 +162,6 @@ export default {
   },
   distanceByPosition(point) {
     if (point != null || typeof point != 'undefined') {
-      console.log("test distance", point)
       let currentLatitude = store.currentLatitude
       let currentLongitude = store.currentLongitude
       if (currentLatitude == null || currentLongitude == null || typeof currentLongitude == 'undefined' || typeof currentLatitude == 'undefined') {
@@ -176,7 +175,6 @@ export default {
         Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)))
       s = s * 6378.137 // EARTH_RADIUS
       s = Math.round(s * 10000) / 10000 //输出为公里
-      console.log("test distance", s)
       return s.toFixed(2) + " km"
     }
     return
