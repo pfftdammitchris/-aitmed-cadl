@@ -1,7 +1,11 @@
 import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 import { AnyArray } from 'immer/dist/internal'
-
+import store from '../../common/store'
+function Rad(d) {
+  //The latitude and longitude is converted into a trigonometric function in the form of a mid-degree minute table.
+  return d * Math.PI / 180.0;
+}
 export default {
   formatTimer(time: number) {
     return moment(time).format('HH:mm:ss')
@@ -155,5 +159,27 @@ export default {
       return '';
     }
     return newStr.substr(0, newStr.length - 1);
-  }
+  },
+  distanceByPosition(point) {
+    if (point != null || typeof point != 'undefined') {
+      console.log("test distance", point)
+      let currentLatitude = store.currentLatitude
+      let currentLongitude = store.currentLongitude
+      if (currentLatitude == null || currentLongitude == null || typeof currentLongitude == 'undefined' || typeof currentLatitude == 'undefined') {
+        return
+      }
+      let radLat1 = Rad(currentLatitude)
+      let radLat2 = Rad(point[0])
+      let a = radLat1 - radLat2
+      let b = Rad(currentLongitude) - Rad(point[1])
+      let s = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2) +
+        Math.cos(radLat1) * Math.cos(radLat2) * Math.pow(Math.sin(b / 2), 2)))
+      s = s * 6378.137 // EARTH_RADIUS
+      s = Math.round(s * 10000) / 10000 //输出为公里
+      console.log("test distance", s)
+      return s + " mi"
+    }
+    return
+
+  },
 }
