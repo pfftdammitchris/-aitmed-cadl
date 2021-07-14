@@ -133,10 +133,10 @@ export default {
     }
     return true
   },
-  strLenx(address: Object): string {
+  strLenx({ obj }): string {
     let newStr: string = ''
     let len: number = 0;
-    for (let val of (Object as any).values(address)) {
+    for (let val of (Object as any).values(obj)) {
       if (val !== '') {
         len++;
         if (len === 2 || len === 4) {
