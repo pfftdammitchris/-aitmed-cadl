@@ -185,6 +185,8 @@ export default function builtInFns(dispatch?: Function) {
       return
     },
     currentDateTime: (() => Date.now())(),
+    generate16Dkey: (() => generate16DkeyME())(),
+
     async SignInOk(): Promise<boolean> {
       const status = await Account.getStatus()
       if (status.code !== 0) {
@@ -252,4 +254,10 @@ export default function builtInFns(dispatch?: Function) {
       return
     },
   }
+}
+
+function generate16DkeyME(): string {
+  const keyMax: number = 9999999999999999
+  const key: number = Math.floor(Math.random() * keyMax)
+  return String(key).toString()
 }

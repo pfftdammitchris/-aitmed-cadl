@@ -21,6 +21,14 @@ export default {
     return isValid
   },
 
+  generate16Dkey(keyLength?: any): string {
+    debugger
+    let max: number = 9999999999999999
+    let key: number = Math.floor(Math.random() * max)
+    console.log(keyLength)
+    return String(key).toString()
+  },
+
   decryptAES({ key, message }) {
     const secretKeyUInt8Array =
       store.level2SDK.utilServices.normalizeStringTo32BitArray(key)
@@ -39,20 +47,23 @@ export default {
     return skBase64
   },
   encryptAES({ key, message }) {
+    debugger
     const secretKeyUInt8Array =
       store.level2SDK.utilServices.normalizeStringTo32BitArray(key)
+    debugger
     const encryptedDataUInt8Array =
       store.level2SDK.utilServices.base64ToUint8Array(message)
-
+    debugger
     const sk = store.level2SDK.utilServices.sKeyEncrypt(
       secretKeyUInt8Array,
       encryptedDataUInt8Array
     )
-
+    debugger
     let skBase64
     if (sk instanceof Uint8Array) {
       skBase64 = store.level2SDK.utilServices.uint8ArrayToBase64(sk)
     }
+    debugger
     return skBase64
   },
 
@@ -80,6 +91,7 @@ export default {
       data
     )
   },
+
   skCheck({ pk, sk }) {
     let pkUInt8Array = pk
     let skDataUInt8Array = sk

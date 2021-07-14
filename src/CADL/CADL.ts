@@ -2317,7 +2317,9 @@ export default class CADL extends EventEmitter {
         case 'ADD_BUILTIN_FNS': {
           const { builtInFns } = action.payload
           for (let [key, val] of Object.entries(builtInFns)) {
+            debugger
             _.set(draft['builtIn'], key, val)
+            debugger
           }
           break
         }

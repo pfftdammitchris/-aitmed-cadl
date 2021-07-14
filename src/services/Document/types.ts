@@ -19,6 +19,8 @@ export interface NoteDocumentName {
   isBinary?: boolean
   isGzip?: boolean
   data?: string
+  sesk?: string
+  aesk?: string
 }
 
 export type NoteType =
@@ -45,6 +47,8 @@ export type CreateParams = {
   fid?: string | Uint8Array
   title: string
   user?: string
+  sesk?: string
+  aesk?: string
   targetRoomName?: string
   tags?: string[]
   type?: number
