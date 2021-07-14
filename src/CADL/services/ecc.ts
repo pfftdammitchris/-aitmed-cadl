@@ -21,11 +21,9 @@ export default {
     return isValid
   },
 
-  generate16Dkey(keyLength?: any): string {
-    debugger
-    let max: number = 9999999999999999
-    let key: number = Math.floor(Math.random() * max)
-    console.log(keyLength)
+  generate16Dkey(): string {
+    const max: number = 9999999999999999
+    const key: number = Math.floor(Math.random() * max)
     return String(key).toString()
   },
 
