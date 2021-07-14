@@ -344,6 +344,8 @@ function create({ pageName, apiObject, dispatch }) {
           mediaType: name?.type,
           title: name?.title,
           user: name?.user,
+          sesk: name?.sesk,
+          aesk: name?.aesk,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
           jwt: restOfDocOptions?.jwt,
