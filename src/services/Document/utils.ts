@@ -25,9 +25,9 @@ export const produceEncryptData: DocumentUtilsTypes.ProduceEncryptData = async (
 ) => {
   // Make sure data is Uint8Array
   let data: Uint8Array =
-      _data instanceof Blob
-        ? await store.level2SDK.utilServices.blobToUint8Array(_data)
-        : _data,
+    _data instanceof Blob
+      ? await store.level2SDK.utilServices.blobToUint8Array(_data)
+      : _data,
     isEncrypt = false
   if (typeof esak !== 'undefined' && esak !== '' && publicKeyOfReceiver) {
     /* Encryption */
@@ -38,7 +38,7 @@ export const produceEncryptData: DocumentUtilsTypes.ProduceEncryptData = async (
         data
       )
       isEncrypt = true
-    } catch (error) {}
+    } catch (error) { }
   }
   return { data, isEncrypt }
 }
@@ -148,8 +148,8 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
         data = dType.isBinary
           ? (response.data as Uint8Array)
           : await store.level2SDK.utilServices.base64ToUint8Array(
-              response.data as string
-            )
+            response.data as string
+          )
       } else {
         throw 'deat.url is missing'
       }
@@ -304,6 +304,8 @@ export const documentToNote: DocumentUtilsTypes.DocumentToNote = async ({
       nonce: name?.nonce,
       targetRoomName: name?.targetRoomName,
       user: name?.user,
+      sesk: name?.sesk,
+      aesk: name?.aesk,
       type: contentType === 'text/plain' ? 'application/json' : contentType,
       // data: contentType === 'text/plain' ? { note: content } : content,
       data: content,
