@@ -71,6 +71,8 @@ export default {
       return false
   },
   inhx({ intHex, index, hex }): number {
+    if (typeof (intHex) === "string")
+      intHex = parseInt(intHex)
     if (((intHex >> (index - 1)) & 1) !== hex) {
       if (hex === 1) {
         intHex += Math.pow(2, index - 1)
