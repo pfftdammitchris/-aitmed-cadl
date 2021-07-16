@@ -35,7 +35,8 @@ export default class Store {
   public responseCatcher: ResponseCatcher = defaultResponseCatcher
   public errorCatcher: ErrorCatcher = defaultErrorCatcher
   public noodlInstance: any
-
+  public currentLatitude: any
+  public currentLongitude: any
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {
     this._env = env
     const sdkEnv = env === 'test' ? 'development' : 'production'

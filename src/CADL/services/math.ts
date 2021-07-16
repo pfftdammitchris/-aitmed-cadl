@@ -8,5 +8,5 @@ export default {
   },
   greater: function ({ num1, num2 }): boolean {
     return num1 > num2
-  },
+  }
 }

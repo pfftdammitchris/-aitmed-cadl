@@ -286,6 +286,24 @@ export default {
     }
     return
   },
+  ShowTimeDateUS(object) {
+    if (isObject(object)) {
+      if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
+        let date = new Date(object['stime'] * 1000)
+        let y = date.getFullYear()
+        let m =
+          date.getMonth() + 1 > 10
+            ? date.getMonth() + 1
+            : '0' + (date.getMonth() + 1)
+        let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
+        let duration_date =
+          m + '-' + d + '-' + y
+        return duration_date
+      }
+      return
+    }
+    return
+  },
   ShowTimeSpanFormat(object) {
     if (isObject(object)) {
       if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
