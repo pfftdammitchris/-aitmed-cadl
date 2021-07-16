@@ -192,7 +192,7 @@ export default {
       console.log("test suggest adress", response)
       return response['response']
     }
-    return
+    return []
   },
   /**
    * 以prefix为前缀查询搜索建议，返回doctor_suggestion: []，speciality_suggestion 分别是推荐的医生姓名和科室名
