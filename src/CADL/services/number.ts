@@ -71,6 +71,8 @@ export default {
       return false
   },
   inhx({ intHex, index, hex }): number {
+    if (typeof (intHex) === "string")
+      intHex = parseInt(intHex)
     if (((intHex >> (index - 1)) & 1) !== hex) {
       if (hex === 1) {
         intHex += Math.pow(2, index - 1)
@@ -112,12 +114,7 @@ export default {
     }
     return false;
 
-  },
-
-  generate16Dkey(): string {
-    let max: number = 9999999999999999
-    let key: number = Math.floor(Math.random() * max)
-    return key.toString()
   }
+
 
 }
