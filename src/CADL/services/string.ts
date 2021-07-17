@@ -160,6 +160,12 @@ export default {
     }
     return newStr.substr(0, newStr.length - 1);
   },
+  /**
+   * Calculate the distance based on the longitude and latitude obtained by this software 
+   * and the incoming longitude and latitude
+   * @param point => longitude and latitude parameters
+   * @returns 
+   */
   distanceByPosition(point) {
     if (point != null || typeof point != 'undefined') {
       let currentLatitude = store.currentLatitude
@@ -180,4 +186,58 @@ export default {
     return
 
   },
+  /**
+   * Parse the address data obtained by mapbox
+   * @param object => mapbox daddress data
+   * @returns 
+   */
+  getAddress({ object }) {
+    let res = {
+      address: "",
+      city: "",
+      state: "",
+      zipCode: "",
+      location: "",
+      geoCode: []
+    }
+    if (object) {
+      let context = object['context']
+      context.forEach(element => {
+        let prefix = element.id.split('.')[0]
+        console.log(prefix)
+        switch (prefix) {
+          case 'postcode':
+            res.zipCode = element.text
+            break
+          case 'place':
+            res.city = element.text
+            break
+          case 'region':
+            res.state = element.text
+            break
+        }
+      })
+      res.geoCode = object.center
+      res.location = object.place_name
+      if (object?.properties?.address) {
+        res.address = object.text + ', ' + object.properties.address
+      } else {
+        res.address = object.text
+      }
+
+      if (object.place_type[0] == 'place') {
+        res.city = object.text
+        res.address = ''
+      }
+
+      if (object.place_type[0] == 'region') {
+        res.state = object.text
+        res.address = ''
+      }
+
+
+      return res
+    }
+    return res
+  }
 }
