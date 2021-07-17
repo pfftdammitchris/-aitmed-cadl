@@ -22,7 +22,7 @@ let GetQuery = (query) => {
     let path =
       '/geocoding/v5/mapbox.places/' +
       query +
-      '.json?access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
+      '.json?country=US&limit=10&access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
     let options = {
       // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
       host: 'api.mapbox.com',
@@ -190,6 +190,7 @@ export default {
       )
       // arr = address
       console.log("test suggest adress", response)
+      if (response == null || typeof response == undefined) { return [] }
       return response['response']
     }
     return []
