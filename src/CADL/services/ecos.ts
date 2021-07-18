@@ -1,8 +1,14 @@
 import store from '../../common/store'
 import { documentToNote } from '../../services/Document'
-import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
+import { retrieveDocument } from '../../common/retrieve'
 import Document from '../../services/Document'
 
+/**
+ * get 0 or 1 from the specified bit
+ * @param sourceNum 
+ * @param bit 
+ * @returns 
+ */
 function getBitValue(sourceNum, bit) {
   if (bit < 8) {
     let value = parseInt(sourceNum).toString(2)
@@ -11,6 +17,13 @@ function getBitValue(sourceNum, bit) {
   }
   return
 }
+/**
+ * Set 0 or 1 to the specified bit
+ * @param sourceNum => original number
+ * @param bit => target bit 
+ * @param targetValue => target value for target bit
+ * @returns 
+ */
 function setBitValue(sourceNum, bit, targetValue: 1 | 0) {
   if (bit < 8) {
     let value = parseInt(sourceNum).toString(2)
@@ -22,6 +35,7 @@ function setBitValue(sourceNum, bit, targetValue: 1 | 0) {
   }
   return
 }
+
 export default {
   async shareDoc({ sourceDoc, targetEdgeID, targetRoomName, targetFileID }) {
     const document = await retrieveDocument(sourceDoc.id)
@@ -98,6 +112,17 @@ export default {
       // return sharedDoc
     }
   },
+
+  /**
+   * Update the type of doc for a given doc array 
+   * according to specific rules
+   * 
+   * specific rules: Set 0|1 to the type specific bit 
+   * 
+   * @param sourceDocList
+   * @param targetBit
+   * @param targetValue
+   */
   async updateDocListType({ sourceDocList, targetBit, targetValue }) {
     for (let i = 0; i < sourceDocList.length; i++) {
       const document = await retrieveDocument(sourceDocList[i].id)
@@ -119,6 +144,8 @@ export default {
       let bitValue = getBitValue(note?.type, targetBit)
       if (bitValue != targetValue) {
         newType = setBitValue(note?.type, targetBit, targetValue)
+      } else {
+        continue
       }
       await Document.update(note?.id, {
         edge_id: edge_id,
