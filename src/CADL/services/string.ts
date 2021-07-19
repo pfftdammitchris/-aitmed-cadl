@@ -33,9 +33,9 @@ export default {
     let keyArray: string[] = []
     return keyArray.concat(key.substring(0, 4), key.substring(4, 8), key.substring(8, 12), key.substring(12))
   },
-  split16Dkey(key: string): string {
-    if (key.length !== 16) return ""
-    return key.substring(0, 4) + '-' + key.substring(4, 8) + '-' + key.substring(8, 12) + '-' + key.substring(12)
+  split16Dkey(Dkey: string): string {
+    if (Dkey.length !== 16) return Dkey + ' length:' + Dkey.length
+    return Dkey.substring(0, 4) + '-' + Dkey.substring(4, 8) + '-' + Dkey.substring(8, 12) + '-' + Dkey.substring(12)
   },
   equal({ string1, string2 }): boolean {
     return string1 === string2
