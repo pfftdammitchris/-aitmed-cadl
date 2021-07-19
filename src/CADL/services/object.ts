@@ -206,5 +206,6 @@ export default {
         }
       }
     }
+    return obj
   },
 }
