@@ -299,7 +299,7 @@ export default {
     let arr: any[] = []
     if (pos) {
       // let address
-      await GetlatAndlon(pos).then(
+      await GetQuery(pos).then(
         (data: LatResponse) => {
           arr[0] = data.center[0]
           arr[1] = data.center[1]
