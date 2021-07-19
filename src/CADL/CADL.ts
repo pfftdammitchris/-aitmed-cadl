@@ -104,20 +104,24 @@ export default class CADL extends EventEmitter {
       )
     }
 
-    console.log("test inipage")
+    //get app curent position 
+    const options = {
+      enableHighAccuracy: true,
+      maximumAge: 1000,
+      timeout: 5000
+    }
     window.navigator.geolocation.getCurrentPosition(
       function (position) {
         let currentLatitude = position.coords.latitude
         let currentLongitude = position.coords.longitude
         store.currentLatitude = currentLatitude
         store.currentLongitude = currentLongitude
-        console.log("test distance", currentLatitude)
-        console.log("test distance", currentLongitude)
       },
       function (error) {
         var errorType = ['You refuse to share location information', "Can't get location information", 'Get location information timed out'];
         alert(errorType[error.code - 1]);
-      }
+      },
+      options
     )
 
     const {

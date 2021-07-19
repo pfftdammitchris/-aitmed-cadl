@@ -2,12 +2,8 @@ import { Client } from 'elasticsearch'
 import { get } from 'https'
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
-// const node = 'http://44.192.21.229:9200'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
 const INDEX = "doctors_v0.3"
-// let client = new Client({ host: 'https://searchapi.aitmed.io' })
-// let DEFAULT_ADDRESS = "92805"
-// let SIZE = 100
 interface LatResponse {
   center: any[]
 }
@@ -17,12 +13,12 @@ interface LatResponse {
  * @param query 
  * @returns 
  */
-let GetQuery = (query) => {
-  let promise = new Promise((res, rej) => {
+const GetQuery = (query) => {
+  return new Promise((res, rej) => {
     let path =
       '/geocoding/v5/mapbox.places/' +
       query +
-      '.json?access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
+      '.json?country=US&limit=10&access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
     let options = {
       // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
       host: 'api.mapbox.com',
@@ -46,45 +42,8 @@ let GetQuery = (query) => {
       rej(e)
     })
   })
-  return promise
 }
-/**
- * Convert query to latitude and longitude
- * Help function for transformGeo
- * @param query address or poss
- * @returns [latitude,longitude]
- */
-let GetlatAndlon = (query) => {
-  let promise = new Promise((res, rej) => {
-    let path =
-      '/geocoding/v5/mapbox.places/' +
-      query +
-      '.json?access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
-    let options = {
-      // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
-      host: 'api.mapbox.com',
-      path: path,
-    }
-    get(options, function (http_res) {
-      // initialize the container for our data
-      let data = ''
-      http_res.on('data', function (chunk) {
-        data += chunk
-      })
-      // console.log(http_res.statusCode)
-      http_res.on('end', function () {
-        let JsonData: any = JSON.parse(data)
-        let response = JsonData.features[0].center
-        res({
-          center: response,
-        })
-      })
-    }).on('error', function (e) {
-      rej(e)
-    })
-  })
-  return promise
-}
+
 
 let Description = (query) => {
   let promise = new Promise((res, rej) => {
@@ -124,8 +83,9 @@ export default {
     query = query.replace("#", "")
     if (query) {
       // let address
-      await GetlatAndlon(query).then(
+      await GetQuery(query).then(
         (data: LatResponse) => {
+          data = data[0]
           arr[1] = data.center[0]
           arr[0] = data.center[1]
           console.log('query zip code1', data)
@@ -190,9 +150,10 @@ export default {
       )
       // arr = address
       console.log("test suggest adress", response)
+      if (response == null || typeof response == undefined) { return [] }
       return response['response']
     }
-    return
+    return []
   },
   /**
    * 以prefix为前缀查询搜索建议，返回doctor_suggestion: []，speciality_suggestion 分别是推荐的医生姓名和科室名
@@ -338,7 +299,7 @@ export default {
     let arr: any[] = []
     if (pos) {
       // let address
-      await GetlatAndlon(pos).then(
+      await GetQuery(pos).then(
         (data: LatResponse) => {
           arr[0] = data.center[0]
           arr[1] = data.center[1]
