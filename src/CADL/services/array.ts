@@ -485,7 +485,7 @@ export default {
     let flag = 0
     if (isArray(array)) {
       array.forEach((arr) => {
-        if (phoneNumber === arr['name']['data']['phone']) {
+        if (phoneNumber === arr['name']['data']['phoneNumber']) {
           flag = 1
           return
         }
