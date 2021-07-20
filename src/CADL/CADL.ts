@@ -118,8 +118,9 @@ export default class CADL extends EventEmitter {
         store.currentLongitude = currentLongitude
       },
       function (error) {
-        var errorType = ['You refuse to share location information', "Can't get location information", 'Get location information timed out'];
-        alert(errorType[error.code - 1]);
+        let errorType = ['You refuse to share location information', "Can't get location information", 'Get location information timed out'];
+        console.log(errorType[error.code - 1])
+        // alert(errorType[error.code - 1]);
       },
       options
     )
