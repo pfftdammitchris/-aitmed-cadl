@@ -156,6 +156,11 @@ export default {
         type: newType,
         jwt: data?.jwt
       })
+
+      await store.level2SDK.edgeServices.createEdge({
+        bvid: localStorage.getItem('user_vid'),
+        type: 1030
+      })
     }
   },
 }
