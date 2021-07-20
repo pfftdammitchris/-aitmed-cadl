@@ -10,10 +10,10 @@ import Document from '../../services/Document'
  * @returns 
  */
 function getBitValue(sourceNum, bit) {
-  if (bit < 8) {
+  if (bit <= 8) {
     let value = parseInt(sourceNum).toString(2)
     let len = value.length
-    return value[len - bit - 1]
+    return value[len - bit]
   }
   return
 }
@@ -25,11 +25,11 @@ function getBitValue(sourceNum, bit) {
  * @returns 
  */
 function setBitValue(sourceNum, bit, targetValue: 1 | 0) {
-  if (bit < 8) {
+  if (bit <= 8) {
     let value = parseInt(sourceNum).toString(2)
     let len = value.length
     let valueArray = value.split('')
-    valueArray.splice(len - bit - 1, 1, targetValue.toString())
+    valueArray.splice(len - bit, 1, targetValue.toString())
     let newValue = valueArray.join('')
     return parseInt(newValue, 2)
   }
@@ -135,9 +135,12 @@ export default {
         )
       }
 
-
-      // let id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.id)
-      let edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+      const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      const data = await store.level2SDK.edgeServices.createEdge({
+        bvid: id,
+        type: 1030
+      })
 
 
       let newType = note?.type
@@ -150,7 +153,13 @@ export default {
       await Document.update(note?.id, {
         edge_id: edge_id,
         content: content,
-        type: newType
+        type: newType,
+        jwt: data?.jwt
+      })
+
+      await store.level2SDK.edgeServices.createEdge({
+        bvid: localStorage.getItem('user_vid'),
+        type: 1030
       })
     }
   },

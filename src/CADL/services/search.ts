@@ -84,8 +84,8 @@ export default {
     if (query) {
       // let address
       await GetQuery(query).then(
-        (data: LatResponse) => {
-          data = data[0]
+        (data: any) => {
+          data = data.response[0]
           arr[1] = data.center[0]
           arr[0] = data.center[1]
           console.log('query zip code1', data)
@@ -300,7 +300,8 @@ export default {
     if (pos) {
       // let address
       await GetQuery(pos).then(
-        (data: LatResponse) => {
+        (data: any) => {
+          data = data.response[0]
           arr[0] = data.center[0]
           arr[1] = data.center[1]
         },
