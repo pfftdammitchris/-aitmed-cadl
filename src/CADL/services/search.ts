@@ -300,10 +300,13 @@ export default {
     if (pos) {
       // let address
       await GetQuery(pos).then(
-        (data: LatResponse) => {
+        (data: any) => {
+          console.log("test", data)
           data = data[0]
+          console.log("test", data)
           arr[0] = data.center[0]
           arr[1] = data.center[1]
+          console.log("test", arr)
         },
         (err) => {
           if (store.env === 'test') {
