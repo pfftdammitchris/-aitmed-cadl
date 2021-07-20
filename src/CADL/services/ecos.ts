@@ -1,6 +1,6 @@
 import store from '../../common/store'
 import { documentToNote } from '../../services/Document'
-import { retrieveDocument } from '../../common/retrieve'
+import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
 import Document from '../../services/Document'
 
 /**
@@ -135,9 +135,12 @@ export default {
         )
       }
 
-
-      // let id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.id)
-      let edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+      const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      const data = await store.level2SDK.edgeServices.createEdge({
+        bvid: id,
+        type: 1030
+      })
 
 
       let newType = note?.type
@@ -150,7 +153,8 @@ export default {
       await Document.update(note?.id, {
         edge_id: edge_id,
         content: content,
-        type: newType
+        type: newType,
+        jwt: data?.jwt
       })
     }
   },
