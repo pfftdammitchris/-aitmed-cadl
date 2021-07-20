@@ -1,6 +1,6 @@
 import store from '../../common/store'
 import { documentToNote } from '../../services/Document'
-import { retrieveEdge, retrieveDocument } from '../../common/retrieve'
+import { retrieveDocument } from '../../common/retrieve'
 import Document from '../../services/Document'
 
 /**
