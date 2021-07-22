@@ -4,6 +4,8 @@ import _, { isArray } from 'lodash'
 import store from '../../common/store'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
 const INDEX = "doctors_v0.3"
+// const mapboxHost = 'api.mapbox.com'
+const mapboxToken = "pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA"
 interface LatResponse {
   center: any[]
 }
@@ -18,7 +20,7 @@ const GetQuery = (query) => {
     let path =
       '/geocoding/v5/mapbox.places/' +
       query +
-      '.json?country=US&limit=10&access_token=pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
+      '.json?country=US&limit=10&access_token=' + mapboxToken
     let options = {
       // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
       host: 'api.mapbox.com',
