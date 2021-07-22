@@ -91,30 +91,41 @@ export default {
   hexOr({ intOne, hexTwo }) {
     return intOne | hexTwo
   },
-
-  hx({ iniLen, localArr, binaryArr }): number[] | boolean {
+  hx({ docGroup, localArr, binaryArr }) {
     if (localArr.length === binaryArr.length) {
       let equals: any;
       let pushArr: number[] = [];
-      for (let index = 0; index < Math.pow(2, iniLen) - 1; index++) {
+      for (let index = 0; index < docGroup.length; index++) {
         equals = 0;
-        for (let indx = 0; indx <= localArr.length - 1; indx++) {
-          if (((index >> (localArr[indx] - 1)) & 1) === binaryArr[indx]) {
+        for (let j = 0; j < localArr.length; j++) {
+          if (((docGroup[index].type >> (localArr[j] - 1)) & 1) === binaryArr[j]) {
             equals++;
           } else {
             break;
           }
         }
         if (equals === localArr.length) {
-          pushArr.push(index);
-
+          pushArr.push(docGroup[index]);
         }
       }
       return pushArr;
     }
     return false;
-
+  },
+  //  校验单个约束
+  typeIsValid({ docType, localArr, binaryArr }) {
+    if (localArr.length === binaryArr.length) {
+      let equals: any;
+      equals = 0;
+      for (let j = 0; j < localArr.length; j++) {
+        if (((docType >> (localArr[j] - 1)) & 1) === binaryArr[j]) {
+          equals++;
+        } else {
+          break;
+        }
+      }
+      return equals === binaryArr.length ? true : false
+    }
+    return false;
   }
-
-
 }
