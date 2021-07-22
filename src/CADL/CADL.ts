@@ -1155,7 +1155,7 @@ export default class CADL extends EventEmitter {
           for (let key of contentAfterExtraction) {
             const initialMapping = fuzzyIndexCreator.initialMapping(key)
             const fKey = fuzzyIndexCreator.toFuzzyInt64(initialMapping)
-            const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
+            // const fKeyHex = fuzzyIndexCreator.toFuzzyHex(initialMapping)
             this._indexRepository.insertIndexData({
               // kText: key,
               // id: docId,
