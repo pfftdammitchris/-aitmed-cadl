@@ -92,7 +92,7 @@ export default {
     return intOne | hexTwo
   },
 
-  hx({ iniLen, localArr, binaryArr }): number[] | boolean {
+  hx({ docGroup, localArr, binaryArr }): number[] | boolean {
     if (localArr.length === binaryArr.length) {
       let equals: any;
       let pushArr: number[] = [];
