@@ -130,7 +130,6 @@ export default class CADL extends EventEmitter {
       )
     }
 
-
     const {
       web = { cadlVersion: '' },
       cadlBaseUrl = '',
