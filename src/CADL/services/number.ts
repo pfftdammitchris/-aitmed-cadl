@@ -91,9 +91,7 @@ export default {
   hexOr({ intOne, hexTwo }) {
     return intOne | hexTwo
   },
-
-  
-  hx({ docGroup, localArr, binaryArr }){
+  hx({ docGroup, localArr, binaryArr }) {
     if (localArr.length === binaryArr.length) {
       let equals: any;
       let pushArr: number[] = [];
@@ -115,23 +113,19 @@ export default {
     return false;
   },
   //  校验单个约束
-  typeIsValid({ docType, localArr, binaryArr }){
+  typeIsValid({ docType, localArr, binaryArr }) {
     if (localArr.length === binaryArr.length) {
       let equals: any;
-        equals = 0;
-        for (let j = 0; j < localArr.length; j++) {
-          if (((docType >> (localArr[j] - 1)) & 1) === binaryArr[j]) {
-            equals++;
-          } else {
-            break;
-          }
+      equals = 0;
+      for (let j = 0; j < localArr.length; j++) {
+        if (((docType >> (localArr[j] - 1)) & 1) === binaryArr[j]) {
+          equals++;
+        } else {
+          break;
         }
-        return equals === binaryArr.length ? true : false
+      }
+      return equals === binaryArr.length ? true : false
     }
     return false;
   }
-
-
-
-
 }
