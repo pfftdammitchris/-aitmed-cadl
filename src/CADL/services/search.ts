@@ -1,5 +1,6 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
+import axios from 'axios'
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
@@ -73,6 +74,24 @@ let Description = (query) => {
     })
   })
   return promise
+}
+
+const GetDrug = (query) => {
+  let host = 'https://api.drugbank.com/v1/us/product_concepts'
+  return new Promise((res, rej) => {
+    axios.get(host, {
+      params: {
+        q: query
+      },
+      headers: {
+        authorization: '632f37ed479fd32c863d466ddac8b3e4'
+      }
+    }).then(response => {
+      res({ response })
+    }).catch(error => {
+      rej(error)
+    })
+  })
 }
 export default {
   /**
@@ -553,4 +572,21 @@ export default {
     }
     return
   },
+
+  async getDrugs({ query }) {
+    console.log("test", query)
+    let response: any = []
+    if (query) {
+      await GetDrug(query).then(
+        (data) => {
+          response = data
+        },
+        (err) => {
+          console.log(err)
+        }
+      )
+      return response
+    }
+    return
+  }
 }
