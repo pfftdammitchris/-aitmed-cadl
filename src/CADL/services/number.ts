@@ -96,7 +96,7 @@ export default {
     if (localArr.length === binaryArr.length) {
       let equals: any;
       let pushArr: number[] = [];
-      for (let index = 0; index < Math.pow(2, iniLen) - 1; index++) {
+      for (let index = 0; index < Math.pow(2, docGroup) - 1; index++) {
         equals = 0;
         for (let indx = 0; indx <= localArr.length - 1; indx++) {
           if (((index >> (localArr[indx] - 1)) & 1) === binaryArr[indx]) {
