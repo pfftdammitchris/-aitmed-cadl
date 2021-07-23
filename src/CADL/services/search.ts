@@ -8,6 +8,7 @@ const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = "pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA"
 const DrugBankToken = 'eyJhbGciOiJIUzI1NiJ9.eyJrZXlfaWQiOjE3OTUsImV4cCI6MTYyNzA2ODE1NH0.jvj7kDWLuQqttmgiLlY31zmw8iVIkmkZVWR_p90dNt0'
+const baseUrl = 'https://api-js.drugbank.com/v1/us'
 interface LatResponse {
   center: any[]
 }
@@ -78,15 +79,19 @@ let Description = (query) => {
 }
 
 const getDrugs = (query) => {
-  let host = 'https://api-js.drugbank.com/v1/us/product_concepts'
+
   return new Promise((res, rej) => {
-    axios.get(host, {
+    axios({
+      url: '/product_concepts',
+      baseURL: baseUrl,
+      method: "get",
       params: {
         q: query
       },
       headers: {
-        authorization: 'Bearer ' + DrugBankToken
-      }
+        'Authorization': 'Bearer ' + DrugBankToken,
+      },
+
     }).then(response => {
       res(response['data'])
     }).catch(error => {
@@ -95,12 +100,16 @@ const getDrugs = (query) => {
   })
 }
 const getRoutes = (drugbank_pcid) => {
-  let host = 'https://api-js.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/routes'
+  // let host = 'https://api-js.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/routes'
   return new Promise((res, rej) => {
-    axios.get(host, {
+    axios({
+      url: '/product_concepts/' + drugbank_pcid + '/routes',
+      baseURL: baseUrl,
+      method: "get",
       headers: {
-        authorization: 'Bearer ' + DrugBankToken
-      }
+        'Authorization': 'Bearer ' + DrugBankToken,
+      },
+
     }).then(response => {
       res(response['data'])
     }).catch(error => {
@@ -109,12 +118,16 @@ const getRoutes = (drugbank_pcid) => {
   })
 }
 const getStrength = (drugbank_pcid) => {
-  let host = 'https://api-js.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/strengths'
+  // let host = 'https://api-js.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/strengths'
   return new Promise((res, rej) => {
-    axios.get(host, {
+    axios({
+      url: '/product_concepts/' + drugbank_pcid + '/strengths',
+      baseURL: baseUrl,
+      method: "get",
       headers: {
-        authorization: 'Bearer ' + DrugBankToken
-      }
+        'Authorization': 'Bearer ' + DrugBankToken,
+      },
+
     }).then(response => {
       res(response['data'])
     }).catch(error => {
