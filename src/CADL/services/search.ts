@@ -1,5 +1,6 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
+import axios from 'axios'
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
@@ -74,6 +75,24 @@ let Description = (query) => {
   })
   return promise
 }
+
+const GetDrug = (query) => {
+  let host = 'https://api.drugbank.com/v1/us/product_concepts'
+  return new Promise((res, rej) => {
+    axios.get(host, {
+      params: {
+        q: query
+      },
+      headers: {
+        authorization: '632f37ed479fd32c863d466ddac8b3e4'
+      }
+    }).then(response => {
+      res({ response })
+    }).catch(error => {
+      rej(error)
+    })
+  })
+}
 export default {
   /**
    * Get the latitude and longitude of the most similar address based on the address input
@@ -86,8 +105,8 @@ export default {
     if (query) {
       // let address
       await GetQuery(query).then(
-        (data: any) => {
-          data = data.response[0]
+        (data: LatResponse) => {
+          data = data[0]
           arr[1] = data.center[0]
           arr[0] = data.center[1]
           console.log('query zip code1', data)
@@ -302,8 +321,7 @@ export default {
     if (pos) {
       // let address
       await GetQuery(pos).then(
-        (data: any) => {
-          data = data.response[0]
+        (data: LatResponse) => {
           arr[0] = data.center[0]
           arr[1] = data.center[1]
         },
@@ -553,4 +571,21 @@ export default {
     }
     return
   },
+
+  async getDrugs({ query }) {
+    console.log("test", query)
+    let response: any = []
+    if (query) {
+      await GetDrug(query).then(
+        (data) => {
+          response = data
+        },
+        (err) => {
+          console.log(err)
+        }
+      )
+      return response
+    }
+    return
+  }
 }

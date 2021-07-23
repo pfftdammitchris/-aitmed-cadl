@@ -2,6 +2,7 @@ import _, { isObject } from 'lodash'
 import store from '../../common/store'
 import { isPopulated } from '../utils'
 import { documentToNote } from '../../services/document/utils'
+import { retrieveDocument } from '../../common/retrieve'
 
 // const node = "http://44.192.21.229:9200"
 // let index = "doctors"
@@ -67,8 +68,18 @@ export default {
     return note
   },
   //  please dont delete
-  prepareDocToPath(name) {
-    if (!name?.data || typeof name == 'string') { return "../cadl/admin/assets/ava.png" }
+  async prepareDocToPath(name) {
+    if (typeof name == 'string') {
+      const data = await retrieveDocument(name)
+      name = data?.name
+      const blob = await store.level2SDK.utilServices.base64ToBlob(
+        name?.data,
+        name?.type
+      )
+      const blobUrl = await URL.createObjectURL(blob)
+      return blobUrl
+    }
+    if (!name?.data) { return "../cadl/admin/assets/ava.png" }
     const type = name?.type
     if (!name?.data) return
     if (typeof name?.data !== 'string') return
