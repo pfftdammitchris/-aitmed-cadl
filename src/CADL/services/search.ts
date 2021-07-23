@@ -7,7 +7,7 @@ let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = "pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA"
-const drugBankApiKey = '632f37ed479fd32c863d466ddac8b3e4'
+const DrugBankToken = 'eyJhbGciOiJIUzI1NiJ9.eyJrZXlfaWQiOjE3OTUsImV4cCI6MTYyNzA2ODE1NH0.jvj7kDWLuQqttmgiLlY31zmw8iVIkmkZVWR_p90dNt0'
 interface LatResponse {
   center: any[]
 }
@@ -78,45 +78,45 @@ let Description = (query) => {
 }
 
 const getDrugs = (query) => {
-  let host = 'https://api.drugbank.com/v1/us/product_concepts'
+  let host = 'https://api-js.drugbank.com/v1/us/product_concepts'
   return new Promise((res, rej) => {
     axios.get(host, {
       params: {
         q: query
       },
       headers: {
-        authorization: drugBankApiKey
+        authorization: 'Bearer ' + DrugBankToken
       }
     }).then(response => {
-      res({ response })
+      res(response['data'])
     }).catch(error => {
       rej(error)
     })
   })
 }
 const getRoutes = (drugbank_pcid) => {
-  let host = 'https://api.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/routes'
+  let host = 'https://api-js.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/routes'
   return new Promise((res, rej) => {
     axios.get(host, {
       headers: {
-        authorization: drugBankApiKey
+        authorization: 'Bearer ' + DrugBankToken
       }
     }).then(response => {
-      res({ response })
+      res(response['data'])
     }).catch(error => {
       rej(error)
     })
   })
 }
 const getStrength = (drugbank_pcid) => {
-  let host = 'https://api.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/strengths'
+  let host = 'https://api-js.drugbank.com/v1/us/product_concepts/' + drugbank_pcid + '/strengths'
   return new Promise((res, rej) => {
     axios.get(host, {
       headers: {
-        authorization: drugBankApiKey
+        authorization: 'Bearer ' + DrugBankToken
       }
     }).then(response => {
-      res({ response })
+      res(response['data'])
     }).catch(error => {
       rej(error)
     })
