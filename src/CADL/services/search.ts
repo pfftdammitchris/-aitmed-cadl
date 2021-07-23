@@ -7,6 +7,8 @@ let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = "pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA"
+const DrugBankToken = 'eyJhbGciOiJIUzI1NiJ9.eyJrZXlfaWQiOjE3OTUsImV4cCI6MTYyNzEyNjY5Nn0.HhGPYffuEYlWASEzkUgvPT4141Rxsan3o-cry1ZiwAY'
+const baseUrl = 'https://api-js.drugbank.com/v1/us/'
 interface LatResponse {
   center: any[]
 }
@@ -76,23 +78,37 @@ let Description = (query) => {
   return promise
 }
 
-const GetDrug = (query) => {
-  let host = 'https://api.drugbank.com/v1/us/product_concepts'
+const getDrugs = (query, drugbank_pcid, type) => {
+  let url = '/product_concepts'
+  if (type == 'Route') {
+    url = '/product_concepts/' + drugbank_pcid + '/routes'
+  } else if (type == 'Strength') {
+    url = '/product_concepts/' + drugbank_pcid + '/strengths'
+  }
+  let params = {}
+  if (query) {
+    params = {
+      q: query
+    }
+  }
   return new Promise((res, rej) => {
-    axios.get(host, {
-      params: {
-        q: query
-      },
+    axios({
+      url: url,
+      baseURL: baseUrl,
+      method: "get",
+      params: params,
       headers: {
-        authorization: '632f37ed479fd32c863d466ddac8b3e4'
-      }
+        'Authorization': 'Bearer ' + DrugBankToken,
+      },
+
     }).then(response => {
-      res({ response })
+      res(response['data'])
     }).catch(error => {
       rej(error)
     })
   })
 }
+
 export default {
   /**
    * Get the latitude and longitude of the most similar address based on the address input
@@ -477,7 +493,6 @@ export default {
    */
   SortBySpeciality({ object }) {
     if (isArray(object)) {
-      console.log('test SortBySpeciality', object)
       let re: Record<string, any> = []
       object.forEach((obj) => {
         let i = 0
@@ -572,12 +587,19 @@ export default {
     return
   },
 
-  async getDrugs({ query }) {
+  async drugBank({ query = null, id = null, type }) {
     console.log("test", query)
     let response: any = []
-    if (query) {
-      await GetDrug(query).then(
+    if (type) {
+      await getDrugs(query, id, type).then(
         (data) => {
+          if (store.env === 'test') {
+            console.log(
+              '%cGet Drug response',
+              'background: purple; color: white; display: block;',
+              { data }
+            )
+          }
           response = data
         },
         (err) => {
