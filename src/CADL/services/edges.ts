@@ -105,8 +105,8 @@ function get({ pageName, apiObject, dispatch }) {
         }
         //
       } else {
-        //@ts-expect-error
         const { data } = await store.level2SDK.edgeServices.retrieveEdge({
+          //@ts-expect-error
           idList: idList?.filter?.(Boolean) || [],
           options: requestOptions,
         })
