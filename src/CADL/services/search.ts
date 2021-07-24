@@ -3,7 +3,9 @@ import { get } from 'https'
 import axios from 'axios'
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
+//set elasticsearch host client
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
+//query index
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
