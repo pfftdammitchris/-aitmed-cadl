@@ -90,9 +90,9 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
-      idList?.forEach?.((id) => {
-        // if (!id) debugger
-      })
+      // idList?.forEach?.((id) => {
+      //   // if (!id) debugger
+      // })
 
       if (!shouldPass) {
         res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
@@ -105,6 +105,7 @@ function get({ pageName, apiObject, dispatch }) {
         }
         //
       } else {
+        //@ts-expect-error
         const { data } = await store.level2SDK.edgeServices.retrieveEdge({
           idList: idList?.filter?.(Boolean) || [],
           options: requestOptions,
