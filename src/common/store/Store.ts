@@ -37,6 +37,7 @@ export default class Store {
   public noodlInstance: any
   public currentLatitude: any
   public currentLongitude: any
+  public drugbankToken: any
   constructor({ apiVersion, apiHost, env, configUrl }: ConfigParams) {
     this._env = env
     const sdkEnv = env === 'test' ? 'development' : 'production'

@@ -7,8 +7,6 @@ let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = "pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA"
-const DrugBankToken = 'eyJhbGciOiJIUzI1NiJ9.eyJrZXlfaWQiOjE3OTUsImV4cCI6MTYyNzEyNjY5Nn0.HhGPYffuEYlWASEzkUgvPT4141Rxsan3o-cry1ZiwAY'
-const baseUrl = 'https://api-js.drugbank.com/v1/us/'
 interface LatResponse {
   center: any[]
 }
@@ -78,36 +76,8 @@ let Description = (query) => {
   return promise
 }
 
-const getDrugs = (query, drugbank_pcid, type) => {
-  let url = '/product_concepts'
-  if (type == 'Route') {
-    url = '/product_concepts/' + drugbank_pcid + '/routes'
-  } else if (type == 'Strength') {
-    url = '/product_concepts/' + drugbank_pcid + '/strengths'
-  }
-  let params = {}
-  if (query) {
-    params = {
-      q: query
-    }
-  }
-  return new Promise((res, rej) => {
-    axios({
-      url: url,
-      baseURL: baseUrl,
-      method: "get",
-      params: params,
-      headers: {
-        'Authorization': 'Bearer ' + DrugBankToken,
-      },
 
-    }).then(response => {
-      res(response['data'])
-    }).catch(error => {
-      rej(error)
-    })
-  })
-}
+
 
 export default {
   /**
@@ -587,27 +557,5 @@ export default {
     return
   },
 
-  async drugBank({ query = null, id = null, type }) {
-    console.log("test", query)
-    let response: any = []
-    if (type) {
-      await getDrugs(query, id, type).then(
-        (data) => {
-          if (store.env === 'test') {
-            console.log(
-              '%cGet Drug response',
-              'background: purple; color: white; display: block;',
-              { data }
-            )
-          }
-          response = data
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
-      return response
-    }
-    return
-  }
+
 }
