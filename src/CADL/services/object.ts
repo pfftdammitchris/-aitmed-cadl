@@ -94,7 +94,6 @@ export default {
         })
         res.push(resArray)
       })
-      console.error(res)
 
       return res
     }
