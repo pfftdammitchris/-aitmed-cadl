@@ -3,12 +3,13 @@ import { get } from 'https'
 import axios from 'axios'
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
+//set elasticsearch host client
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
+//query index
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
-const mapboxToken = "pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA"
-const DrugBankToken = 'eyJhbGciOiJIUzI1NiJ9.eyJrZXlfaWQiOjE3OTUsImV4cCI6MTYyNzEyNjY5Nn0.HhGPYffuEYlWASEzkUgvPT4141Rxsan3o-cry1ZiwAY'
-const baseUrl = 'https://api-js.drugbank.com/v1/us/'
+const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
+const mapboxHost = 'https://api.mapbox.com/'
 interface LatResponse {
   center: any[]
 }
@@ -19,33 +20,34 @@ interface LatResponse {
  * @returns 
  */
 const GetQuery = (query) => {
+  const url = '/geocoding/v5/mapbox.places/' + query + '.json'
   return new Promise((res, rej) => {
-    let path =
-      '/geocoding/v5/mapbox.places/' +
-      query +
-      '.json?country=US&limit=10&access_token=' + mapboxToken
-    let options = {
-      // host: 'api.81p.net/api?p=json&t=jisupk10&token=15414985AABD5796&limit=1'
-      host: 'api.mapbox.com',
-      path: path,
-    }
-    get(options, function (http_res) {
-      // initialize the container for our data
-      let data = ''
-      http_res.on('data', function (chunk) {
-        data += chunk
-      })
-      // console.log(http_res.statusCode)
-      http_res.on('end', function () {
-        let JsonData: any = JSON.parse(data)
-        let response = JsonData.features
-        res({
-          response
-        })
-      })
-    }).on('error', function (e) {
-      rej(e)
+    axios({
+      url: url,
+      baseURL: mapboxHost,
+      method: 'get',
+      params: {
+        'country': 'US',
+        'limit': 10,
+        'access_token': mapboxToken
+      }
+    }).then(
+      data => {
+        if (store.env === 'test') {
+          console.log(
+            '%cGet mapbox address response',
+            'background: purple; color: white; display: block;',
+            { data }
+          )
+        }
+        if (data.status == 200) {
+          res(data)
+        }
+      }
+    ).catch(error => {
+      rej(error)
     })
+
   })
 }
 
@@ -78,36 +80,8 @@ let Description = (query) => {
   return promise
 }
 
-const getDrugs = (query, drugbank_pcid, type) => {
-  let url = '/product_concepts'
-  if (type == 'Route') {
-    url = '/product_concepts/' + drugbank_pcid + '/routes'
-  } else if (type == 'Strength') {
-    url = '/product_concepts/' + drugbank_pcid + '/strengths'
-  }
-  let params = {}
-  if (query) {
-    params = {
-      q: query
-    }
-  }
-  return new Promise((res, rej) => {
-    axios({
-      url: url,
-      baseURL: baseUrl,
-      method: "get",
-      params: params,
-      headers: {
-        'Authorization': 'Bearer ' + DrugBankToken,
-      },
 
-    }).then(response => {
-      res(response['data'])
-    }).catch(error => {
-      rej(error)
-    })
-  })
-}
+
 
 export default {
   /**
@@ -122,13 +96,17 @@ export default {
       // let address
       await GetQuery(query).then(
         (data: LatResponse) => {
-          data = data[0]
+          data = data['data']['features'][0]
           arr[1] = data.center[0]
           arr[0] = data.center[1]
-          console.log('query zip code1', data)
+          if (store.env === 'test') {
+            console.log(data)
+          }
         },
         (err) => {
-          console.log('query error', err)
+          if (store.env === 'test') {
+            console.log(err)
+          }
         }
       )
       // arr = address
@@ -178,17 +156,16 @@ export default {
     if (query) {
       // let address
       await GetQuery(query).then(
-        (data) => {
-          response = data
+        (data: any) => {
+          response = data['data']['features']
         },
         (err) => {
           console.log('query error', err)
         }
       )
       // arr = address
-      console.log("test suggest adress", response)
       if (response == null || typeof response == undefined) { return [] }
-      return response['response']
+      return response
     }
     return []
   },
@@ -325,19 +302,13 @@ export default {
     etime,
     type = 1
   }) {
-    console.log('test query', {
-      cond: cond,
-      distance: distance,
-      carrier: carrier,
-      pos: pos,
-      stime: stime,
-      etime: etime,
-    })
+
     let arr: any[] = []
     if (pos) {
       // let address
       await GetQuery(pos).then(
         (data: LatResponse) => {
+          data = data['data']['features'][0]
           arr[0] = data.center[0]
           arr[1] = data.center[1]
         },
@@ -364,8 +335,20 @@ export default {
       stime = Date.parse(dateObject.toString()) / 1000
       etime = stime + 86400
     }
-
-    console.log('query zip code2', { arr: arr, stime: stime, etime: etime })
+    if (store.env === 'test') {
+      console.log(
+        '%cGet Search request',
+        'background: purple; color: white; display: block;',
+        {
+          cond: cond,
+          distance: distance,
+          carrier: carrier,
+          pos: arr,
+          stime: stime,
+          etime: etime,
+        }
+      )
+    }
     let template: any = {
       "query": {
         "bool": {
@@ -431,7 +414,6 @@ export default {
     } else if (type == 3) {
       template['query']['bool']['filter']['nested']['query']['bool']['filter'][0]['terms']["availByLocation.visitType"] = ['Telemedicine']
     }
-    console.log("test template", template)
 
     const body = await client.search({
       index: INDEX,
@@ -587,27 +569,5 @@ export default {
     return
   },
 
-  async drugBank({ query = null, id = null, type }) {
-    console.log("test", query)
-    let response: any = []
-    if (type) {
-      await getDrugs(query, id, type).then(
-        (data) => {
-          if (store.env === 'test') {
-            console.log(
-              '%cGet Drug response',
-              'background: purple; color: white; display: block;',
-              { data }
-            )
-          }
-          response = data
-        },
-        (err) => {
-          console.log(err)
-        }
-      )
-      return response
-    }
-    return
-  }
+
 }
