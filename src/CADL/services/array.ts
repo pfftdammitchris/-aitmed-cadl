@@ -293,7 +293,7 @@ export default {
       if (newMessage) {
         var cloned = _.cloneDeep(newMessage)
         messages.unshift(cloned)
-        return
+        return messages
       }
     }
     return
