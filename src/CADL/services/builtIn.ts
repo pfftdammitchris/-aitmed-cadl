@@ -10,6 +10,7 @@ import arrayServices from './array'
 import numberService from './number'
 import dateService from './date'
 import searchService from './search'
+import apiRequestService from './apiRequest'
 import ecos from './ecos'
 import utils from './utils'
 import typeCheck from './typeCheck'
@@ -100,6 +101,7 @@ export default function builtInFns(dispatch?: Function) {
     number: numberService,
     date: dateService,
     search: searchService,
+    apiRequest: apiRequestService,
     typeCheck,
     ecos,
     utils,

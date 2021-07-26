@@ -68,36 +68,26 @@ export default {
     return note
   },
   //  please dont delete
-  async prepareDocToPath(name) {
-    if (typeof name == 'string') {
-      const data = await retrieveDocument(name)
-      name = data?.name
-      const blob = await store.level2SDK.utilServices.base64ToBlob(
-        name?.data,
-        name?.type
+  async prepareDocToPath(id) {
+    let path = '../cadl/admin/assets/ava.png'
+    if (typeof id == 'string') {
+      const doc = await retrieveDocument(id)
+      await documentToNote({ document: doc }).then(
+        (note) => {
+          let blob = store.level2SDK.utilServices.base64ToBlob(
+            note?.name?.data,
+            note?.name?.type
+          )
+          path = URL.createObjectURL(blob)
+        },
+        (error) => {
+          console.log(error)
+        }
       )
-      const blobUrl = await URL.createObjectURL(blob)
-      return blobUrl
+      return path
     }
-    if (!name?.data) { return "../cadl/admin/assets/ava.png" }
-    const type = name?.type
-    if (!name?.data) return
-    if (typeof name?.data !== 'string') return
-    if (!isPopulated(name?.data)) return
-    if (
-      typeof name?.data === 'string' &&
-      !name?.data.match(
-        /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g
-      )
-    ) return
-    const blob = store.level2SDK.utilServices.base64ToBlob(name?.data, type)
-    const blobUrl = URL.createObjectURL(blob)
-    // console.error(blobUrl, typeof blobUrl, typeof blob)
-    name.data = blobUrl
-    return blobUrl
-    // blob.then((response) => {
-    //   return URL.createObjectURL(response)
-    // })
+    return path
+
   },
 
   alert({ value }) {
