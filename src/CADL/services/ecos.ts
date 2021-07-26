@@ -10,10 +10,10 @@ import Document from '../../services/Document'
  * @returns 
  */
 function getBitValue(sourceNum, bit) {
-  if (bit <= 8) {
+  if (bit < 8) {
     let value = parseInt(sourceNum).toString(2)
     let len = value.length
-    return value[len - bit]
+    return value[len - bit - 1]
   }
   return
 }
@@ -25,11 +25,11 @@ function getBitValue(sourceNum, bit) {
  * @returns 
  */
 function setBitValue(sourceNum, bit, targetValue: 1 | 0) {
-  if (bit <= 8) {
+  if (bit < 8) {
     let value = parseInt(sourceNum).toString(2)
     let len = value.length
     let valueArray = value.split('')
-    valueArray.splice(len - bit, 1, targetValue.toString())
+    valueArray.splice(len - bit - 1, 1, targetValue.toString())
     let newValue = valueArray.join('')
     return parseInt(newValue, 2)
   }
@@ -137,7 +137,7 @@ export default {
 
       const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
       const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
-      const data = await store.level2SDK.edgeServices.createEdge({
+      const data: any = await store.level2SDK.edgeServices.createEdge({
         bvid: id,
         type: 1030
       })
@@ -158,7 +158,7 @@ export default {
       })
 
       await store.level2SDK.edgeServices.createEdge({
-        bvid: localStorage.getItem('user_vid'),
+        bvid: localStorage.getItem('user_vid')?.toString(),
         type: 1030
       })
     }

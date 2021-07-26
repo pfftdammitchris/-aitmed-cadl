@@ -16,7 +16,6 @@ export default {
     }
     return
   },
-
   set({ object, key, value }) {
     if (isObject(object)) {
       _.set(object, key, value)

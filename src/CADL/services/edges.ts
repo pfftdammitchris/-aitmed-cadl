@@ -90,6 +90,10 @@ function get({ pageName, apiObject, dispatch }) {
         )
       }
 
+      // idList?.forEach?.((id) => {
+      //   // if (!id) debugger
+      // })
+
       if (!shouldPass) {
         res = await dispatch({ type: 'get-cache', payload: { cacheIndex } })
         if (store.env === 'test') {
@@ -99,9 +103,11 @@ function get({ pageName, apiObject, dispatch }) {
             apiObject
           )
         }
+        //
       } else {
+        //@ts-expect-error
         const { data } = await store.level2SDK.edgeServices.retrieveEdge({
-          idList,
+          idList: idList?.filter?.(Boolean) || [],
           options: requestOptions,
         })
         await dispatch({
@@ -123,9 +129,13 @@ function get({ pageName, apiObject, dispatch }) {
       )
     } else {
       //maps edge.eid to edge.id
-      let listOfEdgesWithId = res?.edge.map((edge) => {
-        return replaceEidWithId(edge)
-      })
+      let listOfEdgesWithId = (
+        Array.isArray(res?.edge) ? res?.edge : [res?.edge]
+      )
+        .map((edge) => {
+          return replaceEidWithId(edge)
+        })
+        .filter(Boolean)
       res.edge = listOfEdgesWithId
       if (store.env === 'test') {
         console.log(
@@ -258,28 +268,24 @@ function create({ pageName, apiObject, dispatch }) {
           const rootEdge = edge[0]
           let rootEdgeBesak = rootEdge?.besak
           if (!rootEdge?.besak) {
-            const besak = store.level2SDK.commonServices.generateEsak(
-              pkOfInviter
-            )
-            const {
-              data: updatedRootEdgeRes,
-            } = await store.level2SDK.edgeServices.updateEdge({
-              id: rootEdge.eid,
-              type: 40000,
-              besak,
-              name: rootEdge.name,
-            })
+            const besak =
+              store.level2SDK.commonServices.generateEsak(pkOfInviter)
+            const { data: updatedRootEdgeRes } =
+              await store.level2SDK.edgeServices.updateEdge({
+                id: rootEdge.eid,
+                type: 40000,
+                besak,
+                name: rootEdge.name,
+              })
 
             if (updatedRootEdgeRes?.edge) rootEdgeBesak = besak
           }
           let pkOfInviterToUint8Array, skOfInviterToUint8Array
           if (pkOfInviter && skOfInviter) {
-            pkOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-              pkOfInviter
-            )
-            skOfInviterToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-              skOfInviter
-            )
+            pkOfInviterToUint8Array =
+              store.level2SDK.utilServices.base64ToUint8Array(pkOfInviter)
+            skOfInviterToUint8Array =
+              store.level2SDK.utilServices.base64ToUint8Array(skOfInviter)
           }
           const sak = store.level2SDK.utilServices.aKeyDecrypt(
             pkOfInviterToUint8Array,
@@ -290,23 +296,21 @@ function create({ pageName, apiObject, dispatch }) {
           const pkOfInvitee = inviteEdge.deat.evPK
             ? inviteEdge.deat.evPK
             : inviteEdge.deat.eePK
-          const pkOfInviteeToUint8Array = store.level2SDK.utilServices.base64ToUint8Array(
-            pkOfInvitee
-          )
+          const pkOfInviteeToUint8Array =
+            store.level2SDK.utilServices.base64ToUint8Array(pkOfInvitee)
           if (sak) {
             const eesak = store.level2SDK.utilServices.aKeyEncrypt(
               pkOfInviteeToUint8Array,
               skOfInviterToUint8Array,
               sak
             )
-            const {
-              data: updatedInviteEdgeRes,
-            } = await store.level2SDK.edgeServices.updateEdge({
-              id: inviteEdge.eid,
-              type: 1053,
-              eesak,
-              name: inviteEdge.name,
-            })
+            const { data: updatedInviteEdgeRes } =
+              await store.level2SDK.edgeServices.updateEdge({
+                id: inviteEdge.eid,
+                type: 1053,
+                eesak,
+                name: inviteEdge.name,
+              })
             res = updatedInviteEdgeRes
           }
         } else {
