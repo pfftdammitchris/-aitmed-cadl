@@ -4,12 +4,12 @@ import store from '../../common/store'
 
 
 const aitmedApiHost = 'https://api.aitmed.io/'
-const drugBankHost = 'https://api-js.drugbank.com/v1/us/'
+const drugBankHost = 'https://api-js.drugbank.com/v1/us'
 /**
  * generate drugbank api token with a maximum of 2 hours
  */
 function generateDrugBankToken() {
-    const url = '/drugbank-token'
+    const url = '/drugbank-token/'
     axios({
         url: url,
         baseURL: aitmedApiHost,
@@ -55,7 +55,8 @@ async function getDrugs(query, drugbank_pcid, type) {
     let params = {}
     if (query) {
         params = {
-            q: query
+            // region: 'us,ca',
+            q: query,
         }
     }
     return new Promise((res, rej) => {
