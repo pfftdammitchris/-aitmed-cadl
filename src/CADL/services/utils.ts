@@ -69,7 +69,7 @@ export default {
   },
   //  please dont delete
   async prepareDocToPath(id) {
-    let path = '../cadl/admin/assets/ava.png'
+    let path = '../ava.png'
     if (typeof id == 'string') {
       const doc = await retrieveDocument(id)
       await documentToNote({ document: doc }).then(
@@ -84,7 +84,7 @@ export default {
           if (store.env === 'test') {
             console.log(error)
           }
-          path = '../cadl/admin/assets/ava.png'
+          path = '../ava.png'
         }
       )
       return path
