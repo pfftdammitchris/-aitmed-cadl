@@ -186,8 +186,8 @@ export default function builtInFns(dispatch?: Function) {
       localStorage.setItem('user_vid', userId)
       return
     },
-    currentDateTime: () => Date.now(),
-    // generate16Dkey: (() => generate16DkeyME())(),
+
+    currentDateTime: (() => Date.now())(),
 
     async SignInOk(): Promise<boolean> {
       const status = await Account.getStatus()
@@ -258,8 +258,3 @@ export default function builtInFns(dispatch?: Function) {
   }
 }
 
-// function generate16DkeyME(): string {
-//   const keyMax: number = 9999999999999999
-//   const key: number = Math.floor(Math.random() * keyMax)
-//   return String(key).toString()
-//}
