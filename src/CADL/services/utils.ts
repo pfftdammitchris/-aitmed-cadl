@@ -41,6 +41,7 @@ export default {
   //decrypt
   async prepareDoc({ doc }: { doc: Record<string, any> }) {
     let note
+    if (typeof doc == 'string') return
     if (isObject(doc.subtype)) {
       note = doc
     } else {
@@ -70,7 +71,7 @@ export default {
   //  please dont delete
   async prepareDocToPath(id) {
     let path = '../ava.png'
-    if (typeof id == 'string') {
+    if (typeof id == 'string' && !id.includes('.')) {
       const doc = await retrieveDocument(id)
       await documentToNote({ document: doc }).then(
         (note) => {
