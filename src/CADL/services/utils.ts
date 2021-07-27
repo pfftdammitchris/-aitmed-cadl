@@ -81,7 +81,10 @@ export default {
           path = URL.createObjectURL(blob)
         },
         (error) => {
-          console.log(error)
+          if (store.env === 'test') {
+            console.log(error)
+          }
+          path = '../cadl/admin/assets/ava.png'
         }
       )
       return path
