@@ -97,8 +97,7 @@ export default {
       await GetQuery(query).then(
         (data: LatResponse) => {
           data = data['data']['features'][0]
-          arr[1] = data.center[0]
-          arr[0] = data.center[1]
+          arr = data.center
           if (store.env === 'test') {
             console.log(data)
           }
