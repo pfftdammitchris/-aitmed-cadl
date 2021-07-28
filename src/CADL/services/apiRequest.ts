@@ -1,5 +1,5 @@
 import axios from 'axios'
-import _, { isArray } from 'lodash'
+import _ from 'lodash'
 import store from '../../common/store'
 
 

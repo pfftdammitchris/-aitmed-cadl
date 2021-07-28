@@ -9,6 +9,9 @@ interface splitTime {
 }
 
 export default {
+  currentDateTime() {
+    return Date.now()
+  },
   getDate() {
     return new Date().getDate()
   },
