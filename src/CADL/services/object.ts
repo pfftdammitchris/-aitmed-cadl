@@ -24,6 +24,8 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
+      if (object[key] == "")
+        object[key] = " "
       return object[key]
     }
     return
