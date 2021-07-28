@@ -90,7 +90,9 @@ export default {
             subtitle.forEach((item) => {
               _data = _data.hasOwnProperty(item) ? _data[item] : ''
             })
-            resArray[subtitle[subtitle.length - 1]] = _data.toString()
+            if (_data) {
+              resArray[subtitle[subtitle.length - 1]] = _data.toString()
+            }
           }
         })
         res.push(resArray)
