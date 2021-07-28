@@ -16,7 +16,6 @@ export default {
     }
     return
   },
-
   set({ object, key, value }) {
     if (isObject(object)) {
       _.set(object, key, value)
@@ -94,7 +93,6 @@ export default {
         })
         res.push(resArray)
       })
-      console.error(res)
 
       return res
     }
@@ -206,5 +204,6 @@ export default {
         }
       }
     }
+    return obj
   },
 }

@@ -9,7 +9,6 @@ export { get, create }
 
 function get({ pageName, apiObject, dispatch }) {
   return async () => {
-
     let res
     const { api, dataKey, dataIn, dataOut, subtype, ...options } = _.cloneDeep(
       apiObject || {}
@@ -141,7 +140,7 @@ function get({ pageName, apiObject, dispatch }) {
           .then((res) => {
             rawResponse = res.data
             return Promise.all(
-              res?.data?.document.map(async (document) => {
+              res?.data?.document.map?.(async (document) => {
                 await dispatch({
                   type: 'insert-to-object-table', //yuhan
                   payload: { doc: document },
@@ -274,6 +273,8 @@ function create({ pageName, apiObject, dispatch }) {
               targetRoomName: name?.targetRoomName,
               tags: name?.tags,
               user: name?.user,
+              sesk: name?.sesk,
+              aesk: name?.aesk,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
               jwt: restOfDocOptions?.jwt,
@@ -290,6 +291,8 @@ function create({ pageName, apiObject, dispatch }) {
           targetRoomName: name?.targetRoomName,
           tags: name?.tags,
           user: name?.user,
+          sesk: name?.sesk,
+          aesk: name?.aesk,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
           jwt: restOfDocOptions?.jwt,
@@ -328,6 +331,8 @@ function create({ pageName, apiObject, dispatch }) {
               mediaType: name?.type,
               title: name?.title,
               user: name?.user,
+              sesk: name?.sesk,
+              aesk: name?.aesk,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
               jwt: restOfDocOptions?.jwt,
@@ -376,7 +381,6 @@ function create({ pageName, apiObject, dispatch }) {
             data: res.jwt,
           },
         })
-
       }
       await dispatch({
         type: 'update-data',

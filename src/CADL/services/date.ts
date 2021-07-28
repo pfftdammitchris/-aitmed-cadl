@@ -9,6 +9,9 @@ interface splitTime {
 }
 
 export default {
+  currentDateTime() {
+    return Date.now()
+  },
   getDate() {
     return new Date().getDate()
   },
@@ -286,7 +289,25 @@ export default {
     }
     return
   },
-  ShowTimeSpanFormat(object) {
+  ShowTimeDateUS(object) {
+    if (isObject(object)) {
+      if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
+        let date = new Date(object['stime'] * 1000)
+        let y = date.getFullYear()
+        let m =
+          date.getMonth() + 1 > 10
+            ? date.getMonth() + 1
+            : '0' + (date.getMonth() + 1)
+        let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
+        let duration_date =
+          m + '-' + d + '-' + y
+        return duration_date
+      }
+      return
+    }
+    return
+  },
+  ShowTimeSpanFormat_us(object) {
     if (isObject(object)) {
       if (object.hasOwnProperty('stime') && object.hasOwnProperty('etime')) {
         let date = new Date(object['stime'] * 1000)
@@ -299,7 +320,7 @@ export default {
         let start_date = moment(object['stime'] * 1000).format('LT')
         let end_date = moment(object['etime'] * 1000).format('LT')
         let duration_date =
-          y + '-' + m + '-' + d + ' ' + start_date + '-' + end_date
+          m + '-' + d + '-' + y + ' ' + start_date + '-' + end_date
         return duration_date
       }
       return

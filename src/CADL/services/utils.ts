@@ -2,6 +2,7 @@ import _, { isObject } from 'lodash'
 import store from '../../common/store'
 import { isPopulated } from '../utils'
 import { documentToNote } from '../../services/document/utils'
+import { retrieveDocument } from '../../common/retrieve'
 
 // const node = "http://44.192.21.229:9200"
 // let index = "doctors"
@@ -40,6 +41,7 @@ export default {
   //decrypt
   async prepareDoc({ doc }: { doc: Record<string, any> }) {
     let note
+    if (typeof doc == 'string') return
     if (isObject(doc.subtype)) {
       note = doc
     } else {
@@ -67,26 +69,29 @@ export default {
     return note
   },
   //  please dont delete
-  prepareDocToPath(name) {
-    if (!name?.data || typeof name == 'string') { return "../cadl/admin/assets/ava.png" }
-    const type = name?.type
-    if (!name?.data) return
-    if (typeof name?.data !== 'string') return
-    if (!isPopulated(name?.data)) return
-    if (
-      typeof name?.data === 'string' &&
-      !name?.data.match(
-        /^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$/g
+  async prepareDocToPath(id) {
+    let path = '../ava.png'
+    if (typeof id == 'string' && !id.includes('.')) {
+      const doc = await retrieveDocument(id)
+      await documentToNote({ document: doc }).then(
+        (note) => {
+          let blob = store.level2SDK.utilServices.base64ToBlob(
+            note?.name?.data,
+            note?.name?.type
+          )
+          path = URL.createObjectURL(blob)
+        },
+        (error) => {
+          if (store.env === 'test') {
+            console.log(error)
+          }
+          path = '../ava.png'
+        }
       )
-    ) return
-    const blob = store.level2SDK.utilServices.base64ToBlob(name?.data, type)
-    const blobUrl = URL.createObjectURL(blob)
-    // console.error(blobUrl, typeof blobUrl, typeof blob)
-    name.data = blobUrl
-    return blobUrl
-    // blob.then((response) => {
-    //   return URL.createObjectURL(response)
-    // })
+      return path
+    }
+    return path
+
   },
 
   alert({ value }) {
