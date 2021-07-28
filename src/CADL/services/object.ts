@@ -24,6 +24,8 @@ export default {
   },
   get({ object, key }) {
     if (isObject(object)) {
+      if (object[key] == "")
+        object[key] = " "
       return object[key]
     }
     return
@@ -88,7 +90,9 @@ export default {
             subtitle.forEach((item) => {
               _data = _data.hasOwnProperty(item) ? _data[item] : ''
             })
-            resArray[subtitle[subtitle.length - 1]] = _data.toString()
+            if (_data) {
+              resArray[subtitle[subtitle.length - 1]] = _data.toString()
+            }
           }
         })
         res.push(resArray)
