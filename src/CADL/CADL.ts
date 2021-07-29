@@ -1149,8 +1149,14 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'insert-to-index-table': {
-        console.log('insert index payload!!!', action.payload)
-        const doc = action.payload.doc.doc
+        //console.log('insert index payload!!!', action.payload)
+        let doc: any = []
+        if (Array.isArray(action.payload.doc.doc)) {
+          doc = action.payload.doc.doc
+        } else {
+          // for adding new doc
+          doc = action.payload.doc
+        }
 
         for (let item of doc) {
           let content = item.name
@@ -2397,42 +2403,40 @@ export default class CADL extends EventEmitter {
            * CHECK HERE FOR DOC REFERENCE ISSUES
            *  */
 
-          console.log('Cadl set value line:2367', action.payload)
-          debugger
+          //console.log('Cadl set value line:2367', action.payload)
           if (isObject(currVal) && isObject(newVal)) {
-            debugger
             if ('doc' in newVal) {
-              if (!Array.isArray(currVal.doc)) {
-                debugger
+              // for loading existing docs
+              if (!Array.isArray(currVal.doc) && Array.isArray(newVal.doc)) {
                 currVal.doc = []
                 currVal.doc.push(...newVal.doc)
 
-              } else if ('id' in currVal) {
-                debugger
+                // for adding new doc 
+              } else if (!Array.isArray(currVal.doc) && isObject(newVal.doc)) {
+                currVal.doc = []
+                currVal.doc.push(newVal.doc)
+              }
+
+              else if ('id' in currVal) {
                 newVal = _.merge(currVal, newVal.doc)
 
               } else {
-                debugger
                 currVal.doc.length = 0
                 currVal.doc.push(...newVal.doc)
 
               }
             } else {
-              debugger
               newVal = _.merge(currVal, newVal)
 
             }
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
-            debugger
             currVal.length = 0
             currVal.push(...newVal)
 
           } else if (typeof pageName === 'undefined') {
-            debugger
             _.set(draft, dataKey, newVal)
 
           } else {
-            debugger
             _.set(draft[pageName], dataKey, newVal)
 
           }
