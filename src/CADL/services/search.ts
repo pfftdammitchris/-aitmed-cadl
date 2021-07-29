@@ -10,7 +10,7 @@ const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-const esSyncHost = 'https://sync.aitmed.io:443/avail/update'
+const esSyncHost = 'https://sync.aitmed.io:443/avail/update/'
 interface LatResponse {
   center: any[]
 }
@@ -21,7 +21,7 @@ const updateEs = (id) => {
       url: esSyncHost,
       method: 'put',
       data: {
-        'vid': id
+        vid: id
       },
       headers: {
         'Content-Type': 'application/json'
