@@ -114,7 +114,15 @@ export default {
       if (stringArr[i - 1] !== stringArr[i]) return false
     return true
   },
+  judgeSelectTime(stringArr: string[]) {
+    for (let i = 0; i < stringArr.length; i++) {
 
+      if (stringArr[i].startsWith('$')) {
+        return false
+      }
+    }
+    return true
+  },
   //judge whether all the request textfield is filled in 
   judgeFillinAll(stringArr: string[]) {
     for (let i = 0; i < stringArr.length; i++)

@@ -10,9 +10,44 @@ const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
+const esSyncHost = 'https://sync.aitmed.io:443/avail/update/'
 interface LatResponse {
   center: any[]
 }
+
+const updateEs = (id) => {
+  return new Promise((res, rej) => {
+    axios({
+      url: esSyncHost,
+      method: 'put',
+      data: {
+        vid: id
+      },
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(
+      data => {
+        if (store.env === 'test') {
+          console.log(
+            '%cGet mapbox address response',
+            'background: purple; color: white; display: block;',
+            { data }
+          )
+        }
+        if (data.status == 200) {
+          res(data)
+        }
+      }
+    ).catch(
+      error => {
+        rej(error)
+      }
+    )
+  })
+}
+
+
 /**
  * Load similar addresses based on input text
  * Help function for suggestaddress
@@ -84,6 +119,22 @@ let Description = (query) => {
 
 
 export default {
+  async updateEsData({ id }) {
+    let response: any
+    if (id) {
+      await updateEs(id).then(
+        (data: any) => {
+          response = data['data']
+        },
+        (err) => {
+          console.log(err)
+        }
+      )
+      return response
+
+    }
+    return
+  },
   /**
    * Get the latitude and longitude of the most similar address based on the address input
    * @param query
@@ -567,6 +618,7 @@ export default {
     }
     return
   },
+
 
 
 }
