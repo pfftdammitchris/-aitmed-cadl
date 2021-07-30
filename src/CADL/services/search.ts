@@ -2,6 +2,7 @@ import { Client } from 'elasticsearch'
 import { get } from 'https'
 import axios from 'axios'
 import _, { isArray } from 'lodash'
+import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
 let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
@@ -618,7 +619,25 @@ export default {
     }
     return
   },
+  ComputeObjectFieldCount({ objArr, strOne, strTwo }) {
+    let subTpOne: number = 0;
+    let subTpTwo: number = 0;
+    let arr: number[] = []
+    objArr.map((obj) => {
+      if (obj['subtype'] === strOne) {
+        subTpOne++;
+      }
+      else if (obj['subtype'] === strTwo)
+        subTpTwo++;
+    })
+    arr.push(subTpOne);
+    arr.push(subTpTwo);
+    return arr;
+  },
+  ModifyObjectField({ objArr, str }) {
+    return objArr.map((values) => ob.set(values, 'place_name', ob.trimEnd(values['place_name'], str)));
 
+  }
 
 
 }
