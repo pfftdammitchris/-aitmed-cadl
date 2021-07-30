@@ -167,19 +167,29 @@ export default {
   },
   async queryCode({ query }) {
     let arr: any[] = []
+    let arrNew: any[][] = [];
     if (query) {
       await Description(query).then(
         (data: LatResponse) => {
+          console.error(data.center[3])
           arr[0] = data.center[3]
-          console.log('query cmq', data)
+          for (let j = 0; j < arr[0].length; j++) {
+            arrNew.push([]);
+          }
+          for (let i = 0; i < arr[0].length; i++) {
+            let arrStr: string = arr[0][i][0] + arr[0][i][1]
+            let a: (string | number)[] = _.concat(arr[0][i], arrStr);
+            console.error(a);
+            arrNew[i].push(a);
+          }
         },
         (err) => {
           console.log('query error', err)
         }
       )
-      return arr
+      return arrNew
     }
-    return
+    return []
   },
   async queryInsurance({ id }) {
     let template: any = {
