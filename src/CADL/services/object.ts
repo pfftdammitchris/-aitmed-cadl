@@ -145,14 +145,7 @@ export default {
           return
         }
       })
-      // console.log(object[key]);
-      // if (object[key] === true) {
-      //   flag = 1
-      //   return
-      // }
     })
-    // if (flag === 1) return true
-    // return false
     return auth
   },
   setAuthAllTrue({ object }) {
@@ -210,4 +203,12 @@ export default {
     }
     return obj
   },
+  clearAll({ object }) {
+    Object.keys(object).forEach((item) => {
+      if (isArray(object[item]))
+        object[item] = []
+      else
+        object[item] = " "
+    })
+  }
 }
