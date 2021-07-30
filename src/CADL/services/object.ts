@@ -90,7 +90,9 @@ export default {
             subtitle.forEach((item) => {
               _data = _data.hasOwnProperty(item) ? _data[item] : ''
             })
-            resArray[subtitle[subtitle.length - 1]] = _data.toString()
+            if (_data) {
+              resArray[subtitle[subtitle.length - 1]] = _data.toString()
+            }
           }
         })
         res.push(resArray)
@@ -143,14 +145,7 @@ export default {
           return
         }
       })
-      // console.log(object[key]);
-      // if (object[key] === true) {
-      //   flag = 1
-      //   return
-      // }
     })
-    // if (flag === 1) return true
-    // return false
     return auth
   },
   setAuthAllTrue({ object }) {
@@ -208,4 +203,12 @@ export default {
     }
     return obj
   },
+  clearAll({ object }) {
+    Object.keys(object).forEach((item) => {
+      if (isArray(object[item]))
+        object[item] = []
+      else
+        object[item] = " "
+    })
+  }
 }
