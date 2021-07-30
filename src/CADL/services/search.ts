@@ -10,15 +10,22 @@ const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-const esSyncHost = 'https://sync.aitmed.io:443/avail/update'
+const esSyncHost = 'https://sync.aitmed.io:443/'
 interface LatResponse {
   center: any[]
 }
 
-const updateEs = (id) => {
+const updateEs = (id, type) => {
+  let url = '/avail/'
+  if (type == 'profile') {
+    url = '/docProfile/'
+  } else if (type == 'reasonForVisit') {
+    url = '/rsnForVst/'
+  }
   return new Promise((res, rej) => {
     axios({
-      url: esSyncHost,
+      url: url,
+      baseURL: esSyncHost,
       method: 'put',
       data: {
         'vid': id
@@ -119,10 +126,13 @@ let Description = (query) => {
 
 
 export default {
-  async updateEsData({ id }) {
+  async updateEsData({ id, type }: {
+    id: string,
+    type: 'avail' | 'profile' | 'reasonForVisit'
+  }) {
     let response: any
     if (id) {
-      await updateEs(id).then(
+      await updateEs(id, type).then(
         (data: any) => {
           response = data['data']
         },
