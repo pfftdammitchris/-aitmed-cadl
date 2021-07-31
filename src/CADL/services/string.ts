@@ -210,7 +210,8 @@ export default {
       state: "",
       zipCode: "",
       location: "",
-      geoCode: []
+      geoCode: [],
+      country: ""
     }
     if (object) {
       let context = object['context']
@@ -226,6 +227,9 @@ export default {
             break
           case 'region':
             res.state = element.text
+            break
+          case 'country':
+            res.country = element.text
             break
         }
       })
