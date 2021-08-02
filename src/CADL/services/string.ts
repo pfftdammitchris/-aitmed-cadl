@@ -250,6 +250,10 @@ export default {
         res.state = object.text
         res.address = ''
       }
+      if (object.place_type[0] == 'postcode') {
+        res.zipCode = object.text
+        res.address = ''
+      }
 
 
       return res
