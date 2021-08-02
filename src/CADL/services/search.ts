@@ -1,7 +1,7 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
 import axios from 'axios'
-import _, { isArray } from 'lodash'
+import _, { isArray, map } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
@@ -15,14 +15,22 @@ const esSyncHost = 'https://sync.aitmed.io:443/'
 interface LatResponse {
   center: any[]
 }
-
+/**
+ * 
+ * @param id  user id
+ * @param type the type of document/edge want to sync
+ * @returns sync result
+ */
 const updateEs = (id, type) => {
-  let url = '/avail/'
-  if (type == 'profile') {
-    url = '/docProfile/'
-  } else if (type == 'reasonForVisit') {
-    url = '/rsnForVst/'
-  }
+  // convert document type to url 
+  let urlConvert = new Map([['40000', '/avail/'], ['35841', '/docProfile/'], ['79360', '/rsnForVst/']])
+  let url = urlConvert.get(type)
+  // let url = '/avail/'
+  // if (type == 'profile') {
+  //   url = '/docProfile/'
+  // } else if (type == 'reasonForVisit') {
+  //   url = '/rsnForVst/'
+  // }
   return new Promise((res, rej) => {
     axios({
       url: url,
@@ -129,7 +137,7 @@ let Description = (query) => {
 export default {
   async updateEsData({ id, type }: {
     id: string,
-    type: 'avail' | 'profile' | 'reasonForVisit'
+    type: string
   }) {
     let response: any
     if (id) {
