@@ -1,7 +1,7 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
 import axios from 'axios'
-import _, { isArray, map } from 'lodash'
+import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
