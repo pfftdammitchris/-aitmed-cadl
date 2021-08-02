@@ -5,7 +5,7 @@ import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
-let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
+let client = new Client({ hosts: 'https://elastic.aitmed.io' })
 //query index
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
