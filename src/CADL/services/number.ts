@@ -131,8 +131,6 @@ export default {
 
   // 校验对象表单
   formValid({docData}):boolean{
-    console.log(docData);
-    
     for (const key in docData) {
       if (docData.hasOwnProperty(key)) {
           if (docData[key] === null || docData[key] === '') {
