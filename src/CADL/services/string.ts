@@ -114,7 +114,15 @@ export default {
       if (stringArr[i - 1] !== stringArr[i]) return false
     return true
   },
+  judgeSelectTime(stringArr: string[]) {
+    for (let i = 0; i < stringArr.length; i++) {
 
+      if (stringArr[i].startsWith('$')) {
+        return false
+      }
+    }
+    return true
+  },
   //judge whether all the request textfield is filled in 
   judgeFillinAll(stringArr: string[]) {
     for (let i = 0; i < stringArr.length; i++)
@@ -202,7 +210,8 @@ export default {
       state: "",
       zipCode: "",
       location: "",
-      geoCode: []
+      geoCode: [],
+      country: ""
     }
     if (object) {
       let context = object['context']
@@ -218,6 +227,9 @@ export default {
             break
           case 'region':
             res.state = element.text
+            break
+          case 'country':
+            res.country = element.text
             break
         }
       })
@@ -236,6 +248,10 @@ export default {
 
       if (object.place_type[0] == 'region') {
         res.state = object.text
+        res.address = ''
+      }
+      if (object.place_type[0] == 'postcode') {
+        res.zipCode = object.text
         res.address = ''
       }
 

@@ -2,26 +2,36 @@ import { Client } from 'elasticsearch'
 import { get } from 'https'
 import axios from 'axios'
 import _, { isArray } from 'lodash'
+import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
-let client = new Client({ hosts: 'https://searchapi.aitmed.io' })
+let client = new Client({ hosts: 'https://elastic.aitmed.io' })
 //query index
 const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-const esSyncHost = 'https://sync.aitmed.io:443/avail/update'
+const esSyncHost = 'https://sync.aitmed.io:443/'
 interface LatResponse {
   center: any[]
 }
-
-const updateEs = (id) => {
+/**
+ * 
+ * @param id  user id
+ * @param type the type of document/edge want to sync
+ * @returns sync result
+ */
+const updateEs = (id, type) => {
+  // convert document type to url 
+  let urlConvert = new Map([['40000', '/avail/'], ['35841', '/docProfile/'], ['79360', '/rsnForVst/']])
+  let url = urlConvert.get(type)
   return new Promise((res, rej) => {
     axios({
-      url: esSyncHost,
+      url: url,
+      baseURL: esSyncHost,
       method: 'put',
       data: {
-        'vid': id
+        vid: id
       },
       headers: {
         'Content-Type': 'application/json'
@@ -119,10 +129,13 @@ let Description = (query) => {
 
 
 export default {
-  async updateEsData({ id }) {
+  async updateEsData({ id, type }: {
+    id: string,
+    type: string
+  }) {
     let response: any
     if (id) {
-      await updateEs(id).then(
+      await updateEs(id, type).then(
         (data: any) => {
           response = data['data']
         },
@@ -166,19 +179,29 @@ export default {
   },
   async queryCode({ query }) {
     let arr: any[] = []
+    let arrNew: any[][] = [];
     if (query) {
       await Description(query).then(
         (data: LatResponse) => {
+          console.error(data.center[3])
           arr[0] = data.center[3]
-          console.log('query cmq', data)
+          for (let j = 0; j < arr[0].length; j++) {
+            arrNew.push([]);
+          }
+          for (let i = 0; i < arr[0].length; i++) {
+            let arrStr: string = arr[0][i][0] + arr[0][i][1]
+            let a: (string | number)[] = _.concat(arr[0][i], arrStr);
+            console.error(a);
+            arrNew[i].push(a);
+          }
         },
         (err) => {
           console.log('query error', err)
         }
       )
-      return arr
+      return arrNew
     }
-    return
+    return []
   },
   async queryInsurance({ id }) {
     let template: any = {
@@ -618,7 +641,25 @@ export default {
     }
     return
   },
+  ComputeObjectFieldCount({ objArr, strOne, strTwo }) {
+    let subTpOne: number = 0;
+    let subTpTwo: number = 0;
+    let arr: number[] = []
+    objArr.map((obj) => {
+      if (obj['subtype'] === strOne) {
+        subTpOne++;
+      }
+      else if (obj['subtype'] === strTwo)
+        subTpTwo++;
+    })
+    arr.push(subTpOne);
+    arr.push(subTpTwo);
+    return arr;
+  },
+  ModifyObjectField({ objArr, str }) {
+    return objArr.map((values) => ob.set(values, 'place_name', ob.trimEnd(values['place_name'], str)));
 
+  }
 
 
 }
