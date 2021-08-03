@@ -1,7 +1,7 @@
 import { Client } from 'elasticsearch'
 import { get } from 'https'
 import axios from 'axios'
-import _, { isArray, map } from 'lodash'
+import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
@@ -25,12 +25,6 @@ const updateEs = (id, type) => {
   // convert document type to url 
   let urlConvert = new Map([['40000', '/avail/'], ['35841', '/docProfile/'], ['79360', '/rsnForVst/']])
   let url = urlConvert.get(type)
-  // let url = '/avail/'
-  // if (type == 'profile') {
-  //   url = '/docProfile/'
-  // } else if (type == 'reasonForVisit') {
-  //   url = '/rsnForVst/'
-  // }
   return new Promise((res, rej) => {
     axios({
       url: url,
