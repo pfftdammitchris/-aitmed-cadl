@@ -32,7 +32,10 @@ import {
 import { isObject, asyncForEach, mergeDeep } from '../utils'
 import dot from 'dot-object'
 import builtInFns from './services/builtIn'
-// import AddDocuments from './__mocks__/AddDocuments'
+import FuzzyIndexCreator from '../db/utils/FuzzyIndexCreator'
+import basicExtraction from '../db/utils/KeyExtraction/BasicAlgorithm'
+import IndexRepository from '../db/IndexRepository'
+// import InboxContacts from './__mocks__/InboxContacts'
 // import BaseDataModel from './__mocks__/BaseDataModel'
 
 export default class CADL extends EventEmitter {
@@ -49,6 +52,8 @@ export default class CADL extends EventEmitter {
   private _aspectRatio: number
   private _map: Record<string, any>
   private _config: Record<string, any>
+  private _dbConfig: any
+  private _indexRepository: IndexRepository
   public verificationRequest = {
     timer: 0,
     phoneNumber: '',
@@ -60,7 +65,7 @@ export default class CADL extends EventEmitter {
    * @param CADLARGS.configUrl
    * @param CADLARGS.cadlVersion 'test' | 'stable'
    */
-  constructor({ configUrl, cadlVersion, aspectRatio }: CADLARGS) {
+  constructor({ configUrl, cadlVersion, aspectRatio, dbConfig }: CADLARGS) {
     super()
     //replace default arguments
     store.env = cadlVersion
@@ -70,6 +75,8 @@ export default class CADL extends EventEmitter {
     if (aspectRatio) {
       this.aspectRatio = aspectRatio
     }
+    this._dbConfig = dbConfig
+    this._indexRepository = new IndexRepository()
   }
 
   /**
@@ -111,6 +118,9 @@ export default class CADL extends EventEmitter {
         maximumAge: 1000,
         timeout: 5000
       }
+      //initialize sqlite db
+      await this._indexRepository.getDataBase(this._dbConfig)
+
       window.navigator.geolocation.getCurrentPosition(
         function (position) {
           let currentLatitude = position.coords.latitude
@@ -1112,8 +1122,9 @@ export default class CADL extends EventEmitter {
    * @param action
    */
   private async dispatch(action: { type: string; payload?: any }) {
+
+    console.log('dispatch action type!!!', action.type)
     switch (action.type) {
-<<<<<<< HEAD
       case 'search-cache': {
         console.log('search cache payload!!!', action.payload)
         const key = action.payload.key
@@ -1183,14 +1194,13 @@ export default class CADL extends EventEmitter {
 
         break
       }
-=======
->>>>>>> a4feef308dfa1d30a4dae2f310e2accaa7589a21
       case 'update-map': {
         //TODO: consider adding update-page-map
         this.map = dot.dot(this.root)
         break
       }
       case 'populate': {
+
         const { pageName } = action.payload
         const pageObjectCopy = _.cloneDeep(this.root[pageName])
         const boundDispatch = this.dispatch.bind(this)
@@ -2375,9 +2385,11 @@ export default class CADL extends EventEmitter {
     return produce(state, (draft) => {
       switch (action.type) {
         case 'SET_VALUE': {
+
           const { pageName, dataKey, value, replace } = action.payload
           let currVal
           let newVal = value
+
           if (!replace) {
             //used to merge new value to existing value ref
             if (typeof pageName === 'undefined') {
@@ -2386,7 +2398,6 @@ export default class CADL extends EventEmitter {
               currVal = _.get(state[pageName], dataKey)
             }
           }
-<<<<<<< HEAD
 
           /**
            * CHECK HERE FOR DOC REFERENCE ISSUES
@@ -2418,17 +2429,16 @@ export default class CADL extends EventEmitter {
               newVal = _.merge(currVal, newVal)
 
             }
-=======
-          if (isObject(currVal) && isObject(newVal)) {
-            newVal = _.merge(currVal, newVal)
->>>>>>> a4feef308dfa1d30a4dae2f310e2accaa7589a21
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
             currVal.length = 0
             currVal.push(...newVal)
+
           } else if (typeof pageName === 'undefined') {
             _.set(draft, dataKey, newVal)
+
           } else {
             _.set(draft[pageName], dataKey, newVal)
+
           }
           break
         }
