@@ -4,6 +4,7 @@ import axios from 'axios'
 import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
+import array from './array';
 //set elasticsearch host client
 let client = new Client({ hosts: 'https://elastic.aitmed.io' })
 //query index
@@ -681,8 +682,8 @@ export default {
     return newArrObj;
   },
   pickByArr({ objArr }) {
-    let arrOffice = [];
-    let arrTel = []
+    let arrOffice = new Array()
+    let arrTel = new Array()
     // console.error("test", objArr)
     objArr?.forEach((objItem) => {
       console.error(objItem);
