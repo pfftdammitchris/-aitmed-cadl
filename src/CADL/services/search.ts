@@ -4,7 +4,6 @@ import axios from 'axios'
 import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
-import array from './array';
 //set elasticsearch host client
 let client = new Client({ hosts: 'https://elastic.aitmed.io' })
 //query index
