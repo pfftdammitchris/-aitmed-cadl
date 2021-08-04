@@ -10,6 +10,7 @@ const drugBankHost = 'https://api-js.drugbank.com/v1/us'
  */
 function generateDrugBankToken() {
     const url = '/drugbank-token/'
+    let date = new Date()
     axios({
         url: url,
         baseURL: aitmedApiHost,
@@ -20,6 +21,7 @@ function generateDrugBankToken() {
     }).then(response => {
         if (response['status'] == 200) {
             store.drugbankToken = response['data']['token']
+            localStorage.setItem('expiredTime', (date.getTime() + 2 * 60 * 60 * 1000).toString())
             localStorage.setItem('drugbankToken', response['data']['token'])
             console.log('test', response['data'])
         }
@@ -42,7 +44,10 @@ function generateDrugBankToken() {
  * @returns 
  */
 async function getDrugs(query, drugbank_pcid, type) {
-    if (!store.drugbankToken) {
+    let currentDateTime = new Date().getTime()
+    let expired = localStorage.getItem('expiredTime')
+    let expiredTime = typeof expired == 'string' ? parseInt(expired) : 0
+    if (currentDateTime > expiredTime) {
         await generateDrugBankToken()
     }
     const drugbankToken = store.drugbankToken
