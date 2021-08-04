@@ -47,10 +47,11 @@ async function getDrugs(query, drugbank_pcid, type) {
     let currentDateTime = new Date().getTime()
     let expired = localStorage.getItem('expiredTime')
     let expiredTime = typeof expired == 'string' ? parseInt(expired) : 0
-    if (currentDateTime > expiredTime) {
+    if (currentDateTime >= expiredTime) {//maxium hours=2h，reget token after it expired
         await generateDrugBankToken()
     }
-    const drugbankToken = store.drugbankToken
+    const drugbankToken = localStorage.getItem('drugbankToken')
+    console.log(drugbankToken)
     let url = '/product_concepts'
     if (type == 'Route') {
         url = '/product_concepts/' + drugbank_pcid + '/routes'
