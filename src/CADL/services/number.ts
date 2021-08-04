@@ -127,5 +127,20 @@ export default {
       return equals === binaryArr.length ? true : false
     }
     return false;
+  },
+
+  // 校验对象表单
+  formValid({docData}):boolean{
+    for (const key in docData) {
+      if (docData.hasOwnProperty(key)) {
+          if (docData[key] === null || docData[key] === '') {
+              return false;
+          }
+      }
+  }
+  return true;
   }
 }
+
+
+

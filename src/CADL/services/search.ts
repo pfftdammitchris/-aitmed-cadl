@@ -513,6 +513,7 @@ export default {
     if (isArray(object)) {
       let re: Record<string, any> = []
       object.forEach((obj) => {
+        // console.error(obj)
         let st = obj['_source']['availByLocation'][0]['location']['geoCode'].split(',')
         let address =
           obj['_source']['availByLocation'][0]['location']['address']['street'] +
@@ -659,7 +660,47 @@ export default {
   ModifyObjectField({ objArr, str }) {
     return objArr.map((values) => ob.set(values, 'place_name', ob.trimEnd(values['place_name'], str)));
 
+  },
+  CountObj({ objArr }) {
+    let newArr: {}[] = [];
+    let newArrObj: { [key: string]: any }[] = []
+    objArr.forEach((valuesObj) => {
+      if ((valuesObj["_source"]["availByLocation"] as [])?.length >= 2) {
+        let len: number = (valuesObj["_source"]["availByLocation"])?.length;
+        newArr = valuesObj["_source"]["availByLocation"];
+        _.unset(objArr, valuesObj["_source"]["availByLocation"]);
+        for (let i = 0; i < len; i++) {
+          // console.log(newArr[i])
+          let obj = _.cloneDeep(valuesObj);
+          obj["_source"]["availByLocation"] = new Array(newArr[i]);
+          // console.error(obj)
+          newArrObj.push(obj);
+        }
+      }
+    })
+    return newArrObj;
+  },
+  pickByArr({ objArr }) {
+    let arrOffice = [];
+    let arrTel = []
+    // console.error("test", objArr)
+    objArr?.forEach((objItem) => {
+      console.error(objItem);
+      if (objItem["_source"]["availByLocation"][0]["visitType"] === "Office") {
+        arrOffice.push(objItem);
+
+      }
+      else if (objItem["_source"]["availByLocation"][0]["visitType"] === "Telemedicine") {
+        arrTel.push(objItem);
+        // console.error(objItem);
+
+      }
+
+    })
+    let doubArr: {}[] = [];
+    doubArr.push(arrOffice);
+    doubArr.push(arrTel);
+
+    return doubArr;
   }
-
-
 }
