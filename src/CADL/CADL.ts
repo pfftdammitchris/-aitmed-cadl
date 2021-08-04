@@ -111,15 +111,18 @@ export default class CADL extends EventEmitter {
       )
     }
 
-    //get app curent position 
+
+    //initialize sqlite db
+    await this._indexRepository.getDataBase(this._dbConfig)
+
+
+    //get app curent position 
     if (config?.isGetPosition) {
       const options = {
         enableHighAccuracy: true,
         maximumAge: 1000,
         timeout: 5000
       }
-      //initialize sqlite db
-      await this._indexRepository.getDataBase(this._dbConfig)
 
       window.navigator.geolocation.getCurrentPosition(
         function (position) {
@@ -401,11 +404,11 @@ export default class CADL extends EventEmitter {
     /**
      * shape of processed Page
      * {
-     *  MeetingRoom:{
-     *    init:[],
-     *    components:[]
-     *    ...
-     *  }
+     *  MeetingRoom:{
+     *    init:[],
+     *    components:[]
+     *    ...
+     *  }
      * }
      */
     let processedPage = SECOND_process
@@ -653,8 +656,8 @@ export default class CADL extends EventEmitter {
    * Used to populate the references of the noodl files.
    *
    * @param ProcessPopulateArgs
-   * @param ProcessPopulateArgs.source  The item being de-referenced.
-   * @param ProcessPopulateArgs.lookFor  Reference tokens to look for e.g ['.','..'].
+   * @param ProcessPopulateArgs.source  The item being de-referenced.
+   * @param ProcessPopulateArgs.lookFor  Reference tokens to look for e.g ['.','..'].
    * @param ProcessPopulateArgs.pageName
    * @param ProcessPopulateArgs.skip Keys that should not be de-referenced e.g ['name','country'].
    * @param ProcessPopulateArgs.withFns Choose to attach ecos functions to the source
@@ -793,9 +796,9 @@ export default class CADL extends EventEmitter {
     /**
      * handles the following format
      * [
-     *  {'.path@':3},
-     *  {'path2@':5},
-     *  {if:['.condition', ifTrue, ifFalse]}
+     *  {'.path@':3},
+     *  {'path2@':5},
+     *  {if:['.condition', ifTrue, ifFalse]}
      * ]
      */
 
@@ -962,7 +965,7 @@ export default class CADL extends EventEmitter {
    * @param HandleEvalAssignmentExpressionsArgs.command Assigment command of shape {'.path@':4}
    * @param HandleEvalAssignmentExpressionsArgs.pageName
    *
-   * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
+   * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
    */
   private async handleEvalAssignmentExpressions({ pageName, command, key }) {
     //handles assignment expressions
@@ -1025,7 +1028,7 @@ export default class CADL extends EventEmitter {
    * @param HandleEvalFunctionArgs.key
    * @param HandleEvalFunctionArgs.pageName
    * @param HandleEvalFunctionArgs.command
-   * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
+   * Used as a helper function for emitCall --> evalObject -->  handleEvalCommands
    */
   private async handleEvalFunction({ key, pageName, command }) {
     //handles function evaluation
@@ -1123,10 +1126,10 @@ export default class CADL extends EventEmitter {
    */
   private async dispatch(action: { type: string; payload?: any }) {
 
-    console.log('dispatch action type!!!', action.type)
+    //console.log('dispatch action type!!!', action.type)
     switch (action.type) {
       case 'search-cache': {
-        console.log('search cache payload!!!', action.payload)
+        //console.log('search cache payload!!!', action.payload)
         const key = action.payload.key
         const res = this._indexRepository.search(key)
         return res
@@ -1386,32 +1389,32 @@ export default class CADL extends EventEmitter {
          * case 1: assignment expression
          * ----> {'.key@':3}
          *
-         *  * the left-hand side ('.key@') denotes the path that will be updated with the corresponding value on the right (3)
-         *  * '@' must be present after the path for the expression to be evaluated successfully
+         *  * the left-hand side ('.key@') denotes the path that will be updated with the corresponding value on the right (3)
+         *  * '@' must be present after the path for the expression to be evaluated successfully
          *
          * case 2: evaluating functions
          * ----> {
-         *        '=.builtIn.add:{
-         *          dataIn:{
-         *            val1:1,
-         *            val2:3
-         *          },
-         *          dataOut:'.path'
-         *        }
-         *      }
-         *  * the program knows this is a function to be evaluated because of the '=' at the start of the key.
-         *  * it will will find the reference to the function at the given path, then apply the given arguments (dataIn)
+         *        '=.builtIn.add:{
+         *          dataIn:{
+         *            val1:1,
+         *            val2:3
+         *          },
+         *          dataOut:'.path'
+         *        }
+         *      }
+         *  * the program knows this is a function to be evaluated because of the '=' at the start of the key.
+         *  * it will will find the reference to the function at the given path, then apply the given arguments (dataIn)
          *
          * case 3: if blocks
          * ---->{
-         *        if:[
-         *            '.pathCondExpression',
-         *            'isTrueEffect',
-         *            'isFalseEffect'
-         *          ]
-         *      }
+         *        if:[
+         *            '.pathCondExpression',
+         *            'isTrueEffect',
+         *            'isFalseEffect'
+         *          ]
+         *      }
          *
-         *  * the program runs handleIfCommand if it notices that there is an 'if' key
+         *  * the program runs handleIfCommand if it notices that there is an 'if' key
          *
          */
         let { pageName, updateObject } = action.payload
@@ -1428,8 +1431,8 @@ export default class CADL extends EventEmitter {
            * update object is in the following form
            *
            * {
-           *    '.path@':5,
-           *    '.path2@':6
+           *    '.path@':5,
+           *    '.path2@':6
            * }
            */
           const evalObjectResults = await this.handleEvalObject({
@@ -1441,9 +1444,9 @@ export default class CADL extends EventEmitter {
           /**
            * handles the following format
            * [
-           *  {'.path@':3},
-           *  {'path2@':5},
-           *  {if:['.condition', ifTrue, ifFalse]}
+           *  {'.path@':3},
+           *  {'path2@':5},
+           *  {if:['.condition', ifTrue, ifFalse]}
            * ]
            */
           results = await this.handleEvalArray({
@@ -1578,13 +1581,13 @@ export default class CADL extends EventEmitter {
 
   /**
    *
-   *  - evaluates if block of shape
+   *  - evaluates if block of shape
    * {
-   *  if:[
-   *      condition,
-   *      ifTrueEffect,
-   *      ifFalseEffect
-   *    ]
+   *  if:[
+   *      condition,
+   *      ifTrueEffect,
+   *      ifFalseEffect
+   *    ]
    * }
    */
   private async handleIfCommand({ pageName, ifCommand }) {
@@ -2401,7 +2404,7 @@ export default class CADL extends EventEmitter {
 
           /**
            * CHECK HERE FOR DOC REFERENCE ISSUES
-           *  */
+           *  */
 
           //console.log('Cadl set value line:2367', action.payload)
           if (isObject(currVal) && isObject(newVal)) {
@@ -2411,7 +2414,7 @@ export default class CADL extends EventEmitter {
                 currVal.doc = []
                 currVal.doc.push(...newVal.doc)
 
-                // for adding new doc 
+                // for adding new doc 
               } else if (!Array.isArray(currVal.doc) && isObject(newVal.doc)) {
                 currVal.doc = []
                 currVal.doc.push(newVal.doc)
@@ -2495,7 +2498,7 @@ export default class CADL extends EventEmitter {
    * @returns any[]
    *
    * -used to handle the emit syntax, where a series
-   *  of actions can be called given a common variable(s)
+   *  of actions can be called given a common variable(s)
    */
   public async emitCall({
     dataKey,
