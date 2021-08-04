@@ -240,6 +240,7 @@ export default {
       } else {
         res.address = object.text
       }
+      res.address = object.address ? object.address + ' ' + res.address : res.address
 
       if (object.place_type[0] == 'place') {
         res.city = object.text
