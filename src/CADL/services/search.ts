@@ -665,7 +665,7 @@ export default {
     let newArr: {}[] = [];
     let newArrObj: { [key: string]: any }[] = []
     objArr.forEach((valuesObj) => {
-      if ((valuesObj["_source"]["availByLocation"] as [])?.length >= 2) {
+      if ((valuesObj["_source"]["availByLocation"] as [])?.length >= 1) {
         let len: number = (valuesObj["_source"]["availByLocation"])?.length;
         newArr = valuesObj["_source"]["availByLocation"];
         _.unset(objArr, valuesObj["_source"]["availByLocation"]);
