@@ -681,8 +681,8 @@ export default {
     return newArrObj;
   },
   pickByArr({ objArr }) {
-    let arrOffice = [];
-    let arrTel = []
+    let arrOffice: any = [];
+    let arrTel: any = []
     // console.error("test", objArr)
     objArr?.forEach((objItem) => {
       console.error(objItem);
