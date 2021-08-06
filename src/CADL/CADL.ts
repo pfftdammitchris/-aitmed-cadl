@@ -1935,7 +1935,6 @@ export default class CADL extends EventEmitter {
         //adds commands to queue
         this.initCallQueue = init.map((_command, index) => index)
         while (this.initCallQueue.length > 0) {
-          currentCallCount++
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
           let populatedCommand
