@@ -1,5 +1,6 @@
 import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
+import object from './object'
 interface splitTime {
   showTime: string
   stime: number
@@ -156,9 +157,9 @@ export default {
     // date.setUTCMilliseconds(0)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
-    let array: any = {
+    let array: { [key: string]: [] } = {
       morning: [],
-      afternoon: [],
+      afternoon: []
     }
     //@ts-ignore
     let nowtime = new Date().valueOf() / 1000
@@ -566,10 +567,10 @@ export default {
         year = parseInt(year)
         month = parseInt(month)
         day = parseInt(day)
-        let strTime = year + "-" + month + "-" + day
+        let strTime = year + "-" + month + "-" + (day - 1)
         let dayStart = new Date(strTime)
         let stime = dayStart.valueOf()
-        let eday = year + "-" + month + "-" + (day + 1)
+        let eday = year + "-" + month + "-" + (day)
         let etime = (new Date(eday)).valueOf()
         let s = parseInt(stime.toString().substr(0, 10))
         let e = parseInt(etime.toString().substr(0, 10))
