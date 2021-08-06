@@ -1,6 +1,5 @@
 import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
-import object from './object'
 interface splitTime {
   showTime: string
   stime: number
@@ -157,7 +156,7 @@ export default {
     // date.setUTCMilliseconds(0)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
-    let array: { [key: string]: [] } = {
+    let array: any = {
       morning: [],
       afternoon: []
     }
