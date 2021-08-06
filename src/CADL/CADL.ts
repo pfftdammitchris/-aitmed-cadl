@@ -104,12 +104,12 @@ export default class CADL extends EventEmitter {
       )
     }
 
-    //get app curent position 
+    //get app curent position
     if (config?.isGetPosition) {
       const options = {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 5000
+        timeout: 5000,
       }
       window.navigator.geolocation.getCurrentPosition(
         function (position) {
@@ -119,11 +119,13 @@ export default class CADL extends EventEmitter {
           store.currentLongitude = currentLongitude
         },
         function (error) {
-          let errorType = ['You refuse to share location information', "Can't get location information", 'Get location information timed out'];
+          let errorType = [
+            'You refuse to share location information',
+            "Can't get location information",
+            'Get location information timed out',
+          ]
           if (store.env === 'test') {
-            console.log(
-              errorType[error.code - 1]
-            )
+            console.log(errorType[error.code - 1])
           }
         },
         options
@@ -321,7 +323,7 @@ export default class CADL extends EventEmitter {
       builtIn?: Record<string, any>
       done?: Function
     } = {}
-  ): Promise<void> {
+  ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
 
     const { builtIn, reload } = options
@@ -345,7 +347,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      ; ({ pageCADL } = await this.getPage(pageName))
+      ;({ pageCADL } = await this.getPage(pageName))
     }
 
     if (this.root[pageName] && reload) {
@@ -403,11 +405,16 @@ export default class CADL extends EventEmitter {
       type: 'SET_ROOT_PROPERTIES',
       payload: { properties: processedPage },
     })
+    let aborted = false
 
     //run init commands of page if any
     let init = Object.values(processedPage)[0].init
     if (init) {
       await this.runInit(processedPage).then((page) => {
+        if (page?.abort) {
+          aborted = true
+          return
+        }
         //FOR COMPONENTS
         //process components
         const FIRST_processComponents = this.processPopulate({
@@ -478,7 +485,15 @@ export default class CADL extends EventEmitter {
       const FIRST_processComponents = this.processPopulate({
         source: processedPage,
         lookFor: ['.', '..', '_', '~'],
-        skip: ['update', 'check', 'init', 'formData', 'dataIn', 'style', ...skip],
+        skip: [
+          'update',
+          'check',
+          'init',
+          'formData',
+          'dataIn',
+          'style',
+          ...skip,
+        ],
         withFns: true,
         pageName,
       })
@@ -542,6 +557,8 @@ export default class CADL extends EventEmitter {
     if (options.done) {
       options.done()
     }
+
+    if (aborted) return { aborted }
   }
 
   /**
@@ -1064,8 +1081,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1294,7 +1311,9 @@ export default class CADL extends EventEmitter {
           pageName,
           ifCommand: updateObject,
         })
-        if (res) return res
+        if (res) {
+          return res
+        }
         break
       }
       case 'eval-object': {
@@ -1916,6 +1935,7 @@ export default class CADL extends EventEmitter {
         //adds commands to queue
         this.initCallQueue = init.map((_command, index) => index)
         while (this.initCallQueue.length > 0) {
+          currentCallCount++
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
           let populatedCommand
@@ -1940,6 +1960,16 @@ export default class CADL extends EventEmitter {
           if (typeof populatedCommand === 'function') {
             try {
               //TODO: check dispatch function/ side effects work accordingly
+              // const wrapWithDelay = (fn): Promise<void> => {
+              //   return new Promise((resolve) => {
+              //     setTimeout(() => {
+              //       const res = fn()
+              //       if (res && typeof res === 'object' && 'then' in res) {
+              //         fn().then(() => resolve())
+              //       } else resolve()
+              //     }, 3000)
+              //   })
+              // }
               await populatedCommand()
             } catch (error) {
               throw new UnableToExecuteFn(
@@ -1982,10 +2012,13 @@ export default class CADL extends EventEmitter {
             }
           } else if (isObject(populatedCommand) && 'if' in populatedCommand) {
             //TODO: add the then condition
-            await this.handleIfCommand({
+            const ifResult = await this.handleIfCommand({
               pageName,
               ifCommand: populatedCommand,
             })
+            if (ifResult?.abort) {
+              resolve({ abort: true })
+            }
           } else if (Array.isArray(populatedCommand)) {
             if (typeof populatedCommand[0][1] === 'function') {
               try {
@@ -2243,7 +2276,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => { })
+    return produce(root, (draft) => {})
   }
 
   public newDispatch(action) {
@@ -2254,7 +2287,6 @@ export default class CADL extends EventEmitter {
     if (typeof action.type === 'undefined') {
       throw new Error('Action types cannot be undefined.')
     }
-
     //TODO: add is Dispatching
     this.root = this.reducer(this.root, action)
 
