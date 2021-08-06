@@ -66,7 +66,7 @@ function get({ pageName, apiObject, dispatch }) {
         return
       }
       objtype = ObjType
-      idList = ids ? ids : id ? [id] : ['']
+      idList = ids ? ids : id ? [id] : []
       nonce = _nonce
       if (!isPopulated(id)) {
         throw new UnableToLocateValue(
@@ -83,7 +83,7 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'populate-object',
         payload: { object: requestOptions, pageName },
       })
-      idList = ids ? ids : id ? [id] : ['']
+      idList = ids ? ids : id ? [id] : []
       nonce = _nonce
       requestOptions = populatedCurrentVal
     }
@@ -137,10 +137,16 @@ function get({ pageName, apiObject, dispatch }) {
             idList,
             options: requestOptions,
           })
-          .then((res) => {
+          .then(async (res) => {
             rawResponse = res.data
+            const documents = (
+              Array.isArray(res?.data?.document)
+                ? res?.data?.document
+                : [res?.data?.document]
+            ).filter((obj) => obj !== null && obj !== undefined)
+
             return Promise.all(
-              res?.data?.document.map?.(async (document) => {
+              documents.map?.(async (document) => {
                 await dispatch({
                   type: 'insert-to-object-table', //yuhan
                   payload: { doc: document },
