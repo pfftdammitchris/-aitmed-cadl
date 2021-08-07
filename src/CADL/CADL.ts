@@ -323,7 +323,9 @@ export default class CADL extends EventEmitter {
       builtIn?: Record<string, any>
       done?: Function
       onReceive?(obj: { [pageName: string]: any }): Promise<void> | void
-      onAbort?(obj: { [pageName: string]: any }): void
+      onAbort?(obj: { [pageName: string]: any }): Promise<void> | void
+      onFirstProcess?(obj: { [pageName: string]: any }): Promise<void> | void
+      onSecondProcess?(obj: { [pageName: string]: any }): Promise<void> | void
     } = {},
   ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
@@ -381,6 +383,8 @@ export default class CADL extends EventEmitter {
       pageName,
     })
 
+    options?.onFirstProcess && await options.onFirstProcess?.(FIRST_process)
+
     const SECOND_process = this.processPopulate({
       source: FIRST_process,
       lookFor: ['.', '..', '_', '~'],
@@ -388,6 +392,8 @@ export default class CADL extends EventEmitter {
       withFns: true,
       pageName,
     })
+
+    options?.onSecondProcess && await options.onSecondProcess?.(SECOND_process)
 
     //used to call the dispatch function from service modules
     const boundDispatch = this.dispatch.bind(this)
