@@ -322,9 +322,8 @@ export default class CADL extends EventEmitter {
       reload?: boolean //if true then the pageObject is replaced
       builtIn?: Record<string, any>
       done?: Function
-      onReceive?(
-        pageObject: Record<string, { components: any[] } & Record<string, any>>,
-      ): Promise<void> | void
+      onReceive?(obj: { [pageName: string]: any }): Promise<void> | void
+      onAbort?(obj: { [pageName: string]: any }): void
     } = {},
   ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
@@ -351,7 +350,7 @@ export default class CADL extends EventEmitter {
     } else {
       //refresh the pageObject
       ;({ pageCADL } = await this.getPage(pageName))
-      options?.onReceive?.(pageCADL)
+      options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
 
     if (this.root[pageName] && reload) {
@@ -417,6 +416,7 @@ export default class CADL extends EventEmitter {
       await this.runInit(processedPage).then((page) => {
         if (page?.abort) {
           aborted = true
+          options?.onAbort?.(pageCADL)
           return
         }
         //FOR COMPONENTS
