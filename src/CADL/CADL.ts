@@ -100,7 +100,7 @@ export default class CADL extends EventEmitter {
     } catch (error) {
       throw new UnableToLoadConfig(
         'An error occured while trying to load the config',
-        error
+        error,
       )
     }
 
@@ -128,7 +128,7 @@ export default class CADL extends EventEmitter {
             console.log(errorType[error.code - 1])
           }
         },
-        options
+        options,
       )
     }
 
@@ -204,7 +204,7 @@ export default class CADL extends EventEmitter {
           case 'BaseDataModel': {
             if (BaseDataModel) break
             const { pageCADL: rawBaseDataModel } = await this.getPage(
-              'BaseDataModel'
+              'BaseDataModel',
             )
             const processedBaseDataModel = this.processPopulate({
               source: rawBaseDataModel,
@@ -322,7 +322,10 @@ export default class CADL extends EventEmitter {
       reload?: boolean //if true then the pageObject is replaced
       builtIn?: Record<string, any>
       done?: Function
-    } = {}
+      onReceive?(
+        pageObject: Record<string, { components: any[] } & Record<string, any>>,
+      ): Promise<void> | void
+    } = {},
   ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
 
@@ -348,6 +351,7 @@ export default class CADL extends EventEmitter {
     } else {
       //refresh the pageObject
       ;({ pageCADL } = await this.getPage(pageName))
+      options?.onReceive?.(pageCADL)
     }
 
     if (this.root[pageName] && reload) {
@@ -621,7 +625,7 @@ export default class CADL extends EventEmitter {
     } catch (error) {
       throw new UnableToRetrieveYAML(
         `Unable to retrieve yaml for ${url}`,
-        error
+        error,
       )
     }
 
@@ -1457,7 +1461,7 @@ export default class CADL extends EventEmitter {
             //if similar request has been made (hash exists)
             //compare recorded timestamp with current timestamp
             const oldTimestamp = moment(
-              apiDispatchBufferObject[hash]?.timestamp
+              apiDispatchBufferObject[hash]?.timestamp,
             )
             const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
             if (timeDiff > limit) {
@@ -1922,7 +1926,7 @@ export default class CADL extends EventEmitter {
    * @param pageObject
    */
   public async runInit(
-    pageObject: Record<string, any>
+    pageObject: Record<string, any>,
   ): Promise<Record<string, any>> {
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
@@ -1973,7 +1977,7 @@ export default class CADL extends EventEmitter {
             } catch (error) {
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init. Check command at index ${currIndex} under init`,
-                error
+                error,
               )
             }
           } else if (
@@ -2025,7 +2029,7 @@ export default class CADL extends EventEmitter {
               } catch (error) {
                 throw new UnableToExecuteFn(
                   `An error occured while executing ${pageName}.init`,
-                  error
+                  error,
                 )
               }
             }
@@ -2520,13 +2524,13 @@ export default class CADL extends EventEmitter {
     if (baseUrlWithVersion.includes('cadlVersion')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${cadlVersion}',
-        this.cadlVersion
+        this.cadlVersion,
       )
     }
     if (baseUrlWithVersion.includes('designSuffix')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${designSuffix}',
-        this.designSuffix
+        this.designSuffix,
       )
     }
     return baseUrlWithVersion
