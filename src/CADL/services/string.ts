@@ -22,6 +22,9 @@ export default {
   formatDurationInSecond(unixTime: number) {
     return humanizeDuration(unixTime * 1000)
   },
+  formatDurationInMicroSecond(unixTime: number) {
+    return moment(unixTime).format('lll')
+  },
   concat(stringArr: string[]): string {
     if (Array.isArray(stringArr)) {
       return stringArr.join('')
