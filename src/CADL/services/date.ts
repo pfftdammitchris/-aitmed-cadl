@@ -903,4 +903,10 @@ export default {
     }
     return false
   },
+  compareTime({ startTime, endTime }) {
+    var date = new Date()
+    let stTime = startTime.split(/[A-Z]{2}/)[0].split(":")
+    let edTime = endTime.split(/[A-Z]{2}/)[0].split(":")
+    return date.setHours(stTime[0], stTime[1]) < date.setHours(edTime[0], edTime[1])
+  }
 }
