@@ -636,8 +636,6 @@ export default {
         }
         return item
       }, []);
-      // console.log("cmq---------------------", re, typeof (re))
-      // console.log("cmq---------------------", re, typeof (obj))
       return re
     }
     return
@@ -646,7 +644,16 @@ export default {
     let subTpOne: number = 0;
     let subTpTwo: number = 0;
     let arr: number[] = []
+    // for(let i = 0;i<objArr.length;i++){
+    //   console.error("cmq")
+    //   if (objArr[i]['subtype'] === strOne) {
+    //     subTpOne++;
+    //   }
+    //   else if (objArr[i]['subtype'] === strTwo)
+    //     subTpTwo++;
+    // }
     objArr.map((obj) => {
+      console.error("cmq")
       if (obj['subtype'] === strOne) {
         subTpOne++;
       }
