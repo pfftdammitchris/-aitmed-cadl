@@ -627,7 +627,7 @@ export default class CADL extends EventEmitter {
    * Retrieves and parses cadl yaml file.
    *
    * @param url
-   * @returns The raw object version of the noodl file
+   * @returns The original object version of the noodl file
    * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
    * @throws {UnableToParseYAML} -When unable to parse yaml file
    *
@@ -1943,20 +1943,16 @@ export default class CADL extends EventEmitter {
    * @param onInit
    * @param onAfterInit
    */
-  public async runInit({
+  public async runInit<Init extends any[]>({
     pageObject = {},
     onBeforeInit,
     onInit,
     onAfterInit,
   }: {
     pageObject: Record<string, any>
-    onBeforeInit?(init: any[]): Promise<void> | void
-    onInit?(current: any, index: number, init: any[]): Promise<void> | void
-    onAfterInit?(
-      init: any[],
-      page: Record<string, any>,
-      error?: Error,
-    ): Promise<void> | void
+    onBeforeInit?(init: Init): Promise<void> | void
+    onInit?(current: any, index: number, init: Init): Promise<void> | void
+    onAfterInit?(error: null | Error, init: Init): Promise<void> | void
   }): Promise<Record<string, any>> {
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
@@ -2007,7 +2003,7 @@ export default class CADL extends EventEmitter {
               // }
               await populatedCommand()
             } catch (error) {
-              onAfterInit?.(init, page, error)
+              onAfterInit?.(error, init)
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init. Check command at index ${currIndex} under init`,
                 error,
@@ -2106,7 +2102,7 @@ export default class CADL extends EventEmitter {
             },
           })
         }
-        await onAfterInit?.(init, page)
+        await onAfterInit?.(null, init)
         resolve(page)
       }
     })
