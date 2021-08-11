@@ -1,6 +1,5 @@
 import _, { isArray, isObject } from 'lodash'
 import moment from 'moment'
-import object from './object'
 interface splitTime {
   showTime: string
   stime: number
@@ -157,7 +156,7 @@ export default {
     // date.setUTCMilliseconds(0)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
-    let array: { [key: string]: [] } = {
+    let array: any = {
       morning: [],
       afternoon: []
     }
@@ -961,4 +960,10 @@ export default {
     return quarterStartDate.valueOf() / 1000;
   },
 
+  compareTime({ startTime, endTime }) {
+    var date = new Date()
+    let stTime = startTime.split(/[A-Z]{2}/)[0].split(":")
+    let edTime = endTime.split(/[A-Z]{2}/)[0].split(":")
+    return date.setHours(stTime[0], stTime[1]) < date.setHours(edTime[0], edTime[1])
+  }
 }

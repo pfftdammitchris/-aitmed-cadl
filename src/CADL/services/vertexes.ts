@@ -76,7 +76,7 @@ function get({ pageName, apiObject, dispatch }) {
           delete requestOptions.sCondition
         }
         const { data } = await store.level2SDK.vertexServices.retrieveVertex({
-          idList: [id],
+          idList: id ? [id] : [],
           options: requestOptions,
         })
         await dispatch({
