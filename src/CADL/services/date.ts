@@ -970,5 +970,21 @@ export default {
     let stTime = startTime.split(/[A-Z]{2}/)[0].split(":")
     let edTime = endTime.split(/[A-Z]{2}/)[0].split(":")
     return date.setHours(stTime[0], stTime[1]) < date.setHours(edTime[0], edTime[1])
+  },
+  DateCompare({ startTime, endTime }: { startTime: string, endTime: string }): boolean {
+    let sEndStr = startTime.substr(-2, 2),
+      eEndStr = endTime.substr(-2, 2),
+      sTimeArr: string[] = _.split(startTime.substr(0, 5), ':', 2),
+      eTimeArr: string[] = _.split(endTime.substr(0, 5), ':', 2);
+    eTimeArr[0] = (((eEndStr === 'PM') && Number(eTimeArr[0]) < 12)) ? String(Number(eTimeArr[0]) + 12) : eTimeArr[0];
+    sTimeArr[0] = (((sEndStr === 'PM') && Number(sTimeArr[0]) < 12)) ? String(Number(sTimeArr[0]) + 12) : sTimeArr[0];
+    eTimeArr[0] = (((eEndStr === 'AM') && Number(eTimeArr[0]) === 12)) ? String(Number(eTimeArr[0]) + 12) : eTimeArr[0];
+    sTimeArr[0] = (((sEndStr === 'AM') && Number(sTimeArr[0]) === 12)) ? String(Number(sTimeArr[0]) + 12) : sTimeArr[0];
+    eEndStr = (eEndStr === 'AM') && (eTimeArr[0] === "24") ? "PM" : eEndStr;
+    sEndStr = ((sEndStr === 'AM') && sTimeArr[0] === "24") ? "PM" : sEndStr;
+    return (sEndStr === eEndStr) ?
+      ((Number(sTimeArr[0]) < Number(eTimeArr[0])) ||
+        (Number(sTimeArr[0]) === Number(eTimeArr[0]) && Number(sTimeArr[1]) < Number(eTimeArr[1]))) :
+      ((sEndStr === 'AM') && (eEndStr === 'PM') ? true : false);
   }
 }
