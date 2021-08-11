@@ -194,7 +194,6 @@ export default {
   setProperty({ obj, label, text, arr, valueArr, errorArr }: { obj: { [key: string]: any }[], label: string, text: string, arr: string[], valueArr: string[], errorArr: string[] }) {
     for (let index = 0; index < obj.length; index++) {
       for (let i in arr) {
-        console.error(text)
         if (obj[index][label] === text) {
           obj[index][arr[i]] = valueArr[i];
         } else {
