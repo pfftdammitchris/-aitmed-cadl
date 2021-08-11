@@ -24,6 +24,11 @@ export default {
   getTimezoneOffset() {
     return new Date().getTimezoneOffset().toString()
   },
+  getNowLocalTime() {
+    return new Date(new Date().toLocaleDateString()).getTime();
+  },
+
+
   /**
    * return time stamp (s)  date-->to ---> timestamp
    */
@@ -902,6 +907,64 @@ export default {
     }
     return false
   },
+
+  getQuarterStartMonth(now: number) {
+    let quarterStartMonth = 0;
+    if (new Date(now).getMonth() < 3 || new Date(now).getMonth() == 12) {
+      quarterStartMonth = 0;
+    }
+    if (2 < new Date(now).getMonth() && new Date(now).getMonth() < 6) {
+      quarterStartMonth = 3;
+    }
+    if (5 < new Date(now).getMonth() && new Date(now).getMonth() < 9) {
+      quarterStartMonth = 6;
+    }
+    if (new Date(now).getMonth() > 8) {
+      quarterStartMonth = 9;
+    }
+    return quarterStartMonth;
+  },
+
+  getWeekEndDate(getTime: number) {
+    let now: Date = new Date(getTime);
+    let weekEndDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - ((now.getDay() === 0) ? 7 : now.getDay())));
+    return weekEndDate.valueOf() / 1000;
+  },
+
+  getMonthEndDate(getTime: number) {
+    let now: Date = new Date(getTime * 1000);
+    let monthEndDate = new Date(now.getFullYear(), now.getMonth(), new Date(now.getFullYear(), now.getMonth(), 0).getDate());
+    return monthEndDate.valueOf() / 1000;
+  },
+
+  getQuarterEndDate(getTime: number) {
+    let quarterStartMonth = 0;
+    let now: Date = new Date(getTime * 1000);
+    let monthTime: number = new Date(now).getMonth() + 1;
+    let yearTime: number = now.getFullYear();
+    console.log(monthTime)
+    if (monthTime < 3) {
+      quarterStartMonth = 0;
+    }
+    if (2 < monthTime && monthTime < 6) {
+      quarterStartMonth = 3;
+    }
+    if (5 < monthTime && monthTime < 9) {
+      quarterStartMonth = 6;
+    }
+    if (monthTime > 8 && monthTime <= 11) {
+      quarterStartMonth = 9;
+    }
+    if (monthTime === 12) {
+      quarterStartMonth = 0;
+      yearTime++;
+    }
+    let quarterEndMonth = quarterStartMonth + 2;
+    console.log(quarterStartMonth)
+    let quarterStartDate = new Date(yearTime, quarterEndMonth - 1, new Date(now.getFullYear(), quarterEndMonth, 0).getDate());
+    return quarterStartDate.valueOf() / 1000;
+  },
+
   compareTime({ startTime, endTime }) {
     var date = new Date()
     let stTime = startTime.split(/[A-Z]{2}/)[0].split(":")
