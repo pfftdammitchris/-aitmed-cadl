@@ -318,7 +318,10 @@ export default class CADL extends EventEmitter {
   async initPage(
     pageName: string,
     skip: string[] = [],
-    options: {
+    options: Pick<
+      Parameters<CADL['runInit']>[0],
+      'onBeforeInit' | 'onInit' | 'onAfterInit'
+    > & {
       reload?: boolean //if true then the pageObject is replaced
       builtIn?: Record<string, any>
       done?: Function
@@ -326,7 +329,7 @@ export default class CADL extends EventEmitter {
       onAbort?(obj: { [pageName: string]: any }): Promise<void> | void
       onFirstProcess?(obj: { [pageName: string]: any }): Promise<void> | void
       onSecondProcess?(obj: { [pageName: string]: any }): Promise<void> | void
-    } = {},
+    },
   ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
 
@@ -383,7 +386,7 @@ export default class CADL extends EventEmitter {
       pageName,
     })
 
-    options?.onFirstProcess && await options.onFirstProcess?.(FIRST_process)
+    options?.onFirstProcess && (await options.onFirstProcess?.(FIRST_process))
 
     const SECOND_process = this.processPopulate({
       source: FIRST_process,
@@ -393,7 +396,8 @@ export default class CADL extends EventEmitter {
       pageName,
     })
 
-    options?.onSecondProcess && await options.onSecondProcess?.(SECOND_process)
+    options?.onSecondProcess &&
+      (await options.onSecondProcess?.(SECOND_process))
 
     //used to call the dispatch function from service modules
     const boundDispatch = this.dispatch.bind(this)
@@ -419,7 +423,12 @@ export default class CADL extends EventEmitter {
     //run init commands of page if any
     let init = Object.values(processedPage)[0].init
     if (init) {
-      await this.runInit(processedPage).then((page) => {
+      await this.runInit({
+        pageObject: processedPage,
+        onBeforeInit: options?.onBeforeInit,
+        onInit: options?.onInit,
+        onAfterInit: options?.onAfterInit,
+      }).then((page) => {
         if (page?.abort) {
           aborted = true
           options?.onAbort?.(pageCADL)
@@ -618,7 +627,7 @@ export default class CADL extends EventEmitter {
    * Retrieves and parses cadl yaml file.
    *
    * @param url
-   * @returns The raw object version of the noodl file
+   * @returns The original object version of the noodl file
    * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
    * @throws {UnableToParseYAML} -When unable to parse yaml file
    *
@@ -1930,10 +1939,21 @@ export default class CADL extends EventEmitter {
    * Runs the init functions of the page matching the pageName.
    *
    * @param pageObject
+   * @param onBeforeInit
+   * @param onInit
+   * @param onAfterInit
    */
-  public async runInit(
-    pageObject: Record<string, any>,
-  ): Promise<Record<string, any>> {
+  public async runInit<Init extends any[]>({
+    pageObject = {},
+    onBeforeInit,
+    onInit,
+    onAfterInit,
+  }: {
+    pageObject: Record<string, any>
+    onBeforeInit?(init: Init): Promise<void> | void
+    onInit?(current: any, index: number, init: Init): Promise<void> | void
+    onAfterInit?(error: null | Error, init: Init): Promise<void> | void
+  }): Promise<Record<string, any>> {
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
 
@@ -1942,11 +1962,13 @@ export default class CADL extends EventEmitter {
       let init = Object.values(page)[0].init
 
       if (init) {
+        onBeforeInit && (await onBeforeInit?.(init))
         //adds commands to queue
         this.initCallQueue = init.map((_command, index) => index)
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
+          onInit && (await onInit?.(command, currIndex, init))
           let populatedCommand
           if (
             isObject(command) &&
@@ -1981,6 +2003,7 @@ export default class CADL extends EventEmitter {
               // }
               await populatedCommand()
             } catch (error) {
+              onAfterInit?.(error, init)
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init. Check command at index ${currIndex} under init`,
                 error,
@@ -2079,6 +2102,7 @@ export default class CADL extends EventEmitter {
             },
           })
         }
+        await onAfterInit?.(null, init)
         resolve(page)
       }
     })
