@@ -7,7 +7,7 @@ import store from '../../common/store'
 //set elasticsearch host client
 let client = new Client({ hosts: 'https://elastic.aitmed.io' })
 //query index
-const INDEX = "doctors_v0.3"
+const INDEX = "doctors_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
