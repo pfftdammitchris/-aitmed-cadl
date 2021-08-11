@@ -11,7 +11,12 @@ const INDEX = "doctors_v0.3"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-const esSyncHost = 'https://sync.aitmed.io:443/'
+
+const config = localStorage?.getItem('config')
+let esSyncHost =
+  typeof config == 'string'
+    ? JSON.parse(config)?.syncHost
+    : 'https://sync.aitmed.io:443/'
 interface LatResponse {
   center: any[]
 }
