@@ -24,6 +24,11 @@ export default {
   getTimezoneOffset() {
     return new Date().getTimezoneOffset().toString()
   },
+  getNowLocalTime() {
+    return new Date(new Date().toLocaleDateString()).getTime();
+  },
+
+
   /**
    * return time stamp (s)  date-->to ---> timestamp
    */
