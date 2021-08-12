@@ -70,7 +70,7 @@ export default {
   },
   //  please dont delete
   async prepareDocToPath(id) {
-    let path = '../ava.png'
+    let path
     if (typeof id == 'string' && !id.includes('.')) {
       const doc = await retrieveDocument(id)
       await documentToNote({ document: doc }).then(
@@ -85,7 +85,6 @@ export default {
           if (store.env === 'test') {
             console.log(error)
           }
-          path = '../ava.png'
         }
       )
       return path
