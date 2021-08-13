@@ -706,20 +706,20 @@ export default class CADL extends EventEmitter {
     let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
 
     //using a clone and deep clone to find references when certain slices of the noodl root are being processed
-    let rootCopy = _.clone(this.root)
+    // let rootCopy = _.clone(this.root)
     let rootDeepCopy = _.cloneDeep(this.root)
-    let localCopy = _.clone(localRoot)
+    // let localCopy = _.clone(localRoot)
     let localDeepCopy = _.clone(localRoot)
     const sourceCopyWithRootKeys = populateKeys({
       source: sourceCopy,
       lookFor: '.',
-      locations: [rootCopy, rootDeepCopy],
+      locations: [rootDeepCopy],
     })
     //populate the keys from the local page object
     const sourceCopyWithLocalKeys = populateKeys({
       source: sourceCopyWithRootKeys,
       lookFor: '..',
-      locations: [localCopy, localDeepCopy],
+      locations: [localDeepCopy],
     })
     const boundDispatch = this.dispatch.bind(this)
     localRoot = pageName
@@ -729,7 +729,7 @@ export default class CADL extends EventEmitter {
       source: sourceCopyWithLocalKeys,
       lookFor,
       skip,
-      locations: [this, rootCopy, rootDeepCopy, localCopy, localDeepCopy],
+      locations: [this, rootDeepCopy, localDeepCopy],
       pageName,
       dispatch: boundDispatch,
     })
