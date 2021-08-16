@@ -6,6 +6,7 @@ import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
 let client = new Client({ hosts: 'https://elastic.aitmed.io' })
+let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 //query index
 const INDEX = "doctors_dev"
 // const mapboxHost = 'api.mapbox.com'
@@ -13,10 +14,12 @@ const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMy
 const mapboxHost = 'https://api.mapbox.com/'
 
 const config = localStorage?.getItem('config')
+
 let esSyncHost =
   typeof config == 'string'
     ? JSON.parse(config)?.syncHost
     : 'https://sync.aitmed.io:443/'
+
 interface LatResponse {
   center: any[]
 }
@@ -221,6 +224,26 @@ export default {
       body: template,
     })
     return body.hits.hits
+  },
+  async queryIns({ ins }) {
+    let template: any = {
+      "_source": false,
+      "suggest": {
+        "ins": {
+          "prefix": ins,
+          "completion": {
+            "field": "carries",
+            "size": 10,
+            "skip_duplicates": true
+          }
+        }
+      }
+    }
+    const body = await Newclient.search({
+      index: "ins",
+      body: template,
+    })
+    return body
   },
   /**
    * Get all related addresses of query
