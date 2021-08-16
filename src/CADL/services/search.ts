@@ -191,7 +191,6 @@ export default {
     if (query) {
       await Description(query).then(
         (data: LatResponse) => {
-          console.error(data.center[3])
           arr[0] = data.center[3]
           for (let j = 0; j < arr[0].length; j++) {
             arrNew.push([]);
@@ -199,7 +198,6 @@ export default {
           for (let i = 0; i < arr[0].length; i++) {
             let arrStr: string = arr[0][i][0] + arr[0][i][1]
             let a: (string | number)[] = _.concat(arr[0][i], arrStr);
-            console.error(a);
             arrNew[i].push(a);
           }
         },
@@ -541,7 +539,6 @@ export default {
     if (isArray(object)) {
       let re: Record<string, any> = []
       object.forEach((obj) => {
-        // console.error(obj)
         let st = obj['_source']['availByLocation'][0]['location']['geoCode'].split(',')
         let address =
           obj['_source']['availByLocation'][0]['location']['address']['street'] +
@@ -696,10 +693,8 @@ export default {
         newArr = valuesObj["_source"]["availByLocation"];
         _.unset(objArr, valuesObj["_source"]["availByLocation"]);
         for (let i = 0; i < len; i++) {
-          // console.log(newArr[i])
           let obj = _.cloneDeep(valuesObj);
           obj["_source"]["availByLocation"] = new Array(newArr[i]);
-          // console.error(obj)
           newArrObj.push(obj);
         }
       }
@@ -709,9 +704,7 @@ export default {
   pickByArr({ objArr }) {
     let arrOffice: any = [];
     let arrTel: any = []
-    // console.error("test", objArr)
     objArr?.forEach((objItem) => {
-      console.error(objItem);
       if (objItem["_source"]["availByLocation"][0]["visitType"] === "Office") {
         arrOffice.push(objItem);
 
