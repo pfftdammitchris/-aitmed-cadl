@@ -53,6 +53,11 @@ export default {
     }
     return 'timeStamp is null'
   },
+  /**
+   * timestamp--> year,month,day
+   * @param timeStamp 
+   * @returns 
+   */
   stampToDay(timeStamp) {
     if (!timeStamp) return
     timeStamp = parseInt(timeStamp)
