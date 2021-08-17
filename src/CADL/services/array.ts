@@ -918,5 +918,18 @@ export default {
     for (let i = 0; i < array.length; i++) {
       if (array[i][key] == value) return array[i]
     }
+  },
+  checkElememtExist({ objArr, values }: { objArr: {}[], values: string | number }): boolean {
+    let bool: boolean[] = [];
+    objArr.forEach((obj) => {
+      let arrLast: (number | string)[] = [];
+      (function deepObj(obj: {}) {
+        for (let items in obj) {
+          (typeof obj[items] === "number" || typeof obj[items] === "string") ? arrLast.push(obj[items]) : deepObj(obj[items]);
+        }
+      })(obj);
+      bool.push((arrLast.includes(values)) ? true : false);
+    })
+    return (bool.includes(true)) ? true : false;
   }
 }
