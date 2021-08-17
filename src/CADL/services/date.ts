@@ -53,6 +53,16 @@ export default {
     }
     return 'timeStamp is null'
   },
+  stampToDay(timeStamp) {
+    if (!timeStamp) return
+    timeStamp = parseInt(timeStamp)
+    let date = new Date(timeStamp * 1000)
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate()
+    }
+  },
   /**
    * Returns the time stamp interval of a day  (s)
    * @param {string} (date) -->  MM-DD-YY
@@ -215,8 +225,13 @@ export default {
     }
     return array
   },
-  splitTime({ object2, timeSlot, year, month, day }) {
-    let date = new Date(year, month - 1, day)
+  splitTime({ object2, timeSlot, year, month, day, isSplitCurrent = false }) {
+    let date
+    if (isSplitCurrent) {
+      date = new Date()
+    } else {
+      date = new Date(year, month - 1, day)
+    }
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
     let array: any = []
