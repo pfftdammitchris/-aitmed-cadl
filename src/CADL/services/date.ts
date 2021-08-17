@@ -231,12 +231,17 @@ export default {
     return array
   },
   splitTime({ object2, timeSlot, year, month, day, isSplitCurrent = false }) {
-    let date
+    console.log('test splitTime', {
+      object2, timeSlot, year, month, day, isSplitCurrent
+    })
+    let currentDate
+    let currentTime
     if (isSplitCurrent) {
-      date = new Date()
-    } else {
-      date = new Date(year, month - 1, day)
+      currentDate = new Date()
+      currentTime = currentDate.getTime() / 1000
     }
+
+    let date = new Date(year, month - 1, day)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
     let array: any = []
@@ -267,9 +272,19 @@ export default {
               } else {
 
                 if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                  array.push(splitTimeItem)
+                  if (isSplitCurrent) {
+                    if (splitTimeItem['stime'] > currentTime)
+                      array.push(splitTimeItem)
+                  } else {
+                    array.push(splitTimeItem)
+                  }
                 } else {
-                  array.push(splitTimeItem)
+                  if (isSplitCurrent) {
+                    if (splitTimeItem['stime'] > currentTime)
+                      array.push(splitTimeItem)
+                  } else {
+                    array.push(splitTimeItem)
+                  }
                 }
                 i += 1
               }
