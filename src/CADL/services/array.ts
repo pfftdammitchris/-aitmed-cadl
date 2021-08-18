@@ -931,5 +931,21 @@ export default {
       bool.push((arrLast.includes(values)) ? true : false);
     })
     return (bool.includes(true)) ? true : false;
+  },
+
+  /**
+   * 
+   * @param param0 arrObj: array object
+   * @param param1 numX: according this number splilt array
+   * @param param1 numY: current page number 
+   * @returns 
+   */
+  splitTableList({ arrObj, numX, numY }: { arrObj: { [key: string]: {} }[], numX: number, numY: number }): (({ [key: string]: {} } | number)[] | number)[] {
+    //len:  total page number
+    let len: number = _.chunk(arrObj, numX).length,
+      arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
+      arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
+    arrT.push(arr, len);
+    return arrT;
   }
 }
