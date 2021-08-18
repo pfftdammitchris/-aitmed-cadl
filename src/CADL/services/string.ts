@@ -2,7 +2,6 @@ import moment from 'moment'
 import humanizeDuration from 'humanize-duration'
 import { AnyArray } from 'immer/dist/internal'
 import store from '../../common/store'
-import { isArray, isString } from 'lodash';
 function Rad(d) {
   //The latitude and longitude is converted into a trigonometric function in the form of a mid-degree minute table.
   return d * Math.PI / 180.0;
