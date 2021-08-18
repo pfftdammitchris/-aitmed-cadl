@@ -940,12 +940,16 @@ export default {
    * @param param1 numY: current page number 
    * @returns 
    */
-  splitTableList({ arrObj, numX, numY }: { arrObj: { [key: string]: {} }[], numX: number, numY: number }): (({ [key: string]: {} } | number)[] | number)[] {
-    //len:  total page number
-    let len: number = _.chunk(arrObj, numX).length,
-      arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
+  arrObj({ arrO, numX, numY }: { arrO: { [key: string]: {} }[], numX: number, numY: number }): (({ [key: string]: {} } | number)[] | number)[] {
+    let len: number = _.chunk(arrO, numX).length,
+      arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrO, numX)[numY - 1],
+      arrTh: number[] = [],
       arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
-    arrT.push(arr, len);
+    for (let i = 1; i <= len; i++) {
+      // arrTh: display page number
+      arrTh.push(i);
+    }
+    arrT.push(arr, arrTh);
     return arrT;
   }
 }
