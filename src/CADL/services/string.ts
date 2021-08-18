@@ -22,6 +22,9 @@ export default {
   formatDurationInSecond(unixTime: number) {
     return humanizeDuration(unixTime * 1000)
   },
+  formatDurationInMicroSecond(unixTime: number) {
+    return moment(unixTime).format('lll')
+  },
   concat(stringArr: string[]): string {
     if (Array.isArray(stringArr)) {
       return stringArr.join('')
@@ -240,6 +243,7 @@ export default {
       } else {
         res.address = object.text
       }
+      res.address = object.address ? object.address + ' ' + res.address : res.address
 
       if (object.place_type[0] == 'place') {
         res.city = object.text
@@ -259,5 +263,30 @@ export default {
       return res
     }
     return res
-  }
+  },
+
+  /**
+   * 
+   * @param facilityID =>facilityID
+   * @param locationID =>local loaction's ID
+   * @param roomID =>local room's ID
+   * @returns 
+   */
+  generateID({ facilityID, locationID, roomID }) {
+    if (roomID != "") {
+      // rid: Remove spaces from the string and convert to lowercase, keeping only 6 digits
+      let rid = roomID.toString().toLowerCase().replace(/\s*/g, "").substring(0, 6)
+      // return locationId splice rid,keeping the length of locationId is only 25 digits and the finished stitched string less than 32 digits
+      return locationID.substring(0, 25).concat("_").concat(rid)
+    }
+    else if (locationID != "") {
+      let lid = locationID.toString().toLowerCase().replace(/\s*/g, "").substring(0, 8)
+      return facilityID.substring(0, 16).concat("_").concat(lid)
+    }
+    else {
+      let fid = facilityID.toString().toLocaleLowerCase().replace(/\s*/g, "").substring(0, 16)
+      return fid
+    }
+  },
+
 }

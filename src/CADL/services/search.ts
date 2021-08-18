@@ -6,12 +6,20 @@ import * as ob from "lodash";
 import store from '../../common/store'
 //set elasticsearch host client
 let client = new Client({ hosts: 'https://elastic.aitmed.io' })
+let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 //query index
-const INDEX = "doctors_v0.3"
+const INDEX = "doctors_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-const esSyncHost = 'https://sync.aitmed.io:443/'
+
+const config = localStorage?.getItem('config')
+
+let esSyncHost =
+  typeof config == 'string'
+    ? JSON.parse(config)?.syncHost
+    : 'https://sync.aitmed.io:443/'
+
 interface LatResponse {
   center: any[]
 }
@@ -183,7 +191,6 @@ export default {
     if (query) {
       await Description(query).then(
         (data: LatResponse) => {
-          console.error(data.center[3])
           arr[0] = data.center[3]
           for (let j = 0; j < arr[0].length; j++) {
             arrNew.push([]);
@@ -191,7 +198,6 @@ export default {
           for (let i = 0; i < arr[0].length; i++) {
             let arrStr: string = arr[0][i][0] + arr[0][i][1]
             let a: (string | number)[] = _.concat(arr[0][i], arrStr);
-            console.error(a);
             arrNew[i].push(a);
           }
         },
@@ -216,6 +222,26 @@ export default {
       body: template,
     })
     return body.hits.hits
+  },
+  async queryIns({ ins }) {
+    let template: any = {
+      "_source": false,
+      "suggest": {
+        "ins": {
+          "prefix": ins,
+          "completion": {
+            "field": "carries",
+            "size": 10,
+            "skip_duplicates": true
+          }
+        }
+      }
+    }
+    const body = await Newclient.search({
+      index: "ins",
+      body: template,
+    })
+    return body
   },
   /**
    * Get all related addresses of query
@@ -635,8 +661,6 @@ export default {
         }
         return item
       }, []);
-      // console.log("cmq---------------------", re, typeof (re))
-      // console.log("cmq---------------------", re, typeof (obj))
       return re
     }
     return
@@ -659,7 +683,43 @@ export default {
   ModifyObjectField({ objArr, str }) {
     return objArr.map((values) => ob.set(values, 'place_name', ob.trimEnd(values['place_name'], str)));
 
+  },
+  CountObj({ objArr }) {
+    let newArr: {}[] = [];
+    let newArrObj: { [key: string]: any }[] = []
+    objArr.forEach((valuesObj) => {
+      if ((valuesObj["_source"]["availByLocation"] as [])?.length >= 1) {
+        let len: number = (valuesObj["_source"]["availByLocation"])?.length;
+        newArr = valuesObj["_source"]["availByLocation"];
+        _.unset(objArr, valuesObj["_source"]["availByLocation"]);
+        for (let i = 0; i < len; i++) {
+          let obj = _.cloneDeep(valuesObj);
+          obj["_source"]["availByLocation"] = new Array(newArr[i]);
+          newArrObj.push(obj);
+        }
+      }
+    })
+    return newArrObj;
+  },
+  pickByArr({ objArr }) {
+    let arrOffice: any = [];
+    let arrTel: any = []
+    objArr?.forEach((objItem) => {
+      if (objItem["_source"]["availByLocation"][0]["visitType"] === "Office") {
+        arrOffice.push(objItem);
+
+      }
+      else if (objItem["_source"]["availByLocation"][0]["visitType"] === "Telemedicine") {
+        arrTel.push(objItem);
+        // console.error(objItem);
+
+      }
+
+    })
+    let doubArr: {}[] = [];
+    doubArr.push(arrOffice);
+    doubArr.push(arrTel);
+
+    return doubArr;
   }
-
-
 }

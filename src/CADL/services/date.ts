@@ -24,6 +24,13 @@ export default {
   getTimezoneOffset() {
     return new Date().getTimezoneOffset().toString()
   },
+  getNowLocalTime() {
+    return new Date(new Date().toLocaleDateString()).getTime();
+  },
+  getNowLocalUnixTime() {
+    return Math.ceil(new Date().getTime() / 1000);
+  },
+
   /**
    * return time stamp (s)  date-->to ---> timestamp
    */
@@ -47,6 +54,21 @@ export default {
         : `${parseInt(timeArray[0]) - 12}:${timeArray[1]}PM`
     }
     return 'timeStamp is null'
+  },
+  /**
+   * timestamp--> year,month,day
+   * @param timeStamp 
+   * @returns 
+   */
+  stampToDay({ timeStamp }) {
+    if (!timeStamp) return
+    timeStamp = parseInt(timeStamp)
+    let date = new Date(timeStamp * 1000)
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate()
+    }
   },
   /**
    * Returns the time stamp interval of a day  (s)
@@ -158,7 +180,7 @@ export default {
     let splitTimeItem: splitTime
     let array: any = {
       morning: [],
-      afternoon: [],
+      afternoon: []
     }
     //@ts-ignore
     let nowtime = new Date().valueOf() / 1000
@@ -210,7 +232,17 @@ export default {
     }
     return array
   },
-  splitTime({ object2, timeSlot, year, month, day }) {
+  splitTime({ object2, timeSlot, year, month, day, isSplitCurrent = false }) {
+    console.log('test splitTime', {
+      object2, timeSlot, year, month, day, isSplitCurrent
+    })
+    let currentDate
+    let currentTime
+    if (isSplitCurrent) {
+      currentDate = new Date()
+      currentTime = currentDate.getTime() / 1000
+    }
+
     let date = new Date(year, month - 1, day)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
@@ -242,9 +274,19 @@ export default {
               } else {
 
                 if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                  array.push(splitTimeItem)
+                  if (isSplitCurrent) {
+                    if (splitTimeItem['stime'] > currentTime)
+                      array.push(splitTimeItem)
+                  } else {
+                    array.push(splitTimeItem)
+                  }
                 } else {
-                  array.push(splitTimeItem)
+                  if (isSplitCurrent) {
+                    if (splitTimeItem['stime'] > currentTime)
+                      array.push(splitTimeItem)
+                  } else {
+                    array.push(splitTimeItem)
+                  }
                 }
                 i += 1
               }
@@ -566,7 +608,7 @@ export default {
         year = parseInt(year)
         month = parseInt(month)
         day = parseInt(day)
-        let strTime = year + "-" + month + "-" + day
+        let strTime = year + "-" + month + "-" + (day)
         let dayStart = new Date(strTime)
         let stime = dayStart.valueOf()
         let eday = year + "-" + month + "-" + (day + 1)
@@ -902,4 +944,84 @@ export default {
     }
     return false
   },
+
+  getQuarterStartMonth(now: number) {
+    let quarterStartMonth = 0;
+    if (new Date(now).getMonth() < 3 || new Date(now).getMonth() == 12) {
+      quarterStartMonth = 0;
+    }
+    if (2 < new Date(now).getMonth() && new Date(now).getMonth() < 6) {
+      quarterStartMonth = 3;
+    }
+    if (5 < new Date(now).getMonth() && new Date(now).getMonth() < 9) {
+      quarterStartMonth = 6;
+    }
+    if (new Date(now).getMonth() > 8) {
+      quarterStartMonth = 9;
+    }
+    return quarterStartMonth;
+  },
+
+  getWeekEndDate(getTime: number) {
+    let now: Date = new Date(getTime);
+    let weekEndDate = new Date(now.getFullYear(), now.getMonth(), now.getDate() + (7 - ((now.getDay() === 0) ? 7 : now.getDay())));
+    return weekEndDate.valueOf() / 1000;
+  },
+
+  getMonthEndDate(getTime: number) {
+    let now: Date = new Date(getTime * 1000);
+    let monthEndDate = new Date(now.getFullYear(), now.getMonth(), new Date(now.getFullYear(), now.getMonth(), 0).getDate());
+    return monthEndDate.valueOf() / 1000;
+  },
+
+  getQuarterEndDate(getTime: number) {
+    let quarterStartMonth = 0;
+    let now: Date = new Date(getTime * 1000);
+    let monthTime: number = new Date(now).getMonth() + 1;
+    let yearTime: number = now.getFullYear();
+    console.log(monthTime)
+    if (monthTime < 3) {
+      quarterStartMonth = 0;
+    }
+    if (2 < monthTime && monthTime < 6) {
+      quarterStartMonth = 3;
+    }
+    if (5 < monthTime && monthTime < 9) {
+      quarterStartMonth = 6;
+    }
+    if (monthTime > 8 && monthTime <= 11) {
+      quarterStartMonth = 9;
+    }
+    if (monthTime === 12) {
+      quarterStartMonth = 0;
+      yearTime++;
+    }
+    let quarterEndMonth = quarterStartMonth + 2;
+    console.log(quarterStartMonth)
+    let quarterStartDate = new Date(yearTime, quarterEndMonth - 1, new Date(now.getFullYear(), quarterEndMonth, 0).getDate());
+    return quarterStartDate.valueOf() / 1000;
+  },
+
+  compareTime({ startTime, endTime }) {
+    var date = new Date()
+    let stTime = startTime.split(/[A-Z]{2}/)[0].split(":")
+    let edTime = endTime.split(/[A-Z]{2}/)[0].split(":")
+    return date.setHours(stTime[0], stTime[1]) < date.setHours(edTime[0], edTime[1])
+  },
+  DateCompare({ startTime, endTime }: { startTime: string, endTime: string }): boolean {
+    let sEndStr = startTime.substr(-2, 2),
+      eEndStr = endTime.substr(-2, 2),
+      sTimeArr: string[] = _.split(startTime.substr(0, 5), ':', 2),
+      eTimeArr: string[] = _.split(endTime.substr(0, 5), ':', 2);
+    eTimeArr[0] = (((eEndStr === 'PM') && Number(eTimeArr[0]) < 12)) ? String(Number(eTimeArr[0]) + 12) : eTimeArr[0];
+    sTimeArr[0] = (((sEndStr === 'PM') && Number(sTimeArr[0]) < 12)) ? String(Number(sTimeArr[0]) + 12) : sTimeArr[0];
+    eTimeArr[0] = (((eEndStr === 'AM') && Number(eTimeArr[0]) === 12)) ? String(Number(eTimeArr[0]) + 12) : eTimeArr[0];
+    sTimeArr[0] = (((sEndStr === 'AM') && Number(sTimeArr[0]) === 12)) ? String(Number(sTimeArr[0]) + 12) : sTimeArr[0];
+    eEndStr = (eEndStr === 'AM') && (eTimeArr[0] === "24") ? "PM" : eEndStr;
+    sEndStr = ((sEndStr === 'AM') && sTimeArr[0] === "24") ? "PM" : sEndStr;
+    return (sEndStr === eEndStr) ?
+      ((Number(sTimeArr[0]) < Number(eTimeArr[0])) ||
+        (Number(sTimeArr[0]) === Number(eTimeArr[0]) && Number(sTimeArr[1]) < Number(eTimeArr[1]))) :
+      ((sEndStr === 'AM') && (eEndStr === 'PM') ? true : false);
+  }
 }

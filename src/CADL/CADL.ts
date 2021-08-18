@@ -107,7 +107,7 @@ export default class CADL extends EventEmitter {
     } catch (error) {
       throw new UnableToLoadConfig(
         'An error occured while trying to load the config',
-        error
+        error,
       )
     }
 
@@ -116,12 +116,12 @@ export default class CADL extends EventEmitter {
     await this._indexRepository.getDataBase(this._dbConfig)
 
 
-    //get app curent position 
+    //get app curent position
     if (config?.isGetPosition) {
       const options = {
         enableHighAccuracy: true,
         maximumAge: 1000,
-        timeout: 5000
+        timeout: 5000,
       }
 
       window.navigator.geolocation.getCurrentPosition(
@@ -132,14 +132,16 @@ export default class CADL extends EventEmitter {
           store.currentLongitude = currentLongitude
         },
         function (error) {
-          let errorType = ['You refuse to share location information', "Can't get location information", 'Get location information timed out'];
+          let errorType = [
+            'You refuse to share location information',
+            "Can't get location information",
+            'Get location information timed out',
+          ]
           if (store.env === 'test') {
-            console.log(
-              errorType[error.code - 1]
-            )
+            console.log(errorType[error.code - 1])
           }
         },
-        options
+        options,
       )
     }
 
@@ -215,7 +217,7 @@ export default class CADL extends EventEmitter {
           case 'BaseDataModel': {
             if (BaseDataModel) break
             const { pageCADL: rawBaseDataModel } = await this.getPage(
-              'BaseDataModel'
+              'BaseDataModel',
             )
             const processedBaseDataModel = this.processPopulate({
               source: rawBaseDataModel,
@@ -329,12 +331,19 @@ export default class CADL extends EventEmitter {
   async initPage(
     pageName: string,
     skip: string[] = [],
-    options: {
+    options: Pick<
+      Parameters<CADL['runInit']>[0],
+      'onBeforeInit' | 'onInit' | 'onAfterInit'
+    > & {
       reload?: boolean //if true then the pageObject is replaced
       builtIn?: Record<string, any>
       done?: Function
-    } = {}
-  ): Promise<void> {
+      onReceive?(obj: { [pageName: string]: any }): Promise<void> | void
+      onAbort?(obj: { [pageName: string]: any }): Promise<void> | void
+      onFirstProcess?(obj: { [pageName: string]: any }): Promise<void> | void
+      onSecondProcess?(obj: { [pageName: string]: any }): Promise<void> | void
+    },
+  ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
 
     const { builtIn, reload } = options
@@ -359,6 +368,7 @@ export default class CADL extends EventEmitter {
     } else {
       //refresh the pageObject
       ; ({ pageCADL } = await this.getPage(pageName))
+      options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
 
     if (this.root[pageName] && reload) {
@@ -389,6 +399,8 @@ export default class CADL extends EventEmitter {
       pageName,
     })
 
+    options?.onFirstProcess && (await options.onFirstProcess?.(FIRST_process))
+
     const SECOND_process = this.processPopulate({
       source: FIRST_process,
       lookFor: ['.', '..', '_', '~'],
@@ -396,6 +408,9 @@ export default class CADL extends EventEmitter {
       withFns: true,
       pageName,
     })
+
+    options?.onSecondProcess &&
+      (await options.onSecondProcess?.(SECOND_process))
 
     //used to call the dispatch function from service modules
     const boundDispatch = this.dispatch.bind(this)
@@ -416,11 +431,22 @@ export default class CADL extends EventEmitter {
       type: 'SET_ROOT_PROPERTIES',
       payload: { properties: processedPage },
     })
+    let aborted = false
 
     //run init commands of page if any
     let init = Object.values(processedPage)[0].init
     if (init) {
-      await this.runInit(processedPage).then((page) => {
+      await this.runInit({
+        pageObject: processedPage,
+        onBeforeInit: options?.onBeforeInit,
+        onInit: options?.onInit,
+        onAfterInit: options?.onAfterInit,
+      }).then((page) => {
+        if (page?.abort) {
+          aborted = true
+          options?.onAbort?.(pageCADL)
+          return
+        }
         //FOR COMPONENTS
         //process components
         const FIRST_processComponents = this.processPopulate({
@@ -491,7 +517,15 @@ export default class CADL extends EventEmitter {
       const FIRST_processComponents = this.processPopulate({
         source: processedPage,
         lookFor: ['.', '..', '_', '~'],
-        skip: ['update', 'check', 'init', 'formData', 'dataIn', 'style', ...skip],
+        skip: [
+          'update',
+          'check',
+          'init',
+          'formData',
+          'dataIn',
+          'style',
+          ...skip,
+        ],
         withFns: true,
         pageName,
       })
@@ -555,6 +589,8 @@ export default class CADL extends EventEmitter {
     if (options.done) {
       options.done()
     }
+
+    if (aborted) return { aborted }
   }
 
   /**
@@ -604,7 +640,7 @@ export default class CADL extends EventEmitter {
    * Retrieves and parses cadl yaml file.
    *
    * @param url
-   * @returns The raw object version of the noodl file
+   * @returns The original object version of the noodl file
    * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
    * @throws {UnableToParseYAML} -When unable to parse yaml file
    *
@@ -617,7 +653,7 @@ export default class CADL extends EventEmitter {
     } catch (error) {
       throw new UnableToRetrieveYAML(
         `Unable to retrieve yaml for ${url}`,
-        error
+        error,
       )
     }
 
@@ -683,20 +719,20 @@ export default class CADL extends EventEmitter {
     let localRoot = pageName ? sourceCopy[pageName] : sourceCopy
 
     //using a clone and deep clone to find references when certain slices of the noodl root are being processed
-    let rootCopy = _.clone(this.root)
+    // let rootCopy = _.clone(this.root)
     let rootDeepCopy = _.cloneDeep(this.root)
-    let localCopy = _.clone(localRoot)
+    // let localCopy = _.clone(localRoot)
     let localDeepCopy = _.clone(localRoot)
     const sourceCopyWithRootKeys = populateKeys({
       source: sourceCopy,
       lookFor: '.',
-      locations: [rootCopy, rootDeepCopy],
+      locations: [rootDeepCopy],
     })
     //populate the keys from the local page object
     const sourceCopyWithLocalKeys = populateKeys({
       source: sourceCopyWithRootKeys,
       lookFor: '..',
-      locations: [localCopy, localDeepCopy],
+      locations: [localDeepCopy],
     })
     const boundDispatch = this.dispatch.bind(this)
     localRoot = pageName
@@ -706,7 +742,7 @@ export default class CADL extends EventEmitter {
       source: sourceCopyWithLocalKeys,
       lookFor,
       skip,
-      locations: [this, rootCopy, rootDeepCopy, localCopy, localDeepCopy],
+      locations: [this, rootDeepCopy, localDeepCopy],
       pageName,
       dispatch: boundDispatch,
     })
@@ -1379,7 +1415,9 @@ export default class CADL extends EventEmitter {
           pageName,
           ifCommand: updateObject,
         })
-        if (res) return res
+        if (res) {
+          return res
+        }
         break
       }
       case 'eval-object': {
@@ -1523,7 +1561,7 @@ export default class CADL extends EventEmitter {
             //if similar request has been made (hash exists)
             //compare recorded timestamp with current timestamp
             const oldTimestamp = moment(
-              apiDispatchBufferObject[hash]?.timestamp
+              apiDispatchBufferObject[hash]?.timestamp,
             )
             const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
             if (timeDiff > limit) {
@@ -1986,10 +2024,21 @@ export default class CADL extends EventEmitter {
    * Runs the init functions of the page matching the pageName.
    *
    * @param pageObject
+   * @param onBeforeInit
+   * @param onInit
+   * @param onAfterInit
    */
-  public async runInit(
+  public async runInit<Init extends any[]>({
+    pageObject = {},
+    onBeforeInit,
+    onInit,
+    onAfterInit,
+  }: {
     pageObject: Record<string, any>
-  ): Promise<Record<string, any>> {
+    onBeforeInit?(init: Init): Promise<void> | void
+    onInit?(current: any, index: number, init: Init): Promise<void> | void
+    onAfterInit?(error: null | Error, init: Init): Promise<void> | void
+  }): Promise<Record<string, any>> {
     return new Promise(async (resolve) => {
       const boundDispatch = this.dispatch.bind(this)
 
@@ -1998,11 +2047,13 @@ export default class CADL extends EventEmitter {
       let init = Object.values(page)[0].init
 
       if (init) {
+        onBeforeInit && (await onBeforeInit?.(init))
         //adds commands to queue
         this.initCallQueue = init.map((_command, index) => index)
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
+          onInit && (await onInit?.(command, currIndex, init))
           let populatedCommand
           if (
             isObject(command) &&
@@ -2025,11 +2076,22 @@ export default class CADL extends EventEmitter {
           if (typeof populatedCommand === 'function') {
             try {
               //TODO: check dispatch function/ side effects work accordingly
+              // const wrapWithDelay = (fn): Promise<void> => {
+              //   return new Promise((resolve) => {
+              //     setTimeout(() => {
+              //       const res = fn()
+              //       if (res && typeof res === 'object' && 'then' in res) {
+              //         fn().then(() => resolve())
+              //       } else resolve()
+              //     }, 3000)
+              //   })
+              // }
               await populatedCommand()
             } catch (error) {
+              onAfterInit?.(error, init)
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init. Check command at index ${currIndex} under init`,
-                error
+                error,
               )
             }
           } else if (
@@ -2067,10 +2129,13 @@ export default class CADL extends EventEmitter {
             }
           } else if (isObject(populatedCommand) && 'if' in populatedCommand) {
             //TODO: add the then condition
-            await this.handleIfCommand({
+            const ifResult = await this.handleIfCommand({
               pageName,
               ifCommand: populatedCommand,
             })
+            if (ifResult?.abort) {
+              resolve({ abort: true })
+            }
           } else if (Array.isArray(populatedCommand)) {
             if (typeof populatedCommand[0][1] === 'function') {
               try {
@@ -2078,7 +2143,7 @@ export default class CADL extends EventEmitter {
               } catch (error) {
                 throw new UnableToExecuteFn(
                   `An error occured while executing ${pageName}.init`,
-                  error
+                  error,
                 )
               }
             }
@@ -2122,6 +2187,7 @@ export default class CADL extends EventEmitter {
             },
           })
         }
+        await onAfterInit?.(null, init)
         resolve(page)
       }
     })
@@ -2339,7 +2405,6 @@ export default class CADL extends EventEmitter {
     if (typeof action.type === 'undefined') {
       throw new Error('Action types cannot be undefined.')
     }
-
     //TODO: add is Dispatching
     this.root = this.reducer(this.root, action)
 
@@ -2608,13 +2673,13 @@ export default class CADL extends EventEmitter {
     if (baseUrlWithVersion.includes('cadlVersion')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${cadlVersion}',
-        this.cadlVersion
+        this.cadlVersion,
       )
     }
     if (baseUrlWithVersion.includes('designSuffix')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${designSuffix}',
-        this.designSuffix
+        this.designSuffix,
       )
     }
     return baseUrlWithVersion
