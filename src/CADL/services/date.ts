@@ -27,7 +27,9 @@ export default {
   getNowLocalTime() {
     return new Date(new Date().toLocaleDateString()).getTime();
   },
-
+  getNowLocalUnixTime() {
+    return Math.ceil(new Date().getTime() / 1000);
+  },
 
   /**
    * return time stamp (s)  date-->to ---> timestamp
@@ -58,7 +60,7 @@ export default {
    * @param timeStamp 
    * @returns 
    */
-  stampToDay(timeStamp) {
+  stampToDay({ timeStamp }) {
     if (!timeStamp) return
     timeStamp = parseInt(timeStamp)
     let date = new Date(timeStamp * 1000)
