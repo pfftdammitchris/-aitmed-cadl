@@ -27,7 +27,9 @@ export default {
   getNowLocalTime() {
     return new Date(new Date().toLocaleDateString()).getTime();
   },
-
+  getNowLocalUnixTime() {
+    return Math.ceil(new Date().getTime() / 1000);
+  },
 
   /**
    * return time stamp (s)  date-->to ---> timestamp
@@ -52,6 +54,21 @@ export default {
         : `${parseInt(timeArray[0]) - 12}:${timeArray[1]}PM`
     }
     return 'timeStamp is null'
+  },
+  /**
+   * timestamp--> year,month,day
+   * @param timeStamp 
+   * @returns 
+   */
+  stampToDay({ timeStamp }) {
+    if (!timeStamp) return
+    timeStamp = parseInt(timeStamp)
+    let date = new Date(timeStamp * 1000)
+    return {
+      year: date.getFullYear(),
+      month: date.getMonth() + 1,
+      day: date.getDate()
+    }
   },
   /**
    * Returns the time stamp interval of a day  (s)
@@ -215,7 +232,17 @@ export default {
     }
     return array
   },
-  splitTime({ object2, timeSlot, year, month, day }) {
+  splitTime({ object2, timeSlot, year, month, day, isSplitCurrent = false }) {
+    console.log('test splitTime', {
+      object2, timeSlot, year, month, day, isSplitCurrent
+    })
+    let currentDate
+    let currentTime
+    if (isSplitCurrent) {
+      currentDate = new Date()
+      currentTime = currentDate.getTime() / 1000
+    }
+
     let date = new Date(year, month - 1, day)
     let anotherDay = date.getTime() / 1000 + 86400
     let splitTimeItem: splitTime
@@ -247,9 +274,19 @@ export default {
               } else {
 
                 if (splitTimeItem['showTime'].indexOf('AM') != -1) {
-                  array.push(splitTimeItem)
+                  if (isSplitCurrent) {
+                    if (splitTimeItem['stime'] > currentTime)
+                      array.push(splitTimeItem)
+                  } else {
+                    array.push(splitTimeItem)
+                  }
                 } else {
-                  array.push(splitTimeItem)
+                  if (isSplitCurrent) {
+                    if (splitTimeItem['stime'] > currentTime)
+                      array.push(splitTimeItem)
+                  } else {
+                    array.push(splitTimeItem)
+                  }
                 }
                 i += 1
               }
