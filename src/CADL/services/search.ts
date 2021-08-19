@@ -9,6 +9,7 @@ let client = new Client({ hosts: 'https://elastic.aitmed.io' })
 let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 //query index
 const INDEX = "doctors_dev"
+const NEWINDEX = "doctors_dev,room_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
@@ -719,7 +720,111 @@ export default {
     let doubArr: {}[] = [];
     doubArr.push(arrOffice);
     doubArr.push(arrTel);
-
     return doubArr;
+  },
+  /**
+   * 
+   * @param cond   => Search term
+   * @param distance =>  Query range
+   * @param pos => address
+   * @param stime => start time
+   * @param etime  => end stime
+   * @returns =>providers and rooms
+   * @author => cmq'code
+   */
+  async queryByAllDate({
+    cond = null,
+    distance = 30,
+    pos = 92805,
+    stime,
+    etime
+  }) {
+
+    let arr: any[] = []
+    if (pos) {
+      // let address
+      await GetQuery(pos).then(
+        (data: LatResponse) => {
+          data = data['data']['features'][0]
+          arr[0] = data.center[0]
+          arr[1] = data.center[1]
+        },
+        (err) => {
+          if (store.env === 'test') {
+            console.log(
+              '%cError',
+              'background: purple; color: white; display: block;',
+              err
+            )
+          }
+        }
+      )
+    }
+    if (typeof stime == 'string' || typeof etime == 'string') {
+      let d = new Date()
+      let dateObject = new Date()
+      dateObject.setMonth(d.getMonth() + 1)
+      dateObject.setDate(d.getDate())
+      dateObject.setFullYear(d.getFullYear())
+      dateObject.setHours(0)
+      dateObject.setMinutes(0)
+      dateObject.setSeconds(0)
+      stime = Date.parse(dateObject.toString()) / 1000
+      etime = stime + 86400
+    }
+    let template: any = {
+      "query": {
+        "bool": {
+          "must": {
+            "function_score": {
+              "query": {
+                "multi_match": {
+                  "query": cond,
+                  "type": "best_fields",
+                  "fields": [
+                    "specialty^2",
+                    "fullName^1",
+                    "service^2",
+                    "facilityName^1"
+                  ],
+                  "fuzziness": "AUTO",
+                  "prefix_length": 2
+                }
+              }
+            }
+          },
+          "filter": [
+            {
+              "range": {
+                "avail": {
+                  "gte": stime,
+                  "lt": etime,
+                  "relation": "intersects"
+                }
+              }
+            },
+            {
+              "geo_distance": {
+                "distance": distance + "mi",
+                "practiceLocation.geoCode": arr[1] + ' , ' + arr[0]
+              }
+            }
+
+          ]
+        }
+      }
+    }
+    const body = await Newclient.search({
+      index: NEWINDEX,
+      body: template,
+    })
+    if (store.env === 'test') {
+      console.log(
+        '%cGet Search response',
+        'background: purple; color: white; display: block;',
+        { index: NEWINDEX, response: body.hits.hits }
+      )
+    }
+    return body.hits.hits
   }
 }
