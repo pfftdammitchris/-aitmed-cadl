@@ -30,18 +30,24 @@ interface LatResponse {
  * @param type the type of document/edge want to sync
  * @returns sync result
  */
-const updateEs = (id, type) => {
+const updateEs = (id, type, bvid) => {
   // convert document type to url 
-  let urlConvert = new Map([['40000', '/avail/'], ['35841', '/docProfile/'], ['79360', '/rsnForVst/']])
+  let urlConvert = new Map(
+    [
+      ['40000', '/avail/'],
+      ['35841', '/docProfile/'],
+      ['79360', '/rsnForVst/'],
+      ['655363', '/room/']
+    ])
   let url = urlConvert.get(type)
+  let data = type == '40000' ? { vid: id, bvid: bvid } : { vid: id }
+
   return new Promise((res, rej) => {
     axios({
       url: url,
       baseURL: esSyncHost,
       method: 'put',
-      data: {
-        vid: id
-      },
+      data: data,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -138,13 +144,14 @@ let Description = (query) => {
 
 
 export default {
-  async updateEsData({ id, type }: {
+  async updateEsData({ id, type, bvid = null }: {
     id: string,
-    type: string
+    type: string,
+    bvid: string | null
   }) {
     let response: any
     if (id) {
-      await updateEs(id, type).then(
+      await updateEs(id, type, bvid).then(
         (data: any) => {
           response = data['data']
         },
