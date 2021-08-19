@@ -943,13 +943,8 @@ export default {
   splitTableList({ arrObj, numX, numY }: { arrObj: { [key: string]: {} }[], numX: number, numY: number }): (({ [key: string]: {} } | number)[] | number)[] {
     let len: number = _.chunk(arrObj, numX).length,
       arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
-      arrTh: number[] = [],
       arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
-    for (let i = 1; i <= len; i++) {
-      // arrTh: display page number
-      arrTh.push(i);
-    }
-    arrT.push(arr, arrTh);
+    arrT.push(arr, len);
     return arrT;
   }
 }
