@@ -677,6 +677,7 @@ export default {
     return
   },
   ShowDateByNumber({ year, month, day, formatType = '' }) {
+    console.log('test ShowDateByNumber', { year, month, day })
     if (
       typeof year == 'string' ||
       typeof month == 'string' ||
@@ -868,11 +869,7 @@ export default {
     return
   },
 
-  transformMonth({ month }) {
-    console.log('test transformMonth', { month: month })
-    if (typeof month == 'string') {
-      return
-    }
+  transformMonth({ month, flag = 1 }) {
     const months = [
       'Jan',
       'Feb',
@@ -887,7 +884,34 @@ export default {
       'Nov',
       'Dec',
     ]
-    return months[month - 1]
+    const monthName = {
+      'Jan': 1,
+      'Feb': 2,
+      'Mar': 3,
+      'Apr': 4,
+      'May': 5,
+      'Jun': 6,
+      'Jul': 7,
+      'Aug': 8,
+      'Sept': 9,
+      'Oct': 10,
+      'Nov': 11,
+      'Dec': 12
+    }
+
+    if (flag == 2) {
+      return monthName[month]
+    } else {
+      return months[month - 1]
+    }
+  },
+  /**
+   * transform year to int type
+   * @param year
+   * @returns 
+   */
+  transformYear({ year }) {
+    return parseInt(year)
   },
   getDurationByMinute({ stime, etime }) {
     return (etime - stime) / 60
@@ -1023,5 +1047,15 @@ export default {
       ((Number(sTimeArr[0]) < Number(eTimeArr[0])) ||
         (Number(sTimeArr[0]) === Number(eTimeArr[0]) && Number(sTimeArr[1]) < Number(eTimeArr[1]))) :
       ((sEndStr === 'AM') && (eEndStr === 'PM') ? true : false);
+  },
+  generateYear({ last = 30, next = 10 }) {
+    let currentYear = new Date().getFullYear()
+    let data: any = []
+    let startYear = currentYear - last
+    for (let i = 0; i < last + next; i++) {
+      data.push(startYear)
+      startYear++
+    }
+    return data
   }
 }
