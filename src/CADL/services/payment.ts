@@ -55,7 +55,7 @@ export default {
                 console.error('  ' + error.message)
               })
               alert(
-                'Unable to process your payment at this time. Please try again later.'
+                'Unable to process your payment at this time. Please try again later.',
               )
               return
             }
@@ -92,8 +92,16 @@ export default {
     document.body.appendChild(sqNode___)
   },
   getPaymentNonce() {
-    //@ts-ignore
-    const nonce = document.getElementById('card-nonce').value
-    return nonce
+    window.postMessage('getPaymentNonce', window.origin)
+    const nonceElem = document.getElementById('card-nonce') as HTMLInputElement
+    if (nonceElem) {
+      return nonceElem.value
+    } else {
+      console.log(
+        `%cNonce element using selector "#card-nonce" not found`,
+        `color:#ec0000;`,
+      )
+    }
+    return ''
   },
 }
