@@ -11,7 +11,7 @@
     "build:js": "rollup -c",
     "build:types": "tsc --emitDeclarationOnly",
     "clean": "rm -rf dist",
-    "watch": "rollup -c -w",
+    "watch": "NODE_ENV=development rollup -c -w",
     "serve:test": "serve test_public",
     "serve:val_ui": "serve public",
     "start:val_ui": "npm-run-all --parallel start:val_ui watch",

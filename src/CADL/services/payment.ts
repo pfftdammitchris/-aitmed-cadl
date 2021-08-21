@@ -1,4 +1,6 @@
 export default {
+  // NOTE: createSqPaymentForm is deprecated. The form is now being rendered
+  // from s3 in an html file from an assetsUrl link
   createSqPaymentForm() {
     const sqNode___ = document.createElement('script')
     sqNode___.type = 'text/javascript'
@@ -92,8 +94,37 @@ export default {
     document.body.appendChild(sqNode___)
   },
   getPaymentNonce() {
-    window.postMessage('getPaymentNonce', window.origin)
+    const iframes = Array.from(document.getElementsByClassName('page'))
+
+    if (iframes.length) {
+      const iframe = iframes[0] as HTMLIFrameElement
+
+      if (iframe) {
+        const iframeDoc = iframe.contentWindow?.document
+        iframe.contentWindow?.postMessage(
+          {
+            getMeTheToken: true,
+          },
+          iframe.contentWindow.origin,
+        )
+        const nonceElem = iframeDoc?.getElementById(
+          'card-nonce',
+        ) as HTMLInputElement
+        const token = nonceElem?.value
+        console.log({ iframeDoc })
+        console.log({ nonceElem })
+        console.log({ token })
+        if (token) return token
+      } else {
+        console.log(
+          `%cCould not find the page component iframe`,
+          `color:#ec0000;`,
+        )
+      }
+    }
+
     const nonceElem = document.getElementById('card-nonce') as HTMLInputElement
+
     if (nonceElem) {
       return nonceElem.value
     } else {
@@ -102,6 +133,7 @@ export default {
         `color:#ec0000;`,
       )
     }
-    return ''
+
+    return
   },
 }
