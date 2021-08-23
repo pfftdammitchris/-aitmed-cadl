@@ -9,6 +9,7 @@ import { terser } from 'rollup-plugin-terser'
 import pkg from './package.json'
 
 const extensions = ['.js', '.ts']
+const _DEV_ = process.env.NODE_ENV === 'development'
 
 export default [
   // CommonJS (for Node) and ES module (for bundlers) build.
@@ -48,7 +49,7 @@ export default [
         extensions,
       }),
       nodePolyfills(),
-      terser({ compress: true }),
+      _DEV_ ? undefined : terser({ compress: true }),
     ],
   },
   {

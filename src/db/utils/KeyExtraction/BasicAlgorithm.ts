@@ -28,7 +28,7 @@ function getObjValues(obj: Object): string[] {
   for (let key of contentMap.keys()) {
     result.push(key)
   }
-  console.log('BasicAlgorithm.ts:55', result)
+  //console.log('BasicAlgorithm.ts:55', result)
   return result
 }
 export default function extract(content: any) {
