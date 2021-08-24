@@ -33,6 +33,7 @@ export default (
     let sqlstr =
       'INSERT INTO ecos_doc_table VALUES (:ctime, :mtime, :atime, :atimes, :id, :name, :deat, :size, :fid, :eid, :bsig, :esig, :subtype, :type, :tage);'
     let params = {}
+    //yuhan
     console.log('insertdoc!!', doc)
     for (let [key, val] of Object.entries(doc)) {
       if (val instanceof Uint8Array) {
