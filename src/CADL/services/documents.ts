@@ -283,6 +283,7 @@ function create({ pageName, apiObject, dispatch }) {
               aesk: name?.aesk,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
+              reid: restOfDocOptions?.reid,
               jwt: restOfDocOptions?.jwt,
               dTypeProps,
             }
@@ -301,6 +302,7 @@ function create({ pageName, apiObject, dispatch }) {
           aesk: name?.aesk,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
+          reid: restOfDocOptions?.reid,
           jwt: restOfDocOptions?.jwt,
           dTypeProps,
         })
@@ -341,6 +343,7 @@ function create({ pageName, apiObject, dispatch }) {
               aesk: name?.aesk,
               type: restOfDocOptions?.type,
               fid: restOfDocOptions?.fid,
+              reid: restOfDocOptions?.reid,
               jwt: restOfDocOptions?.jwt,
               dTypeProps,
             }
@@ -359,6 +362,7 @@ function create({ pageName, apiObject, dispatch }) {
           aesk: name?.aesk,
           type: restOfDocOptions?.type,
           fid: restOfDocOptions?.fid,
+          reid: restOfDocOptions?.reid,
           jwt: restOfDocOptions?.jwt,
           dTypeProps,
           dispatch,
