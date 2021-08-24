@@ -10,6 +10,7 @@ let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 //query index
 const INDEX = "doctors_dev"
 const NEWINDEX = "doctors_dev,room_dev"
+const ROOMINDEX = "room_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
@@ -833,5 +834,58 @@ export default {
       )
     }
     return body.hits.hits
+  },
+  async queryAgain({ type, id }) {
+
+    let template: any = {
+      "query": {
+        "match": {
+          "_id": id
+        }
+      }
+    }
+    let Nowindex = ""
+    if (type === "room") {
+      Nowindex = ROOMINDEX
+    } else if (type === "provider") {
+      Nowindex = INDEX
+    }
+    const body = await Newclient.search({
+      index: Nowindex,
+      body: template,
+    })
+    console.error("cmq==================", Nowindex, body)
+    return body.hits.hits
+  },
+  GetAllLonAndLatNew({ object }) {
+    if (isArray(object)) {
+      let re: Record<string, any> = []
+      object.forEach((obj) => {
+        let st = obj['_source']['practiceLocation']['geoCode'].split(',')
+        let address =
+          obj['_source']['practiceLocation']['street'] +
+          ' ' +
+          obj['_source']['practiceLocation']['city'] +
+          ' ' +
+          obj['_source']['practiceLocation']['state'] +
+          ' ' +
+          obj['_source']['practiceLocation']['zipCode']
+        let Lon = parseFloat(st[1])
+        let Lat = parseFloat(st[0])
+        re.push({
+          data: [Lon, Lat],
+          information: {
+            address: address,
+            name: obj['_source']['fullName'] + ' ' + obj['_source']['title'],
+            phoneNumber: obj['_source']['phoneNumber'],
+            speciality: obj['_source']['specialty'],
+            title: obj['_source']['title'],
+          },
+        })
+      })
+      console.error("cmq")
+      return re
+    }
+    return
   }
 }
