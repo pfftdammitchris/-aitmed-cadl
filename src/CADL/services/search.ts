@@ -854,7 +854,6 @@ export default {
       index: Nowindex,
       body: template,
     })
-    console.error("cmq==================", Nowindex, body)
     return body.hits.hits
   },
   GetAllLonAndLatNew({ object }) {
@@ -883,7 +882,6 @@ export default {
           },
         })
       })
-      console.error("cmq")
       return re
     }
     return
