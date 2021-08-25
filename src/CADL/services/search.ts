@@ -888,6 +888,34 @@ export default {
       return re
     }
     return
+  },
+  GetFacilityLat({ object }) {
+    if (isArray(object)) {
+      let re: Record<string, any> = []
+      object.forEach((obj) => {
+        let st = obj['name']['data']['basicInfo']['geoCode']
+        console.error("cmq", st)
+        let address =
+          obj['name']['data']['basicInfo']['address'] +
+          ' ' +
+          obj['name']['data']['basicInfo']['city'] +
+          ' ' +
+          obj['name']['data']['basicInfo']['state'] +
+          ' ' +
+          obj['name']['data']['basicInfo']['zipCode']
+        let Lon = parseFloat(st[0])
+        let Lat = parseFloat(st[1])
+        re.push({
+          data: [Lon, Lat],
+          information: {
+            address: address
+          },
+        })
+      })
+
+      return re
+    }
+    return
   }
 
 }
