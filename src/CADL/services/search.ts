@@ -714,11 +714,11 @@ export default {
     let arrOffice: any = [];
     let arrTel: any = []
     objArr?.forEach((objItem) => {
-      if (objItem["_source"]["availByLocation"][0]["visitType"] === "Office") {
+      if (objItem["_source"]["visitType"] === "Office Visits") {
         arrOffice.push(objItem);
 
       }
-      else if (objItem["_source"]["availByLocation"][0]["visitType"] === "Telemedicine") {
+      else if (objItem["_source"]["visitType"] === "Telemedicine") {
         arrTel.push(objItem);
         // console.error(objItem);
 
@@ -728,6 +728,7 @@ export default {
     let doubArr: {}[] = [];
     doubArr.push(arrOffice);
     doubArr.push(arrTel);
+
     return doubArr;
   },
   /**
@@ -822,6 +823,8 @@ export default {
         }
       }
     }
+
+
     const body = await Newclient.search({
       index: NEWINDEX,
       body: template,
@@ -886,4 +889,5 @@ export default {
     }
     return
   }
+
 }
