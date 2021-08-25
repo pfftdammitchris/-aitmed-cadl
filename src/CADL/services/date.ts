@@ -153,13 +153,13 @@ export default {
       if (dataArray[i] == today) {
         dataObject.push({
           key: dataArray[i],
-          color: '#ffffff',
-          backgroundColor: '#2988e6',
+          color: '#003d68',
+          backgroundColor: '#d7e2ea',
         })
       } else {
         dataObject.push({
           key: dataArray[i],
-          color: '#000000',
+          color: '#517086',
           backgroundColor: '#ffffff',
         })
       }

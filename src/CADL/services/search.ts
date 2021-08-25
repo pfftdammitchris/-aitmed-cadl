@@ -10,6 +10,7 @@ let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 //query index
 const INDEX = "doctors_dev"
 const NEWINDEX = "doctors_dev,room_dev"
+const ROOMINDEX = "room_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
@@ -30,18 +31,24 @@ interface LatResponse {
  * @param type the type of document/edge want to sync
  * @returns sync result
  */
-const updateEs = (id, type) => {
+const updateEs = (id, type, bvid) => {
   // convert document type to url 
-  let urlConvert = new Map([['40000', '/avail/'], ['35841', '/docProfile/'], ['79360', '/rsnForVst/']])
+  let urlConvert = new Map(
+    [
+      ['40000', '/avail/'],
+      ['35841', '/docProfile/'],
+      ['79360', '/rsnForVst/'],
+      ['655363', '/room/']
+    ])
   let url = urlConvert.get(type)
+  let data = type == '40000' ? { vid: id, bvid: bvid } : { vid: id }
+
   return new Promise((res, rej) => {
     axios({
       url: url,
       baseURL: esSyncHost,
       method: 'put',
-      data: {
-        vid: id
-      },
+      data: data,
       headers: {
         'Content-Type': 'application/json'
       }
@@ -138,13 +145,14 @@ let Description = (query) => {
 
 
 export default {
-  async updateEsData({ id, type }: {
+  async updateEsData({ id, type, bvid = null }: {
     id: string,
-    type: string
+    type: string,
+    bvid: string | null
   }) {
     let response: any
     if (id) {
-      await updateEs(id, type).then(
+      await updateEs(id, type, bvid).then(
         (data: any) => {
           response = data['data']
         },
@@ -706,11 +714,11 @@ export default {
     let arrOffice: any = [];
     let arrTel: any = []
     objArr?.forEach((objItem) => {
-      if (objItem["_source"]["availByLocation"][0]["visitType"] === "Office") {
+      if (objItem["_source"]["visitType"] === "Office Visits") {
         arrOffice.push(objItem);
 
       }
-      else if (objItem["_source"]["availByLocation"][0]["visitType"] === "Telemedicine") {
+      else if (objItem["_source"]["visitType"] === "Telemedicine") {
         arrTel.push(objItem);
         // console.error(objItem);
 
@@ -720,6 +728,7 @@ export default {
     let doubArr: {}[] = [];
     doubArr.push(arrOffice);
     doubArr.push(arrTel);
+
     return doubArr;
   },
   /**
@@ -814,6 +823,8 @@ export default {
         }
       }
     }
+
+
     const body = await Newclient.search({
       index: NEWINDEX,
       body: template,
@@ -826,5 +837,85 @@ export default {
       )
     }
     return body.hits.hits
+  },
+  async queryAgain({ type, id }) {
+
+    let template: any = {
+      "query": {
+        "match": {
+          "_id": id
+        }
+      }
+    }
+    let Nowindex = ""
+    if (type === "room") {
+      Nowindex = ROOMINDEX
+    } else if (type === "provider") {
+      Nowindex = INDEX
+    }
+    const body = await Newclient.search({
+      index: Nowindex,
+      body: template,
+    })
+    return body.hits.hits
+  },
+  GetAllLonAndLatNew({ object }) {
+    if (isArray(object)) {
+      let re: Record<string, any> = []
+      object.forEach((obj) => {
+        let st = obj['_source']['practiceLocation']['geoCode'].split(',')
+        let address =
+          obj['_source']['practiceLocation']['street'] +
+          ' ' +
+          obj['_source']['practiceLocation']['city'] +
+          ' ' +
+          obj['_source']['practiceLocation']['state'] +
+          ' ' +
+          obj['_source']['practiceLocation']['zipCode']
+        let Lon = parseFloat(st[1])
+        let Lat = parseFloat(st[0])
+        re.push({
+          data: [Lon, Lat],
+          information: {
+            address: address,
+            name: obj['_source']['fullName'] + ' ' + obj['_source']['title'],
+            phoneNumber: obj['_source']['phoneNumber'],
+            speciality: obj['_source']['specialty'],
+            title: obj['_source']['title'],
+          },
+        })
+      })
+      return re
+    }
+    return
+  },
+  GetFacilityLat({ object }) {
+    if (isArray(object)) {
+      let re: Record<string, any> = []
+      object.forEach((obj) => {
+        let st = obj['name']['data']['basicInfo']['geoCode']
+        console.error("cmq", st)
+        let address =
+          obj['name']['data']['basicInfo']['address'] +
+          ' ' +
+          obj['name']['data']['basicInfo']['city'] +
+          ' ' +
+          obj['name']['data']['basicInfo']['state'] +
+          ' ' +
+          obj['name']['data']['basicInfo']['zipCode']
+        let Lon = parseFloat(st[0])
+        let Lat = parseFloat(st[1])
+        re.push({
+          data: [Lon, Lat],
+          information: {
+            address: address
+          },
+        })
+      })
+
+      return re
+    }
+    return
   }
+
 }
