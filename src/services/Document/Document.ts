@@ -39,6 +39,7 @@ export const create: DocumentTypes.Create = async ({
   aesk,
   targetRoomName,
   fid,
+  reid,  // transform to esig in lvl2
   mediaType,
   dataType = 0,
   dTypeProps,
@@ -204,6 +205,7 @@ export const create: DocumentTypes.Create = async ({
   const response = await store.level2SDK.documentServices
     .createDocument({
       eid: edge.eid,
+      eSig: reid, // transform to esig in lvl2
       type,
       subtype: dType.value,
       name,

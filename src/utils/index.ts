@@ -24,7 +24,7 @@ export function ecosObjType(id: string | Uint8Array): string {
       return 'DOCUMENT'
     case 2:
       return 'EDGE'
-    case 1:
+    case 3:
       return 'FILE'
     default:
       return 'UNKNOWN'
@@ -217,8 +217,7 @@ export function valPageJump(
           if (!validPages.includes(cadlObject[key])) {
             errors.push(
               new InvalidDestination(
-                `${
-                  cadlObject[key] !== '' ? cadlObject[key] : null
+                `${cadlObject[key] !== '' ? cadlObject[key] : null
                 } is not a valid page destination.`
               )
             )
