@@ -20,7 +20,7 @@ const config = localStorage?.getItem('config')
 let esSyncHost =
   typeof config == 'string'
     ? JSON.parse(config)?.syncHost
-    : 'https://sync.aitmed.io:443/'
+    : 'https://syncd.aitmed.io:443/'
 
 interface LatResponse {
   center: any[]
