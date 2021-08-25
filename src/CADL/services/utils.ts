@@ -105,4 +105,30 @@ export default {
   getPhoneNumber(num: string) {
     return num.split(' ')[1]
   },
+  getTempParams() {
+    let tempParams: any = localStorage.getItem('tempParams')
+    tempParams = typeof tempParams == 'string' ? JSON.parse(tempParams) : {}
+    return tempParams
+  },
+  setTempParams({ Object }) {
+    if (Object) {
+      let tempParams: any = localStorage.getItem('tempParams')
+      tempParams = typeof tempParams == 'string' ? JSON.parse(tempParams) : {}
+      let keys = Object.keys(Object)
+      for (let i = 0; i < keys.length; i++) {
+        tempParams[keys[i]] = Object[keys[i]]
+      }
+      localStorage.setItem('tempParams', JSON.stringify(tempParams))
+    }
+
+  },
+  removeTempParams() {
+    localStorage.removeItem('tempParams')
+  },
+  removeKeyTempParams({ key }) {
+    let tempParams: any = localStorage.getItem('tempParams')
+    tempParams = typeof tempParams == 'string' ? JSON.parse(tempParams) : {}
+    delete tempParams[key]
+    localStorage.setItem('tempParams', JSON.stringify(tempParams))
+  }
 }
