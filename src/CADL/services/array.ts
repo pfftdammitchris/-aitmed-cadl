@@ -946,5 +946,20 @@ export default {
       arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
     arrT.push(arr, len);
     return arrT;
+  },
+  /**
+   * 
+   * @param param array: array any
+   * @returns boolean
+   * 
+   */
+  isArrayEmpty({ array }: { array: any[] }): boolean {
+    if (array.length === 0) {
+      return true
+    }
+    return false
+
   }
+
+
 }
