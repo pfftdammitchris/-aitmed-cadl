@@ -948,9 +948,10 @@ export default {
     return arrT;
   },
   /**
-   * if the array is empty or not
-   * @param param0 : array 
-   * @returns 
+   * 
+   * @param param array: array any
+   * @returns boolean
+   * 
    */
   isArrayEmpty({ array }: { array: any[] }): boolean {
     if (array.length === 0) {
