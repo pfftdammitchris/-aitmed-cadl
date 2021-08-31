@@ -2481,8 +2481,9 @@ export default class CADL extends EventEmitter {
 
                 // for adding new doc 
               } else if (!Array.isArray(currVal.doc) && isObject(newVal.doc)) {
-                currVal.doc = []
-                currVal.doc.push(newVal.doc)
+                // currVal.doc = []
+                // currVal.doc.push(newVal.doc)
+                currVal.doc = newVal.doc
               }
 
               else if ('id' in currVal) {
