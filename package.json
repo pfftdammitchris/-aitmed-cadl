@@ -1,6 +1,6 @@
 {
   "name": "@aitmed/cadl",
-  "version": "1.0.364",
+  "version": "1.0.365",
   "description": "A package with utilities to manage and process CADL files.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
