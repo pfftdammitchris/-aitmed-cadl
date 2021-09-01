@@ -1,6 +1,5 @@
-import _, { isArray } from 'lodash'
+import _, { isArray, get } from 'lodash'
 import store from '../../common/store'
-import object from './object'
 // import object from './object'
 type connection = {
   name: string
@@ -964,16 +963,37 @@ export default {
 
   /**
    * Generate the corresponding page name according to the title of the doc
-   * @param object 
-   * @param type 
-   * @returns array
+   * @param array: Array to be processed 
+   * @param type : 'Edit' | 'Review' | 'Preview'
+   * @param dataKey : path of key such as "name.title" 
+   * @returns array｜[]
    */
-  transformPage({ object, type }: { object: Object | null, type: 'Edit' | 'Review' }) {
-    if (isArray(object)) {
-      object.forEach((obj: any) => {
-        obj.pageName = `${obj.name.title + '' + type + 'Page1'}`
+  transformPage(
+    { array, type, dataKey }:
+      { array: any, type: 'Edit' | 'Review' | 'Preview', dataKey: string }
+  ) {
+    let mapping = {
+      'New Patient Forms': 'NewPatForm',
+      'COVID-19 Testing Consent - New Patient': 'Cov19TestNewPat',
+      'COVID-19 Testing Consent Form': 'Cov19TestForm',
+      'Pifzer-BioNTech Vaccine - First Dose': 'PifzerVaccineFirDose',
+      'Pifzer-BioNTech Vaccine - Second Dose': 'PifzerVaccineSecDose',
+      'Moderna Vaccine Form - First Dose': 'ModernaVaccineFirDose',
+      'Moderna Vaccine Form - Second Dose': 'ModernaVaccineSecDose'
+    }
+    let title
+    let space
+    if (isArray(array)) {
+      array.forEach((obj: any) => {
+        title = get(obj, dataKey).trim()
+        space = title.split(" ")
+        if (space.length != 1) {
+          obj.pageName = `${mapping[title] + '' + type + 'Page1'}`
+        } else {
+          obj.pageName = `${title + '' + type + 'Page1'}`
+        }
       })
-      return object
+      return array
     }
     return []
   }
