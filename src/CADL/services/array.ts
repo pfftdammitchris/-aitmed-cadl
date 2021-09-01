@@ -1,5 +1,6 @@
 import _, { isArray } from 'lodash'
 import store from '../../common/store'
+import object from './object'
 // import object from './object'
 type connection = {
   name: string
@@ -959,6 +960,22 @@ export default {
     }
     return false
 
+  },
+
+  /**
+   * Generate the corresponding page name according to the title of the doc
+   * @param object 
+   * @param type 
+   * @returns array
+   */
+  TransformPage({ object, type }: { object: Object | null, type: 'Edit' | 'Review' }) {
+    if (isArray(object)) {
+      object.forEach((obj: any) => {
+        obj.pageName = `${obj.name.title + '' + type + 'Page1'}`
+      })
+      return object
+    }
+    return []
   }
 
 
