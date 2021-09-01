@@ -968,7 +968,7 @@ export default {
    * @param type 
    * @returns array
    */
-  TransformPage({ object, type }: { object: Object | null, type: 'Edit' | 'Review' }) {
+  transformPage({ object, type }: { object: Object | null, type: 'Edit' | 'Review' }) {
     if (isArray(object)) {
       object.forEach((obj: any) => {
         obj.pageName = `${obj.name.title + '' + type + 'Page1'}`
