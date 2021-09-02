@@ -996,5 +996,22 @@ export default {
       return array
     }
     return []
+  },
+  /**
+   * Converted to array to object array
+   * @param array
+   * @returns 
+   */
+  transformArray({ array }) {
+    let res: any = []
+    if (isArray(array)) {
+      array.forEach(arr => {
+        res.push({
+          key: arr
+        })
+      })
+      return res
+    }
+    return []
   }
 }
