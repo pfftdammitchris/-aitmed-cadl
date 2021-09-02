@@ -941,11 +941,16 @@ export default {
    * @returns 
    */
   splitTableList({ arrObj, numX, numY }: { arrObj: { [key: string]: {} }[], numX: number, numY: number }): (({ [key: string]: {} } | number)[] | number)[] {
-    let len: number = _.chunk(arrObj, numX).length,
-      arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
-      arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
-    arrT.push(arr, len);
-    return arrT;
+    let len: number = _.chunk(arrObj, numX).length;
+    // if the length = 0 , array[0] will return undenfin
+    if (len === 0) {
+      return [[], len]
+    } else {
+      let arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
+        arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
+      arrT.push(arr, len);
+      return arrT;
+    }
   },
   /**
    * 
@@ -994,6 +999,23 @@ export default {
         }
       })
       return array
+    }
+    return []
+  },
+  /**
+   * Converted to array to object array
+   * @param array
+   * @returns 
+   */
+  transformArray({ array }) {
+    let res: any = []
+    if (isArray(array)) {
+      array.forEach(arr => {
+        res.push({
+          key: arr
+        })
+      })
+      return res
     }
     return []
   }
