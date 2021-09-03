@@ -163,4 +163,33 @@ export default {
       })
     }
   },
+  async updateDocListReid({ sourceDocList, reid }) {
+    for (let i = 0; i < sourceDocList.length; i++) {
+      const document = await retrieveDocument(sourceDocList[i].id)
+      const note = await documentToNote({ document })
+      let content = note?.name?.data
+      if (typeof content === 'string') {
+        content = await store.level2SDK.utilServices.base64ToBlob(
+          note?.name?.data,
+          note?.name?.type
+        )
+      }
+      const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+      const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      const data: any = await store.level2SDK.edgeServices.createEdge({
+        bvid: id,
+        type: 1030
+      })
+      await Document.update(note?.id, {
+        edge_id: edge_id,
+        content: content,
+        reid: reid,
+        jwt: data?.jwt
+      })
+      await store.level2SDK.edgeServices.createEdge({
+        bvid: localStorage.getItem('user_vid')?.toString(),
+        type: 1030
+      })
+    }
+  },
 }

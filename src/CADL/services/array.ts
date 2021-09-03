@@ -1,4 +1,4 @@
-import _, { isArray } from 'lodash'
+import _, { isArray, get } from 'lodash'
 import store from '../../common/store'
 // import object from './object'
 type connection = {
@@ -953,11 +953,16 @@ export default {
    * @returns 
    */
   splitTableList({ arrObj, numX, numY }: { arrObj: { [key: string]: {} }[], numX: number, numY: number }): (({ [key: string]: {} } | number)[] | number)[] {
-    let len: number = _.chunk(arrObj, numX).length,
-      arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
-      arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
-    arrT.push(arr, len);
-    return arrT;
+    let len: number = _.chunk(arrObj, numX).length;
+    // if the length = 0 , array[0] will return undenfin
+    if (len === 0) {
+      return [[], len]
+    } else {
+      let arr: ({ [key: string]: ({}) } | number)[] = _.chunk(arrObj, numX)[numY - 1],
+        arrT: (({ [key: string]: {} } | number)[] | number)[] = [];
+      arrT.push(arr, len);
+      return arrT;
+    }
   },
   /**
    * 
@@ -971,7 +976,59 @@ export default {
     }
     return false
 
+  },
+
+  /**
+   * Generate the corresponding page name according to the title of the doc
+   * @param array: Array to be processed 
+   * @param type : 'Edit' | 'Review' | 'Preview'
+   * @param dataKey : path of key such as "name.title" 
+   * @returns array｜[]
+   */
+  transformPage(
+    { array, type, dataKey }:
+      { array: any, type: 'Edit' | 'Review' | 'Preview', dataKey: string }
+  ) {
+    let mapping = {
+      'New Patient Forms': 'NewPatForm',
+      'COVID-19 Testing Consent - New Patient': 'Cov19TestNewPat',
+      'COVID-19 Testing Consent Form': 'Cov19TestForm',
+      'Pifzer-BioNTech Vaccine - First Dose': 'PifzerVaccineFirDose',
+      'Pifzer-BioNTech Vaccine - Second Dose': 'PifzerVaccineSecDose',
+      'Moderna Vaccine Form - First Dose': 'ModernaVaccineFirDose',
+      'Moderna Vaccine Form - Second Dose': 'ModernaVaccineSecDose'
+    }
+    let title
+    let space
+    if (isArray(array)) {
+      array.forEach((obj: any) => {
+        title = get(obj, dataKey).trim()
+        space = title.split(" ")
+        if (space.length != 1) {
+          obj.pageName = `${mapping[title] + '' + type + 'Page1'}`
+        } else {
+          obj.pageName = `${title + '' + type + 'Page1'}`
+        }
+      })
+      return array
+    }
+    return []
+  },
+  /**
+   * Converted to array to object array
+   * @param array
+   * @returns 
+   */
+  transformArray({ array }) {
+    let res: any = []
+    if (isArray(array)) {
+      array.forEach(arr => {
+        res.push({
+          key: arr
+        })
+      })
+      return res
+    }
+    return []
   }
-
-
 }
