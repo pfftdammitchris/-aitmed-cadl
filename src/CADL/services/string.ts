@@ -288,5 +288,11 @@ export default {
       return fid
     }
   },
+  bitFormatting(bitNum: number): string {
+    if (bitNum === 0) return '0 B';
+    let k = 1024, sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], i = Math.floor(Math.log(bitNum) / Math.log(k));
+    let num = bitNum / Math.pow(k, i);
+    return num.toFixed(2) + ' ' + sizes[i];
+  }
 
 }
