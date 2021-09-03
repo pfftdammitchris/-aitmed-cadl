@@ -22,6 +22,17 @@ export default {
     }
     return
   },
+  setObjectKey({ objectArr, key, value }: { objectArr: {}[], key: string, value: any }): {}[] {
+    Array.from(objectArr).forEach((object) => {
+      if (_.isObject(object)) {
+        _.set(object, key, value)
+      }
+
+    })
+    return objectArr;
+
+  },
+
   get({ object, key }) {
     if (isObject(object)) {
       if (object[key] == "")
@@ -38,6 +49,17 @@ export default {
       return false
     }
     return
+  },
+  objectHasValue({ objArr, valPath }: { objArr: { [key: string]: {} }[], valPath: string }): boolean {
+    let objBool = false;
+    Array.from(objArr).forEach((obj) => {
+      if (obj[valPath] !== false) {
+        objBool = true;
+        return objBool;
+      }
+    })
+
+    return objBool;
   },
   //clears one key of all items of object, and set one item，for list radio
   clearAndSetKey({ object, item, key, value }) {

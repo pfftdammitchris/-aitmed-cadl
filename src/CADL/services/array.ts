@@ -257,6 +257,18 @@ export default {
     }
     return false
   },
+  judgeListLength({ array, len }: { array: [], len: number }): boolean {
+
+    if (isArray(array)) {
+
+      if (array.length === len) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+    return false;
+  },
   hasKey({ object, key }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
