@@ -55,6 +55,7 @@ export default {
         objBool = true;
         return objBool;
       }
+      return objBool;
     })
 
     return objBool;
