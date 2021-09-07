@@ -187,12 +187,21 @@ export default {
     }
   },
 
-  async updateReidDocListType({ sourceDocList, targetBit, targetValue }) {
+  /**
+   * For each doc id in the sourceDocList as the doc pointed to by the reid, 
+   * and update the pointed doc
+   * @param sourceDocList 
+   * @param targetBit 
+   * @param targetValue 
+   * @param sCondition 
+   */
+  async updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition }) {
     let idList
     for (let i = 0; i < sourceDocList.length; i++) {
       idList = [sourceDocList[i]]
       let requestOptions = {
-        xfname: 'reid'
+        xfname: 'reid',
+        scondition: sCondition,
       }
       let reidDocs = await store.level2SDK.documentServices
         .retrieveDocument({
