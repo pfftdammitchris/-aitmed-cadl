@@ -355,7 +355,7 @@ export default {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
         let m =
-          date.getMonth() + 1 > 10
+          date.getMonth() + 1 >= 10
             ? date.getMonth() + 1
             : '0' + (date.getMonth() + 1)
         let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`

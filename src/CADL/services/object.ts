@@ -27,10 +27,8 @@ export default {
       if (_.isObject(object)) {
         _.set(object, key, value)
       }
-
     })
     return objectArr;
-
   },
 
   get({ object, key }) {
