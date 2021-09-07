@@ -293,6 +293,13 @@ export default {
     let k = 1024, sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'], i = Math.floor(Math.log(bitNum) / Math.log(k));
     let num = bitNum / Math.pow(k, i);
     return num.toFixed(2) + ' ' + sizes[i];
+  },
+  equalsLenString({ stringOne, stringTwo, len }: { stringOne: string, stringTwo: string, len: number }): boolean {
+    for (let i = 0; i < len; i++) {
+      if (stringOne[i] !== stringTwo[i]) {
+        return false
+      }
+    }
+    return true
   }
-
 }
