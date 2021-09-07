@@ -10,12 +10,9 @@ import Document from '../../services/Document'
  * @returns 
  */
 function getBitValue(sourceNum, bit) {
-  if (bit < 8) {
-    let value = parseInt(sourceNum).toString(2)
-    let len = value.length
-    return value[len - bit - 1]
-  }
-  return
+  let value = parseInt(sourceNum).toString(2)
+  let len = value.length
+  return value[len - bit - 1]
 }
 /**
  * Set 0 or 1 to the specified bit
@@ -25,15 +22,12 @@ function getBitValue(sourceNum, bit) {
  * @returns 
  */
 function setBitValue(sourceNum, bit, targetValue: 1 | 0) {
-  if (bit < 8) {
-    let value = parseInt(sourceNum).toString(2)
-    let len = value.length
-    let valueArray = value.split('')
-    valueArray.splice(len - bit - 1, 1, targetValue.toString())
-    let newValue = valueArray.join('')
-    return parseInt(newValue, 2)
-  }
-  return
+  let value = parseInt(sourceNum).toString(2)
+  let len = value.length
+  let valueArray = value.split('')
+  valueArray.splice(len - bit - 1, 1, targetValue.toString())
+  let newValue = valueArray.join('')
+  return parseInt(newValue, 2)
 }
 
 export default {
@@ -163,4 +157,98 @@ export default {
       })
     }
   },
+  async updateDocListReid({ sourceDocList, reid }) {
+    for (let i = 0; i < sourceDocList.length; i++) {
+      const document = await retrieveDocument(sourceDocList[i].id)
+      const note = await documentToNote({ document })
+      let content = note?.name?.data
+      if (typeof content === 'string') {
+        content = await store.level2SDK.utilServices.base64ToBlob(
+          note?.name?.data,
+          note?.name?.type
+        )
+      }
+      const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+      const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      const data: any = await store.level2SDK.edgeServices.createEdge({
+        bvid: id,
+        type: 1030
+      })
+      await Document.update(note?.id, {
+        edge_id: edge_id,
+        content: content,
+        reid: reid,
+        jwt: data?.jwt
+      })
+      await store.level2SDK.edgeServices.createEdge({
+        bvid: localStorage.getItem('user_vid')?.toString(),
+        type: 1030
+      })
+    }
+  },
+
+  /**
+   * For each doc id in the sourceDocList as the doc pointed to by the reid, 
+   * and update the pointed doc
+   * @param sourceDocList 
+   * @param targetBit 
+   * @param targetValue 
+   * @param sCondition 
+   */
+  async updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition }) {
+    let idList
+    for (let i = 0; i < sourceDocList.length; i++) {
+      idList = [sourceDocList[i]]
+      let requestOptions = {
+        xfname: 'reid',
+        scondition: sCondition,
+      }
+      let reidDocs = await store.level2SDK.documentServices
+        .retrieveDocument({
+          idList,
+          options: requestOptions,
+        })
+      let reidDocList = reidDocs.data.document
+      for (let j = 0; j < reidDocList.length; j++) {
+        const document = reidDocList[j]
+        const note = await documentToNote({ document })
+        let content = note?.name?.data
+        if (typeof content === 'string') {
+          content = await store.level2SDK.utilServices.base64ToBlob(
+            note?.name?.data,
+            note?.name?.type
+          )
+        }
+
+        const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+        const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+        const data: any = await store.level2SDK.edgeServices.createEdge({
+          bvid: id,
+          type: 1030
+        })
+
+
+        let newType = note?.type
+        let bitValue = getBitValue(note?.type, targetBit)
+        if (bitValue != targetValue) {
+          newType = setBitValue(note?.type, targetBit, targetValue)
+        } else {
+          continue
+        }
+        await Document.update(note?.id, {
+          edge_id: edge_id,
+          content: content,
+          type: newType,
+          jwt: data?.jwt
+        })
+
+        await store.level2SDK.edgeServices.createEdge({
+          bvid: localStorage.getItem('user_vid')?.toString(),
+          type: 1030
+        })
+      }
+
+    }
+  },
+
 }

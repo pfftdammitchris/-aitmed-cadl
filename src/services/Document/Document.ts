@@ -276,7 +276,7 @@ export const retrieve = async (id, _edge) => {
  */
 export const update: any = async (
   id,
-  { edge_id, title, content, mediaType, tags, type, dTypeProps, jwt }
+  { edge_id, title, content, mediaType, tags, type, dTypeProps, jwt, reid }
 ) => {
   // Get original document
   const document = await retrieveDocument(id)
@@ -422,6 +422,7 @@ export const update: any = async (
       size: blob.size,
       type,
       jwt,
+      eSig: reid,
     })
     if (!response || response.code !== 0) {
       throw new AiTmedError({

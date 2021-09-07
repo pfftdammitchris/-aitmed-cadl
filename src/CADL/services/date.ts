@@ -355,7 +355,7 @@ export default {
         let date = new Date(object['stime'] * 1000)
         let y = date.getFullYear()
         let m =
-          date.getMonth() + 1 > 10
+          date.getMonth() + 1 >= 10
             ? date.getMonth() + 1
             : '0' + (date.getMonth() + 1)
         let d = date.getDate() < 10 ? `0${date.getDate()}` : `${date.getDate()}`
@@ -1057,5 +1057,23 @@ export default {
       startYear++
     }
     return data
+  },
+  formatData(timeStamp): string {
+    timeStamp = timeStamp * 1000;
+    function formatAMPM(date: Date) {
+      let hours = date.getHours();
+      let minutes: string | number = date.getMinutes();
+      let ampm = hours >= 12 ? 'pm' : 'am';
+      hours = hours % 12;
+      hours = hours ? hours : 12;
+      minutes = minutes < 10 ? '0' + minutes : minutes;
+      let strTime = hours + ':' + minutes + ' ' + ampm;
+      return strTime;
+    }
+    if (timeStamp >= new Date(new Date().toLocaleDateString()).getTime()) {
+      return formatAMPM(new Date(timeStamp))
+    } else {
+      return (new Date(timeStamp).toDateString().split(" ")[1] + "\u0020" + new Date(timeStamp).toDateString().split(" ")[2])
+    }
   }
 }
