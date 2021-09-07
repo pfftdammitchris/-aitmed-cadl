@@ -188,8 +188,8 @@ export default {
   },
 
   /**
-   * For each doc id in the sourceDocList as the doc pointed to by the reid, 
-   * and update the pointed doc
+   * Query each doc id in the sourceDocList as the doc pointed to by the reid,
+   *  and update the type for these doc
    * @param sourceDocList 
    * @param targetBit 
    * @param targetValue 
@@ -198,7 +198,7 @@ export default {
   async updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition }) {
     let idList
     for (let i = 0; i < sourceDocList.length; i++) {
-      idList = [sourceDocList[i]]
+      idList = [sourceDocList[i].id]
       let requestOptions = {
         xfname: 'reid',
         scondition: sCondition,
@@ -250,5 +250,82 @@ export default {
 
     }
   },
+
+  /**
+   * Establish a connection between the doc array of the email and the doc of the folder (doc(type=3084))
+   * @param sourceDocList 
+   * @param folder 
+   * @param eid 
+   */
+  async createFolderTag({ sourceDocList, folder, eid }) {
+    let idList
+    const type: any = 3840
+    const content: any = ""
+    const targetRoomName: any = ""
+    for (let i = 0; i < sourceDocList.length; i++) {
+      //Check if doc(type=3840) exists
+      idList = [sourceDocList[i].id, folder]
+      const requestOptions = {
+        xfname: 'reid,fid',
+        type: 3840,
+      }
+      const linkDocs = await store.level2SDK.documentServices
+        .retrieveDocument({
+          idList,
+          options: requestOptions,
+        })
+      const folderTags = linkDocs.data.document
+      if (folderTags.length == 0) {
+        await Document.create({
+          content,
+          targetRoomName,
+          title: "",
+          user: "",
+          reid: sourceDocList[i].id,
+          edge_id: eid,
+          fid: folder,
+          type: type,
+        })
+      }
+    }
+  },
+
+  /**
+   * Delete the link between the doc array of the email and the doc of the folder (doc(type=3084))
+   * @param sourceDocList 
+   * @param folder 
+   */
+  async deleteFolderTag({ sourceDocList, folder }) {
+    let idList
+    for (let i = 0; i < sourceDocList.length; i++) {
+      idList = [sourceDocList[i].id, folder]
+      const requestOptions = {
+        xfname: 'reid,fid',
+        type: 3840,
+      }
+      const linkDocs = await store.level2SDK.documentServices
+        .retrieveDocument({
+          idList,
+          options: requestOptions,
+        })
+      const folderTags = linkDocs.data.document
+      for (let j = 0; j < folderTags.length; j++) {
+        const document = folderTags[j]
+        const note = await documentToNote({ document })
+        const res = await store.level2SDK.commonServices.deleteRequest([
+          note.id,
+        ])
+        if (store.env === 'test') {
+          console.log(
+            '%cDelete Object Response',
+            'background: purple; color: white; display: block;',
+            res
+          )
+        }
+      }
+
+    }
+  }
+
 
 }
