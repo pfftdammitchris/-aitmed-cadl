@@ -230,5 +230,54 @@ export default {
       else
         object[item] = " "
     })
+  },
+  extractingFeatureStrings({ objArrs, pathObj, bool }: { objArrs: {}[], pathObj: string[], bool?: boolean }): string | { [key: string]: string[] }[] {
+    let objArr: any[] = [], objArrData: any[] = [], itemName: string[] = [], objNameArr: {}[] = [], hj: { [key: string]: {}[] } = {}, newArr: string[] = [];
+    objArrs.forEach((o: {}) => {
+      pathObj.forEach((item) => {
+        itemName.push(item.split(".")[item.split(".").length - 1]);
+        objArrData.push(_.get(o, item, "default"));
+      })
+      objArr.push(_.get(o, pathObj[0], "default"));
+      objNameArr.push(_.zipObject(itemName, objArrData));
+    })
+
+    if (objArr.length === 0) {
+      return "The array is empty";
+    }
+    if (bool) {
+      objArr.map((value, index, arr) => { arr[index] = value[0].toLocaleUpperCase() + value.slice(1); objArr = arr });
+    }
+    objArr.sort();
+    for (let arr of objArr) {
+      if (!(arr in newArr) && /[a-zA-Z]+/.test(arr.charAt(0))) {
+        newArr.push(arr.charAt(0));
+      }
+    }
+    let newArrLen: number = newArr.length;
+    let objValues: any[] = []
+    for (let newArrIn = 0; newArrIn < newArrLen; newArrIn++) {
+      hj[newArr[newArrIn]] = new Array();
+      objNameArr.forEach((item) => {
+        if ((item[itemName[0]].charAt(0) as string).toLocaleUpperCase() === newArr[newArrIn] && (/[a-zA-Z]+/.test(item[itemName[0]].charAt(0)))) {
+
+          hj[newArr[newArrIn]].push(item)
+        }
+      })
+    }
+    objNameArr.forEach((item) => {
+      if (!(/[a-zA-Z]+/.test(item[itemName[0]].charAt(0)))) {
+        objValues.push(item);
+      }
+    })
+    objArr = [];
+    for (let [key, value] of Object.entries(hj)) {
+      objArr.push(_.zipObject(["index", "data"], [key, value]));
+    }
+    if (objValues.length !== 0) {
+      objArr.unshift(_.zipObject(["index", "data"], ["#", objValues]));
+
+    }
+    return objArr;
   }
 }
