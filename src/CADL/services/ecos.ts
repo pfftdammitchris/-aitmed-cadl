@@ -174,6 +174,12 @@ export default {
         bvid: id,
         type: 1030
       })
+      console.log('test', {
+        edge_id: edge_id,
+        content: content,
+        reid: reid,
+        jwt: data?.jwt
+      })
       await Document.update(note?.id, {
         edge_id: edge_id,
         content: content,
@@ -213,7 +219,7 @@ export default {
         const document = reidDocList[j]
         const note = await documentToNote({ document })
         let content = note?.name?.data
-        if (typeof content === 'string') {
+        if (typeof content == 'string' && content != 'undefined') {
           content = await store.level2SDK.utilServices.base64ToBlob(
             note?.name?.data,
             note?.name?.type
