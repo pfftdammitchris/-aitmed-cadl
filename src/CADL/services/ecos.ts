@@ -12,7 +12,7 @@ import Document from '../../services/Document'
 function getBitValue(sourceNum, bit) {
   let value = parseInt(sourceNum).toString(2)
   let len = value.length
-  return value[len - bit - 1]
+  return value[len - bit]
 }
 /**
  * Set 0 or 1 to the specified bit
@@ -25,7 +25,7 @@ function setBitValue(sourceNum, bit, targetValue: 1 | 0) {
   let value = parseInt(sourceNum).toString(2)
   let len = value.length
   let valueArray = value.split('')
-  valueArray.splice(len - bit - 1, 1, targetValue.toString())
+  valueArray.splice(len - bit, 1, targetValue.toString())
   let newValue = valueArray.join('')
   return parseInt(newValue, 2)
 }
