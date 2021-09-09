@@ -201,7 +201,7 @@ export default {
    * @param targetValue 
    * @param sCondition 
    */
-  async updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition }) {
+  async updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition, eid }) {
     let idList
     for (let i = 0; i < sourceDocList.length; i++) {
       idList = [sourceDocList[i].id]
@@ -215,6 +215,28 @@ export default {
           options: requestOptions,
         })
       let reidDocList = reidDocs.data.document
+
+      //create doc
+      if (reidDocList.lenght == 0) {
+        let type: any = 3584
+        const content: any = ""
+        const targetRoomName: any = ""
+        let bitValue = getBitValue(type, targetBit)
+        if (bitValue != targetValue) {
+          type = setBitValue(type, targetBit, targetValue)
+        }
+        await Document.create({
+          content,
+          targetRoomName,
+          title: "",
+          user: "",
+          reid: sourceDocList[i].id,
+          edge_id: eid,
+          type: type,
+        })
+      }
+
+      //update type
       for (let j = 0; j < reidDocList.length; j++) {
         const document = reidDocList[j]
         const note = await documentToNote({ document })
