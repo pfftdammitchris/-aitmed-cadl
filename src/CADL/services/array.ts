@@ -120,6 +120,19 @@ export default {
     }
     return
   },
+  removeObjectByValue({ object, values, value }: { object: {}[], values: string, value: string }) {
+    if (isArray(object)) {
+      for (let i = 0; i < object.length; i++) {
+        if (_.get(object[i], values) == value) {
+          // TO DO: how to handle objects with same key? should they all be deleted, or just delete first one?
+          // Should duplicate object key made not allowed using add method?
+          object.splice(i, 1)
+          return
+        }
+      }
+    }
+    return
+  },
   removeById({ object, id }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
