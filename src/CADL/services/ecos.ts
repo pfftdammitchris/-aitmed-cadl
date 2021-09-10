@@ -217,7 +217,7 @@ export default {
       let reidDocList = reidDocs.data.document
 
       //create doc
-      if (reidDocList.lenght == 0) {
+      if (reidDocList.length == 0) {
         let type: any = 3584
         const content: any = ""
         const targetRoomName: any = ""
