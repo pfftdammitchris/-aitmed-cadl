@@ -197,8 +197,11 @@ export default {
     }
     return objNew;
   },
-  getObjKey({ objects }): string[] {
-    return Object.keys(objects);
+  getObjKey({ objects }): string[] | null {
+    if (objects) {
+      return Object.keys(objects)
+    }
+    return []
   },
   getObjWithKV({ object }) {
     var arr: keyValue[] = [];
