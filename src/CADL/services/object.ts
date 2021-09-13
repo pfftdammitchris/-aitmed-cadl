@@ -237,6 +237,9 @@ export default {
   },
   extractingFeatureStrings({ objArrs, pathObj, bool }: { objArrs: {}[], pathObj: string[], bool?: boolean }): string | { [key: string]: string[] }[] {
     let objArr: any[] = [], objArrData: any[] = [], itemName: string[] = [], objNameArr: {}[] = [], hj: { [key: string]: {}[] } = {}, newArr: string[] = [];
+    if (objArrs.length === 0) {
+      return "The array is empty"
+    }
     objArrs.forEach((o: {}) => {
       pathObj.forEach((item) => {
         itemName.push(item.split(".")[item.split(".").length - 1]);
