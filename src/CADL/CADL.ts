@@ -452,7 +452,7 @@ export default class CADL extends EventEmitter {
         const FIRST_processComponents = this.processPopulate({
           source: page,
           lookFor: ['.', '..', '_', '~'],
-          skip: ['update', 'check', 'init', 'formData', 'dataIn', 'style', ...skip],
+          skip: ['update', 'check', 'init', 'formData', 'dataIn', ...skip],
           withFns: true,
           pageName,
         })
@@ -469,7 +469,6 @@ export default class CADL extends EventEmitter {
             'init',
             'formData',
             'dataIn',
-            'style',
             ...skip,
           ],
           withFns: true,
