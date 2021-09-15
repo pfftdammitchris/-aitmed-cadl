@@ -112,7 +112,7 @@ export default {
         return `${`${h}`.slice(-2)}:${`0${m}`.slice(-2)}PM`
       }
     }
-    let i: number = 0
+    let i: number = 360
     let arr: any[] = []
     while ((i <= 18 * 60) && (i >= 6 * 60)) {
       arr.push(fotmat(i))
