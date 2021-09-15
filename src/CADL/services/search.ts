@@ -4,9 +4,7 @@ import axios from 'axios'
 import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
-//set elasticsearch host client
-let client = new Client({ hosts: 'https://elastic.aitmed.io' })
-let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
+
 //query index
 const INDEX = "doctors_dev"
 const NEWINDEX = "doctors_dev,room_dev"
@@ -14,17 +12,34 @@ const ROOMINDEX = "room_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-
-const config = localStorage?.getItem('config')
-
-let esSyncHost =
-  typeof config == 'string'
-    ? JSON.parse(config)?.syncHost
-    : 'https://syncd.aitmed.io:443/'
+const config: any = localStorage?.getItem('config')
+console.error(config);
 
 interface LatResponse {
   center: any[]
 }
+/**
+ * 
+ * @param key the key in the config yaml 
+ * @param defaultValue the default result want to response when dont write in config
+ * @returns 
+ */
+const getItemOfConfig = (key: string, defaultValue: string) => {
+  let value =
+    JSON.parse(config)?.hasOwnProperty(key) ? JSON.parse(config)[key] : defaultValue
+  return value
+}
+
+let esSyncHost = getItemOfConfig('syncHost', 'https://syncd.aitmed.io')
+console.error(esSyncHost);
+
+//set elasticsearch host client
+let elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+console.error(elasticClient);
+
+let client = new Client({ hosts: elasticClient })
+let Newclient = new Client({ hosts: elasticClient })
+
 /**
  * 
  * @param id  user id
@@ -54,6 +69,7 @@ const updateEs = (id, type, bvid) => {
       }
     }).then(
       data => {
+
         if (store.env === 'test') {
           console.log(
             '%cGet mapbox address response',
