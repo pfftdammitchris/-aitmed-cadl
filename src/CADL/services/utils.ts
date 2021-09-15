@@ -130,5 +130,19 @@ export default {
     tempParams = typeof tempParams == 'string' ? JSON.parse(tempParams) : {}
     delete tempParams[key]
     localStorage.setItem('tempParams', JSON.stringify(tempParams))
+  },
+  getFileSize({ size, units = 'kb' }: { size: number, units: 'kb' | 'mb' }) {
+    if (size && units) {
+      switch (units) {
+        case 'kb':
+          return (size / 1024).toFixed(1)
+          break
+        case 'mb':
+          return (size / (1024 * 1024)).toFixed(1)
+          break
+      }
+    }
+    return 0
   }
 }
+

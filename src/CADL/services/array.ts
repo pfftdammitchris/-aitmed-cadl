@@ -384,10 +384,11 @@ export default {
   },
 
   getByKey({ array, key1, value, key2 }) {
-    if (isArray(array)) {
-      for (let i = 0; i < array.length; i++) {
-        if (array[i][key1] === value) {
-          return array[i][key2]
+    const _array = _.cloneDeep(array)
+    if (isArray(_array)) {
+      for (let i = 0; i < _array.length; i++) {
+        if (_array[i][key1] === value) {
+          return _array[i][key2]
         }
       }
       return
