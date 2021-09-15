@@ -12,9 +12,8 @@ const ROOMINDEX = "room_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
-const config: any = localStorage?.getItem('config')
-console.error(config);
 
+const Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 interface LatResponse {
   center: any[]
 }
@@ -25,20 +24,12 @@ interface LatResponse {
  * @returns 
  */
 const getItemOfConfig = (key: string, defaultValue: string) => {
-  let value =
+  const config: any = localStorage?.getItem('config')
+  const value =
     JSON.parse(config)?.hasOwnProperty(key) ? JSON.parse(config)[key] : defaultValue
   return value
 }
 
-let esSyncHost = getItemOfConfig('syncHost', 'https://syncd.aitmed.io')
-console.error(esSyncHost);
-
-//set elasticsearch host client
-let elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
-console.error(elasticClient);
-
-let client = new Client({ hosts: elasticClient })
-let Newclient = new Client({ hosts: elasticClient })
 
 /**
  * 
@@ -48,6 +39,7 @@ let Newclient = new Client({ hosts: elasticClient })
  */
 const updateEs = (id, type, bvid) => {
   // convert document type to url 
+  const esSyncHost = getItemOfConfig('syncHost', 'https://syncd.aitmed.io')
   let urlConvert = new Map(
     [
       ['40000', '/avail/'],
@@ -235,6 +227,8 @@ export default {
     return []
   },
   async queryInsurance({ id }) {
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let template: any = {
       "query": {
         "match": {
@@ -300,6 +294,8 @@ export default {
    * @returns {Promise<{doctor_suggestion: [], speciality_suggestion: []}>}
    */
   async suggest({ prefix }) {
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     console.log('test suggest', prefix)
     // let INDEX = 'doctors_v0.4'
     let TEXT_INDEX = "test_doctors"
@@ -426,7 +422,8 @@ export default {
     etime,
     type = 1
   }) {
-
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let arr: any[] = []
     if (pos) {
       // let address
@@ -764,7 +761,8 @@ export default {
     stime,
     etime
   }) {
-
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let arr: any[] = []
     if (pos) {
       // let address
@@ -841,7 +839,7 @@ export default {
     }
 
 
-    const body = await Newclient.search({
+    const body = await client.search({
       index: NEWINDEX,
       body: template,
     })
@@ -855,7 +853,8 @@ export default {
     return body.hits.hits
   },
   async queryAgain({ type, id }) {
-
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let template: any = {
       "query": {
         "match": {
@@ -869,7 +868,7 @@ export default {
     } else if (type === "provider") {
       Nowindex = INDEX
     }
-    const body = await Newclient.search({
+    const body = await client.search({
       index: Nowindex,
       body: template,
     })
