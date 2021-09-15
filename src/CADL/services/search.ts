@@ -285,28 +285,28 @@ export default {
    */
   async suggest({ prefix }) {
     console.log('test suggest', prefix)
-    let INDEX = 'doctors_v0.4'
+    // let INDEX = 'doctors_v0.4'
     let TEXT_INDEX = "test_doctors"
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
     let len = prefix.length
     let color = ""
-    let body = await client.search({
-      index: INDEX,
-      body: {
-        "suggest": {
-          "doctor_suggestion": {
-            "text": prefix,
-            "completion": {
-              "field": "suggest",
-              "skip_duplicates": true,
-              "size": 10
-            }
-          }
-        }
-      }
-    })
+    // let body = await client.search({
+    //   index: INDEX,
+    //   body: {
+    //     "suggest": {
+    //       "doctor_suggestion": {
+    //         "text": prefix,
+    //         "completion": {
+    //           "field": "suggest",
+    //           "skip_duplicates": true,
+    //           "size": 10
+    //         }
+    //       }
+    //     }
+    //   }
+    // })
     let body_1 = await client.search({
       index: TEXT_INDEX,
       body: {
@@ -330,23 +330,23 @@ export default {
         }
       }
     })
-    for (let s of body.suggest.doctor_suggestion[0].options) {
-      let strLen = (s.text).indexOf(prefix) + 1
-      let sum = strLen + len
-      let str = (s.text).substring(strLen, sum)
-      let otherStr = (s.text).substring(sum, s.length)
-      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
-        color = "0xca1e36"
-        s["color"] = color
-        s["id"] = s._id
-        s["hightStr"] = str
-        s["otherStr"] = otherStr
-      } else {
-        color = "0x143459"
-        s["color"] = color
-      }
-      doc_sug.push(s)
-    }
+    // for (let s of body.suggest.doctor_suggestion[0].options) {
+    //   let strLen = (s.text).indexOf(prefix) + 1
+    //   let sum = strLen + len
+    //   let str = (s.text).substring(strLen, sum)
+    //   let otherStr = (s.text).substring(sum, s.length)
+    //   if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+    //     color = "0xca1e36"
+    //     s["color"] = color
+    //     s["id"] = s._id
+    //     s["hightStr"] = str
+    //     s["otherStr"] = otherStr
+    //   } else {
+    //     color = "0x143459"
+    //     s["color"] = color
+    //   }
+    //   doc_sug.push(s)
+    // }
     for (let s of body_1.suggest.speciality_suggestion[0].options) {
       let strLen = (s.text).indexOf(prefix) + 1
       let sum = strLen + len
