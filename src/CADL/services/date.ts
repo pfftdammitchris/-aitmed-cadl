@@ -114,7 +114,7 @@ export default {
     }
     let i: number = 0
     let arr: any[] = []
-    while (i <= 24 * 60) {
+    while ((i <= 18 * 60) && (i >= 6 * 60)) {
       arr.push(fotmat(i))
       i += parseInt(span)
     }
