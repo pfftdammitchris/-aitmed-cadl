@@ -10,10 +10,11 @@ export default {
     return num1 > num2
   },
 
-  lessthanSize: function({object,key}): boolean {
-　　if (parseFloat(object).toString() !== "NaN") { 
+  lessthanSize: function({object,key}): boolean {   
+    let objectSize:string = object['size']
+　　if (parseFloat(objectSize).toString() !== "NaN") { 
      let maxSize: number = Math.floor(key*Math.pow(1024,2))
-        return  object > maxSize ? false : true        
+        return  parseFloat(objectSize) > maxSize ? false : true        
   　　} 
     return false
   }

@@ -131,14 +131,18 @@ export default {
     delete tempParams[key]
     localStorage.setItem('tempParams', JSON.stringify(tempParams))
   },
-  getFileSize({ size, units = 'kb' }: { size: number, units: 'kb' | 'mb' }) {
-    if (size && units) {
+  getFileSize({ object, units = 'kb' }: { object: object, units: 'kb' | 'mb' }) {
+
+    let objectSize:number = parseFloat(object['size'])
+    console.log("message info",objectSize);
+
+    if (objectSize && units) {
       switch (units) {
         case 'kb':
-          return (size / 1024).toFixed(1)
+          return (objectSize / 1024).toFixed(1)
           break
         case 'mb':
-          return (size / (1024 * 1024)).toFixed(1)
+          return (objectSize / (1024 * 1024)).toFixed(1)
           break
       }
     }
