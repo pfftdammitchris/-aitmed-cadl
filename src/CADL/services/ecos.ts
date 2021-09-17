@@ -359,6 +359,7 @@ export default {
     sourceDocList,
     newType
   }) {
+    let res: any[] = []
     // let sharedDocList = new array();
     for (let i = 0; i < sourceDocList.length; i++) {
       const document = await retrieveDocument(sourceDocList[i].id)
@@ -370,7 +371,7 @@ export default {
           note?.name?.type
         )
       }
-      await Document.create({
+      const response = await Document.create({
         content,
         title: note?.name?.title,
         user: note?.name?.user,
@@ -381,7 +382,16 @@ export default {
       })
       // sharedDocList[i] = sharedDoc
       // return sharedDoc
+      res.push(response)
     }
+    if (store.env === 'test') {
+      console.log(
+        '%ccopyDocToAttachment Object Response',
+        'background: purple; color: white; display: block;',
+        res
+      )
+    }
+    return res
   },
 
 }
