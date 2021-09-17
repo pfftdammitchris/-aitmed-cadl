@@ -375,7 +375,7 @@ export default {
         title: note?.name?.title,
         user: note?.name?.user,
         type: newType,
-        edge_id: note?.id,
+        edge_id: note?.eid,
         mediaType: note?.name?.type,
         fid: note?.fid,
       })
