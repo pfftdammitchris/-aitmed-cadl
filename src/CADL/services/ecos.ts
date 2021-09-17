@@ -355,5 +355,33 @@ export default {
     }
   },
 
+  async copyDocToAttachment({
+    sourceDocList,
+    newType
+  }) {
+    // let sharedDocList = new array();
+    for (let i = 0; i < sourceDocList.length; i++) {
+      const document = await retrieveDocument(sourceDocList[i].id)
+      const note = await documentToNote({ document })
+      let content = note?.name?.data
+      if (typeof content === 'string') {
+        content = await store.level2SDK.utilServices.base64ToBlob(
+          note?.name?.data,
+          note?.name?.type
+        )
+      }
+      await Document.create({
+        content,
+        title: note?.name?.title,
+        user: note?.name?.user,
+        type: newType,
+        edge_id: note?.id,
+        mediaType: note?.name?.type,
+        fid: note?.fid,
+      })
+      // sharedDocList[i] = sharedDoc
+      // return sharedDoc
+    }
+  },
 
 }
