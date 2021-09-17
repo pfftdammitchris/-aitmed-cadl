@@ -1044,5 +1044,11 @@ export default {
       return res
     }
     return []
+  },
+  transformTrashEmail({ array }) {
+    array.forEach(element => {
+      element['name']['user'] = element['name']['data']['receiverAvatarId'];
+      element['name']['data']['senderName'] = element['name']['data']['receiverName'];
+    });
   }
 }
