@@ -110,7 +110,7 @@ export default [
           },
         ],
       }),
-      // terser({ compress: true }),
+      terser({ compress: true }),
     ],
   },
 ]
