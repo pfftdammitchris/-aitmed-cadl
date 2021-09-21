@@ -11,7 +11,6 @@ import YAML from 'yaml'
 export function parseYml(yml = ''): Record<string, any> {
   try {
     return YAML.parse(yml, {
-      logLevel: 'debug',
       prettyErrors: true,
       schema: 'failsafe',
       version: '1.2',
