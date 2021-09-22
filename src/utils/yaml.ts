@@ -12,7 +12,7 @@ export function parseYml(yml = ''): Record<string, any> {
   try {
     return YAML.parse(yml, {
       prettyErrors: true,
-      schema: 'failsafe',
+      schema: 'core',
       version: '1.2',
     })
   } catch (error) {
