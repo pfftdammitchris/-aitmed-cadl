@@ -1003,7 +1003,6 @@ export default {
     { array, type, dataKey }:
       { array: any, type: 'Edit' | 'Review' | 'Preview', dataKey: string }
   ) {
-    console.log('test', { array, type, dataKey })
     let mapping = {
       'New Patient Forms': 'NewPatForm',
       'COVID-19 Testing Consent - New Patient': 'Cov19TestNewPat',
