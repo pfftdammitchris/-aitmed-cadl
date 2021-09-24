@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import axios from 'axios'
-import YAML from 'yaml'
 import { EventEmitter } from 'events'
 import produce, { setAutoFreeze } from 'immer'
 import moment from 'moment'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
+import {parseYml} from '../utils/yaml'
 setAutoFreeze(false)
 
 import store from '../common/store'
@@ -673,7 +673,7 @@ export default class CADL extends EventEmitter {
     }
 
     try {
-      cadlObject = YAML.parse(cadlYAML)
+      cadlObject = parseYml(cadlYAML)
     } catch (error) {
       throw new UnableToParseYAML(`Unable to parse yaml for ${url}`, error)
     }
