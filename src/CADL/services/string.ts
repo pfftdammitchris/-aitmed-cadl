@@ -10,6 +10,9 @@ export default {
   formatTimer(time: number) {
     return moment(time).format('HH:mm:ss')
   },
+  formatUnixtimeSecond(unixTime: number) {
+    return moment(unixTime * 1000).format('L hh:mm:ss')
+  },
   formatUnixtime_en(unixTime: number) {
     return moment(unixTime * 1000).format('lll')
   },
