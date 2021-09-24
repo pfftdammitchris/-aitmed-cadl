@@ -132,7 +132,7 @@ export default {
     localStorage.setItem('tempParams', JSON.stringify(tempParams))
   },
   getFileSize({ object, units = 'kb' }: { object: object, units: 'kb' | 'mb' }) {
-    let objectSize:number = parseFloat(object['size'])
+    let objectSize: number = parseFloat(object['size'])
     if (objectSize && units) {
       switch (units) {
         case 'kb':
@@ -144,6 +144,9 @@ export default {
       }
     }
     return 0
+  },
+  getFileName({ object }: { object: object }) {
+    return object['name']
   }
 }
 
