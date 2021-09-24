@@ -1003,6 +1003,7 @@ export default {
     { array, type, dataKey }:
       { array: any, type: 'Edit' | 'Review' | 'Preview', dataKey: string }
   ) {
+    console.log('test', { array, type, dataKey })
     let mapping = {
       'New Patient Forms': 'NewPatForm',
       'COVID-19 Testing Consent - New Patient': 'Cov19TestNewPat',
@@ -1016,12 +1017,15 @@ export default {
     let space
     if (isArray(array)) {
       array.forEach((obj: any) => {
-        title = get(obj, dataKey).trim()
-        space = title.split(" ")
-        if (space.length != 1) {
-          obj.pageName = `${mapping[title] + '' + type + 'Page1'}`
-        } else {
-          obj.pageName = `${title + '' + type + 'Page1'}`
+        title = get(obj, dataKey)
+        if (title) {
+          title = title.trim()
+          space = title.split(" ")
+          if (space.length != 1) {
+            obj.pageName = `${mapping[title] + '' + type + 'Page1'}`
+          } else {
+            obj.pageName = `${title + '' + type + 'Page1'}`
+          }
         }
       })
       return array
