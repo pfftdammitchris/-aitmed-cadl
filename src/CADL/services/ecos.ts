@@ -183,6 +183,7 @@ export default {
       await Document.update(note?.id, {
         edge_id: edge_id,
         content: content,
+        type: note?.type,
         reid: reid,
         jwt: data?.jwt
       })
