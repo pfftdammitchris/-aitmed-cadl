@@ -1,8 +1,8 @@
 import pako from 'pako'
-import YAML from 'yaml'
 import axios from 'axios'
 import store from '../common/store'
 import _ from 'lodash'
+import { parseYml } from './yaml'
 
 import {
   UnableToParseYAML,
@@ -32,7 +32,7 @@ export function ecosObjType(id: string | Uint8Array): string {
 }
 export const compareUint8Arrays = (
   u8a1: Uint8Array,
-  u8a2: Uint8Array
+  u8a2: Uint8Array,
 ): boolean => {
   if (u8a1.length !== u8a2.length) return false
   for (let i = 0; i < u8a1.length; i++) {
@@ -98,7 +98,7 @@ export function mergeDeep(target, source) {
  */
 export function validateCADL(cadlYAML: string): Record<string, any> {
   try {
-    let cadlObject = YAML.parse(cadlYAML)
+    let cadlObject = parseYml(cadlYAML)
     return cadlObject
   } catch (error) {
     throw new UnableToParseYAML(`Unable to parse yaml: ${cadlYAML}`, error)
@@ -114,7 +114,7 @@ export function validateCADL(cadlYAML: string): Record<string, any> {
  * @throws UnableToParseYAML -if unable to parse yaml file
  */
 export async function fetchCADLObject(
-  url: string
+  url: string,
 ): Promise<Record<string, any>> {
   let cadlYAML, cadlObject
   try {
@@ -125,7 +125,7 @@ export async function fetchCADLObject(
   }
 
   try {
-    cadlObject = YAML.parse(cadlYAML)
+    cadlObject = parseYml(cadlYAML)
   } catch (error) {
     throw new UnableToParseYAML(error.message)
   }
@@ -166,7 +166,7 @@ export async function fetchAll(url) {
 
       if (!err.length) {
         try {
-          cadlObject = YAML.parse(cadlYAML)
+          cadlObject = parseYml(cadlYAML)
           isValid = true
         } catch (error) {
           err.push(new UnableToParseYAML(error.message))
@@ -196,7 +196,7 @@ export async function fetchAll(url) {
 //TODO: write unit tests
 export function valPageJump(
   cadlObject: Record<string, any>,
-  validPages: string[]
+  validPages: string[],
 ): InvalidDestination[] {
   const cadlCopy = Object.assign({}, cadlObject)
   let errors: InvalidDestination[] = []
@@ -217,9 +217,10 @@ export function valPageJump(
           if (!validPages.includes(cadlObject[key])) {
             errors.push(
               new InvalidDestination(
-                `${cadlObject[key] !== '' ? cadlObject[key] : null
-                } is not a valid page destination.`
-              )
+                `${
+                  cadlObject[key] !== '' ? cadlObject[key] : null
+                } is not a valid page destination.`,
+              ),
             )
           }
         }

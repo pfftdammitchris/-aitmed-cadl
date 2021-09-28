@@ -1,11 +1,11 @@
 import _ from 'lodash'
 import axios from 'axios'
-import YAML from 'yaml'
 import { EventEmitter } from 'events'
 import produce, { setAutoFreeze } from 'immer'
 import moment from 'moment'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
+import {parseYml} from '../utils/yaml'
 setAutoFreeze(false)
 
 import store from '../common/store'
@@ -107,14 +107,12 @@ export default class CADL extends EventEmitter {
     } catch (error) {
       throw new UnableToLoadConfig(
         'An error occured while trying to load the config',
-        error,
+        error
       )
     }
 
-
     //initialize sqlite db
     await this._indexRepository.getDataBase(this._dbConfig)
-
 
     //get app curent position
     if (config?.isGetPosition) {
@@ -141,7 +139,7 @@ export default class CADL extends EventEmitter {
             console.log(errorType[error.code - 1])
           }
         },
-        options,
+        options
       )
     }
 
@@ -174,6 +172,12 @@ export default class CADL extends EventEmitter {
     this._config = this.processPopulate({
       source: config,
       lookFor: ['.', '..', '=', '~'],
+    })
+    this.newDispatch({
+      type: 'SET_ROOT_PROPERTIES',
+      payload: {
+        properties: { Config: this._config },
+      },
     })
 
     //set overrides of Base Objects
@@ -217,7 +221,7 @@ export default class CADL extends EventEmitter {
           case 'BaseDataModel': {
             if (BaseDataModel) break
             const { pageCADL: rawBaseDataModel } = await this.getPage(
-              'BaseDataModel',
+              'BaseDataModel'
             )
             const processedBaseDataModel = this.processPopulate({
               source: rawBaseDataModel,
@@ -342,7 +346,7 @@ export default class CADL extends EventEmitter {
       onAbort?(obj: { [pageName: string]: any }): Promise<void> | void
       onFirstProcess?(obj: { [pageName: string]: any }): Promise<void> | void
       onSecondProcess?(obj: { [pageName: string]: any }): Promise<void> | void
-    },
+    }
   ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
 
@@ -367,7 +371,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      ; ({ pageCADL } = await this.getPage(pageName))
+      ;({ pageCADL } = await this.getPage(pageName))
       options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
 
@@ -452,7 +456,16 @@ export default class CADL extends EventEmitter {
         const FIRST_processComponents = this.processPopulate({
           source: page,
           lookFor: ['.', '..', '_', '~'],
-          skip: ['update', 'check', 'init', 'formData', 'dataIn', 'style', ...skip],
+          skip: [
+            'update',
+            'check',
+            'init',
+            'formData',
+            'dataIn',
+            'display',
+            'backgroundColor',
+            ...skip,
+          ],
           withFns: true,
           pageName,
         })
@@ -469,7 +482,8 @@ export default class CADL extends EventEmitter {
             'init',
             'formData',
             'dataIn',
-            'style',
+            'display',
+            'backgroundColor',
             ...skip,
           ],
           withFns: true,
@@ -654,12 +668,12 @@ export default class CADL extends EventEmitter {
     } catch (error) {
       throw new UnableToRetrieveYAML(
         `Unable to retrieve yaml for ${url}`,
-        error,
+        error
       )
     }
 
     try {
-      cadlObject = YAML.parse(cadlYAML)
+      cadlObject = parseYml(cadlYAML)
     } catch (error) {
       throw new UnableToParseYAML(`Unable to parse yaml for ${url}`, error)
     }
@@ -1114,8 +1128,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1162,7 +1176,6 @@ export default class CADL extends EventEmitter {
    * @param action
    */
   private async dispatch(action: { type: string; payload?: any }) {
-
     //console.log('dispatch action type!!!', action.type)
     switch (action.type) {
       case 'search-cache': {
@@ -1229,7 +1242,6 @@ export default class CADL extends EventEmitter {
             })
             //console.log('insert to index table!!!', fKey, initialMapping, fKeyHex)
           }
-
         }
 
         break
@@ -1240,7 +1252,6 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'populate': {
-
         const { pageName } = action.payload
         const pageObjectCopy = _.cloneDeep(this.root[pageName])
         const boundDispatch = this.dispatch.bind(this)
@@ -1562,7 +1573,7 @@ export default class CADL extends EventEmitter {
             //if similar request has been made (hash exists)
             //compare recorded timestamp with current timestamp
             const oldTimestamp = moment(
-              apiDispatchBufferObject[hash]?.timestamp,
+              apiDispatchBufferObject[hash]?.timestamp
             )
             const timeDiff = currentTimestamp.diff(oldTimestamp, 'seconds')
             if (timeDiff > limit) {
@@ -2092,7 +2103,7 @@ export default class CADL extends EventEmitter {
               onAfterInit?.(error, init)
               throw new UnableToExecuteFn(
                 `An error occured while executing ${pageName}.init. Check command at index ${currIndex} under init`,
-                error,
+                error
               )
             }
           } else if (
@@ -2144,7 +2155,7 @@ export default class CADL extends EventEmitter {
               } catch (error) {
                 throw new UnableToExecuteFn(
                   `An error occured while executing ${pageName}.init`,
-                  error,
+                  error
                 )
               }
             }
@@ -2395,7 +2406,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => { })
+    return produce(root, (draft) => {})
   }
 
   public newDispatch(action) {
@@ -2454,7 +2465,6 @@ export default class CADL extends EventEmitter {
     return produce(state, (draft) => {
       switch (action.type) {
         case 'SET_VALUE': {
-
           const { pageName, dataKey, value, replace } = action.payload
           let currVal
           let newVal = value
@@ -2480,35 +2490,27 @@ export default class CADL extends EventEmitter {
                 currVal.doc = []
                 currVal.doc.push(...newVal.doc)
 
-                // for adding new doc 
+                // for adding new doc
               } else if (!Array.isArray(currVal.doc) && isObject(newVal.doc)) {
                 // currVal.doc = []
                 // currVal.doc.push(newVal.doc)
                 currVal.doc = newVal.doc
-              }
-
-              else if ('id' in currVal) {
+              } else if ('id' in currVal) {
                 newVal = _.merge(currVal, newVal.doc)
-
               } else {
                 currVal.doc.length = 0
                 currVal.doc.push(...newVal.doc)
-
               }
             } else {
               newVal = _.merge(currVal, newVal)
-
             }
           } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
             currVal.length = 0
             currVal.push(...newVal)
-
           } else if (typeof pageName === 'undefined') {
             _.set(draft, dataKey, newVal)
-
           } else {
             _.set(draft[pageName], dataKey, newVal)
-
           }
           break
         }
@@ -2675,13 +2677,13 @@ export default class CADL extends EventEmitter {
     if (baseUrlWithVersion.includes('cadlVersion')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${cadlVersion}',
-        this.cadlVersion,
+        this.cadlVersion
       )
     }
     if (baseUrlWithVersion.includes('designSuffix')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${designSuffix}',
-        this.designSuffix,
+        this.designSuffix
       )
     }
     return baseUrlWithVersion

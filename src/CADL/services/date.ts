@@ -1076,5 +1076,8 @@ export default {
     } else {
       return (new Date(timeStamp).toDateString().split(" ")[1] + "\u0020" + new Date(timeStamp).toDateString().split(" ")[2])
     }
+  },
+  getMonthString(): string[] {
+    return ["December", "November", "October", "September", "August", "July", "June", "May", "April", "March", "February", "January"].splice(11 - new Date().getMonth(), 12)
   }
 }

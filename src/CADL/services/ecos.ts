@@ -183,6 +183,7 @@ export default {
       await Document.update(note?.id, {
         edge_id: edge_id,
         content: content,
+        type: note?.type,
         reid: reid,
         jwt: data?.jwt
       })
@@ -355,5 +356,43 @@ export default {
     }
   },
 
+  async copyDocToAttachment({
+    sourceDocList,
+    newType
+  }) {
+    let res: any[] = []
+    // let sharedDocList = new array();
+    for (let i = 0; i < sourceDocList.length; i++) {
+      const document = await retrieveDocument(sourceDocList[i].id)
+      const note = await documentToNote({ document })
+      let content = note?.name?.data
+      if (typeof content === 'string') {
+        content = await store.level2SDK.utilServices.base64ToBlob(
+          note?.name?.data,
+          note?.name?.type
+        )
+      }
+      const response = await Document.create({
+        content,
+        title: note?.name?.title,
+        user: note?.name?.user,
+        type: newType,
+        edge_id: note?.eid,
+        mediaType: note?.name?.type,
+        fid: note?.fid,
+      })
+      // sharedDocList[i] = sharedDoc
+      // return sharedDoc
+      res.push(response)
+    }
+    if (store.env === 'test') {
+      console.log(
+        '%ccopyDocToAttachment Object Response',
+        'background: purple; color: white; display: block;',
+        res
+      )
+    }
+    return res
+  },
 
 }

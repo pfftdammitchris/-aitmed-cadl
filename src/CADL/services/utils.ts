@@ -130,5 +130,23 @@ export default {
     tempParams = typeof tempParams == 'string' ? JSON.parse(tempParams) : {}
     delete tempParams[key]
     localStorage.setItem('tempParams', JSON.stringify(tempParams))
+  },
+  getFileSize({ object, units = 'kb' }: { object: object, units: 'kb' | 'mb' }) {
+    let objectSize: number = parseFloat(object['size'])
+    if (objectSize && units) {
+      switch (units) {
+        case 'kb':
+          return (objectSize / 1024).toFixed(1)
+          break
+        case 'mb':
+          return (objectSize / (1024 * 1024)).toFixed(1)
+          break
+      }
+    }
+    return 0
+  },
+  getFileName({ object }: { object: object }) {
+    return object['name']
   }
 }
+

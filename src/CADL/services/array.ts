@@ -384,10 +384,11 @@ export default {
   },
 
   getByKey({ array, key1, value, key2 }) {
-    if (isArray(array)) {
-      for (let i = 0; i < array.length; i++) {
-        if (array[i][key1] === value) {
-          return array[i][key2]
+    const _array = _.cloneDeep(array)
+    if (isArray(_array)) {
+      for (let i = 0; i < _array.length; i++) {
+        if (_array[i][key1] === value) {
+          return _array[i][key2]
         }
       }
       return
@@ -1015,12 +1016,15 @@ export default {
     let space
     if (isArray(array)) {
       array.forEach((obj: any) => {
-        title = get(obj, dataKey).trim()
-        space = title.split(" ")
-        if (space.length != 1) {
-          obj.pageName = `${mapping[title] + '' + type + 'Page1'}`
-        } else {
-          obj.pageName = `${title + '' + type + 'Page1'}`
+        title = get(obj, dataKey)
+        if (title) {
+          title = title.trim()
+          space = title.split(" ")
+          if (space.length != 1) {
+            obj.pageName = `${mapping[title] + '' + type + 'Page1'}`
+          } else {
+            obj.pageName = `${title + '' + type + 'Page1'}`
+          }
         }
       })
       return array
@@ -1043,5 +1047,5 @@ export default {
       return res
     }
     return []
-  }
+  },
 }

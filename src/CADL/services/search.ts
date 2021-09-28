@@ -4,9 +4,7 @@ import axios from 'axios'
 import _, { isArray } from 'lodash'
 import * as ob from "lodash";
 import store from '../../common/store'
-//set elasticsearch host client
-let client = new Client({ hosts: 'https://elastic.aitmed.io' })
-let Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
+
 //query index
 const INDEX = "doctors_dev"
 const NEWINDEX = "doctors_dev,room_dev"
@@ -15,16 +13,24 @@ const ROOMINDEX = "room_dev"
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
 
-const config = localStorage?.getItem('config')
-
-let esSyncHost =
-  typeof config == 'string'
-    ? JSON.parse(config)?.syncHost
-    : 'https://syncd.aitmed.io:443/'
-
+const Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 interface LatResponse {
   center: any[]
 }
+/**
+ * 
+ * @param key the key in the config yaml 
+ * @param defaultValue the default result want to response when dont write in config
+ * @returns 
+ */
+const getItemOfConfig = (key: string, defaultValue: string) => {
+  const config: any = localStorage?.getItem('config')
+  const value =
+    JSON.parse(config)?.hasOwnProperty(key) ? JSON.parse(config)[key] : defaultValue
+  return value
+}
+
+
 /**
  * 
  * @param id  user id
@@ -33,6 +39,7 @@ interface LatResponse {
  */
 const updateEs = (id, type, bvid) => {
   // convert document type to url 
+  const esSyncHost = getItemOfConfig('syncHost', 'https://syncd.aitmed.io')
   let urlConvert = new Map(
     [
       ['40000', '/avail/'],
@@ -54,6 +61,7 @@ const updateEs = (id, type, bvid) => {
       }
     }).then(
       data => {
+
         if (store.env === 'test') {
           console.log(
             '%cGet mapbox address response',
@@ -219,6 +227,8 @@ export default {
     return []
   },
   async queryInsurance({ id }) {
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let template: any = {
       "query": {
         "match": {
@@ -284,29 +294,31 @@ export default {
    * @returns {Promise<{doctor_suggestion: [], speciality_suggestion: []}>}
    */
   async suggest({ prefix }) {
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     console.log('test suggest', prefix)
-    let INDEX = 'doctors_v0.4'
+    // let INDEX = 'doctors_v0.4'
     let TEXT_INDEX = "test_doctors"
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
     let len = prefix.length
     let color = ""
-    let body = await client.search({
-      index: INDEX,
-      body: {
-        "suggest": {
-          "doctor_suggestion": {
-            "text": prefix,
-            "completion": {
-              "field": "suggest",
-              "skip_duplicates": true,
-              "size": 10
-            }
-          }
-        }
-      }
-    })
+    // let body = await client.search({
+    //   index: INDEX,
+    //   body: {
+    //     "suggest": {
+    //       "doctor_suggestion": {
+    //         "text": prefix,
+    //         "completion": {
+    //           "field": "suggest",
+    //           "skip_duplicates": true,
+    //           "size": 10
+    //         }
+    //       }
+    //     }
+    //   }
+    // })
     let body_1 = await client.search({
       index: TEXT_INDEX,
       body: {
@@ -330,23 +342,23 @@ export default {
         }
       }
     })
-    for (let s of body.suggest.doctor_suggestion[0].options) {
-      let strLen = (s.text).indexOf(prefix) + 1
-      let sum = strLen + len
-      let str = (s.text).substring(strLen, sum)
-      let otherStr = (s.text).substring(sum, s.length)
-      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
-        color = "0xca1e36"
-        s["color"] = color
-        s["id"] = s._id
-        s["hightStr"] = str
-        s["otherStr"] = otherStr
-      } else {
-        color = "0x143459"
-        s["color"] = color
-      }
-      doc_sug.push(s)
-    }
+    // for (let s of body.suggest.doctor_suggestion[0].options) {
+    //   let strLen = (s.text).indexOf(prefix) + 1
+    //   let sum = strLen + len
+    //   let str = (s.text).substring(strLen, sum)
+    //   let otherStr = (s.text).substring(sum, s.length)
+    //   if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+    //     color = "0xca1e36"
+    //     s["color"] = color
+    //     s["id"] = s._id
+    //     s["hightStr"] = str
+    //     s["otherStr"] = otherStr
+    //   } else {
+    //     color = "0x143459"
+    //     s["color"] = color
+    //   }
+    //   doc_sug.push(s)
+    // }
     for (let s of body_1.suggest.speciality_suggestion[0].options) {
       let strLen = (s.text).indexOf(prefix) + 1
       let sum = strLen + len
@@ -410,7 +422,8 @@ export default {
     etime,
     type = 1
   }) {
-
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let arr: any[] = []
     if (pos) {
       // let address
@@ -748,7 +761,8 @@ export default {
     stime,
     etime
   }) {
-
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let arr: any[] = []
     if (pos) {
       // let address
@@ -825,7 +839,7 @@ export default {
     }
 
 
-    const body = await Newclient.search({
+    const body = await client.search({
       index: NEWINDEX,
       body: template,
     })
@@ -839,7 +853,8 @@ export default {
     return body.hits.hits
   },
   async queryAgain({ type, id }) {
-
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let template: any = {
       "query": {
         "match": {
@@ -853,7 +868,7 @@ export default {
     } else if (type === "provider") {
       Nowindex = INDEX
     }
-    const body = await Newclient.search({
+    const body = await client.search({
       index: Nowindex,
       body: template,
     })
