@@ -1048,4 +1048,14 @@ export default {
     }
     return []
   },
+  ComparisonSettingProperties({ objArrOne, strOnePath, objArrTwo, strTwoPath, strValue, newValue }): {}[] {
+    objArrOne.forEach((eleOne) => {
+      objArrTwo.forEach((eleTwo) => {
+        if (_.get(eleOne, strOnePath) === _.get(eleTwo, strTwoPath)) {
+          _.set(eleTwo, strValue, newValue)
+        }
+      })
+    })
+    return objArrTwo;
+  }
 }
