@@ -82,23 +82,23 @@ export default {
     targetFileID,
   }) {
     return Promise.all(sourceDocList.map(async (sourceDoc) => {
-      const document = await retrieveDocument(sourceDoc.id)
-      const note = await documentToNote({ document })
-      let content = note?.name?.data
+      // const document = await retrieveDocument(sourceDoc.id)
+      // const note = await documentToNote({ document })
+      let content = sourceDoc?.name?.data
       if (typeof content === 'string') {
         content = await store.level2SDK.utilServices.base64ToBlob(
-          note?.name?.data,
-          note?.name?.type
+          sourceDoc?.name?.data,
+          sourceDoc?.name?.type
         )
       }
       await Document.create({
         content,
         targetRoomName,
-        title: note?.name?.title,
-        user: note?.name?.user,
-        type: note?.type,
+        title: sourceDoc?.name?.title,
+        user: sourceDoc?.name?.user,
+        type: sourceDoc?.type,
         edge_id: targetEdgeID,
-        mediaType: note?.name?.type,
+        mediaType: sourceDoc?.name?.type,
         fid: targetFileID,
       })
     }))
@@ -116,33 +116,33 @@ export default {
    */
   updateDocListType({ sourceDocList, targetBit, targetValue }) {
     return Promise.all(sourceDocList.map(async (sourceDoc) => {
-      const document = await retrieveDocument(sourceDoc.id)
-      const note = await documentToNote({ document })
-      let content = note?.name?.data
+      // const document = await retrieveDocument(sourceDoc.id)
+      // const note = await documentToNote({ document })
+      let content = sourceDoc?.name?.data
       if (typeof content === 'string') {
         content = await store.level2SDK.utilServices.base64ToBlob(
-          note?.name?.data,
-          note?.name?.type
+          sourceDoc?.name?.data,
+          sourceDoc?.name?.type
         )
       }
 
-      const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
-      const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      // const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+      // const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
 
-      if (id != localStorage.getItem('user_vid')?.toString()) {
+      if (sourceDoc.bsig != localStorage.getItem('user_vid')?.toString()) {
         await store.level2SDK.edgeServices.createEdge({
-          bvid: id,
+          bvid: sourceDoc.bsig,
           type: 1030
         })
       }
 
 
-      let newType = note?.type
-      let bitValue = getBitValue(note?.type, targetBit)
+      let newType = sourceDoc?.type
+      let bitValue = getBitValue(sourceDoc?.type, targetBit)
       if (bitValue != targetValue) {
-        newType = setBitValue(note?.type, targetBit, targetValue)
-        await Document.update(note?.id, {
-          edge_id: edge_id,
+        newType = setBitValue(sourceDoc?.type, targetBit, targetValue)
+        await Document.update(sourceDoc?.id, {
+          edge_id: sourceDoc.eid,
           content: content,
           type: newType,
           // jwt: data?.jwt
@@ -150,7 +150,7 @@ export default {
 
       }
 
-      if (id != localStorage.getItem('user_vid')?.toString()) {
+      if (sourceDoc.bsig != localStorage.getItem('user_vid')?.toString()) {
         await store.level2SDK.edgeServices.createEdge({
           bvid: localStorage.getItem('user_vid')?.toString(),
           type: 1030
@@ -162,39 +162,39 @@ export default {
   },
   updateDocListReid({ sourceDocList, reid }) {
     return Promise.all(sourceDocList.map((async (sourceDoc) => {
-      const document = await retrieveDocument(sourceDoc.id)
-      const note = await documentToNote({ document })
-      let content = note?.name?.data
+      // const document = await retrieveDocument(sourceDoc.id)
+      // const note = await documentToNote({ document })
+      let content = sourceDoc?.name?.data
       if (typeof content === 'string') {
         content = await store.level2SDK.utilServices.base64ToBlob(
-          note?.name?.data,
-          note?.name?.type
+          sourceDoc?.name?.data,
+          sourceDoc?.name?.type
         )
       }
-      const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
-      const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
-      if (id != localStorage.getItem('user_vid')?.toString()) {
+      // const id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.bsig)
+      // const edge_id = await store.level2SDK.utilServices.uint8ArrayToBase64(note?.eid)
+      if (sourceDoc.bsig != localStorage.getItem('user_vid')?.toString()) {
         await store.level2SDK.edgeServices.createEdge({
-          bvid: id,
+          bvid: sourceDoc.bsig,
           type: 1030
         })
       }
 
       console.log('test', {
-        edge_id: edge_id,
+        edge_id: sourceDoc.eid,
         content: content,
         reid: reid,
         // jwt: data?.jwt
       })
-      await Document.update(note?.id, {
-        edge_id: edge_id,
+      await Document.update(sourceDoc?.id, {
+        edge_id: sourceDoc.eid,
         content: content,
-        type: note?.type,
+        type: sourceDoc?.type,
         reid: reid,
         // jwt: data?.jwt
       })
 
-      if (id != localStorage.getItem('user_vid')?.toString()) {
+      if (sourceDoc.bsig != localStorage.getItem('user_vid')?.toString()) {
         await store.level2SDK.edgeServices.createEdge({
           bvid: localStorage.getItem('user_vid')?.toString(),
           type: 1030
