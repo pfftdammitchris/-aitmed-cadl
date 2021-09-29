@@ -75,15 +75,14 @@ export default {
     })
     return sharedDoc
   },
-  async shareDocList({
+  shareDocList({
     sourceDocList,
     targetEdgeID,
     targetRoomName,
     targetFileID,
   }) {
-    // let sharedDocList = new array();
-    for (let i = 0; i < sourceDocList.length; i++) {
-      const document = await retrieveDocument(sourceDocList[i].id)
+    return Promise.all(sourceDocList.map(async (sourceDoc) => {
+      const document = await retrieveDocument(sourceDoc.id)
       const note = await documentToNote({ document })
       let content = note?.name?.data
       if (typeof content === 'string') {
@@ -102,9 +101,7 @@ export default {
         mediaType: note?.name?.type,
         fid: targetFileID,
       })
-      // sharedDocList[i] = sharedDoc
-      // return sharedDoc
-    }
+    }))
   },
 
   /**
@@ -117,9 +114,9 @@ export default {
    * @param targetBit
    * @param targetValue
    */
-  async updateDocListType({ sourceDocList, targetBit, targetValue }) {
-    for (let i = 0; i < sourceDocList.length; i++) {
-      const document = await retrieveDocument(sourceDocList[i].id)
+  updateDocListType({ sourceDocList, targetBit, targetValue }) {
+    return Promise.all(sourceDocList.map(async (sourceDoc) => {
+      const document = await retrieveDocument(sourceDoc.id)
       const note = await documentToNote({ document })
       let content = note?.name?.data
       if (typeof content === 'string') {
@@ -141,25 +138,26 @@ export default {
       let bitValue = getBitValue(note?.type, targetBit)
       if (bitValue != targetValue) {
         newType = setBitValue(note?.type, targetBit, targetValue)
-      } else {
-        continue
+        await Document.update(note?.id, {
+          edge_id: edge_id,
+          content: content,
+          type: newType,
+          jwt: data?.jwt
+        })
+
       }
-      await Document.update(note?.id, {
-        edge_id: edge_id,
-        content: content,
-        type: newType,
-        jwt: data?.jwt
-      })
 
       await store.level2SDK.edgeServices.createEdge({
         bvid: localStorage.getItem('user_vid')?.toString(),
         type: 1030
       })
-    }
+
+    }))
+
   },
-  async updateDocListReid({ sourceDocList, reid }) {
-    for (let i = 0; i < sourceDocList.length; i++) {
-      const document = await retrieveDocument(sourceDocList[i].id)
+  updateDocListReid({ sourceDocList, reid }) {
+    return Promise.all(sourceDocList.map((async (sourceDoc) => {
+      const document = await retrieveDocument(sourceDoc.id)
       const note = await documentToNote({ document })
       let content = note?.name?.data
       if (typeof content === 'string') {
@@ -191,7 +189,7 @@ export default {
         bvid: localStorage.getItem('user_vid')?.toString(),
         type: 1030
       })
-    }
+    })))
   },
 
   /**
@@ -202,10 +200,10 @@ export default {
    * @param targetValue 
    * @param sCondition 
    */
-  async updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition, eid }) {
+  updateReidDocListType({ sourceDocList, targetBit, targetValue, sCondition, eid }) {
     let idList
-    for (let i = 0; i < sourceDocList.length; i++) {
-      idList = [sourceDocList[i].id]
+    return Promise.all(sourceDocList.map(async (sourceDoc) => {
+      idList = [sourceDoc.id]
       let requestOptions = {
         xfname: 'reid',
         scondition: sCondition,
@@ -231,15 +229,15 @@ export default {
           targetRoomName,
           title: "",
           user: "",
-          reid: sourceDocList[i].id,
+          reid: sourceDoc.id,
           edge_id: eid,
           type: type,
         })
       }
 
       //update type
-      for (let j = 0; j < reidDocList.length; j++) {
-        const document = reidDocList[j]
+      return Promise.all(reidDocList.map(async (reidDoc) => {
+        const document = reidDoc
         const note = await documentToNote({ document })
         let content = note?.name?.data
         if (typeof content == 'string' && content != 'undefined') {
@@ -261,23 +259,21 @@ export default {
         let bitValue = getBitValue(note?.type, targetBit)
         if (bitValue != targetValue) {
           newType = setBitValue(note?.type, targetBit, targetValue)
-        } else {
-          continue
+          await Document.update(note?.id, {
+            edge_id: edge_id,
+            content: content,
+            type: newType,
+            jwt: data?.jwt
+          })
         }
-        await Document.update(note?.id, {
-          edge_id: edge_id,
-          content: content,
-          type: newType,
-          jwt: data?.jwt
-        })
 
         await store.level2SDK.edgeServices.createEdge({
           bvid: localStorage.getItem('user_vid')?.toString(),
           type: 1030
         })
-      }
+      }))
+    }))
 
-    }
   },
 
   /**
@@ -286,14 +282,13 @@ export default {
    * @param folder 
    * @param eid 
    */
-  async createFolderTag({ sourceDocList, folder, eid }) {
+  createFolderTag({ sourceDocList, folder, eid }) {
     let idList
     const type: any = 3840
     const content: any = ""
     const targetRoomName: any = ""
-    for (let i = 0; i < sourceDocList.length; i++) {
-      //Check if doc(type=3840) exists
-      idList = [sourceDocList[i].id, folder]
+    return Promise.all(sourceDocList.map(async (sourceDoc) => {
+      idList = [sourceDoc.id, folder]
       const requestOptions = {
         xfname: 'reid,fid',
         type: 3840,
@@ -310,13 +305,14 @@ export default {
           targetRoomName,
           title: "",
           user: "",
-          reid: sourceDocList[i].id,
+          reid: sourceDoc.id,
           edge_id: eid,
           fid: folder,
           type: type,
         })
       }
-    }
+    }))
+
   },
 
   /**
@@ -324,10 +320,10 @@ export default {
    * @param sourceDocList 
    * @param folder 
    */
-  async deleteFolderTag({ sourceDocList, folder }) {
+  deleteFolderTag({ sourceDocList, folder }) {
     let idList
-    for (let i = 0; i < sourceDocList.length; i++) {
-      idList = [sourceDocList[i].id, folder]
+    return Promise.all(sourceDocList.map(async (sourceDoc) => {
+      idList = [sourceDoc.id, folder]
       const requestOptions = {
         xfname: 'reid,fid',
         type: 3840,
@@ -352,8 +348,8 @@ export default {
           )
         }
       }
+    }))
 
-    }
   },
 
   async copyDocToAttachment({
