@@ -13,6 +13,9 @@ export default {
   formatUnixtimeSecond(unixTime: number) {
     return moment(unixTime * 1000).format('L hh:mm:ss')
   },
+  formatNowTime() {
+    return moment().format("lll")
+  },
   formatUnixtime_en(unixTime: number) {
     return moment(unixTime * 1000).format('lll')
   },
