@@ -393,6 +393,25 @@ export default {
       }
       return
     }
+    return
+  },
+
+  getIndex({ array, key }) {
+    if (isArray(array)) {
+      return array.indexOf(key)
+    }
+    return
+  },
+
+  getListByKey({ array, keyId }) {
+    let resultArr: any[] = []
+    if (isArray(array)) {
+      for (let i = 0; i < array.length; i++) {
+        resultArr.push(array[i][keyId])
+      }
+      return resultArr
+    }
+    return
   },
 
   getConnection({ array1, array2 }) {
