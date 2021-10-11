@@ -812,6 +812,7 @@ export default {
                   ],
                   "fuzziness": "AUTO",
                   "prefix_length": 2
+
                 }
               }
             }
@@ -835,7 +836,8 @@ export default {
 
           ]
         }
-      }
+      },
+      "size": 100
     }
 
 
