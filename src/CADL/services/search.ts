@@ -6,9 +6,8 @@ import * as ob from "lodash";
 import store from '../../common/store'
 
 //query index
-const INDEX = "doctors_dev"
-const NEWINDEX = "doctors_dev,room_dev"
-const ROOMINDEX = "room_dev"
+const Index_doc = "doctors_dev"
+const Index_All = "doctors_dev,room_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
@@ -225,6 +224,11 @@ export default {
     }
     return []
   },
+  /**
+   * query Insurance ： (popular and all) plans carriers
+   * @param id 
+   * @returns 
+   */
   async queryInsurance({ id }) {
     const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
     const client = new Client({ hosts: elasticClient })
@@ -242,7 +246,8 @@ export default {
     return body['hits']['hits']
   },
   async queryIns({ ins }) {
-    const Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
     let template: any = {
       "_source": false,
       "suggest": {
@@ -256,7 +261,7 @@ export default {
         }
       }
     }
-    const body = await Newclient.search({
+    const body = await client.search({
       index: "ins",
       body: template,
     })
@@ -297,7 +302,6 @@ export default {
     const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
     const client = new Client({ hosts: elasticClient })
     console.log('test suggest', prefix)
-    // let INDEX = 'doctors_v0.4'
     let TEXT_INDEX = "test_doctors"
     let doc_sug: any[] = []
     let spe_sug: any[] = []
@@ -537,7 +541,7 @@ export default {
     }
 
     const body = await client.search({
-      index: INDEX,
+      index: Index_doc,
       body: template,
     })
     // console.log(carrier)
@@ -546,7 +550,7 @@ export default {
       console.log(
         '%cGet Search response',
         'background: purple; color: white; display: block;',
-        { index: INDEX, response: body['hits']['hits'] }
+        { index: Index_doc, response: body['hits']['hits'] }
       )
     }
     return body['hits']['hits']
@@ -842,38 +846,16 @@ export default {
 
 
     const body = await client.search({
-      index: NEWINDEX,
+      index: Index_All,
       body: template,
     })
     if (store.env === 'test') {
       console.log(
         '%cGet Search response',
         'background: purple; color: white; display: block;',
-        { index: NEWINDEX, response: body['hits']['hits'] }
+        { index: Index_All, response: body['hits']['hits'] }
       )
     }
-    return body['hits']['hits']
-  },
-  async queryAgain({ type, id }) {
-    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
-    const client = new Client({ hosts: elasticClient })
-    let template: any = {
-      "query": {
-        "match": {
-          "_id": id
-        }
-      }
-    }
-    let Nowindex = ""
-    if (type === "room") {
-      Nowindex = ROOMINDEX
-    } else if (type === "provider") {
-      Nowindex = INDEX
-    }
-    const body = await client.search({
-      index: Nowindex,
-      body: template,
-    })
     return body['hits']['hits']
   },
   GetAllLonAndLatNew({ object }) {
