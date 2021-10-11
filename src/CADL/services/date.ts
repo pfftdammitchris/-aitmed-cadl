@@ -118,7 +118,8 @@ export default {
       arr.push(fotmat(i))
       i += parseInt(span)
     }
-    console.log(arr)
+    arr[arr.length - 1] = "11:59PM"
+    // console.log(arr)
     return arr
   },
   calendarArray({ year, month, today }) {

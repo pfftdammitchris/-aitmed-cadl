@@ -5,7 +5,7 @@ import produce, { setAutoFreeze } from 'immer'
 import moment from 'moment'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
-import {parseYml} from '../utils/yaml'
+import { parseYml } from '../utils/yaml'
 setAutoFreeze(false)
 
 import store from '../common/store'
@@ -371,7 +371,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      ;({ pageCADL } = await this.getPage(pageName))
+      ; ({ pageCADL } = await this.getPage(pageName))
       options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
 
@@ -464,6 +464,7 @@ export default class CADL extends EventEmitter {
             'dataIn',
             'display',
             'backgroundColor',
+            'height',
             ...skip,
           ],
           withFns: true,
@@ -484,6 +485,7 @@ export default class CADL extends EventEmitter {
             'dataIn',
             'display',
             'backgroundColor',
+            'height',
             ...skip,
           ],
           withFns: true,
@@ -1128,8 +1130,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -2406,7 +2408,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => {})
+    return produce(root, (draft) => { })
   }
 
   public newDispatch(action) {

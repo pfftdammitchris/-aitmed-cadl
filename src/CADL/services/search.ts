@@ -1,4 +1,4 @@
-import { Client } from 'elasticsearch'
+import { Client } from 'elasticsearch-browser'
 import { get } from 'https'
 import axios from 'axios'
 import _, { isArray } from 'lodash'
@@ -13,7 +13,6 @@ const ROOMINDEX = "room_dev"
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
 
-const Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
 interface LatResponse {
   center: any[]
 }
@@ -240,9 +239,10 @@ export default {
       index: "test_doctors",
       body: template,
     })
-    return body.hits.hits
+    return body['hits']['hits']
   },
   async queryIns({ ins }) {
+    const Newclient = new Client({ hosts: 'https://elasticd.aitmed.io' })
     let template: any = {
       "_source": false,
       "suggest": {
@@ -359,7 +359,7 @@ export default {
     //   }
     //   doc_sug.push(s)
     // }
-    for (let s of body_1.suggest.speciality_suggestion[0].options) {
+    for (let s of body_1['suggest']['speciality_suggestion'][0]['options']) {
       let strLen = (s.text).indexOf(prefix) + 1
       let sum = strLen + len
       let str = (s.text).substring(strLen, sum)
@@ -376,7 +376,7 @@ export default {
       }
       spe_sug.push(s)
     }
-    for (let s of body_1.suggest.symptom_suggestion[0].options) {
+    for (let s of body_1['suggest']['symptom_suggestion'][0]['options']) {
       let strLen = (s.text).indexOf(prefix)
       let sum = strLen + len
       let str = (s.text).substring(strLen, sum)
@@ -546,10 +546,10 @@ export default {
       console.log(
         '%cGet Search response',
         'background: purple; color: white; display: block;',
-        { index: INDEX, response: body.hits.hits }
+        { index: INDEX, response: body['hits']['hits'] }
       )
     }
-    return body.hits.hits
+    return body['hits']['hits']
   },
 
   /**
@@ -849,10 +849,10 @@ export default {
       console.log(
         '%cGet Search response',
         'background: purple; color: white; display: block;',
-        { index: NEWINDEX, response: body.hits.hits }
+        { index: NEWINDEX, response: body['hits']['hits'] }
       )
     }
-    return body.hits.hits
+    return body['hits']['hits']
   },
   async queryAgain({ type, id }) {
     const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
@@ -874,7 +874,7 @@ export default {
       index: Nowindex,
       body: template,
     })
-    return body.hits.hits
+    return body['hits']['hits']
   },
   GetAllLonAndLatNew({ object }) {
     if (isArray(object)) {
