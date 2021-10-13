@@ -393,6 +393,25 @@ export default {
       }
       return
     }
+    return
+  },
+
+  getIndex({ array, key }) {
+    if (isArray(array)) {
+      return array.indexOf(key)
+    }
+    return
+  },
+
+  getListByKey({ array, keyId }) {
+    let resultArr: any[] = []
+    if (isArray(array)) {
+      for (let i = 0; i < array.length; i++) {
+        resultArr.push(array[i][keyId])
+      }
+      return resultArr
+    }
+    return
   },
 
   getConnection({ array1, array2 }) {
@@ -1010,7 +1029,8 @@ export default {
       'Pifzer-BioNTech Vaccine - First Dose': 'PifzerVaccineFirDose',
       'Pifzer-BioNTech Vaccine - Second Dose': 'PifzerVaccineSecDose',
       'Moderna Vaccine Form - First Dose': 'ModernaVaccineFirDose',
-      'Moderna Vaccine Form - Second Dose': 'ModernaVaccineSecDose'
+      'Moderna Vaccine Form - Second Dose': 'ModernaVaccineSecDose',
+      'Flu Vaccination Consent form 2020-2021(English)': 'FluVaccinationConsentFormEnglish'
     }
     let title
     let space
