@@ -240,7 +240,7 @@ export default {
       }
     }
     const body = await client.search({
-      index: "test_doctors",
+      index: "ins_all",
       body: template,
     })
     return body['hits']['hits']
@@ -262,7 +262,7 @@ export default {
       }
     }
     const body = await client.search({
-      index: "ins",
+      index: "ins_carriers",
       body: template,
     })
     return body
@@ -302,7 +302,7 @@ export default {
     const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
     const client = new Client({ hosts: elasticClient })
     console.log('test suggest', prefix)
-    let TEXT_INDEX = "test_doctors"
+    let TEXT_INDEX = "search_field_suggestion"
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
