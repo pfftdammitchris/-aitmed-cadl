@@ -608,31 +608,30 @@ export default {
   SortBySpeciality({ object }) {
     if (isArray(object)) {
       let re: Record<string, any> = []
+      let map = new Map
+      let index = 0
       object.forEach((obj) => {
-        let i = 0
-        for (; i < re.length; i++) {
-          if (obj['_source']['specialty'] == re[i]['Speciality']) {
+        let specialities = obj['_source']['specialty'] ? obj['_source']['specialty'] : [obj['_source']['service']]
+        for (let j = 0; j < specialities.length; j++) {
+          if (map.get(specialities[j]) === undefined) {
+            let item = {
+              Speciality: specialities[j],
+              num: 1,
+              data: [obj],
+            }
+            // item.data.push(obj)
+            re.push(item)
+            map.set(specialities[j], index++)
+          } else {
+            let i = parseInt(map.get(specialities[j]))
+            console.log('test', { obj, i })
             re[i]['num'] = re[i]['num'] + 1
             re[i]['data'].push(obj)
-            break
           }
-        }
-        if (i == re.length) {
-          let item = {
-            Speciality: obj['_source']['specialty'],
-            num: 1,
-            data: [obj],
-          }
-          // item.data.push(obj)
-          re.push(item)
+
         }
       })
 
-      for (let j = 0; j < re.length; j++) {
-        if (re[j]['Speciality'] == null) {
-          re[j]['Speciality'] = 'unknown'
-        }
-      }
       return re
     }
     return
