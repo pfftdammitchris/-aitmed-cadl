@@ -343,7 +343,14 @@ export default {
               "size": 8
             }
           }
-        }
+        },
+        "sort": [
+          {
+            "weight": {
+              "order": "desc"
+            }
+          }
+        ]
       }
     })
     // for (let s of body.suggest.doctor_suggestion[0].options) {
