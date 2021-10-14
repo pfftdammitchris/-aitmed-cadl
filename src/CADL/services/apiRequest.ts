@@ -86,7 +86,9 @@ async function getDrugs(query, drugbank_pcid, type) {
 }
 
 async function getCPT(query) {
+
     const CPTUrl = "https://clinicaltables.nlm.nih.gov/api/hcpcs/v3/search"
+
     return new Promise((res, rej) => {
         axios({
             url: CPTUrl,
@@ -143,10 +145,10 @@ export default {
         return response
     },
 
-    async queryCPT(query) {
+    async queryCPT({query}) {
         let response: any = []
         await getCPT(query).then(
-            (data) => {
+            (data: Array<string>) => {
                 if (store.env === 'test') {
                     console.log(
                         '%cGet Drug response',
@@ -154,7 +156,7 @@ export default {
                         { data }
                     )
                 }
-                response = data
+                response = data[3]
             },
             (err) => {
                 console.log(err)
