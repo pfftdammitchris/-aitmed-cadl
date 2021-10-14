@@ -85,6 +85,32 @@ async function getDrugs(query, drugbank_pcid, type) {
     })
 }
 
+async function getCPT(query) {
+    const CPTUrl = "https://clinicaltables.nlm.nih.gov/api/hcpcs/v3/search"
+    return new Promise((res, rej) => {
+        axios({
+            url: CPTUrl,
+            method: "get",
+            params: {
+                authenticity_token: "",
+                terms: query
+            },
+
+        }).then((response) => {
+            if (store.env === 'test') {
+                console.log(
+                    '%cGet CPT response',
+                    'background: purple; color: white; display: block;',
+                    response['data']
+                )
+            }
+            res(response['data'])
+        }).catch(error => {
+            rej(error)
+        })
+    })
+}
+
 
 export default {
     async drugBank(
@@ -117,6 +143,25 @@ export default {
         return response
     },
 
+    async queryCPT(query) {
+        let response: any = []
+        await getCPT(query).then(
+            (data) => {
+                if (store.env === 'test') {
+                    console.log(
+                        '%cGet Drug response',
+                        'background: purple; color: white; display: block;',
+                        { data }
+                    )
+                }
+                response = data
+            },
+            (err) => {
+                console.log(err)
+            }
+        )
+        return response
+    }
 
 
 }
