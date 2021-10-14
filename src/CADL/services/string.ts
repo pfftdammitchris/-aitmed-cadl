@@ -49,7 +49,7 @@ export default {
   equal({ string1, string2 }): boolean {
     return string1 === string2
   },
-  getFirstChar(value: string): string | void {
+  getFirstChar({ value }): string | void {
     if (value) {
       return value.charAt(0).toUpperCase()
     }
@@ -138,6 +138,14 @@ export default {
       if (stringArr[i] == "" || stringArr[i] == "-- --") return true
     return false
   },
+  judgeIsAllEmpty(stringArr: string[]) {
+    console.log(stringArr);
+
+    for (let i = 0; i < stringArr.length; i++)
+      if (stringArr[i] != "") return false
+    return true
+  },
+
   judgeAllTrue({ str1, str2, str3 }) {
     return str1 && str2 && str3
   },
