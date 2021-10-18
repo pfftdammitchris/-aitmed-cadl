@@ -8,6 +8,7 @@ import store from '../../common/store'
 //query index
 const Index_doc = "doctors_dev"
 const Index_All = "doctors_dev,room_dev"
+const Index_Providers = "provider_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
@@ -862,6 +863,36 @@ export default {
         { index: Index_All, response: body['hits']['hits'] }
       )
     }
+    return body['hits']['hits']
+  },
+  /**
+   * 
+   * @param param0 cond  =>search term
+   * @returns 
+   * @author =>cmq'code
+   */
+  async queryProviders({
+    cond = null
+  }) {
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
+    let template: any = {
+      "query": {
+        "multi_match": {
+          "query": cond,
+          "type": "best_fields",
+          "fields": ["fullName^2", "specialty"],
+          "fuzziness": "AUTO",
+          "max_expansions": 50
+        }
+      }
+    }
+
+
+    const body = await client.search({
+      index: Index_Providers,
+      body: template,
+    })
     return body['hits']['hits']
   },
   GetAllLonAndLatNew({ object }) {
