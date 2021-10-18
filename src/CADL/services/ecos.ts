@@ -248,8 +248,9 @@ export default {
       }
 
       //update type
-      await Promise.all(reidDocList.map(async (reidDoc) => {
-        const document = reidDoc
+      // await Promise.all(reidDocList.map(async (reidDoc) => {
+      for (let j = 0; j < reidDocList.length; j++) {
+        const document = reidDocList[j]
         const note = await documentToNote({ document })
         let content = note?.name?.data
         if (typeof content == 'string' && content != 'undefined') {
@@ -288,8 +289,9 @@ export default {
             type: 1030
           })
         }
+      }
 
-      }))
+      // }))
 
     }
 
