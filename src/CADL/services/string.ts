@@ -229,7 +229,7 @@ export default {
       location: "",
       geoCode: [],
       country: "",
-      county: ""
+      county: "",
     }
     if (object) {
       let context = object['context']
