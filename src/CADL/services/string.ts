@@ -49,7 +49,7 @@ export default {
   equal({ string1, string2 }): boolean {
     return string1 === string2
   },
-  getFirstChar(value: string): string | void {
+  getFirstChar({ value }): string | void {
     if (value) {
       return value.charAt(0).toUpperCase()
     }

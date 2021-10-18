@@ -1030,7 +1030,8 @@ export default {
       'Pifzer-BioNTech Vaccine - Second Dose': 'PifzerVaccineSecDose',
       'Moderna Vaccine Form - First Dose': 'ModernaVaccineFirDose',
       'Moderna Vaccine Form - Second Dose': 'ModernaVaccineSecDose',
-      'Flu Vaccination Consent form 2020-2021(English)': 'FluVaccinationConsentFormEnglish'
+      'Flu Vaccination Consent form 2020-2021(English)': 'FluVaccinationConsentFormEnglish',
+      'Surgery Authorization': 'SurgeryAuthorization'
     }
     let title
     let space
@@ -1077,5 +1078,8 @@ export default {
       })
     })
     return objArrTwo;
+  },
+  uniqueByObjectKey({ objArr, path }: { objArr: {}[], path: string }): {}[] {
+    return _.uniqBy(objArr, path);
   }
 }

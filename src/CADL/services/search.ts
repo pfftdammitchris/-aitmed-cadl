@@ -8,6 +8,7 @@ import store from '../../common/store'
 //query index
 const Index_doc = "doctors_dev"
 const Index_All = "doctors_dev,room_dev"
+const Index_Providers = "provider_dev"
 // const mapboxHost = 'api.mapbox.com'
 const mapboxToken = 'pk.eyJ1IjoiamllamlleXV5IiwiYSI6ImNrbTFtem43NzF4amQyd3A4dmMyZHJhZzQifQ.qUDDq-asx1Q70aq90VDOJA'
 const mapboxHost = 'https://api.mapbox.com/'
@@ -343,7 +344,14 @@ export default {
               "size": 8
             }
           }
-        }
+        },
+        "sort": [
+          {
+            "weight": {
+              "order": "desc"
+            }
+          }
+        ]
       }
     })
     // for (let s of body.suggest.doctor_suggestion[0].options) {
@@ -601,31 +609,30 @@ export default {
   SortBySpeciality({ object }) {
     if (isArray(object)) {
       let re: Record<string, any> = []
+      let map = new Map
+      let index = 0
       object.forEach((obj) => {
-        let i = 0
-        for (; i < re.length; i++) {
-          if (obj['_source']['specialty'] == re[i]['Speciality']) {
+        let specialities = obj['_source']['specialty'] ? obj['_source']['specialty'] : [obj['_source']['service']]
+        for (let j = 0; j < specialities.length; j++) {
+          if (map.get(specialities[j]) === undefined) {
+            let item = {
+              Speciality: specialities[j],
+              num: 1,
+              data: [obj],
+            }
+            // item.data.push(obj)
+            re.push(item)
+            map.set(specialities[j], index++)
+          } else {
+            let i = parseInt(map.get(specialities[j]))
+            console.log('test', { obj, i })
             re[i]['num'] = re[i]['num'] + 1
             re[i]['data'].push(obj)
-            break
           }
-        }
-        if (i == re.length) {
-          let item = {
-            Speciality: obj['_source']['specialty'],
-            num: 1,
-            data: [obj],
-          }
-          // item.data.push(obj)
-          re.push(item)
+
         }
       })
 
-      for (let j = 0; j < re.length; j++) {
-        if (re[j]['Speciality'] == null) {
-          re[j]['Speciality'] = 'unknown'
-        }
-      }
       return re
     }
     return
@@ -856,6 +863,36 @@ export default {
         { index: Index_All, response: body['hits']['hits'] }
       )
     }
+    return body['hits']['hits']
+  },
+  /**
+   * 
+   * @param param0 cond  =>search term
+   * @returns 
+   * @author =>cmq'code
+   */
+  async queryProviders({
+    cond = null
+  }) {
+    const elasticClient = getItemOfConfig('elasticClient', 'https://elasticd.aitmed.io')
+    const client = new Client({ hosts: elasticClient })
+    let template: any = {
+      "query": {
+        "multi_match": {
+          "query": cond,
+          "type": "best_fields",
+          "fields": ["fullName^2", "specialty"],
+          "fuzziness": "AUTO",
+          "max_expansions": 50
+        }
+      }
+    }
+
+
+    const body = await client.search({
+      index: Index_Providers,
+      body: template,
+    })
     return body['hits']['hits']
   },
   GetAllLonAndLatNew({ object }) {
