@@ -228,7 +228,8 @@ export default {
       zipCode: "",
       location: "",
       geoCode: [],
-      country: ""
+      country: "",
+      county: ""
     }
     if (object) {
       let context = object['context']
@@ -247,6 +248,9 @@ export default {
             break
           case 'country':
             res.country = element.text
+            break
+          case 'district':
+            res.county = element.text
             break
         }
       })
@@ -270,6 +274,11 @@ export default {
       }
       if (object.place_type[0] == 'postcode') {
         res.zipCode = object.text
+        res.address = ''
+      }
+
+      if (object.place_type[0] == 'district') {
+        res.county = object.text
         res.address = ''
       }
 
