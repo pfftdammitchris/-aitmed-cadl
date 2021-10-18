@@ -248,7 +248,7 @@ export default {
       }
 
       //update type
-      Promise.all(reidDocList.map(async (reidDoc) => {
+      await Promise.all(reidDocList.map(async (reidDoc) => {
         const document = reidDoc
         const note = await documentToNote({ document })
         let content = note?.name?.data
