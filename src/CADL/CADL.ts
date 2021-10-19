@@ -507,6 +507,7 @@ export default class CADL extends EventEmitter {
             'init',
             'formData',
             'dataIn',
+            'style',
             ...skip,
           ],
           pageName,
