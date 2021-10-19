@@ -31,6 +31,12 @@ export default [
         format: 'es', // ES6 output - the preferred format
         sourcemap: true,
       },
+      {
+        file: pkg.browser,
+        format: 'iife', // ES6 output - the preferred format
+        sourcemap: true,
+        name: 'aitmedCadl',
+      },
     ],
     plugins: [
       external(),
