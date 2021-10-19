@@ -4,7 +4,6 @@
   "description": "A package with utilities to manage and process CADL files.",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
-  "browser": "dist/index.min.js",
   "jsnext:main": "dist/index.es.js",
   "types": "dist/types/index.d.ts",
   "scripts": {
