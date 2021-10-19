@@ -952,6 +952,15 @@ export default {
       return re
     }
     return
+  },
+  ChooseCarrier({ object, cond }) {
+    for (let i = 0; i < Array.from(object).length; i++) {
+      if (object[i].carrier == cond) {
+        return object[i].plan[1]
+      } else {
+        continue
+      }
+    }
   }
 
 }
