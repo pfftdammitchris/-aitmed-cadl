@@ -230,6 +230,8 @@ export default {
       geoCode: [],
       country: "",
       county: "",
+      firsLine: "",
+      SecondLine: ""
     }
     if (object) {
       let context = object['context']
@@ -264,6 +266,10 @@ export default {
       }
       res.address = object.address ? object.address + ' ' + res.address : res.address
 
+      if (object.place_type[0] == 'poi') {
+        res.firsLine = object.properties.address
+        res.SecondLine = object.text
+      }
       if (object.place_type[0] == 'place') {
         res.city = object.text
         res.address = ''
