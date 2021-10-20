@@ -244,7 +244,8 @@ export default {
             res.city = element.text
             break
           case 'region':
-            res.state = element.text
+            // res.state = element.text
+            res.state = (element.short_code).split('-')[1]
             break
           case 'country':
             res.country = element.text
