@@ -962,6 +962,16 @@ export default {
       }
     }
   },
+  jugeSame({ object, cond }) {
+    for (let i = 0; i < Array.from(object).length; i++) {
+      if (object[i].carrier == cond) {
+        return true
+      } else {
+        continue
+      }
+    }
+    return false
+  },
   DeleteCarrier({ object, carreir, plans, len }) {
     for (let i = 0; i < Array.from(object).length; i++) {
       if (object[i].carriers == carreir) {
