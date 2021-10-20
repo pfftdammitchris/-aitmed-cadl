@@ -961,6 +961,17 @@ export default {
         continue
       }
     }
+  },
+  DeleteCarrier({ object, carreir, plans, len }) {
+    for (let i = 0; i < Array.from(object).length; i++) {
+      if (object[i].carriers == carreir) {
+        object[i].plans = plans
+        object[i].planLength = len
+        console.error("cmq========", object[i])
+        return object
+      } else {
+        continue
+      }
+    }
   }
-
 }
