@@ -32,7 +32,7 @@ export default [
         sourcemap: true,
       },
       {
-        file: pkg.browser,
+        file: 'dist/index.min.js',
         format: 'iife', // ES6 output - the preferred format
         sourcemap: true,
         name: 'aitmedCadl',
