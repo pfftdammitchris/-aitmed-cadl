@@ -744,8 +744,6 @@ export default {
       }
       else if (objItem["_source"]["visitType"] === "Telemedicine") {
         arrTel.push(objItem);
-        // console.error(objItem);
-
       }
 
     })
@@ -930,7 +928,6 @@ export default {
       let re: Record<string, any> = []
       object.forEach((obj) => {
         let st = obj['name']['data']['basicInfo']['geoCode']
-        console.error("cmq", st)
         let address =
           obj['name']['data']['basicInfo']['address'] +
           ' ' +
@@ -977,7 +974,6 @@ export default {
       if (object[i].carrier == carreir) {
         object[i].plans = plans
         object[i].planLength = len
-        console.error(object)
         return object
       } else {
         continue
