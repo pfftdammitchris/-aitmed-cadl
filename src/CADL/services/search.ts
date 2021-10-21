@@ -974,9 +974,10 @@ export default {
   },
   DeleteCarrier({ object, carreir, plans, len }) {
     for (let i = 0; i < Array.from(object).length; i++) {
-      if (object[i].carriers == carreir) {
+      if (object[i].carrier == carreir) {
         object[i].plans = plans
         object[i].planLength = len
+        console.error(object)
         return object
       } else {
         continue
