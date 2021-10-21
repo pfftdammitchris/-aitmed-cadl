@@ -268,6 +268,12 @@ export default {
     })
     return body
   },
+  async queryAllCarriers({ object }) {
+    object.forEach(index => {
+      index["text"] = index["carrier"]
+    });
+    return object
+  },
   /**
    * Get all related addresses of query
    * @param query 
