@@ -965,9 +965,9 @@ export default {
       }
     }
   },
-  jugeSame({ object, cond }) {
+  jugeSame({ object, cond, name }) {
     for (let i = 0; i < Array.from(object).length; i++) {
-      if (object[i].carrier == cond) {
+      if (object[i][name] == cond) {
         return true
       } else {
         continue
