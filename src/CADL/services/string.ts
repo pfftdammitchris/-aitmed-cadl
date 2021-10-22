@@ -269,6 +269,9 @@ export default {
       if (object.place_type[0] == 'poi' || object.place_type[0] == 'address') {
         res.firsLine = object.text
         res.SecondLine = object.properties.address
+      } else {
+        res.firsLine = ""
+        res.SecondLine = ""
       }
       if (object.place_type[0] == 'place') {
         res.city = object.text
