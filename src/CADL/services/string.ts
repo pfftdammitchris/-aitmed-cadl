@@ -270,7 +270,12 @@ export default {
 
       if (object.place_type[0] == 'poi' || object.place_type[0] == 'address') {
         res.firsLine = object.text
-        res.SecondLine = object.properties.address
+        if (object.properties.address) {
+          res.SecondLine = object.properties.address
+        } else {
+          res.SecondLine = ""
+        }
+
       } else {
         res.firsLine = ""
         res.SecondLine = ""
