@@ -884,7 +884,6 @@ export default {
   selectOneToArr({ arr, key }) {
     let arr1: Array<any> = new Array()
     for (let i = 0; i < arr.length; i++) arr1.push(arr[i][key])
-    console.log('test', arr1)
     return arr1
   },
   matchInArray({ arr, value, key, key1 }) {
