@@ -266,7 +266,7 @@ export default {
       }
       res.address = object.address ? object.address + ' ' + res.address : res.address
 
-      if (object.place_type[0] == 'poi') {
+      if (object.place_type[0] == 'poi' || object.place_type[0] == 'address') {
         res.firsLine = object.text
         res.SecondLine = object.properties.address
       }
