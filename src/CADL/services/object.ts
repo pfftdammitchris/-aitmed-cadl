@@ -286,5 +286,11 @@ export default {
 
     }
     return objArr;
-  }
+  },
+  addKey({ object, key, value }) {
+    object.forEach(index => {
+      index[key] = value
+    });
+    return object
+  },
 }
