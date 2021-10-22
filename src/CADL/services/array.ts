@@ -884,6 +884,7 @@ export default {
   selectOneToArr({ arr, key }) {
     let arr1: Array<any> = new Array()
     for (let i = 0; i < arr.length; i++) arr1.push(arr[i][key])
+    console.log('test', arr1)
     return arr1
   },
   matchInArray({ arr, value, key, key1 }) {
@@ -957,7 +958,9 @@ export default {
     return
   },
   addSelect({ array }) {
-    return array.unshift("please select")
+    let _array = _.cloneDeep(array)
+    _array.unshift('please select')
+    return _array
   },
   getObjectByArray({ array, key, value }) {
     for (let i = 0; i < array.length; i++) {
