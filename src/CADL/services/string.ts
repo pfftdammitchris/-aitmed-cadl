@@ -134,8 +134,10 @@ export default {
   },
   //judge whether all the request textfield is filled in 
   judgeFillinAll(stringArr: string[]) {
+    console.log(stringArr);
+
     for (let i = 0; i < stringArr.length; i++)
-      if (stringArr[i] == "" || stringArr[i] == "-- --") return true
+      if (stringArr[i] == "" || stringArr[i] == "-- --" || stringArr[i] == "Select") return true
     return false
   },
   judgeIsAllEmpty(stringArr: string[]) {
