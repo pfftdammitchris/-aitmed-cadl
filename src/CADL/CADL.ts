@@ -371,7 +371,7 @@ export default class CADL extends EventEmitter {
       return
     } else {
       //refresh the pageObject
-      ;({ pageCADL } = await this.getPage(pageName))
+      ; ({ pageCADL } = await this.getPage(pageName))
       options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
 
@@ -465,6 +465,7 @@ export default class CADL extends EventEmitter {
             'display',
             'backgroundColor',
             'height',
+            'pointerEvents',
             ...skip,
           ],
           withFns: true,
@@ -486,6 +487,7 @@ export default class CADL extends EventEmitter {
             'display',
             'backgroundColor',
             'height',
+            'pointerEvents',
             ...skip,
           ],
           withFns: true,
@@ -505,6 +507,7 @@ export default class CADL extends EventEmitter {
             'init',
             'formData',
             'dataIn',
+            'style',
             ...skip,
           ],
           pageName,
@@ -1130,8 +1133,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1865,7 +1868,7 @@ export default class CADL extends EventEmitter {
             gotoArgs = populatedFalseEffect['goto'].dataIn
           }
           // debugger
-          await this.root.builtIn['goto']({pageName, goto: gotoArgs})
+          await this.root.builtIn['goto']({ pageName, goto: gotoArgs })
           return { abort: true }
         }
       } else if (typeof ifFalseEffect === 'function') {
@@ -2410,7 +2413,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => {})
+    return produce(root, (draft) => { })
   }
 
   public newDispatch(action) {

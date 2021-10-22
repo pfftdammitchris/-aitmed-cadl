@@ -268,6 +268,12 @@ export default {
     })
     return body
   },
+  async queryAllCarriers({ object }) {
+    object.forEach(index => {
+      index["text"] = index["carrier"]
+    });
+    return object
+  },
   /**
    * Get all related addresses of query
    * @param query 
@@ -744,8 +750,6 @@ export default {
       }
       else if (objItem["_source"]["visitType"] === "Telemedicine") {
         arrTel.push(objItem);
-        // console.error(objItem);
-
       }
 
     })
@@ -930,7 +934,6 @@ export default {
       let re: Record<string, any> = []
       object.forEach((obj) => {
         let st = obj['name']['data']['basicInfo']['geoCode']
-        console.error("cmq", st)
         let address =
           obj['name']['data']['basicInfo']['address'] +
           ' ' +
@@ -961,6 +964,26 @@ export default {
         continue
       }
     }
+  },
+  jugeSame({ object, cond, name }) {
+    for (let i = 0; i < Array.from(object).length; i++) {
+      if (object[i][name] == cond) {
+        return true
+      } else {
+        continue
+      }
+    }
+    return false
+  },
+  DeleteCarrier({ object, carreir, plans, len }) {
+    for (let i = 0; i < Array.from(object).length; i++) {
+      if (object[i].carrier == carreir) {
+        object[i].plans = plans
+        object[i].planLength = len
+        return object
+      } else {
+        continue
+      }
+    }
   }
-
 }

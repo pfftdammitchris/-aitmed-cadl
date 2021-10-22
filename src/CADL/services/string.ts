@@ -232,6 +232,8 @@ export default {
       geoCode: [],
       country: "",
       county: "",
+      firsLine: "",
+      SecondLine: ""
     }
     if (object) {
       let context = object['context']
@@ -246,7 +248,8 @@ export default {
             res.city = element.text
             break
           case 'region':
-            res.state = element.text
+            // res.state = element.text
+            res.state = (element.short_code).split('-')[1]
             break
           case 'country':
             res.country = element.text
@@ -265,6 +268,10 @@ export default {
       }
       res.address = object.address ? object.address + ' ' + res.address : res.address
 
+      if (object.place_type[0] == 'poi') {
+        res.firsLine = object.text
+        res.SecondLine = object.properties.address
+      }
       if (object.place_type[0] == 'place') {
         res.city = object.text
         res.address = ''
