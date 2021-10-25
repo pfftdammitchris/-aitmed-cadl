@@ -1081,5 +1081,18 @@ export default {
   },
   uniqueByObjectKey({ objArr, path }: { objArr: {}[], path: string }): {}[] {
     return _.uniqBy(objArr, path);
+  },
+  formatStringFill({ strArr, sfill }: { strArr: string[], sfill: string }): string {
+    let str: string = "";
+    for (let i = 0; i <= strArr.length - 1; i++) {
+      if (strArr[i]) {
+        if (i === strArr.length - 1) {
+          str += strArr[i];
+          return str
+        }
+        str += strArr[i].concat(sfill)
+      }
+    }
+    return str.slice(0, -1)
   }
 }
