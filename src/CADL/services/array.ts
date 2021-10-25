@@ -1091,7 +1091,7 @@ export default {
    * stringArr include any item of array1, if include , return false, else return true
    */
   allComplete(stringArr: string[]): boolean {
-    let array1 = ["", "Select"]
+    let array1 = ["", "Select", "-- --"]
     let result = true
     if (Array.isArray(stringArr)) {
       result = array1.some((val) => {
