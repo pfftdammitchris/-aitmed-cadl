@@ -889,7 +889,8 @@ export default {
           "fuzziness": "AUTO",
           "max_expansions": 50
         }
-      }
+      },
+      size: 100
     }
 
 

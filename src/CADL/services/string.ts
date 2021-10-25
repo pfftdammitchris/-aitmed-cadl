@@ -134,8 +134,10 @@ export default {
   },
   //judge whether all the request textfield is filled in 
   judgeFillinAll(stringArr: string[]) {
+    console.log(stringArr);
+
     for (let i = 0; i < stringArr.length; i++)
-      if (stringArr[i] == "" || stringArr[i] == "-- --") return true
+      if (stringArr[i] == "" || stringArr[i] == "-- --" || stringArr[i] == "Select") return true
     return false
   },
   judgeIsAllEmpty(stringArr: string[]) {
@@ -266,9 +268,17 @@ export default {
       }
       res.address = object.address ? object.address + ' ' + res.address : res.address
 
-      if (object.place_type[0] == 'poi') {
+      if (object.place_type[0] == 'poi' || object.place_type[0] == 'address') {
         res.firsLine = object.text
-        res.SecondLine = object.properties.address
+        if (object.properties.address) {
+          res.SecondLine = object.properties.address
+        } else {
+          res.SecondLine = ""
+        }
+
+      } else {
+        res.firsLine = ""
+        res.SecondLine = ""
       }
       if (object.place_type[0] == 'place') {
         res.city = object.text

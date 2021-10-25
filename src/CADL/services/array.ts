@@ -957,7 +957,9 @@ export default {
     return
   },
   addSelect({ array }) {
-    return array.unshift("please select")
+    let _array = _.cloneDeep(array)
+    _array.unshift('please select')
+    return _array
   },
   getObjectByArray({ array, key, value }) {
     for (let i = 0; i < array.length; i++) {
