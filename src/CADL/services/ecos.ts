@@ -253,7 +253,7 @@ export default {
         const document = reidDocList[j]
         const note = await documentToNote({ document })
         let content = note?.name?.data
-        if (typeof content == 'string' && content != 'undefined') {
+        if (typeof content == 'string' && content != 'undefined' && document?.name?.data != null) {
           content = await store.level2SDK.utilServices.base64ToBlob(
             note?.name?.data,
             note?.name?.type
