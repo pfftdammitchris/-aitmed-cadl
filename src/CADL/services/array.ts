@@ -285,7 +285,7 @@ export default {
   hasKey({ object, key }) {
     if (isArray(object)) {
       for (let i = 0; i < object.length; i++) {
-        if (object[i].key === key) {
+        if (object[i].key === key || object[i][key]) {
           return true
         }
       }
@@ -1096,5 +1096,13 @@ export default {
       }
     }
     return str.slice(0, -1)
+  },
+  findSelectAtl({ arrObject, value, keyAtl }: { arrObject: object[], value: any, keyAtl: string }): boolean {
+
+    return arrObject.some((element) => {
+      return element[keyAtl] === value;
+    })
+
   }
+
 }
