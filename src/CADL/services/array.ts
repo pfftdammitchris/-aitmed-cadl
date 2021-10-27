@@ -1,4 +1,4 @@
-import _, { isArray, get } from 'lodash'
+import _, { isArray, get, every } from 'lodash'
 import store from '../../common/store'
 // import object from './object'
 type connection = {
@@ -1083,6 +1083,22 @@ export default {
   },
   uniqueByObjectKey({ objArr, path }: { objArr: {}[], path: string }): {}[] {
     return _.uniqBy(objArr, path);
+  },
+  /**
+   * 
+   * @param stringArr 
+   * @returns true | false
+   * stringArr include any item of array1, if include , return false, else return true
+   */
+  allComplete(stringArr: string[]): boolean {
+    let array1 = ["", "Select", "-- --"]
+    let result = true
+    if (Array.isArray(stringArr)) {
+      result = array1.some((val) => {
+        return stringArr.includes(val)
+      })
+    }
+    return !result
   },
   formatStringFill({ strArr, sfill }: { strArr: string[], sfill: string }): string {
     let str: string = "";
