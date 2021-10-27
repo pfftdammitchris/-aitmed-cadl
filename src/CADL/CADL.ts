@@ -2597,6 +2597,10 @@ export default class CADL extends EventEmitter {
         source: clone,
       })
       if ('actionType' in action && action?.actionType === 'evalObject') {
+        let object = action?.object
+        await object()
+
+        // const response = await this.handleEvalObject({ object: action?.object, pageName })
         const response = await this.dispatch({
           type: 'eval-object',
           payload: {
@@ -2637,6 +2641,12 @@ export default class CADL extends EventEmitter {
         } else {
           returnValues[index] = ''
         }
+      } else if ('goto' in action) {
+        await this.handleEvalCommands({
+          pageName,
+          commands: actionWithVals,
+          key: 'goto',
+        })
       }
     })
 
