@@ -907,7 +907,7 @@ export default {
         "multi_match": {
           "query": cond,
           "type": "best_fields",
-          "fields": ["fullName^2", "specialty"],
+          "fields": ["fullName^2", "specialty", "facilityName"],
           "fuzziness": "AUTO",
           "max_expansions": 50
         }
