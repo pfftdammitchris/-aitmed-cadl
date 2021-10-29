@@ -466,6 +466,7 @@ export default class CADL extends EventEmitter {
             'backgroundColor',
             'height',
             'pointerEvents',
+            'highlightKey',
             ...skip,
           ],
           withFns: true,
