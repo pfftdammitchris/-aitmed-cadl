@@ -348,19 +348,19 @@ export default {
       }
     })
     //定义接受所有的special
-    for (let SpeInfo of body_1["suggest"]['speciality_suggestion'][0]['options']) {
-      Allspe.push(SpeInfo["_source"]["specialty"])
-      for (let sym of SpeInfo["_source"]["symptom"]) {
-        Allsym.push(sym.trim())
-      }
-    }
-    for (let SymInfo of body_1['suggest']['symptom_suggestion'][0]['options']) {
-      Allspe.push(SymInfo["_source"]["specialty"])
-      for (let sym of SymInfo["_source"]["symptom"]) {
-        Allsym.push(sym.trim())
-      }
+    // for (let SpeInfo of body_1["suggest"]['speciality_suggestion'][0]['options']) {
+    //   Allspe.push(SpeInfo["_source"]["specialty"])
+    //   for (let sym of SpeInfo["_source"]["symptom"]) {
+    //     Allsym.push(sym.trim())
+    //   }
+    // }
+    // for (let SymInfo of body_1['suggest']['symptom_suggestion'][0]['options']) {
+    //   Allspe.push(SymInfo["_source"]["specialty"])
+    //   for (let sym of SymInfo["_source"]["symptom"]) {
+    //     Allsym.push(sym.trim())
+    //   }
 
-    }
+    // }
     // console.error("cmq", Allspe)
     // console.error("cmq", Allsym)
     // for (let SpeInfo of Array.from(new Set(Allspe))) {
@@ -400,47 +400,47 @@ export default {
     // console.error("cmq", spe_sug)
     // console.error("cmq", sym_sug)
 
-    // for (let s of body_1['suggest']['speciality_suggestion'][0]['options']) {
-    //   let strLen = (s.text).indexOf(prefix) + 1
-    //   let sum = strLen + len
-    //   let str = (s.text).substring(strLen, sum)
-    //   let otherStr = (s.text).substring(sum, s.length)
-    //   if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
-    //     color = "0xca1e36"
-    //     s["color"] = color
-    //     s["id"] = s._id
-    //     s["hightStr"] = str
-    //     s["otherStr"] = otherStr
-    //   } else {
-    //     color = "0x143459"
-    //     s["color"] = color
-    //   }
-    //   spe_sug.push(s)
-    // }
-    // for (let s of body_1['suggest']['symptom_suggestion'][0]['options']) {
-    //   let strLen = (s.text).indexOf(prefix)
-    //   let sum = strLen + len
-    //   let str = (s.text).substring(strLen, sum)
-    //   s["text"] = (s.text).replace(/^\s+|\s+$/g, '')
-    //   let otherStr = (s.text).substring(sum - 1, s.length)
-    //   if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
-    //     color = "0xca1e36"
-    //     s["color"] = color
-    //     s["id"] = s._id
-    //     s["hightStr"] = str
-    //     s["otherStr"] = otherStr
-    //   } else {
-    //     color = "0x143459"
-    //     s["color"] = color
-    //   }
-    //   sym_sug.push(s)
-    // }
+    for (let s of body_1['suggest']['speciality_suggestion'][0]['options']) {
+      // let strLen = (s.text).indexOf(prefix) + 1
+      // let sum = strLen + len
+      // let str = (s.text).substring(strLen, sum)
+      // let otherStr = (s.text).substring(sum, s.length)
+      // if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+      //   color = "0xca1e36"
+      //   s["color"] = color
+      //   s["id"] = s._id
+      //   s["hightStr"] = str
+      //   s["otherStr"] = otherStr
+      // } else {
+      //   color = "0x143459"
+      //   s["color"] = color
+      // }
+      spe_sug.push(s)
+    }
+    for (let s of body_1['suggest']['symptom_suggestion'][0]['options']) {
+      // let strLen = (s.text).indexOf(prefix)
+      // let sum = strLen + len
+      // let str = (s.text).substring(strLen, sum)
+      // s["text"] = (s.text).replace(/^\s+|\s+$/g, '')
+      // let otherStr = (s.text).substring(sum - 1, s.length)
+      // if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+      //   color = "0xca1e36"
+      //   s["color"] = color
+      //   s["id"] = s._id
+      //   s["hightStr"] = str
+      //   s["otherStr"] = otherStr
+      // } else {
+      //   color = "0x143459"
+      //   s["color"] = color
+      // }
+      sym_sug.push(s)
+    }
     console.log('test suggest', {
       doctor_suggestion: doc_sug,
       speciality_suggestion: spe_sug,
       symptom_suggestion: Array.from(new Set(sym_sug)),
     })
-    return { doctor_suggestion: doc_sug, speciality_suggestion: Array.from(new Set(Allspe)), symptom_suggestion: Array.from(new Set(Allsym)) }
+    return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug, symptom_suggestion: Array.from(new Set(sym_sug)) }
   },
   /**
    * 
