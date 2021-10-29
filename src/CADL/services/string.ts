@@ -47,7 +47,7 @@ export default {
     return 'Please let your friend enters this code on their side: ' + Dkey.substring(0, 4) + '-' + Dkey.substring(4, 8) + '-' + Dkey.substring(8, 12) + '-' + Dkey.substring(12)
   },
   equal({ string1, string2 }): boolean {
-    return string1 === string2
+    return string1 == string2
   },
   getFirstChar({ value }): string | void {
     if (value) {
