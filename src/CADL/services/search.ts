@@ -397,8 +397,14 @@ export default {
     // }
     // console.error("cmq", spe_sug)
     // console.error("cmq", sym_sug)
-
-    for (let s of body_1['suggest']['speciality_suggestion'][0]['options']) {
+    function compare(property1, property2) {
+      return function (a, b) {
+        let value1 = a[property1][property2];
+        let value2 = b[property1][property2];
+        return value2 - value1;
+      }
+    } //sort排序降序
+    for (let s of body_1['suggest']['speciality_suggestion'][0]['options'].sort(compare("_source", "weight"))) {
       // let strLen = (s.text).indexOf(prefix) + 1
       // let sum = strLen + len
       // let str = (s.text).substring(strLen, sum)
@@ -415,7 +421,7 @@ export default {
       // }
       spe_sug.push(s)
     }
-    for (let s of body_1['suggest']['symptom_suggestion'][0]['options']) {
+    for (let s of body_1['suggest']['symptom_suggestion'][0]['options'].sort(compare("_source", "weight"))) {
       // let strLen = (s.text).indexOf(prefix)
       // let sum = strLen + len
       // let str = (s.text).substring(strLen, sum)
