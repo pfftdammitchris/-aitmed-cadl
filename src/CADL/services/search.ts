@@ -313,23 +313,8 @@ export default {
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
-    let len = prefix.length
-    let color = ""
-    // let body = await client.search({
-    //   index: INDEX,
-    //   body: {
-    //     "suggest": {
-    //       "doctor_suggestion": {
-    //         "text": prefix,
-    //         "completion": {
-    //           "field": "suggest",
-    //           "skip_duplicates": true,
-    //           "size": 10
-    //         }
-    //       }
-    //     }
-    //   }
-    // })
+    let Allspe: any[] = []
+    let Allsym: any[] = []
     let body_1 = await client.search({
       index: TEXT_INDEX,
       body: {
@@ -360,7 +345,60 @@ export default {
         ]
       }
     })
-    // for (let s of body.suggest.doctor_suggestion[0].options) {
+    //定义接受所有的special
+    for (let SpeInfo of body_1["suggest"]['speciality_suggestion'][0]['options']) {
+      Allspe.push(SpeInfo["_source"]["specialty"])
+      for (let sym of SpeInfo["_source"]["symptom"]) {
+        Allsym.push(sym.trim())
+      }
+    }
+    for (let SymInfo of body_1['suggest']['symptom_suggestion'][0]['options']) {
+      Allspe.push(SymInfo["_source"]["specialty"])
+      for (let sym of SymInfo["_source"]["symptom"]) {
+        Allsym.push(sym.trim())
+      }
+
+    }
+    // console.error("cmq", Allspe)
+    // console.error("cmq", Allsym)
+    // for (let SpeInfo of Array.from(new Set(Allspe))) {
+    //   let special = {}
+    //   let strLen = prefix.length
+    //   special["text"] = (SpeInfo).replace(/^\s+|\s+$/g, '')
+    //   let otherStr = (SpeInfo).substring(strLen, SpeInfo.length)
+    //   if (((SpeInfo).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+    //     color = "0xca1e36"
+    //     special["color"] = color
+    //     special["hightStr"] = prefix
+    //     special["otherStr"] = otherStr
+    //   } else {
+    //     color = "0x143459"
+    //     special["color"] = color
+    //   }
+    //   spe_sug.push(special)
+
+    // }
+    // for (let SymInfo of Array.from(new Set(Allsym))) {
+    //   let symptom = {}
+    //   let strLen = prefix.length
+    //   symptom["text"] = (SymInfo).replace(/^\s+|\s+$/g, '')
+    //   let otherStr = (SymInfo).substring(strLen, SymInfo.length)
+    //   if (((SymInfo).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+    //     color = "0xca1e36"
+    //     symptom["color"] = color
+    //     symptom["hightStr"] = prefix
+    //     symptom["otherStr"] = otherStr
+    //   } else {
+    //     color = "0x143459"
+    //     symptom["color"] = color
+    //   }
+    //   sym_sug.push(symptom)
+
+    // }
+    // console.error("cmq", spe_sug)
+    // console.error("cmq", sym_sug)
+
+    // for (let s of body_1['suggest']['speciality_suggestion'][0]['options']) {
     //   let strLen = (s.text).indexOf(prefix) + 1
     //   let sum = strLen + len
     //   let str = (s.text).substring(strLen, sum)
@@ -375,51 +413,33 @@ export default {
     //     color = "0x143459"
     //     s["color"] = color
     //   }
-    //   doc_sug.push(s)
+    //   spe_sug.push(s)
     // }
-    for (let s of body_1['suggest']['speciality_suggestion'][0]['options']) {
-      let strLen = (s.text).indexOf(prefix) + 1
-      let sum = strLen + len
-      let str = (s.text).substring(strLen, sum)
-      let otherStr = (s.text).substring(sum, s.length)
-      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
-        color = "0xca1e36"
-        s["color"] = color
-        s["id"] = s._id
-        s["hightStr"] = str
-        s["otherStr"] = otherStr
-      } else {
-        color = "0x143459"
-        s["color"] = color
-      }
-      spe_sug.push(s)
-    }
-    for (let s of body_1['suggest']['symptom_suggestion'][0]['options']) {
-      let strLen = (s.text).indexOf(prefix)
-      let sum = strLen + len
-      let str = (s.text).substring(strLen, sum)
-      s["text"] = (s.text).replace(/^\s+|\s+$/g, '')
-      let otherStr = (s.text).substring(sum - 1, s.length)
-      if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
-        color = "0xca1e36"
-        s["color"] = color
-        s["id"] = s._id
-        s["hightStr"] = str
-        s["otherStr"] = otherStr
-      } else {
-        color = "0x143459"
-        s["color"] = color
-      }
-      sym_sug.push(s)
-    }
+    // for (let s of body_1['suggest']['symptom_suggestion'][0]['options']) {
+    //   let strLen = (s.text).indexOf(prefix)
+    //   let sum = strLen + len
+    //   let str = (s.text).substring(strLen, sum)
+    //   s["text"] = (s.text).replace(/^\s+|\s+$/g, '')
+    //   let otherStr = (s.text).substring(sum - 1, s.length)
+    //   if (((s.text).toLowerCase()).indexOf(prefix.toLowerCase()) != -1) {
+    //     color = "0xca1e36"
+    //     s["color"] = color
+    //     s["id"] = s._id
+    //     s["hightStr"] = str
+    //     s["otherStr"] = otherStr
+    //   } else {
+    //     color = "0x143459"
+    //     s["color"] = color
+    //   }
+    //   sym_sug.push(s)
+    // }
     console.log('test suggest', {
       doctor_suggestion: doc_sug,
       speciality_suggestion: spe_sug,
       symptom_suggestion: Array.from(new Set(sym_sug)),
     })
-    return { doctor_suggestion: doc_sug, speciality_suggestion: spe_sug, symptom_suggestion: Array.from(new Set(sym_sug)) }
+    return { doctor_suggestion: doc_sug, speciality_suggestion: Array.from(new Set(Allspe)), symptom_suggestion: Array.from(new Set(Allsym)) }
   },
-
   /**
    * 
    * @param cond   => Search term
@@ -885,12 +905,12 @@ export default {
         "multi_match": {
           "query": cond,
           "type": "best_fields",
-          "fields": ["fullName^2", "specialty"],
+          "fields": ["fullName^2", "specialty", "facilityName"],
           "fuzziness": "AUTO",
           "max_expansions": 50
         }
       },
-      size: 100
+      "size": 100
     }
 
 

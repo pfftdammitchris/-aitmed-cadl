@@ -80,6 +80,7 @@ export default {
     targetEdgeID,
     targetRoomName,
     targetFileID,
+    reid,
   }) {
     return Promise.all(sourceDocList.map(async (sourceDoc) => {
       // const document = await retrieveDocument(sourceDoc.id)
@@ -100,6 +101,7 @@ export default {
         edge_id: targetEdgeID,
         mediaType: sourceDoc?.name?.type,
         fid: targetFileID,
+        reid: reid,
       })
     }))
   },
