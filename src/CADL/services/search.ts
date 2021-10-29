@@ -313,8 +313,6 @@ export default {
     let doc_sug: any[] = []
     let spe_sug: any[] = []
     let sym_sug: any[] = []
-    let Allspe: any[] = []
-    let Allsym: any[] = []
     let body_1 = await client.search({
       index: TEXT_INDEX,
       body: {
