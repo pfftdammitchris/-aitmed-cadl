@@ -315,8 +315,6 @@ export default {
     let sym_sug: any[] = []
     let Allspe: any[] = []
     let Allsym: any[] = []
-    let len = prefix.length
-    let color = ""
     let body_1 = await client.search({
       index: TEXT_INDEX,
       body: {
