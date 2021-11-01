@@ -1114,11 +1114,32 @@ export default {
     return str.slice(0, -1)
   },
   findSelectAtl({ arrObject, value, keyAtl }: { arrObject: object[], value: any, keyAtl: string }): boolean {
-
     return arrObject.some((element) => {
       return element[keyAtl] === value;
     })
-
+  },
+  //filter data by tag
+  filterByTag({ sourceDoc, tagCategory, tagName }: { sourceDoc: object[], tagCategory: string, tagName: string }) {
+    let result: any[] = []
+    if (tagName === 'All') {
+      return sourceDoc
+    }
+    sourceDoc.forEach((itemDoc) => {
+      if (itemDoc['name'] == undefined) {
+        console.warn("array.filterByTag itemDoc.name is underfined");
+        return
+      }
+      else if (itemDoc['name']['data'] == undefined) {
+        console.warn("array.filterByTag itemDoc.name.data is underfined");
+        return
+      }
+      else if (itemDoc['name']['data'][tagCategory] == undefined) {
+        console.warn("array.filterByTag itemDoc.name.data.tag is underfined");
+        return
+      }
+      else if (itemDoc['name']['data'][tagCategory]['name'] === tagName)
+        result.push(itemDoc)
+    })
+    return result
   }
-
 }
