@@ -130,15 +130,33 @@ export default {
   },
 
   // 校验对象表单
-  formValid({docData}):boolean{
+  formValid({ docData }): boolean {
     for (const key in docData) {
       if (docData.hasOwnProperty(key)) {
-          if (docData[key] === null || docData[key] === '') {
-              return false;
-          }
+        if (docData[key] === null || docData[key] === '') {
+          return false;
+        }
       }
-  }
-  return true;
+    }
+    return true;
+  },
+
+  /**
+   * E8 -> E2
+   * subtype = 196616 addition = 2
+   * return 196610
+   * @param subtype 
+   * @param addition 
+   * @returns 
+   */
+  transformSubtype({ subtype, addition }) {
+    if (subtype && addition) {
+      subtype = parseInt(subtype)
+      let _subtype = subtype & 0xff
+      let newSubtype = subtype - _subtype + addition
+      return newSubtype
+    }
+    return 0
   }
 }
 
