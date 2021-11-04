@@ -92,18 +92,33 @@ export default class CADL extends EventEmitter {
    * -sets CADL version, baseUrl, assetsUrl, and root
    */
   public async init({
-    BaseDataModel,
-    BaseCSS,
-    BasePage,
+    use,
   }: {
-    BaseDataModel?: Record<string, any>
-    BaseCSS?: Record<string, any>
-    BasePage?: Record<string, any>
+    use?: {
+      BaseDataModel?: Record<string, any>
+      BaseCSS?: Record<string, any>
+      BasePage?: Record<string, any>
+      config?: {
+        web?: { cadlVersion?: string | Record<string, any> } & Record<
+          string,
+          any
+        >
+        cadlBaseUrl?: string
+        cadlMain?: string
+        designSuffix?: string
+        myBaseUrl?: string
+      } & Record<string, any>
+      cadlEndpoint?: {
+        assetsUrl?: string
+        baseUrl?: string
+        preload?: string[]
+      } & Record<string, any>
+    } & { [pageName: string]: Record<string, any> }
   } = {}): Promise<void> {
     //load noodl config
-    let config: any
+    let config: Record<string, any>
     try {
-      config = await store.level2SDK.loadConfigData()
+      config = use?.config || (await store.level2SDK.loadConfigData())
     } catch (error) {
       throw new UnableToLoadConfig(
         'An error occured while trying to load the config',
@@ -122,25 +137,27 @@ export default class CADL extends EventEmitter {
         timeout: 5000,
       }
 
-      window.navigator.geolocation.getCurrentPosition(
-        function (position) {
-          let currentLatitude = position.coords.latitude
-          let currentLongitude = position.coords.longitude
-          store.currentLatitude = currentLatitude
-          store.currentLongitude = currentLongitude
-        },
-        function (error) {
-          let errorType = [
-            'You refuse to share location information',
-            "Can't get location information",
-            'Get location information timed out',
-          ]
-          if (store.env === 'test') {
-            console.log(errorType[error.code - 1])
-          }
-        },
-        options,
-      )
+      if (typeof window !== 'undefined') {
+        window.navigator.geolocation.getCurrentPosition(
+          function (position) {
+            let currentLatitude = position.coords.latitude
+            let currentLongitude = position.coords.longitude
+            store.currentLatitude = currentLatitude
+            store.currentLongitude = currentLongitude
+          },
+          function (error) {
+            let errorType = [
+              'You refuse to share location information',
+              "Can't get location information",
+              'Get location information timed out',
+            ]
+            if (store.env === 'test') {
+              console.log(errorType[error.code - 1])
+            }
+          },
+          options,
+        )
+      }
     }
 
     const {
@@ -160,9 +177,13 @@ export default class CADL extends EventEmitter {
 
     //set cadlEndpoint
     let cadlEndpointUrl = `${this.cadlBaseUrl}${cadlMain}`
-    let { cadlObject: cadlEndpoint } = await this.defaultObject(cadlEndpointUrl)
-
-    this.cadlEndpoint = cadlEndpoint
+    if (use?.cadlEndpoint) {
+      this.cadlEndpoint = use.cadlEndpoint
+    } else {
+      this.cadlEndpoint = (
+        await this.defaultObject(cadlEndpointUrl)
+      )?.cadlObject
+    }
 
     const { baseUrl, assetsUrl, preload } = this.cadlEndpoint
 
@@ -181,9 +202,9 @@ export default class CADL extends EventEmitter {
     })
 
     //set overrides of Base Objects
-    if (BaseDataModel) {
+    if (use?.BaseDataModel) {
       const processedBaseDataModel = this.processPopulate({
-        source: BaseDataModel,
+        source: use.BaseDataModel,
         lookFor: ['.', '..', '=', '~'],
       })
       this.newDispatch({
@@ -193,9 +214,9 @@ export default class CADL extends EventEmitter {
         },
       })
     }
-    if (BaseCSS) {
+    if (use?.BaseCSS) {
       const processedBaseCSS = this.processPopulate({
-        source: BaseCSS,
+        source: use.BaseCSS,
         lookFor: ['.', '..', '=', '~'],
       })
       this.newDispatch({
@@ -204,9 +225,9 @@ export default class CADL extends EventEmitter {
       })
     }
 
-    if (BasePage) {
+    if (use?.BasePage) {
       const processedBasePage = this.processPopulate({
-        source: BasePage,
+        source: use.BasePage,
         lookFor: ['.', '..', '=', '~'],
       })
       this.newDispatch({
@@ -219,12 +240,10 @@ export default class CADL extends EventEmitter {
       for (let pageName of preload) {
         switch (pageName) {
           case 'BaseDataModel': {
-            if (BaseDataModel) break
-            const { pageCADL: rawBaseDataModel } = await this.getPage(
-              'BaseDataModel',
-            )
             const processedBaseDataModel = this.processPopulate({
-              source: rawBaseDataModel,
+              source:
+                use?.BaseDataModel ||
+                (await this.getPage('BaseDataModel'))?.pageCADL,
               lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
@@ -237,10 +256,8 @@ export default class CADL extends EventEmitter {
             break
           }
           case 'BaseCSS': {
-            if (BaseCSS) break
-            const { pageCADL: rawBaseCSS } = await this.getPage('BaseCSS')
             const processedBaseCSS = this.processPopulate({
-              source: rawBaseCSS,
+              source: use?.BaseCSS || (await this.getPage('BaseCSS'))?.pageCADL,
               lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
@@ -250,10 +267,9 @@ export default class CADL extends EventEmitter {
             break
           }
           case 'BasePage': {
-            if (BasePage) break
-            const { pageCADL: rawBasePage } = await this.getPage('BasePage')
             const processedBasePage = this.processPopulate({
-              source: rawBasePage,
+              source:
+                use?.BasePage || (await this.getPage('BasePage'))?.pageCADL,
               lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
@@ -263,9 +279,9 @@ export default class CADL extends EventEmitter {
             break
           }
           default: {
-            const { pageCADL: rawPage } = await this.getPage(pageName)
             const processedRawPage = this.processPopulate({
-              source: rawPage,
+              source:
+                use?.[pageName] || (await this.getPage(pageName))?.pageCADL,
               lookFor: ['.', '..', '=', '~'],
             })
             this.newDispatch({
@@ -333,7 +349,7 @@ export default class CADL extends EventEmitter {
    * - initiates cadlObject for page specified
    */
   async initPage(
-    pageName: string,
+    pageArg: string | { pageName: string; cadlYAML: string; cadlObject: any },
     skip: string[] = [],
     options: Pick<
       Parameters<CADL['runInit']>[0],
@@ -365,14 +381,26 @@ export default class CADL extends EventEmitter {
         },
       })
     }
-    let pageCADL
+
+    let pageName = ''
+    let pageCADL: Record<string, any> | undefined
+
+    if (typeof pageArg === 'string') {
+      pageName = pageArg
+    } else if (typeof pageArg === 'object' && 'pageName' in pageArg) {
+      pageName = pageArg.pageName
+      pageCADL = pageArg.cadlObject
+    }
+
     if (reload === false && this.root[pageName]) {
       //keep the current pageObject
       return
     } else {
-      //refresh the pageObject
-      ; ({ pageCADL } = await this.getPage(pageName))
-      options?.onReceive && (await options?.onReceive?.(pageCADL))
+      if (!pageCADL) {
+        //refresh the pageObject
+        ;({ pageCADL } = await this.getPage(pageName))
+      }
+      pageCADL && options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
 
     if (this.root[pageName] && reload) {
@@ -396,7 +424,7 @@ export default class CADL extends EventEmitter {
      */
 
     const FIRST_process = this.processPopulate({
-      source: pageCADL,
+      source: pageCADL as Record<string, any>,
       lookFor: ['.', '..', '~'],
       skip: ['update', 'save', 'check', 'init', 'components', ...skip],
       withFns: true,
@@ -448,7 +476,7 @@ export default class CADL extends EventEmitter {
       }).then((page) => {
         if (page?.abort) {
           aborted = true
-          options?.onAbort?.(pageCADL)
+          pageCADL && options?.onAbort?.(pageCADL)
           return
         }
         //FOR COMPONENTS
@@ -1134,8 +1162,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -2414,7 +2442,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => { })
+    return produce(root, (draft) => {})
   }
 
   public newDispatch(action) {
