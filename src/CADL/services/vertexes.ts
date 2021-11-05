@@ -60,7 +60,7 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'set-api-buffer',
         payload: {
           apiObject: {
-            idList: [id],
+            idList,
             options: requestOptions,
             nonce,
           },
