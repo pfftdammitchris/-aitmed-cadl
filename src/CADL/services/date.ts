@@ -1085,5 +1085,17 @@ export default {
   },
   getMonthString(): string[] {
     return ["December", "November", "October", "September", "August", "July", "June", "May", "April", "March", "February", "January"].splice(11 - new Date().getMonth(), 12)
-  }
+  },
+
+  /**
+   * 
+   * @param date --->1998-09-02
+   */
+  checkUnder18({ date }) {
+    let currentDate = new Date().getTime()
+    let pastDate = new Date(date).getTime()
+    let years = (currentDate - pastDate) / (1000 * 60 * 60 * 24 * 356)
+    if (years < 18) return true
+    return false
+  },
 }

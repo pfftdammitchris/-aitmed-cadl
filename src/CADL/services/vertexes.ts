@@ -12,6 +12,7 @@ function get({ pageName, apiObject, dispatch }) {
       apiObject || {}
     )
     let res: Record<string, any> = {}
+    let idList: string[] | Uint8Array[] = []
     let requestOptions = {
       ...options,
     }
@@ -36,6 +37,7 @@ function get({ pageName, apiObject, dispatch }) {
         `Missing reference ${id} at page ${pageName}`
       )
     }
+    idList = Array.isArray(id) ? [...id] : [id]
     requestOptions = { ...requestOptions, ...populatedCurrentVal }
     sCondition = populatedCurrentVal?.sCondition
 
@@ -44,7 +46,10 @@ function get({ pageName, apiObject, dispatch }) {
         console.log(
           '%cGet Vertex Request',
           'background: purple; color: white; display: block;',
-          { options: requestOptions }
+          {
+            idList,
+            options: requestOptions,
+          }
         )
       }
       if (sCondition) {
@@ -55,7 +60,7 @@ function get({ pageName, apiObject, dispatch }) {
         type: 'set-api-buffer',
         payload: {
           apiObject: {
-            idList: [id],
+            idList,
             options: requestOptions,
             nonce,
           },
@@ -76,7 +81,7 @@ function get({ pageName, apiObject, dispatch }) {
           delete requestOptions.sCondition
         }
         const { data } = await store.level2SDK.vertexServices.retrieveVertex({
-          idList: id ? [id] : [],
+          idList,
           options: requestOptions,
         })
         await dispatch({
