@@ -54,7 +54,8 @@ export const create: DocumentTypes.Create = async ({
   const edge = await retrieveEdge(edge_id)
   if (!edge) throw new AiTmedError({ name: 'EDGE_DOES_NOT_EXIST' })
   const dType = new DType()
-  dType.dataType = dTypeProps?.dataType || dataType
+
+  dType.dataType = dTypeProps?.applicationDataType || dTypeProps?.dataType || dataType
 
   // Permission
   dType.isEditable = !!+dTypeProps?.isEditable || true
@@ -69,7 +70,6 @@ export const create: DocumentTypes.Create = async ({
 
   dType.isOnServer =
     !!+dTypeProps?.isOnServer || gzipData.length < CONTENT_SIZE_LIMIT
-
   // Encryption
   dType.isEncrypted = !!+dTypeProps?.isEncrypted
   let esak: Uint8Array | string = ''
