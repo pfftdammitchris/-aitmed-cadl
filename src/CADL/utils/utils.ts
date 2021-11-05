@@ -91,7 +91,7 @@ function populateKeys({
       if (Object.keys(parent).length && output[key]) {
         const mergedObjects = mergeDeep(
           populateKeys({ source: parent, lookFor, locations }),
-          populateKeys({ source: output[key], lookFor, locations })
+          populateKeys({ source: output[key], lookFor, locations }),
         )
         // output = Object.assign(output, mergedObjects)
         output = { ...output, ...mergedObjects }
@@ -608,7 +608,7 @@ function populateString({
         'background: orange; color: black; display: block;',
         {
           [path.join('.')]: source,
-        }
+        },
       )
     }
   }
@@ -870,14 +870,14 @@ function populateVals({
  * @returns Object that has had Uint8Array values mapped to base64.
  */
 function replaceUint8ArrayWithBase64(
-  source: Record<string, any> | any[]
+  source: Record<string, any> | any[],
 ): Record<string, any> {
   let sourceCopy = _.cloneDeep(source || {})
   if (isObject(source)) {
     Object.keys(sourceCopy).forEach((key) => {
       if (sourceCopy[key] instanceof Uint8Array) {
         sourceCopy[key] = store.level2SDK.utilServices.uint8ArrayToBase64(
-          sourceCopy[key]
+          sourceCopy[key],
         )
       } else if (isObject(sourceCopy[key])) {
         sourceCopy[key] = replaceUint8ArrayWithBase64(sourceCopy[key])
@@ -886,7 +886,7 @@ function replaceUint8ArrayWithBase64(
         !(sourceCopy[key] instanceof Uint8Array)
       ) {
         sourceCopy[key] = sourceCopy[key].map((elem) =>
-          replaceUint8ArrayWithBase64(elem)
+          replaceUint8ArrayWithBase64(elem),
         )
       }
     })
