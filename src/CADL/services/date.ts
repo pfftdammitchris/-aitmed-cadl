@@ -1093,6 +1093,17 @@ export default {
     let dateFormat: Date = new Date(+date);
     return `${dateFormat.toLocaleString('en-US', { month: "2-digit" })}` + `${separator}` + `${dateFormat.toLocaleString('en-US', { day: "2-digit" })}` + `${separator}` + `${dateFormat.getFullYear()}` + '\u0020'
       + `${dateFormat.toLocaleString('en-US', { hour: 'numeric', minute: "numeric", hour12: true })}`
+  },
 
+  /**
+   * 
+   * @param date --->1998-09-02
+   */
+  checkUnder18({ date }) {
+    let currentDate = new Date().getTime()
+    let pastDate = new Date(date).getTime()
+    let years = (currentDate - pastDate) / (1000 * 60 * 60 * 24 * 356)
+    if (years < 18) return true
+    return false
   },
 }
