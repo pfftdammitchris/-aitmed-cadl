@@ -1085,5 +1085,14 @@ export default {
   },
   getMonthString(): string[] {
     return ["December", "November", "October", "September", "August", "July", "June", "May", "April", "March", "February", "January"].splice(11 - new Date().getMonth(), 12)
-  }
+  },
+  formatDataPro({ date, separator }: { date: number | string, separator: string }) {
+    if (date.toString().length === 10) {
+      date = (+date) * 1000;
+    }
+    let dateFormat: Date = new Date(+date);
+    return `${dateFormat.toLocaleString('en-US', { month: "2-digit" })}` + `${separator}` + `${dateFormat.toLocaleString('en-US', { day: "2-digit" })}` + `${separator}` + `${dateFormat.getFullYear()}` + '\u0020'
+      + `${dateFormat.toLocaleString('en-US', { hour: 'numeric', minute: "numeric", hour12: true })}`
+
+  },
 }
