@@ -1,13 +1,15 @@
+import * as u from '@jsmanifest/utils'
+import * as nt from 'noodl-types'
 import _ from 'lodash'
 import axios from 'axios'
 import { EventEmitter } from 'events'
-import produce, { setAutoFreeze } from 'immer'
+import produce, { Draft, setAutoFreeze } from 'immer'
 import moment from 'moment'
 import sha256 from 'crypto-js/sha256'
 import Base64 from 'crypto-js/enc-base64'
 import { parseYml } from '../utils/yaml'
+import reducer, { Action as ReducerAction, producer } from './reducer'
 setAutoFreeze(false)
-
 import store from '../common/store'
 import {
   UnableToParseYAML,
@@ -17,20 +19,19 @@ import {
 } from './errors'
 import { CADL_OBJECT, CADLARGS } from './types'
 import {
+  attachFns,
+  isPopulated,
+  isNoodlFunction,
   populateObject,
   populateString,
-  attachFns,
   populateKeys,
   populateVals,
   populateArray,
   replaceUint8ArrayWithBase64,
   replaceEvalObject,
   replaceVars,
-  isPopulated,
-  isNoodlFunction,
 } from './utils'
 import { isObject, asyncForEach, mergeDeep } from '../utils'
-import dot from 'dot-object'
 import builtInFns from './services/builtIn'
 import FuzzyIndexCreator from '../db/utils/FuzzyIndexCreator'
 import basicExtraction from '../db/utils/KeyExtraction/BasicAlgorithm'
@@ -38,45 +39,37 @@ import IndexRepository from '../db/IndexRepository'
 // import InboxContacts from './__mocks__/InboxContacts'
 // import BaseDataModel from './__mocks__/BaseDataModel'
 
-export default class CADL extends EventEmitter {
-  private _cadlVersion: 'test' | 'stable'
-  private _cadlEndpoint: CADL_OBJECT
+class CADL extends EventEmitter {
   private _cadlBaseUrl: string | undefined
   private _baseUrl: string
-  private _myBaseUrl: string
   private _assetsUrl: string
   private _root: Record<string, any> = this.initRoot({})
-  private _rawRoot: Record<string, any> = this.initRawRoot({})
-  private _initCallQueue: any[]
   private _designSuffix: Record<string, any>
   private _aspectRatio: number
-  private _map: Record<string, any>
   private _config: Record<string, any>
   private _dbConfig: any
   private _indexRepository: IndexRepository
-  public verificationRequest = {
-    timer: 0,
-    phoneNumber: '',
-  }
+  cadlEndpoint: CADL_OBJECT
+  cadlVersion: 'test' | 'stable'
+  initCallQueue = [] as any[]
+  myBaseUrl = ''
+  verificationRequest = { timer: 0, phoneNumber: '' }
 
   /**
-   *
-   * @param CADLARGS
-   * @param CADLARGS.configUrl
-   * @param CADLARGS.cadlVersion 'test' | 'stable'
+   * @param { number } aspectRatio
+   * @param { string } configUrl
+   * @param { 'test' | 'stable' } cadlVersion
+   * @param { unknown } dbConfig
    */
   constructor({ configUrl, cadlVersion, aspectRatio, dbConfig }: CADLARGS) {
     super()
-    //replace default arguments
+    aspectRatio && (this.aspectRatio = aspectRatio)
     store.env = cadlVersion
     store.configUrl = configUrl
     store.noodlInstance = this
-    this.cadlVersion = cadlVersion
-    if (aspectRatio) {
-      this.aspectRatio = aspectRatio
-    }
     this._dbConfig = dbConfig
     this._indexRepository = new IndexRepository()
+    this.cadlVersion = cadlVersion
   }
 
   /**
@@ -91,22 +84,44 @@ export default class CADL extends EventEmitter {
    * -loads noodl config if not already loaded
    * -sets CADL version, baseUrl, assetsUrl, and root
    */
-  public async init({
-    BaseDataModel,
-    BaseCSS,
-    BasePage,
+  async init({
+    onConfig,
+    onCadlEndpoint,
+    onPreload,
+    onRehydrateGlobal,
+    ...use
   }: {
     BaseDataModel?: Record<string, any>
     BaseCSS?: Record<string, any>
     BasePage?: Record<string, any>
+    config?: nt.RootConfig & Record<string, any>
+    cadlEndpoint?: nt.AppConfig & Record<string, any>
+    onConfig?: (
+      processedObject: Record<string, any>,
+      json: Record<string, any>,
+    ) => void
+    onCadlEndpoint?: (
+      json: Record<string, any>,
+      yml: string | undefined,
+    ) => void
+    onPreload?: (
+      name: string,
+      processedObject: Record<string, any>,
+      json: Record<string, any>,
+      yml: string | undefined,
+    ) => void
+    onRehydrateGlobal?: (globalObject: Record<string, any>) => void
   } = {}): Promise<void> {
     //load noodl config
-    let config: any
+    let config: Record<string, any>
     try {
-      config = await store.level2SDK.loadConfigData()
+      config = u.isObj(use.config)
+        ? use.config
+        : await store.level2SDK.loadConfigData()
     } catch (error) {
+      if (error instanceof Error) throw error
       throw new UnableToLoadConfig(
-        'An error occured while trying to load the config',
+        `[Error] An error occured while trying to load the config`,
         error,
       )
     }
@@ -122,25 +137,27 @@ export default class CADL extends EventEmitter {
         timeout: 5000,
       }
 
-      window.navigator.geolocation.getCurrentPosition(
-        function (position) {
-          let currentLatitude = position.coords.latitude
-          let currentLongitude = position.coords.longitude
-          store.currentLatitude = currentLatitude
-          store.currentLongitude = currentLongitude
-        },
-        function (error) {
-          let errorType = [
-            'You refuse to share location information',
-            "Can't get location information",
-            'Get location information timed out',
-          ]
-          if (store.env === 'test') {
-            console.log(errorType[error.code - 1])
-          }
-        },
-        options,
-      )
+      if (typeof window !== 'undefined') {
+        window.navigator.geolocation.getCurrentPosition(
+          function onSuccess(position) {
+            let currentLatitude = position.coords.latitude
+            let currentLongitude = position.coords.longitude
+            store.currentLatitude = currentLatitude
+            store.currentLongitude = currentLongitude
+          },
+          function onError(error) {
+            let errorType = [
+              'You refuse to share location information',
+              "Can't get location information",
+              'Get location information timed out',
+            ]
+            if (store.env === 'test') {
+              console.log(errorType[error.code - 1])
+            }
+          },
+          options,
+        )
+      }
     }
 
     const {
@@ -150,151 +167,81 @@ export default class CADL extends EventEmitter {
       designSuffix = '',
       myBaseUrl = '',
     } = config
-    //set cadlVersion
-    this.cadlVersion = web.cadlVersion[this.cadlVersion]
-    this.designSuffix = designSuffix
-    this.cadlBaseUrl = cadlBaseUrl
 
-    //set myBaseUrl
-    this.myBaseUrl = myBaseUrl
-
-    //set cadlEndpoint
-    let cadlEndpointUrl = `${this.cadlBaseUrl}${cadlMain}`
-    let { cadlObject: cadlEndpoint } = await this.defaultObject(cadlEndpointUrl)
-
-    this.cadlEndpoint = cadlEndpoint
-
-    const { baseUrl, assetsUrl, preload } = this.cadlEndpoint
-
-    //set baseUrl and assets Url
-    this.baseUrl = baseUrl
-    this.assetsUrl = assetsUrl
     this._config = this.processPopulate({
       source: config,
       lookFor: ['.', '..', '=', '~'],
     })
+
+    onConfig?.(this._config, config)
+
+    this.cadlVersion = web.cadlVersion[this.cadlVersion]
+    this.cadlBaseUrl = cadlBaseUrl
+    {
+      let cadlYAML: string | undefined
+      if (u.isObj(use.cadlEndpoint)) {
+        this.cadlEndpoint = use.cadlEndpoint
+      } else {
+        const { cadlObject, cadlYAML: yml } = await this.defaultObject(
+          `${this.cadlBaseUrl}${cadlMain}`,
+        )
+        this.cadlEndpoint = cadlObject
+        cadlYAML = yml
+      }
+      onCadlEndpoint?.(this.cadlEndpoint, cadlYAML)
+    }
+    this.assetsUrl = this.cadlEndpoint?.assetsUrl
+    this.baseUrl = this.cadlEndpoint?.baseUrl
+    this.designSuffix = designSuffix
+    this.myBaseUrl = myBaseUrl
+
     this.newDispatch({
       type: 'SET_ROOT_PROPERTIES',
-      payload: {
-        properties: { Config: this._config },
-      },
+      payload: { properties: { Config: this._config } },
     })
 
-    //set overrides of Base Objects
-    if (BaseDataModel) {
-      const processedBaseDataModel = this.processPopulate({
-        source: BaseDataModel,
-        lookFor: ['.', '..', '=', '~'],
-      })
-      this.newDispatch({
-        type: 'SET_ROOT_PROPERTIES',
-        payload: {
-          properties: processedBaseDataModel,
-        },
-      })
-    }
-    if (BaseCSS) {
-      const processedBaseCSS = this.processPopulate({
-        source: BaseCSS,
-        lookFor: ['.', '..', '=', '~'],
-      })
-      this.newDispatch({
-        type: 'SET_ROOT_PROPERTIES',
-        payload: { properties: processedBaseCSS },
-      })
-    }
-
-    if (BasePage) {
-      const processedBasePage = this.processPopulate({
-        source: BasePage,
-        lookFor: ['.', '..', '=', '~'],
-      })
-      this.newDispatch({
-        type: 'SET_ROOT_PROPERTIES',
-        payload: { properties: processedBasePage },
-      })
-    }
-
-    if (preload && preload.length) {
-      for (let pageName of preload) {
-        switch (pageName) {
-          case 'BaseDataModel': {
-            if (BaseDataModel) break
-            const { pageCADL: rawBaseDataModel } = await this.getPage(
-              'BaseDataModel',
-            )
-            const processedBaseDataModel = this.processPopulate({
-              source: rawBaseDataModel,
-              lookFor: ['.', '..', '=', '~'],
-            })
-            this.newDispatch({
-              type: 'SET_ROOT_PROPERTIES',
-              payload: {
-                properties: processedBaseDataModel,
-              },
-            })
-
-            break
+    if (u.isArr(this.cadlEndpoint.preload)) {
+      for (const preload of _.uniq([
+        'BaseDataModel',
+        'BaseCSS',
+        'BasePage',
+        ...(this.cadlEndpoint?.preload || []),
+      ])) {
+        if (this.cadlEndpoint.preload.includes(preload)) {
+          let obj = use[preload] || (await this.getPage(preload))
+          let yml: string | undefined
+          if ('pageCADL' in obj || 'pageYAML' in obj) {
+            obj = obj.pageCADL
+            yml = obj.pageYAML
           }
-          case 'BaseCSS': {
-            if (BaseCSS) break
-            const { pageCADL: rawBaseCSS } = await this.getPage('BaseCSS')
-            const processedBaseCSS = this.processPopulate({
-              source: rawBaseCSS,
-              lookFor: ['.', '..', '=', '~'],
-            })
-            this.newDispatch({
-              type: 'SET_ROOT_PROPERTIES',
-              payload: { properties: processedBaseCSS },
-            })
-            break
-          }
-          case 'BasePage': {
-            if (BasePage) break
-            const { pageCADL: rawBasePage } = await this.getPage('BasePage')
-            const processedBasePage = this.processPopulate({
-              source: rawBasePage,
-              lookFor: ['.', '..', '=', '~'],
-            })
-            this.newDispatch({
-              type: 'SET_ROOT_PROPERTIES',
-              payload: { properties: processedBasePage },
-            })
-            break
-          }
-          default: {
-            const { pageCADL: rawPage } = await this.getPage(pageName)
-            const processedRawPage = this.processPopulate({
-              source: rawPage,
-              lookFor: ['.', '..', '=', '~'],
-            })
-            this.newDispatch({
-              type: 'SET_ROOT_PROPERTIES',
-              payload: { properties: processedRawPage },
-            })
-            break
-          }
+          const processed = this.processPopulate({
+            source: obj,
+            lookFor: ['.', '..', '=', '~'],
+          })
+          onPreload?.(preload, processed, obj, yml)
+          this.newDispatch({
+            type: 'SET_ROOT_PROPERTIES',
+            payload: { properties: processed },
+          })
         }
       }
     }
 
     //set Global object from localStorage
     //used to retain user data in case of browser reload
-    let localStorageGlobal = localStorage.getItem('Global')
-    let localStorageGlobalParsed: Record<string, any> | null = null
-    if (localStorageGlobal) {
-      try {
-        localStorageGlobalParsed = JSON.parse(localStorageGlobal)
-      } catch (error) {
-        console.log(error)
-      }
-      if (localStorageGlobalParsed) {
+    try {
+      const ls =
+        typeof window !== 'undefined' ? window.localStorage : ({} as any)
+      const cachedGlobal = ls.getItem?.('Global')
+      const parsedGlobal = cachedGlobal ? JSON.parse(cachedGlobal) : null
+      onRehydrateGlobal?.(parsedGlobal)
+      if (parsedGlobal) {
         this.newDispatch({
           type: 'SET_ROOT_PROPERTIES',
           payload: {
             properties: {
               Global: {
-                ...localStorageGlobalParsed,
+                ...parsedGlobal,
                 globalRegister: this.root.Global.globalRegister,
               },
             },
@@ -306,10 +253,12 @@ export default class CADL extends EventEmitter {
           payload: {
             pageName: 'builtIn',
             dataKey: 'builtIn.UserVertex',
-            data: localStorageGlobalParsed.currentUser.vertex,
+            data: parsedGlobal?.currentUser?.vertex,
           },
         })
       }
+    } catch (error) {
+      console.error(error)
     }
     this.emit('stateChanged', {
       name: 'update',
@@ -333,7 +282,7 @@ export default class CADL extends EventEmitter {
    * - initiates cadlObject for page specified
    */
   async initPage(
-    pageName: string,
+    pageArg: string | { pageName: string; cadlYAML: string; cadlObject: any },
     skip: string[] = [],
     options: Pick<
       Parameters<CADL['runInit']>[0],
@@ -341,7 +290,6 @@ export default class CADL extends EventEmitter {
     > & {
       reload?: boolean //if true then the pageObject is replaced
       builtIn?: Record<string, any>
-      done?: Function
       onReceive?(obj: { [pageName: string]: any }): Promise<void> | void
       onAbort?(obj: { [pageName: string]: any }): Promise<void> | void
       onFirstProcess?(obj: { [pageName: string]: any }): Promise<void> | void
@@ -350,37 +298,50 @@ export default class CADL extends EventEmitter {
   ): Promise<void | { aborted: true }> {
     if (!this.cadlEndpoint) await this.init()
 
-    const { builtIn, reload } = options
-    if (reload === undefined) {
-      options.reload = true
-    }
+    const {
+      builtIn,
+      onBeforeInit,
+      onInit,
+      onAfterInit,
+      onReceive,
+      onAbort,
+      onFirstProcess,
+      onSecondProcess,
+      reload,
+    } = options
+
+    if (reload === undefined) options.reload = true
 
     if (builtIn && isObject(builtIn)) {
       this.newDispatch({
         type: 'ADD_BUILTIN_FNS',
-        payload: {
-          builtInFns: {
-            ...builtIn,
-          },
-        },
+        payload: { builtInFns: { ...builtIn } },
       })
     }
-    let pageCADL
+
+    let pageName = ''
+    let pageCADL: Record<string, any> | undefined
+    let pageYAML = ''
+
+    if (typeof pageArg === 'string') {
+      pageName = pageArg
+    } else if (typeof pageArg === 'object' && 'pageName' in pageArg) {
+      pageName = pageArg.pageName
+      pageCADL = pageArg.cadlObject
+      pageYAML = pageArg.cadlYAML || ''
+    }
+
     if (reload === false && this.root[pageName]) {
       //keep the current pageObject
       return
     } else {
-      //refresh the pageObject
-      ; ({ pageCADL } = await this.getPage(pageName))
-      options?.onReceive && (await options?.onReceive?.(pageCADL))
+      !pageCADL && (pageCADL = (await this.getPage(pageName))?.pageCADL)
+      onReceive && (await onReceive?.(pageCADL as Record<string, any>))
     }
 
     if (this.root[pageName] && reload) {
       //delete old pageObject if refreshing
-      this.newDispatch({
-        type: 'DELETE_PAGE',
-        payload: { pageName },
-      })
+      this.newDispatch({ type: 'DELETE_PAGE', payload: { pageName } })
     }
 
     let prevVal = {}
@@ -396,14 +357,14 @@ export default class CADL extends EventEmitter {
      */
 
     const FIRST_process = this.processPopulate({
-      source: pageCADL,
+      source: pageCADL as Record<string, any>,
       lookFor: ['.', '..', '~'],
       skip: ['update', 'save', 'check', 'init', 'components', ...skip],
       withFns: true,
       pageName,
     })
 
-    options?.onFirstProcess && (await options.onFirstProcess?.(FIRST_process))
+    onFirstProcess && (await onFirstProcess?.(FIRST_process))
 
     const SECOND_process = this.processPopulate({
       source: FIRST_process,
@@ -413,8 +374,7 @@ export default class CADL extends EventEmitter {
       pageName,
     })
 
-    options?.onSecondProcess &&
-      (await options.onSecondProcess?.(SECOND_process))
+    onSecondProcess && (await onSecondProcess?.(SECOND_process))
 
     //used to call the dispatch function from service modules
     const boundDispatch = this.dispatch.bind(this)
@@ -431,10 +391,12 @@ export default class CADL extends EventEmitter {
      * }
      */
     let processedPage = SECOND_process
+
     this.newDispatch({
       type: 'SET_ROOT_PROPERTIES',
       payload: { properties: processedPage },
     })
+
     let aborted = false
 
     //run init commands of page if any
@@ -442,13 +404,13 @@ export default class CADL extends EventEmitter {
     if (init) {
       await this.runInit({
         pageObject: processedPage,
-        onBeforeInit: options?.onBeforeInit,
-        onInit: options?.onInit,
-        onAfterInit: options?.onAfterInit,
+        onBeforeInit,
+        onInit,
+        onAfterInit,
       }).then((page) => {
         if (page?.abort) {
           aborted = true
-          options?.onAbort?.(pageCADL)
+          onAbort?.(pageCADL as Record<string, any>)
           return
         }
         //FOR COMPONENTS
@@ -472,25 +434,12 @@ export default class CADL extends EventEmitter {
           withFns: true,
           pageName,
         })
-        //process components again to fill in new values
+        // process components again to fill in new values
         const SECOND_processComponents = this.processPopulate({
           source: FIRST_processComponents,
           lookFor: ['.', '..', '_', '~'],
-          skip: [
-            'update',
-            'check',
-            'edge',
-            'document',
-            'vertex',
-            'init',
-            'formData',
-            'dataIn',
-            'display',
-            'backgroundColor',
-            'height',
-            'pointerEvents',
-            ...skip,
-          ],
+          // prettier-ignore
+          skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'display', 'backgroundColor', 'height', 'pointerEvents', ...skip],
           withFns: true,
           pageName,
         })
@@ -499,18 +448,8 @@ export default class CADL extends EventEmitter {
         const evolveComponentVals = populateArray({
           source: SECOND_processComponents[pageName].components,
           lookFor: '=',
-          skip: [
-            'update',
-            'check',
-            'edge',
-            'document',
-            'vertex',
-            'init',
-            'formData',
-            'dataIn',
-            'style',
-            ...skip,
-          ],
+          // prettier-ignore
+          skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'style', ...skip],
           pageName,
           locations: [SECOND_processComponents[pageName], this.root],
         })
@@ -538,15 +477,8 @@ export default class CADL extends EventEmitter {
       const FIRST_processComponents = this.processPopulate({
         source: processedPage,
         lookFor: ['.', '..', '_', '~'],
-        skip: [
-          'update',
-          'check',
-          'init',
-          'formData',
-          'dataIn',
-          'style',
-          ...skip,
-        ],
+        // prettier-ignore
+        skip: ['update', 'check', 'init', 'formData', 'dataIn', 'style', ...skip],
         withFns: true,
         pageName,
       })
@@ -554,18 +486,8 @@ export default class CADL extends EventEmitter {
       const SECOND_processComponents = this.processPopulate({
         source: FIRST_processComponents,
         lookFor: ['.', '..', '_', '~'],
-        skip: [
-          'update',
-          'check',
-          'edge',
-          'document',
-          'vertex',
-          'init',
-          'formData',
-          'dataIn',
-          'style',
-          ...skip,
-        ],
+        // prettier-ignore
+        skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'style', ...skip],
         withFns: true,
         pageName,
       })
@@ -573,17 +495,8 @@ export default class CADL extends EventEmitter {
       const evolveComponentVals = populateArray({
         source: SECOND_processComponents[pageName].components,
         lookFor: '=',
-        skip: [
-          'update',
-          'check',
-          'edge',
-          'document',
-          'vertex',
-          'init',
-          'formData',
-          'dataIn',
-          ...skip,
-        ],
+        // prettier-ignore
+        skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', ...skip],
         pageName,
         locations: [SECOND_processComponents[pageName], this.root],
       })
@@ -607,10 +520,6 @@ export default class CADL extends EventEmitter {
     }
     this.dispatch({ type: 'update-map' })
 
-    if (options.done) {
-      options.done()
-    }
-
     if (aborted) return { aborted }
   }
 
@@ -620,39 +529,27 @@ export default class CADL extends EventEmitter {
    * @throws {UnableToRetrieveYAML} -When unable to retrieve cadlYAML
    * @throws {UnableToParseYAML} -When unable to parse yaml file
    */
-  public async getPage(pageName: string): Promise<CADL_OBJECT> {
+  async getPage(pageName: string): Promise<CADL_OBJECT> {
     //TODO: used for local testing
     // if (pageName === 'AddDocuments') return _.cloneDeep(AddDocuments)
     // if (pageName === 'BaseDataModel') return _.cloneDeep(BaseDataModel)
 
-    let pageCADL
-    let pageYAML
-    let pageUrl
+    let pageCADL: Record<string, any>
+    let pageYAML = ''
+    let pageUrl = ''
+
     if (pageName.startsWith('~')) {
-      if (!this.myBaseUrl) {
-        pageUrl = this.baseUrl
-      } else {
-        pageUrl = this.myBaseUrl
-      }
+      pageUrl = this.myBaseUrl || this.baseUrl
       pageName = pageName.substring(2)
     } else {
       pageUrl = this.baseUrl
     }
     try {
-      let url = `${pageUrl}${pageName}_en.yml`
-      const { cadlObject, cadlYAML } = await this.defaultObject(url)
-      pageCADL = cadlObject
-      pageYAML = cadlYAML
+      const result = await this.defaultObject(`${pageUrl}${pageName}_en.yml`)
+      pageCADL = result.cadlObject
+      pageYAML = result.cadlYAML
     } catch (error) {
       throw error
-    }
-    if (pageCADL) {
-      this.rawRootDispatch({
-        type: 'SET_ROOT_PROPERTIES',
-        payload: {
-          properties: { [pageName]: pageYAML },
-        },
-      })
     }
     return { pageCADL, pageYAML }
   }
@@ -696,7 +593,7 @@ export default class CADL extends EventEmitter {
    * @returns The data that is assigned to the given path.
    *
    */
-  public getData(pageName: string, dataKey: string): any {
+  getData(pageName: string, dataKey: string): any {
     const firstCharacter = dataKey[0]
     const pathArr = dataKey.split('.')
     let currentVal
@@ -1134,8 +1031,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1250,11 +1147,6 @@ export default class CADL extends EventEmitter {
           }
         }
 
-        break
-      }
-      case 'update-map': {
-        //TODO: consider adding update-page-map
-        this.map = dot.dot(this.root)
         break
       }
       case 'populate': {
@@ -1616,9 +1508,8 @@ export default class CADL extends EventEmitter {
         break
       }
       case 'get-cache': {
-        const { cacheIndex } = action.payload
-        const cacheData = this.getApiCache(cacheIndex)
-        return cacheData
+        // action.payload === cache index
+        return this.root.apiCache[action.payload.cacheIndex].data
       }
       case 'emit-update': {
         const { pageName, dataKey, newVal } = action.payload
@@ -1627,10 +1518,6 @@ export default class CADL extends EventEmitter {
           path: `${pageName}.${dataKey}`,
           newVal,
         })
-      }
-
-      default: {
-        return
       }
     }
   }
@@ -1648,348 +1535,166 @@ export default class CADL extends EventEmitter {
    */
   private async handleIfCommand({ pageName, ifCommand }) {
     const [condExpression, ifTrueEffect, ifFalseEffect] = ifCommand['if']
-    let condResult
-    if (
-      condExpression === false ||
-      condExpression === 'false' ||
-      condExpression === true ||
-      condExpression === 'true'
-    ) {
+
+    let condResult: boolean | 'true' | 'false' | undefined
+    let lookFor = undefined as string | undefined
+
+    if (nt.Identify.isBoolean(condExpression)) {
       condResult = condExpression
-    } else if (typeof condExpression === 'function') {
-      //condExpression is a function
+    } else if (u.isFnc(condExpression)) {
       condResult = await condExpression()
     } else if (
-      typeof condExpression === 'string' &&
-      (condExpression.startsWith('.') ||
-        condExpression.startsWith('=') ||
-        condExpression.startsWith('..'))
+      u.isStr(condExpression) &&
+      ['.', '='].some((op) => condExpression.startsWith(op))
     ) {
       //condExpression is a path pointing to a reference
-      let lookFor
-      if (condExpression.startsWith('..')) {
-        lookFor = '..'
-      } else if (condExpression.startsWith('.')) {
-        lookFor = '.'
-      } else if (condExpression.startsWith('=')) {
-        lookFor = '='
-      }
-      let res
-      if (condExpression.startsWith('..') || condExpression.startsWith('=..')) {
+      // prettier-ignore
+      lookFor = ['..','.','=',].find((op) => condExpression.startsWith(op))
+
+      let res: any
+
+      const isLocalEvalRef = ['=..', '..'].some((op) =>
+        condExpression.startsWith(op),
+      )
+
+      const isRootEvalRef =
+        !isLocalEvalRef &&
+        ['.', '=.'].some((op) => condExpression.startsWith(op))
+
+      if (lookFor && (isRootEvalRef || isLocalEvalRef)) {
         res = populateString({
           source: condExpression,
-          locations: [this.root[pageName]],
-          lookFor,
-        })
-      } else if (
-        condExpression.startsWith('.') ||
-        condExpression.startsWith('=.')
-      ) {
-        res = populateString({
-          source: condExpression,
-          locations: [this.root],
+          locations: [isRootEvalRef ? this.root : this.root[pageName]],
           lookFor,
         })
       }
-      if (typeof res === 'function') {
-        condResult = await res()
-      } else if (res && res !== condExpression) {
-        if (condResult === 'false') {
-          condResult = false
-        } else {
-          condResult = true
-        }
-      } else {
-        condResult = false
-      }
+
+      // prettier-ignore
+      condResult = u.isFnc(res)
+        ? await res()
+        : res && res !== condExpression
+        ? nt.Identify.isBooleanFalse(condResult) ? false : true : false
     } else if (
       isObject(condExpression) &&
-      Object.keys(condExpression)?.[0]?.startsWith('=')
+      u.keys(condExpression)?.[0]?.startsWith('=')
     ) {
       //condExpression matches an evalObject function evaluation
-      condResult = await this.dispatch({
-        type: 'eval-object',
-        payload: { pageName, updateObject: condExpression },
-      })
+      const payload = { pageName, updateObject: condExpression }
+      condResult = await this.dispatch({ type: 'eval-object', payload })
     }
-    if (condResult === true || condResult === 'true') {
-      let lookFor
-      if (isObject(ifTrueEffect) && 'goto' in ifTrueEffect) {
+
+    const effectValue = condResult ? ifTrueEffect : ifFalseEffect
+
+    const isPlainObject = u.isObj(effectValue)
+    const leadingKey = isPlainObject ? u.keys(effectValue)[0] : null
+    const hasActionTypeKey = isPlainObject && 'actionType' in effectValue
+    const isEvalObject =
+      hasActionTypeKey && effectValue.actionType === 'evalObject'
+
+    if (u.isFnc(effectValue)) {
+      await effectValue()
+      return
+    }
+
+    if (isPlainObject) {
+      if (nt.Identify.folds.goto(effectValue)) {
         //handles goto function logic
-        const populatedTrueEffect = populateVals({
-          source: ifTrueEffect,
+        const result = populateVals({
+          source: effectValue,
           pageName,
           lookFor: ['..', '.', '='],
           locations: [this.root, this.root[pageName]],
         })
-        let gotoArgs
+        await this.root.builtIn?.goto?.({
+          pageName,
+          goto: u.isStr(result?.goto)
+            ? result.goto
+            : u.isObj(result?.goto)
+            ? result.goto.dataIn
+            : result,
+        })
+        return { abort: true }
+      }
 
-        if (typeof populatedTrueEffect['goto'] === 'string') {
-          gotoArgs = populatedTrueEffect['goto']
-        } else if (isObject(populatedTrueEffect['goto'])) {
-          gotoArgs = populatedTrueEffect['goto'].dataIn
-        }
-        // debugger
-        await this.root.builtIn['goto']({ pageName, goto: gotoArgs })
-        return { abort: 'true' }
-      } else if (
-        isObject(ifTrueEffect) &&
-        (Object.keys(ifTrueEffect)?.[0]?.includes('@') ||
-          Object.keys(ifTrueEffect)?.[0]?.startsWith('='))
-      ) {
-        //handles evalObject assignment expression
-        await this.dispatch({
-          type: 'eval-object',
-          payload: { pageName, updateObject: ifTrueEffect },
-        })
+      if (leadingKey?.includes('@') || leadingKey?.startsWith('=')) {
+        const payload = { pageName, updateObject: effectValue }
+        await this.dispatch({ type: 'eval-object', payload })
         return
-      } else if (
-        isObject(ifTrueEffect) &&
-        'actionType' in ifTrueEffect &&
-        ifTrueEffect?.actionType === 'evalObject'
-      ) {
-        //ifTrueEffect matches an evalObject actionType
-        const res = await this.dispatch({
+      }
+
+      if (isEvalObject) {
+        // matches an evalObject actionType
+        const result = this.dispatch({
           type: 'eval-object',
-          payload: { pageName, updateObject: ifTrueEffect?.object },
+          payload: { pageName, updateObject: effectValue?.object },
         })
-        return res
-      } else if (
-        (isObject(ifTrueEffect) && 'actionType' in ifTrueEffect) ||
-        Array.isArray(ifTrueEffect)
-      ) {
+        return result
+      }
+
+      if (hasActionTypeKey || Array.isArray(effectValue)) {
         //this returns unhandled object expressions that will be handled by the UI
-        return ifTrueEffect
-      } else if (
-        typeof ifTrueEffect === 'string' &&
-        ifTrueEffect.startsWith('..')
-      ) {
-        lookFor = '..'
-      } else if (
-        typeof ifTrueEffect === 'string' &&
-        ifTrueEffect.startsWith('.')
-      ) {
-        lookFor = '.'
-      } else if (
-        typeof ifTrueEffect === 'string' &&
-        ifTrueEffect.startsWith('=')
-      ) {
-        lookFor = '='
+        return effectValue
       }
-      if (lookFor) {
-        //ifTrueEffect is a path that points to a reference
-        let res = populateString({
-          source: ifTrueEffect,
-          locations: [this.root, this.root[pageName]],
-          lookFor,
-        })
-        if (typeof res === 'function') {
-          //reference is a function
-          await res()
-        } else if (isObject(res)) {
-          //reference is an object
-          //assume that it is an evalObject object function evaluation type
-          const boundDispatch = this.dispatch.bind(this)
-          const withFns = attachFns({
-            cadlObject: res,
-            dispatch: boundDispatch,
-          })
-          //@ts-ignore
-          const { dataIn, dataOut } = Object.values(ifTrueEffect)[0]
-          if (typeof withFns === 'function') {
-            let result
-            if (dataIn) {
-              result = await withFns(dataIn)
-            } else {
-              result = await withFns()
-            }
-            if (dataOut) {
-              const pathArr = dataOut.split('.')
-              this.newDispatch({
-                type: 'SET_VALUE',
-                payload: {
-                  dataKey: pathArr,
-                  value: result,
-                },
-              })
-            }
-            return result
-          } else if (
-            Array.isArray(withFns) &&
-            typeof withFns[1] === 'function'
-          ) {
-            let result
-            if (dataIn) {
-              result = await withFns[1](dataIn)
-            } else {
-              result = await withFns[1]()
-            }
-            if (dataOut) {
-              const pathArr = dataOut.split('.')
-              this.newDispatch({
-                type: 'SET_VALUE',
-                payload: {
-                  dataKey: pathArr,
-                  value: result,
-                },
-              })
-            }
-            return result
-          }
-        } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
-          let result
-          result = await res[1]()
-          return result
-        } else {
-          return res
-        }
-      } else {
-        return ifTrueEffect
-      }
-    } else if (condResult === false || condResult === 'false') {
-      let lookFor
-      if (isObject(ifFalseEffect) && 'goto' in ifFalseEffect) {
-        if (
-          'goto' in this.root.builtIn &&
-          typeof this.root.builtIn['goto'] === 'function'
-        ) {
-          //handles goto function logic
-          const populatedFalseEffect = populateVals({
-            source: ifFalseEffect,
-            pageName,
-            lookFor: ['..', '.', '='],
+
+      if (u.isStr(effectValue)) {
+        const lookFor = ['..', '.', '='].find((op) =>
+          effectValue.startsWith(op),
+        )
+
+        let res: any
+
+        if (lookFor) {
+          //effectValue is a path that points to a reference
+          res = populateString({
+            source: effectValue,
             locations: [this.root, this.root[pageName]],
+            lookFor,
           })
 
-          let gotoArgs
+          if (u.isFnc(res)) {
+            // reference is a function
+            await res()
+          } else if (isObject(res)) {
+            //reference is an object
+            //assume that it is an evalObject object function evaluation type
+            const boundDispatch = this.dispatch.bind(this)
+            const withFns = attachFns({
+              cadlObject: res,
+              dispatch: boundDispatch,
+            })
 
-          if (typeof populatedFalseEffect['goto'] === 'string') {
-            gotoArgs = populatedFalseEffect['goto']
-          } else if (isObject(populatedFalseEffect['goto'])) {
-            gotoArgs = populatedFalseEffect['goto'].dataIn
+            const { dataIn, dataOut } =
+              u.values(u.isObj(effectValue) ? effectValue : {})?.[0] || {}
+
+            if (u.isFnc(withFns)) {
+              const result = dataIn ? await withFns(dataIn) : await withFns()
+
+              if (dataOut) {
+                const pathArr = dataOut.split('.')
+                const payload = { dataKey: pathArr, value: result }
+                this.newDispatch({ type: 'SET_VALUE', payload })
+              }
+              return result
+            } else if (u.isArr(withFns) && u.isFnc(withFns[1])) {
+              const result = dataIn
+                ? await withFns[1](dataIn)
+                : await withFns[1]()
+              if (dataOut) {
+                this.newDispatch({
+                  type: 'SET_VALUE',
+                  payload: { dataKey: dataOut.split('.'), value: result },
+                })
+              }
+              return result
+            }
+          } else if (u.isArr(res) && u.isFnc(res?.[1])) {
+            return res[1]()
+          } else {
+            return res
           }
-          // debugger
-          await this.root.builtIn['goto']({ pageName, goto: gotoArgs })
-          return { abort: true }
-        }
-      } else if (typeof ifFalseEffect === 'function') {
-        await ifFalseEffect()
-        return
-      } else if (
-        isObject(ifFalseEffect) &&
-        (Object.keys(ifFalseEffect)?.[0]?.includes('@') ||
-          Object.keys(ifFalseEffect)?.[0]?.startsWith('='))
-      ) {
-        //handles evalObject assignment expression
-        await this.dispatch({
-          type: 'eval-object',
-          payload: { pageName, updateObject: ifFalseEffect },
-        })
-        return
-      } else if (
-        isObject(ifFalseEffect) &&
-        'actionType' in ifFalseEffect &&
-        ifFalseEffect?.actionType === 'evalObject'
-      ) {
-        //ifTrueEffect matches an evalObject actionType
-        const res = await this.dispatch({
-          type: 'eval-object',
-          payload: { pageName, updateObject: ifFalseEffect?.object },
-        })
-        return res
-      } else if (
-        (isObject(ifFalseEffect) && 'actionType' in ifFalseEffect) ||
-        Array.isArray(ifFalseEffect)
-      ) {
-        //this returns unhandled object expressions that will be handled by the UI
-        return ifFalseEffect
-      } else if (
-        typeof ifFalseEffect === 'string' &&
-        ifFalseEffect.startsWith('..')
-      ) {
-        lookFor = '..'
-      } else if (
-        typeof ifFalseEffect === 'string' &&
-        ifFalseEffect.startsWith('.')
-      ) {
-        lookFor = '.'
-      } else if (
-        typeof ifFalseEffect === 'string' &&
-        ifFalseEffect.startsWith('=')
-      ) {
-        lookFor = '='
-      }
-      if (lookFor) {
-        //ifFalseEffect is a path that points to a reference
-        let res = populateString({
-          source: ifFalseEffect,
-          locations: [this.root, this.root[pageName]],
-          lookFor,
-        })
-
-        if (typeof res === 'function') {
-          //reference is a function
-          await res()
-        } else if (isObject(res)) {
-          //reference is an object
-          //assume that it is an evalObject object function evaluation type
-          const boundDispatch = this.dispatch.bind(this)
-          const withFns = attachFns({
-            cadlObject: res,
-            dispatch: boundDispatch,
-          })
-          //@ts-ignore
-
-          const { dataIn, dataOut } = Object.values(ifFalseEffect)[0]
-          if (typeof withFns === 'function') {
-            let result
-            if (dataIn) {
-              result = await withFns(dataIn)
-            } else {
-              result = await withFns()
-            }
-            if (dataOut) {
-              const pathArr = dataOut.split('.')
-              this.newDispatch({
-                type: 'SET_VALUE',
-                payload: {
-                  dataKey: pathArr,
-                  value: result,
-                },
-              })
-            }
-            return result
-          } else if (
-            Array.isArray(withFns) &&
-            typeof withFns[1] === 'function'
-          ) {
-            let result
-            if (dataIn) {
-              result = await withFns[1](dataIn)
-            } else {
-              result = await withFns[1]()
-            }
-            if (dataOut) {
-              const pathArr = dataOut.split('.')
-              this.newDispatch({
-                type: 'SET_VALUE',
-                payload: {
-                  dataKey: pathArr,
-                  value: result,
-                },
-              })
-            }
-            return result
-          }
-        } else if (Array.isArray(res) && typeof res?.[1] === 'function') {
-          let result
-          result = await res[1]()
-          return result
         } else {
-          return res
+          return effectValue
         }
-      } else {
-        return ifFalseEffect
       }
     }
   }
@@ -2003,36 +1708,22 @@ export default class CADL extends EventEmitter {
    * @emits CADL#stateChanged
    *
    */
-  public async updateObject({
-    dataKey,
-    dataObject,
-    dataObjectKey,
-  }: {
+  async updateObject(args: {
     dataKey: string
     dataObject: any
     dataObjectKey?: string
   }) {
-    let path
-    if (dataKey.startsWith('.')) {
-      path = dataKey.substring(1, dataKey.length)
-    } else {
-      path = dataKey
-    }
+    const { dataKey, dataObject, dataObjectKey } = args
+    const path = dataKey.startsWith('.')
+      ? dataKey.substring(1, dataKey.length)
+      : dataKey
     const pathArr = path.split('.')
     const newVal = dataObjectKey ? dataObject[dataObjectKey] : dataObject
-
     this.newDispatch({
       type: 'SET_VALUE',
-      payload: {
-        dataKey: pathArr,
-        value: newVal,
-        replace: true,
-      },
+      payload: { dataKey: pathArr, value: newVal, replace: true },
     })
-    await this.dispatch({
-      type: 'update-localStorage',
-    })
-
+    await this.dispatch({ type: 'update-localStorage' })
     this.emit('stateChanged', {
       name: 'update',
       path: dataKey,
@@ -2048,7 +1739,7 @@ export default class CADL extends EventEmitter {
    * @param onInit
    * @param onAfterInit
    */
-  public async runInit<Init extends any[]>({
+  async runInit<Init extends any[]>({
     pageObject = {},
     onBeforeInit,
     onInit,
@@ -2060,30 +1751,29 @@ export default class CADL extends EventEmitter {
     onAfterInit?(error: null | Error, init: Init): Promise<void> | void
   }): Promise<Record<string, any>> {
     return new Promise(async (resolve) => {
-      const boundDispatch = this.dispatch.bind(this)
-
+      let boundDispatch = this.dispatch.bind(this)
       let page = pageObject
-      const pageName = Object.keys(page)[0]
+      let pageName = Object.keys(page)[0]
       let init = Object.values(page)[0].init
 
       if (init) {
         onBeforeInit && (await onBeforeInit?.(init))
         //adds commands to queue
-        this.initCallQueue = init.map((_command, index) => index)
+        this.initCallQueue = init.map((_, index: number) => index)
         while (this.initCallQueue.length > 0) {
           const currIndex = this.initCallQueue.shift()
           const command: any = init[currIndex]
           onInit && (await onInit?.(command, currIndex, init))
+
           let populatedCommand
+
           if (
             isObject(command) &&
-            (Object.keys(command)[0].includes('=') ||
-              Object.keys(command)[0].includes('@'))
+            (u.keys(command)[0].includes('=') ||
+              u.keys(command)[0].includes('@'))
           ) {
-            await this.dispatch({
-              type: 'eval-object',
-              payload: { updateObject: command, pageName },
-            })
+            const payload = { updateObject: command, pageName }
+            await this.dispatch({ type: 'eval-object', payload })
           } else if (isPopulated(command)) {
             populatedCommand = command
           } else {
@@ -2095,17 +1785,6 @@ export default class CADL extends EventEmitter {
           }
           if (typeof populatedCommand === 'function') {
             try {
-              //TODO: check dispatch function/ side effects work accordingly
-              // const wrapWithDelay = (fn): Promise<void> => {
-              //   return new Promise((resolve) => {
-              //     setTimeout(() => {
-              //       const res = fn()
-              //       if (res && typeof res === 'object' && 'then' in res) {
-              //         fn().then(() => resolve())
-              //       } else resolve()
-              //     }, 3000)
-              //   })
-              // }
               await populatedCommand()
             } catch (error) {
               onAfterInit?.(error, init)
@@ -2120,32 +1799,15 @@ export default class CADL extends EventEmitter {
           ) {
             const { actionType, dataKey, dataObject, object, funcName }: any =
               populatedCommand
-            switch (actionType) {
-              case 'updateObject': {
-                await this.updateObject({ dataKey, dataObject })
-                break
+            if (actionType === 'updateObject') {
+              await this.updateObject({ dataKey, dataObject })
+            } else if (actionType === 'builtIn') {
+              if (funcName === 'videoChat') {
+                await this.root.builtIn?.[funcName]?.(populatedCommand)
               }
-              case 'builtIn': {
-                if (funcName === 'videoChat') {
-                  if (
-                    funcName in this.root.builtIn &&
-                    typeof this.root.builtIn[funcName] === 'function'
-                  ) {
-                    await this.root.builtIn[funcName](populatedCommand)
-                  }
-                }
-                break
-              }
-              case 'evalObject': {
-                await this.dispatch({
-                  type: 'eval-object',
-                  payload: { pageName, updateObject: object },
-                })
-                break
-              }
-              default: {
-                return
-              }
+            } else if (actionType === 'evalObject') {
+              const payload = { pageName, updateObject: object }
+              await this.dispatch({ type: 'eval-object', payload })
             }
           } else if (isObject(populatedCommand) && 'if' in populatedCommand) {
             //TODO: add the then condition
@@ -2153,9 +1815,7 @@ export default class CADL extends EventEmitter {
               pageName,
               ifCommand: populatedCommand,
             })
-            if (ifResult?.abort) {
-              resolve({ abort: true })
-            }
+            ifResult?.abort && resolve({ abort: true })
           } else if (Array.isArray(populatedCommand)) {
             if (typeof populatedCommand[0][1] === 'function') {
               try {
@@ -2170,7 +1830,6 @@ export default class CADL extends EventEmitter {
           }
           //updating page after command has been called
           const updatedPage = this.root[pageName]
-
           //populateObject again to populate any data that was dependant on the command call
           let populatedUpdatedPage = populateObject({
             source: updatedPage,
@@ -2215,174 +1874,28 @@ export default class CADL extends EventEmitter {
 
   /**
    * Sets either the user or meetroom value from localStorage to the corresponding root value in memory
-   *
-   * @param key "user" | "meetroom"
-   *
    */
-  //TODO: ask Chris if he uses this
-  public setFromLocalStorage(key: 'user' | 'meetroom') {
-    let localStorageGlobal
+  setFromLocalStorage(key: 'user' | 'meetroom'): void {
     try {
-      const Global = localStorage.getItem('Global')
-      if (Global) {
-        localStorageGlobal = JSON.parse(Global)
+      let serializedGlobal = localStorage.getItem('Global')
+      if (serializedGlobal) {
+        const Global = JSON.parse(serializedGlobal)
+        for (const [k, path] of [
+          ['user', 'currentUser.vertex'],
+          ['meetroom', 'meetroom.edge'],
+        ]) {
+          if (k === key) {
+            const dataKey = `Global.${path}`
+            this.newDispatch({
+              type: 'SET_VALUE',
+              payload: { dataKey, value: _.get(Global, path) },
+            })
+          }
+        }
       }
     } catch (error) {
-      console.log(error)
+      console.error(error)
     }
-    if (localStorageGlobal) {
-      switch (key) {
-        case 'user': {
-          let user = localStorageGlobal.currentUser.vertex
-
-          this.newDispatch({
-            type: 'SET_VALUE',
-            payload: {
-              dataKey: 'Global.currentUser.vertex',
-              value: user,
-            },
-          })
-          break
-        }
-        case 'meetroom': {
-          let currMeetroom = localStorageGlobal.meetroom.edge
-          this.newDispatch({
-            type: 'SET_VALUE',
-            payload: {
-              dataKey: 'Global.meetroom.edge',
-              value: currMeetroom,
-            },
-          })
-          break
-        }
-        default: {
-          return
-        }
-      }
-    }
-  }
-
-  /**
-   * Set a new value at a given path. Assume the path begins at the root.
-   *
-   * @param SetValueArgs
-   * @param SetValueArgs.path The path to the property being changed.
-   * @param SetValueArgs.value The new value being set at the given path
-   *
-   */
-  public setValue({ path, value }: { path: string; value: any }): void {
-    let pathArr = path.split('.')
-
-    this.newDispatch({
-      type: 'SET_VALUE',
-      payload: { dataKey: pathArr, value },
-    })
-    return
-  }
-
-  /**
-   * Add a value to an array at a given path. Assume the path begins at root.
-   *
-   * @param AddValueArgs
-   * @param AddValueArgs.path Path to an array from the root.
-   * @param AddValueArgs.value Value that will be added to the array at the given path.
-   *
-   */
-  public addValue({ path, value }: { path: string; value: any }): void {
-    let pathArr = path.split('.')
-    let currVal = _.get(this.root, pathArr)
-    if (typeof currVal === 'undefined') {
-      currVal = [value]
-    } else if (Array.isArray(currVal)) {
-      currVal.push(value)
-    }
-
-    this.newDispatch({
-      type: 'SET_VALUE',
-      payload: { dataKey: pathArr, value: currVal },
-    })
-    return
-  }
-
-  /**
-   * Remove a value from an array at a given path. Assume the path begins at the root.
-   *
-   * @param RemoveValue
-   * @param RemoveValue.path Path to the array being altered.
-   * @param RemoveValue.Predicate The condition to be met for items being deleted from the array e.g {id:'123'}
-   *
-   */
-  public removeValue({
-    path,
-    predicate,
-  }: {
-    path: string
-    predicate: Record<string, number | string>
-  }): void {
-    let pathArr = path.split('.')
-    let currVal = _.get(this.root, pathArr)
-    if (currVal && Array.isArray(currVal)) {
-      let newVal = currVal.filter((elem) => {
-        let passes = true
-        for (let [key, val] of Object.entries(predicate)) {
-          if (elem[key] === val) {
-            passes = false
-          }
-        }
-        return passes
-      })
-
-      this.newDispatch({
-        type: 'SET_VALUE',
-        payload: { dataKey: pathArr, value: newVal },
-      })
-    }
-  }
-
-  /**
-   * Replace value at a given path. Assume the path begins at the root.
-   *
-   * @param ReplaceValueArgs
-   * @param ReplaceValueArgs.path Path to an array beginning from the root level.
-   * @param ReplaceValueArgs.predicate Condition to be met for value being replaced.
-   * @param ReplaceValueArgs.value Value that will replace the value in question.
-   *
-   */
-  public replaceValue({
-    path,
-    predicate,
-    value,
-  }: {
-    path: string
-    predicate: Record<string, number | string>
-    value: any
-  }): void {
-    let pathArr = path.split('.')
-    let currVal = _.get(this.root, pathArr)
-    if (currVal && Array.isArray(currVal)) {
-      let currValCopy = [...currVal]
-      let valIndex = -1
-      for (let i = 0; i < currValCopy.length; i++) {
-        for (let [key, val] of Object.entries(predicate)) {
-          //TODO:refac to account for multiple conditions
-          if (currValCopy[i][key] === val) {
-            valIndex = i
-          }
-        }
-      }
-      if (valIndex >= 0) {
-        currValCopy.splice(valIndex, 1, value)
-
-        this.newDispatch({
-          type: 'SET_VALUE',
-          payload: {
-            dataKey: pathArr,
-            value: currValCopy,
-          },
-        })
-      }
-    }
-    return
   }
 
   /**
@@ -2390,21 +1903,11 @@ export default class CADL extends EventEmitter {
    *
    * @param callback Function used to update the state
    */
-  public editDraft(callback) {
-    if (typeof callback !== 'function') {
-      throw new Error('Callback must be a function')
-    }
-    this.newDispatch({
-      type: 'EDIT_DRAFT',
-      payload: { callback },
-    })
+  editDraft(callback: (draft: Draft<CADL['root']>) => void) {
+    this.newDispatch({ type: 'EDIT_DRAFT', payload: { callback } })
   }
 
-  public editListDraft({ list, index, dataKey, value }) {
-    list[index][dataKey] = value
-  }
-
-  private initRoot(root) {
+  private initRoot(root: CADL['root']) {
     return produce(root, (draft) => {
       draft.actions = {}
       draft.builtIn = builtInFns(this.dispatch.bind(this))
@@ -2412,158 +1915,13 @@ export default class CADL extends EventEmitter {
     })
   }
 
-  private initRawRoot(root) {
-    //@ts-ignore
-    return produce(root, (draft) => { })
-  }
-
-  public newDispatch(action) {
-    if (!isObject(action)) {
-      throw new Error('Actions must be plain objects')
-    }
-
+  newDispatch<T extends keyof typeof producer>(action: ReducerAction<T>) {
+    if (!isObject(action)) throw new Error('Actions must be plain objects')
     if (typeof action.type === 'undefined') {
       throw new Error('Action types cannot be undefined.')
     }
-    //TODO: add is Dispatching
-    this.root = this.reducer(this.root, action)
-
+    this.root = reducer(this.root, action)
     return action
-  }
-
-  public rawRootDispatch(action) {
-    if (!isObject(action)) {
-      throw new Error('Actions must be plain objects')
-    }
-
-    if (typeof action.type === 'undefined') {
-      throw new Error('Action types cannot be undefined.')
-    }
-
-    this.rawRoot = this.rawRootReducer(this.rawRoot, action)
-
-    return action
-  }
-
-  private rawRootReducer(state = this.rawRoot, action) {
-    return produce(state, (draft) => {
-      switch (action.type) {
-        case 'SET_ROOT_PROPERTIES': {
-          const { properties } = action.payload
-          for (let [key, val] of Object.entries(properties)) {
-            _.set(draft, key, val)
-          }
-          break
-        }
-        case 'DELETE_PAGE': {
-          const { pageName } = action.payload
-          delete draft[pageName]
-          break
-        }
-
-        case 'EDIT_DRAFT': {
-          const { callback } = action.payload
-          callback(draft)
-        }
-      }
-    })
-  }
-
-  private reducer(state = this.root, action) {
-    return produce(state, (draft) => {
-      switch (action.type) {
-        case 'SET_VALUE': {
-          const { pageName, dataKey, value, replace } = action.payload
-          let currVal
-          let newVal = value
-
-          if (!replace) {
-            //used to merge new value to existing value ref
-            if (typeof pageName === 'undefined') {
-              currVal = _.get(state, dataKey)
-            } else {
-              currVal = _.get(state[pageName], dataKey)
-            }
-          }
-
-          /**
-           * CHECK HERE FOR DOC REFERENCE ISSUES
-           *  */
-
-          //console.log('Cadl set value line:2367', action.payload)
-          if (isObject(currVal) && isObject(newVal)) {
-            if ('doc' in newVal) {
-              // for loading existing docs
-              if (!Array.isArray(currVal.doc) && Array.isArray(newVal.doc)) {
-                currVal.doc = []
-                currVal.doc.push(...newVal.doc)
-
-                // for adding new doc
-              } else if (!Array.isArray(currVal.doc) && isObject(newVal.doc)) {
-                // currVal.doc = []
-                // currVal.doc.push(newVal.doc)
-                currVal.doc = newVal.doc
-              } else if ('id' in currVal) {
-                newVal = _.merge(currVal, newVal.doc)
-              } else {
-                currVal.doc.length = 0
-                currVal.doc.push(...newVal.doc)
-              }
-            } else {
-              newVal = _.merge(currVal, newVal)
-            }
-          } else if (Array.isArray(currVal) && Array.isArray(newVal)) {
-            currVal.length = 0
-            currVal.push(...newVal)
-          } else if (typeof pageName === 'undefined') {
-            _.set(draft, dataKey, newVal)
-          } else {
-            _.set(draft[pageName], dataKey, newVal)
-          }
-          break
-        }
-        case 'SET_ROOT_PROPERTIES': {
-          const { properties } = action.payload
-          for (let [key, val] of Object.entries(properties)) {
-            _.set(draft, key, val)
-          }
-          break
-        }
-        case 'SET_LOCAL_PROPERTIES': {
-          const { properties, pageName } = action.payload
-          for (let [key, val] of Object.entries(properties)) {
-            _.set(draft[pageName], key, val)
-          }
-          break
-        }
-        case 'ADD_BUILTIN_FNS': {
-          const { builtInFns } = action.payload
-          for (let [key, val] of Object.entries(builtInFns)) {
-            _.set(draft['builtIn'], key, val)
-          }
-          break
-        }
-        case 'DELETE_PAGE': {
-          const { pageName } = action.payload
-          delete draft[pageName]
-          break
-        }
-        case 'SET_CACHE': {
-          const { cacheIndex, data } = action.payload
-          const currentTimestamp = moment(Date.now()).toString()
-
-          _.set(draft['apiCache'], cacheIndex, {
-            data,
-            timestamp: currentTimestamp,
-          })
-          break
-        }
-        case 'EDIT_DRAFT': {
-          const { callback } = action.payload
-          callback(draft)
-        }
-      }
-    })
   }
 
   /**
@@ -2577,7 +1935,7 @@ export default class CADL extends EventEmitter {
    * -used to handle the emit syntax, where a series
    *  of actions can be called given a common variable(s)
    */
-  public async emitCall({
+  async emitCall({
     dataKey,
     actions,
     pageName,
@@ -2654,24 +2012,6 @@ export default class CADL extends EventEmitter {
     return Object.values(returnValues)
   }
 
-  private getApiCache(cacheIndex) {
-    return this.root.apiCache[cacheIndex].data
-  }
-
-  public get cadlVersion() {
-    return this._cadlVersion
-  }
-
-  public set cadlVersion(cadlVersion) {
-    this._cadlVersion = cadlVersion
-  }
-  public get cadlEndpoint() {
-    return this._cadlEndpoint
-  }
-
-  public set cadlEndpoint(cadlEndpoint) {
-    this._cadlEndpoint = cadlEndpoint
-  }
   private get baseUrl() {
     return this._baseUrl
   }
@@ -2681,15 +2021,8 @@ export default class CADL extends EventEmitter {
       this._baseUrl = baseUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
     }
   }
-  public get myBaseUrl() {
-    return this._myBaseUrl
-  }
 
-  public set myBaseUrl(myBaseUrl) {
-    this._myBaseUrl = myBaseUrl
-  }
-
-  public get cadlBaseUrl() {
+  get cadlBaseUrl() {
     if (!this._cadlBaseUrl) return undefined
     let baseUrlWithVersion = this._cadlBaseUrl
     if (baseUrlWithVersion.includes('cadlVersion')) {
@@ -2707,50 +2040,46 @@ export default class CADL extends EventEmitter {
     return baseUrlWithVersion
   }
 
-  public set cadlBaseUrl(cadlBaseUrl) {
+  set cadlBaseUrl(cadlBaseUrl) {
     this._cadlBaseUrl = cadlBaseUrl
   }
 
-  public get assetsUrl() {
+  get assetsUrl() {
     return this._assetsUrl
   }
 
-  public set assetsUrl(assetsUrl) {
+  set assetsUrl(assetsUrl) {
     if (this.cadlBaseUrl) {
       this._assetsUrl = assetsUrl.replace('${cadlBaseUrl}', this.cadlBaseUrl)
     }
   }
 
-  public get designSuffix() {
+  get designSuffix() {
     const { greaterEqual, less, widthHeightRatioThreshold } = this._designSuffix
     return this.aspectRatio >= widthHeightRatioThreshold ? greaterEqual : less
   }
-  public set designSuffix(designSuffix) {
+
+  set designSuffix(designSuffix) {
     this._designSuffix = designSuffix
   }
-  public get aspectRatio() {
+
+  get aspectRatio() {
     return this._aspectRatio
   }
-  public set aspectRatio(aspectRatio) {
+
+  set aspectRatio(aspectRatio) {
     this._aspectRatio = aspectRatio
     if (this.cadlBaseUrl) {
       this._baseUrl = this.cadlBaseUrl
     }
   }
 
-  public get root() {
+  get root() {
     return this._root
   }
 
-  public set root(root) {
+  set root(root) {
     this._root = root || {}
-  }
-  public get rawRoot() {
-    return this._rawRoot
-  }
-
-  public set rawRoot(rawRoot) {
-    this._rawRoot = rawRoot || {}
   }
 
   set apiVersion(apiVersion) {
@@ -2761,22 +2090,9 @@ export default class CADL extends EventEmitter {
     return store.apiVersion
   }
 
-  set initCallQueue(initCallQueue) {
-    this._initCallQueue = initCallQueue
-  }
-
-  get initCallQueue() {
-    return this._initCallQueue
-  }
-
-  public getConfig() {
+  getConfig() {
     return this._config
   }
-  set map(map) {
-    this._map = map
-  }
-
-  get map() {
-    return this._map
-  }
 }
+
+export default CADL
