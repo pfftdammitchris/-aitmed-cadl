@@ -166,7 +166,7 @@ class CADL extends EventEmitter {
       cadlMain = '',
       designSuffix = '',
       myBaseUrl = '',
-    } = config
+    } = config || {}
 
     this._config = this.processPopulate({
       source: config,
@@ -175,7 +175,7 @@ class CADL extends EventEmitter {
 
     onConfig?.(this._config, config)
 
-    this.cadlVersion = web.cadlVersion[this.cadlVersion]
+    this.cadlVersion = web.cadlVersion?.[this.cadlVersion || 'test']
     this.cadlBaseUrl = cadlBaseUrl
     {
       let cadlYAML: string | undefined
@@ -194,13 +194,14 @@ class CADL extends EventEmitter {
     this.baseUrl = this.cadlEndpoint?.baseUrl
     this.designSuffix = designSuffix
     this.myBaseUrl = myBaseUrl
+    debugger
 
     this.newDispatch({
       type: 'SET_ROOT_PROPERTIES',
       payload: { properties: { Config: this._config } },
     })
 
-    if (u.isArr(this.cadlEndpoint.preload)) {
+    if (u.isArr(this.cadlEndpoint?.preload)) {
       for (const preload of _.uniq([
         'BaseDataModel',
         'BaseCSS',
@@ -233,7 +234,9 @@ class CADL extends EventEmitter {
       const ls =
         typeof window !== 'undefined' ? window.localStorage : ({} as any)
       const cachedGlobal = ls.getItem?.('Global')
-      const parsedGlobal = cachedGlobal ? JSON.parse(cachedGlobal) : null
+      const parsedGlobal = cachedGlobal
+        ? JSON.parse(cachedGlobal)
+        : cachedGlobal
       onRehydrateGlobal?.(parsedGlobal)
       if (parsedGlobal) {
         this.newDispatch({
@@ -1115,11 +1118,11 @@ class CADL extends EventEmitter {
         }
 
         for (let item of doc) {
-          let content = item.name
+          let content = item?.name
           const contentAfterExtraction = basicExtraction(content)
 
           const fuzzyIndexCreator = new FuzzyIndexCreator()
-          let docId = item.id
+          let docId = item?.id
           if (docId instanceof Uint8Array) {
             docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
           }
@@ -1139,7 +1142,7 @@ class CADL extends EventEmitter {
               // score: 0,
               kText: key,
               docId,
-              docType: item.type,
+              docType: item?.type,
               fKey,
               score: 0,
             })
