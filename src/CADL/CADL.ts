@@ -2055,7 +2055,8 @@ class CADL extends EventEmitter {
   }
 
   get designSuffix() {
-    const { greaterEqual, less, widthHeightRatioThreshold } = this._designSuffix
+    const { greaterEqual, less, widthHeightRatioThreshold } =
+      this._designSuffix || {}
     return this.aspectRatio >= widthHeightRatioThreshold ? greaterEqual : less
   }
 
