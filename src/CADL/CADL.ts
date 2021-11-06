@@ -192,9 +192,8 @@ class CADL extends EventEmitter {
     }
     this.assetsUrl = this.cadlEndpoint?.assetsUrl
     this.baseUrl = this.cadlEndpoint?.baseUrl
-    this.designSuffix = designSuffix
+    this.designSuffix = designSuffix || ''
     this.myBaseUrl = myBaseUrl
-    debugger
 
     this.newDispatch({
       type: 'SET_ROOT_PROPERTIES',
@@ -2037,7 +2036,7 @@ class CADL extends EventEmitter {
     if (baseUrlWithVersion.includes('designSuffix')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${designSuffix}',
-        this.designSuffix,
+        this.designSuffix || '',
       )
     }
     return baseUrlWithVersion
@@ -2064,7 +2063,7 @@ class CADL extends EventEmitter {
   }
 
   set designSuffix(designSuffix) {
-    this._designSuffix = designSuffix
+    this._designSuffix = designSuffix || ''
   }
 
   get aspectRatio() {
