@@ -52,6 +52,7 @@ export type CreateParams = {
   aesk?: string
   targetRoomName?: string
   tags?: string[]
+  tage?: number
   type?: number
   dataType?: number
   mediaType?: NoteType
