@@ -166,7 +166,7 @@ class CADL extends EventEmitter {
       cadlMain = '',
       designSuffix = '',
       myBaseUrl = '',
-    } = config
+    } = config || {}
 
     this._config = this.processPopulate({
       source: config,
@@ -175,7 +175,7 @@ class CADL extends EventEmitter {
 
     onConfig?.(this._config, config)
 
-    this.cadlVersion = web.cadlVersion[this.cadlVersion]
+    this.cadlVersion = web.cadlVersion?.[this.cadlVersion || 'test']
     this.cadlBaseUrl = cadlBaseUrl
     {
       let cadlYAML: string | undefined
@@ -192,7 +192,7 @@ class CADL extends EventEmitter {
     }
     this.assetsUrl = this.cadlEndpoint?.assetsUrl
     this.baseUrl = this.cadlEndpoint?.baseUrl
-    this.designSuffix = designSuffix
+    this.designSuffix = designSuffix || ''
     this.myBaseUrl = myBaseUrl
 
     this.newDispatch({
@@ -200,7 +200,7 @@ class CADL extends EventEmitter {
       payload: { properties: { Config: this._config } },
     })
 
-    if (u.isArr(this.cadlEndpoint.preload)) {
+    if (u.isArr(this.cadlEndpoint?.preload)) {
       for (const preload of _.uniq([
         'BaseDataModel',
         'BaseCSS',
@@ -233,7 +233,9 @@ class CADL extends EventEmitter {
       const ls =
         typeof window !== 'undefined' ? window.localStorage : ({} as any)
       const cachedGlobal = ls.getItem?.('Global')
-      const parsedGlobal = cachedGlobal ? JSON.parse(cachedGlobal) : null
+      const parsedGlobal = cachedGlobal
+        ? JSON.parse(cachedGlobal)
+        : cachedGlobal
       onRehydrateGlobal?.(parsedGlobal)
       if (parsedGlobal) {
         this.newDispatch({
@@ -1115,11 +1117,11 @@ class CADL extends EventEmitter {
         }
 
         for (let item of doc) {
-          let content = item.name
+          let content = item?.name
           const contentAfterExtraction = basicExtraction(content)
 
           const fuzzyIndexCreator = new FuzzyIndexCreator()
-          let docId = item.id
+          let docId = item?.id
           if (docId instanceof Uint8Array) {
             docId = store.level2SDK.utilServices.uint8ArrayToBase64(docId)
           }
@@ -1139,7 +1141,7 @@ class CADL extends EventEmitter {
               // score: 0,
               kText: key,
               docId,
-              docType: item.type,
+              docType: item?.type,
               fKey,
               score: 0,
             })
@@ -1584,7 +1586,6 @@ class CADL extends EventEmitter {
     }
 
     const effectValue = condResult ? ifTrueEffect : ifFalseEffect
-
     const isPlainObject = u.isObj(effectValue)
     const leadingKey = isPlainObject ? u.keys(effectValue)[0] : null
     const hasActionTypeKey = isPlainObject && 'actionType' in effectValue
@@ -1616,6 +1617,11 @@ class CADL extends EventEmitter {
         return { abort: true }
       }
 
+      // if (effectValue === ifFalseEffect && u.isFnc(effectValue)) {
+      //   await effectValue()
+      //   return
+      // }
+
       if (leadingKey?.includes('@') || leadingKey?.startsWith('=')) {
         const payload = { pageName, updateObject: effectValue }
         await this.dispatch({ type: 'eval-object', payload })
@@ -1624,7 +1630,7 @@ class CADL extends EventEmitter {
 
       if (isEvalObject) {
         // matches an evalObject actionType
-        const result = this.dispatch({
+        const result = await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: effectValue?.object },
         })
@@ -1636,13 +1642,11 @@ class CADL extends EventEmitter {
         return effectValue
       }
 
+      let lookFor: string | undefined
+      let res: any
+
       if (u.isStr(effectValue)) {
-        const lookFor = ['..', '.', '='].find((op) =>
-          effectValue.startsWith(op),
-        )
-
-        let res: any
-
+        lookFor = ['..', '.', '='].find((op) => effectValue.startsWith(op))
         if (lookFor) {
           //effectValue is a path that points to a reference
           res = populateString({
@@ -1650,53 +1654,54 @@ class CADL extends EventEmitter {
             locations: [this.root, this.root[pageName]],
             lookFor,
           })
-
-          if (u.isFnc(res)) {
-            // reference is a function
-            await res()
-          } else if (isObject(res)) {
-            //reference is an object
-            //assume that it is an evalObject object function evaluation type
-            const boundDispatch = this.dispatch.bind(this)
-            const withFns = attachFns({
-              cadlObject: res,
-              dispatch: boundDispatch,
-            })
-
-            const { dataIn, dataOut } =
-              u.values(u.isObj(effectValue) ? effectValue : {})?.[0] || {}
-
-            if (u.isFnc(withFns)) {
-              const result = dataIn ? await withFns(dataIn) : await withFns()
-
-              if (dataOut) {
-                const pathArr = dataOut.split('.')
-                const payload = { dataKey: pathArr, value: result }
-                this.newDispatch({ type: 'SET_VALUE', payload })
-              }
-              return result
-            } else if (u.isArr(withFns) && u.isFnc(withFns[1])) {
-              const result = dataIn
-                ? await withFns[1](dataIn)
-                : await withFns[1]()
-              if (dataOut) {
-                this.newDispatch({
-                  type: 'SET_VALUE',
-                  payload: { dataKey: dataOut.split('.'), value: result },
-                })
-              }
-              return result
-            }
-          } else if (u.isArr(res) && u.isFnc(res?.[1])) {
-            return res[1]()
-          } else {
-            return res
-          }
         } else {
           return effectValue
         }
       }
+
+      if (u.isFnc(res)) {
+        // reference is a function
+        await res()
+      } else if (isObject(res)) {
+        //reference is an object
+        //assume that it is an evalObject object function evaluation type
+        const withFns = attachFns({
+          cadlObject: res,
+          dispatch: this.dispatch.bind(this),
+        })
+
+        const { dataIn, dataOut } = u.values(
+          u.isObj(effectValue) ? effectValue : {},
+        )?.[0]
+
+        if (u.isFnc(withFns)) {
+          const result = dataIn ? await withFns(dataIn) : await withFns()
+
+          if (dataOut) {
+            const pathArr = dataOut.split('.')
+            const payload = { dataKey: pathArr, value: result }
+            this.newDispatch({ type: 'SET_VALUE', payload })
+          }
+          return result
+        } else if (u.isArr(withFns) && u.isFnc(withFns[1])) {
+          const result = dataIn ? await withFns[1](dataIn) : await withFns[1]()
+          if (dataOut) {
+            this.newDispatch({
+              type: 'SET_VALUE',
+              payload: { dataKey: dataOut.split('.'), value: result },
+            })
+          }
+          return result
+        }
+      } else if (u.isArr(res) && u.isFnc(res?.[1])) {
+        const result = await res[1]()
+        return result
+      } else {
+        return res
+      }
     }
+
+    return effectValue
   }
   /**
    * Used for the actionType 'updateObject'. It updates the value of an object at the given path.
@@ -2034,7 +2039,7 @@ class CADL extends EventEmitter {
     if (baseUrlWithVersion.includes('designSuffix')) {
       baseUrlWithVersion = baseUrlWithVersion.replace(
         '${designSuffix}',
-        this.designSuffix,
+        this.designSuffix || '',
       )
     }
     return baseUrlWithVersion
@@ -2055,12 +2060,13 @@ class CADL extends EventEmitter {
   }
 
   get designSuffix() {
-    const { greaterEqual, less, widthHeightRatioThreshold } = this._designSuffix
+    const { greaterEqual, less, widthHeightRatioThreshold } =
+      this._designSuffix || {}
     return this.aspectRatio >= widthHeightRatioThreshold ? greaterEqual : less
   }
 
   set designSuffix(designSuffix) {
-    this._designSuffix = designSuffix
+    this._designSuffix = designSuffix || ''
   }
 
   get aspectRatio() {
