@@ -1586,7 +1586,6 @@ class CADL extends EventEmitter {
     }
 
     const effectValue = condResult ? ifTrueEffect : ifFalseEffect
-
     const isPlainObject = u.isObj(effectValue)
     const leadingKey = isPlainObject ? u.keys(effectValue)[0] : null
     const hasActionTypeKey = isPlainObject && 'actionType' in effectValue
@@ -1618,6 +1617,11 @@ class CADL extends EventEmitter {
         return { abort: true }
       }
 
+      // if (effectValue === ifFalseEffect && u.isFnc(effectValue)) {
+      //   await effectValue()
+      //   return
+      // }
+
       if (leadingKey?.includes('@') || leadingKey?.startsWith('=')) {
         const payload = { pageName, updateObject: effectValue }
         await this.dispatch({ type: 'eval-object', payload })
@@ -1626,7 +1630,7 @@ class CADL extends EventEmitter {
 
       if (isEvalObject) {
         // matches an evalObject actionType
-        const result = this.dispatch({
+        const result = await this.dispatch({
           type: 'eval-object',
           payload: { pageName, updateObject: effectValue?.object },
         })
@@ -1638,13 +1642,11 @@ class CADL extends EventEmitter {
         return effectValue
       }
 
+      let lookFor: string | undefined
+      let res: any
+
       if (u.isStr(effectValue)) {
-        const lookFor = ['..', '.', '='].find((op) =>
-          effectValue.startsWith(op),
-        )
-
-        let res: any
-
+        lookFor = ['..', '.', '='].find((op) => effectValue.startsWith(op))
         if (lookFor) {
           //effectValue is a path that points to a reference
           res = populateString({
@@ -1652,53 +1654,54 @@ class CADL extends EventEmitter {
             locations: [this.root, this.root[pageName]],
             lookFor,
           })
-
-          if (u.isFnc(res)) {
-            // reference is a function
-            await res()
-          } else if (isObject(res)) {
-            //reference is an object
-            //assume that it is an evalObject object function evaluation type
-            const boundDispatch = this.dispatch.bind(this)
-            const withFns = attachFns({
-              cadlObject: res,
-              dispatch: boundDispatch,
-            })
-
-            const { dataIn, dataOut } =
-              u.values(u.isObj(effectValue) ? effectValue : {})?.[0] || {}
-
-            if (u.isFnc(withFns)) {
-              const result = dataIn ? await withFns(dataIn) : await withFns()
-
-              if (dataOut) {
-                const pathArr = dataOut.split('.')
-                const payload = { dataKey: pathArr, value: result }
-                this.newDispatch({ type: 'SET_VALUE', payload })
-              }
-              return result
-            } else if (u.isArr(withFns) && u.isFnc(withFns[1])) {
-              const result = dataIn
-                ? await withFns[1](dataIn)
-                : await withFns[1]()
-              if (dataOut) {
-                this.newDispatch({
-                  type: 'SET_VALUE',
-                  payload: { dataKey: dataOut.split('.'), value: result },
-                })
-              }
-              return result
-            }
-          } else if (u.isArr(res) && u.isFnc(res?.[1])) {
-            return res[1]()
-          } else {
-            return res
-          }
         } else {
           return effectValue
         }
       }
+
+      if (u.isFnc(res)) {
+        // reference is a function
+        await res()
+      } else if (isObject(res)) {
+        //reference is an object
+        //assume that it is an evalObject object function evaluation type
+        const withFns = attachFns({
+          cadlObject: res,
+          dispatch: this.dispatch.bind(this),
+        })
+
+        const { dataIn, dataOut } = u.values(
+          u.isObj(effectValue) ? effectValue : {},
+        )?.[0]
+
+        if (u.isFnc(withFns)) {
+          const result = dataIn ? await withFns(dataIn) : await withFns()
+
+          if (dataOut) {
+            const pathArr = dataOut.split('.')
+            const payload = { dataKey: pathArr, value: result }
+            this.newDispatch({ type: 'SET_VALUE', payload })
+          }
+          return result
+        } else if (u.isArr(withFns) && u.isFnc(withFns[1])) {
+          const result = dataIn ? await withFns[1](dataIn) : await withFns[1]()
+          if (dataOut) {
+            this.newDispatch({
+              type: 'SET_VALUE',
+              payload: { dataKey: dataOut.split('.'), value: result },
+            })
+          }
+          return result
+        }
+      } else if (u.isArr(res) && u.isFnc(res?.[1])) {
+        const result = await res[1]()
+        return result
+      } else {
+        return res
+      }
     }
+
+    return effectValue
   }
   /**
    * Used for the actionType 'updateObject'. It updates the value of an object at the given path.

@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run clean && npm run build:js && npm run build:types",
     "build:js": "rollup -c",
-    "build:types": "tsc --emitDeclarationOnly",
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
     "clean": "rm -rf dist",
     "watch": "cross-env NODE_ENV=development rollup -c -w",
     "serve:test": "serve test_public",
