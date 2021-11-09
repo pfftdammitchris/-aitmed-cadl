@@ -1152,6 +1152,12 @@ export default {
         if (sourceEdge?.tage) {
           const type = sourceEdge?.tage & 0xfff
           switch (type) {
+            case 1:
+              sourceEdge['name']['statusStyle'] = {
+                borderColor: "0xfc3a3a",
+                boxShadow: "1px 1px 4px 1px #fc3a3a"
+              }
+              break
             case 2:
               sourceEdge['name']['statusStyle'] = {
                 borderColor: "#dededf",
