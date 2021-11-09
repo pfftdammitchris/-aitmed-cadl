@@ -1158,7 +1158,7 @@ export default {
                 boxShadow: "1px 1px 4px 1px #fc3a3a"
               }
               break
-            case 2:
+            case 3:
               sourceEdge['name']['statusStyle'] = {
                 borderColor: "#dededf",
                 boxShadow: "1px 1px 4px 1px #dededf"
