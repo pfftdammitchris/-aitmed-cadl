@@ -431,6 +431,7 @@ class CADL extends EventEmitter {
             'height',
             'pointerEvents',
             'highlightKey',
+            'boxShadow',
             ...skip,
           ],
           withFns: true,
@@ -441,7 +442,7 @@ class CADL extends EventEmitter {
           source: FIRST_processComponents,
           lookFor: ['.', '..', '_', '~'],
           // prettier-ignore
-          skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'display', 'backgroundColor', 'height', 'pointerEvents', ...skip],
+          skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'display', 'backgroundColor', 'height', 'pointerEvents', 'boxShadow', ...skip],
           withFns: true,
           pageName,
         })
@@ -1033,8 +1034,8 @@ class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -1551,7 +1552,7 @@ class CADL extends EventEmitter {
     ) {
       //condExpression is a path pointing to a reference
       // prettier-ignore
-      lookFor = ['..','.','=',].find((op) => condExpression.startsWith(op))
+      lookFor = ['..', '.', '=',].find((op) => condExpression.startsWith(op))
 
       let res: any
 
@@ -1575,7 +1576,7 @@ class CADL extends EventEmitter {
       condResult = u.isFnc(res)
         ? await res()
         : res && res !== condExpression
-        ? nt.Identify.isBooleanFalse(condResult) ? false : true : false
+          ? nt.Identify.isBooleanFalse(condResult) ? false : true : false
     } else if (
       isObject(condExpression) &&
       u.keys(condExpression)?.[0]?.startsWith('=')
@@ -1611,8 +1612,8 @@ class CADL extends EventEmitter {
           goto: u.isStr(result?.goto)
             ? result.goto
             : u.isObj(result?.goto)
-            ? result.goto.dataIn
-            : result,
+              ? result.goto.dataIn
+              : result,
         })
         return { abort: true }
       }
