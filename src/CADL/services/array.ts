@@ -524,7 +524,10 @@ export default {
       }
       return array1.concat(array2)
     }
-    return
+
+    if (isArray(array1) && !isArray(array2)) return array1
+    if (isArray(array2) && !isArray(array1)) return array2
+    return []
   },
   isExist({ array, phoneNumber }) {
     let flag = 0
