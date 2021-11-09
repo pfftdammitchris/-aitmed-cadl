@@ -1,4 +1,4 @@
-import _, { isArray, get } from 'lodash'
+import _, { isArray, get, cloneDeep } from 'lodash'
 import store from '../../common/store'
 // import object from './object'
 type connection = {
@@ -1144,5 +1144,30 @@ export default {
         result.push(itemDoc)
     })
     return result
+  },
+  initMeetingStyle({ sourceEdgeList }) {
+    let _sourceEdgeList = cloneDeep(sourceEdgeList)
+    if (isArray(_sourceEdgeList)) {
+      _sourceEdgeList.forEach(sourceEdge => {
+        if (sourceEdge?.tage) {
+          const type = sourceEdge?.tage & 0xfff
+          switch (type) {
+            case 2:
+              sourceEdge['name']['statusStyle'] = {
+                borderColor: "#dededf",
+                boxShadow: "1px 1px 4px 1px #dededf"
+              }
+              break
+            case 3:
+              sourceEdge['name']['statusStyle'] = {
+                borderColor: "0xfc3a3a",
+                boxShadow: "0px 0px 6px 0.5px #fc3a3a"
+              }
+              break
+          }
+        }
+      })
+    }
+    return _sourceEdgeList
   }
 }
