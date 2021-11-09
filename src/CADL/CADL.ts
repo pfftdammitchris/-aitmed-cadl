@@ -428,10 +428,10 @@ class CADL extends EventEmitter {
             'dataIn',
             'display',
             'backgroundColor',
-            'height',
-            'pointerEvents',
-            'highlightKey',
-            'boxShadow',
+            // 'height',
+            // 'pointerEvents',
+            // 'highlightKey',
+            // 'boxShadow',
             ...skip,
           ],
           withFns: true,
@@ -442,7 +442,7 @@ class CADL extends EventEmitter {
           source: FIRST_processComponents,
           lookFor: ['.', '..', '_', '~'],
           // prettier-ignore
-          skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'display', 'backgroundColor', 'height', 'pointerEvents', 'boxShadow', ...skip],
+          skip: ['update', 'check', 'edge', 'document', 'vertex', 'init', 'formData', 'dataIn', 'style', ...skip],
           withFns: true,
           pageName,
         })
