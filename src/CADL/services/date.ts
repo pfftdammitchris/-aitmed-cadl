@@ -1113,7 +1113,7 @@ export default {
       timeStart: number,
       timeEnd: number
     }) {
-    const date = new Date().getTime() / 100
+    const date = new Date().getTime() / 1000
     if (queryType && stime) {
       switch (queryType) {
         case 1:
