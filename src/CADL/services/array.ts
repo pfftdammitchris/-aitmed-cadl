@@ -530,7 +530,12 @@ export default {
     let flag = 0
     if (isArray(array)) {
       array.forEach((arr) => {
-        if (phoneNumber === arr['name']['data']['phone']) {
+        if (arr['name']['data']['phone'] === undefined) {
+          if (phoneNumber === arr['name']['data']['basicInfo']['phone']) {
+            flag = 1
+            return
+          }
+        } else if (phoneNumber === arr['name']['data']['phone']) {
           flag = 1
           return
         }
