@@ -95,9 +95,10 @@ const SET_LOCAL_PROPERTIES = createProducer((draft, action) => {
 })
 
 const SET_CACHE = createProducer((draft, action) => {
+  const currentTimestamp = moment(Date.now()).toString()
   _.set(draft['apiCache'], action.payload.cacheIndex, {
     data: action.payload.data,
-    timestamp: moment(Date.now()).toString(),
+    timestamp: currentTimestamp,
   })
 })
 

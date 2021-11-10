@@ -91,7 +91,7 @@
     "sql.js": "^1.5.0",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
-    "yaml": "^2.0.0-1"
+    "yaml": "^1.10.2"
   },
   "peerDependencies": {
     "@aitmed/ecos-lvl2-sdk": "^1.4.145"
