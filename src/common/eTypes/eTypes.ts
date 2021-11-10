@@ -19,7 +19,7 @@ enum eTypes {
 }
 
 const [typeMapper, codeMapper, typeList, codeList] = Object.keys(eTypes).reduce<
-  [Record<string, number>, Record<number, string>, string[], number[]]
+  [Record<string, number>, Record<string, string>, string[], number[]]
 >(
   (acc, cur) => {
     if (typeof eTypes[cur as any] === 'number') {
