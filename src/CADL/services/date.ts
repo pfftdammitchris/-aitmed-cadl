@@ -919,6 +919,7 @@ export default {
   },
 
   startMeeting({ stime }) {
+    // Temporary notes for test conveniently
     if ((stime - 900) * 1000 <= new Date().getTime()) return true
     return false
   },
@@ -1106,4 +1107,27 @@ export default {
     if (years < 18) return true
     return false
   },
+  timeRange({ queryType, stime, timeStart = -1, timeEnd = -1 }:
+    {
+      queryType: number,
+      stime: number,
+      timeStart: number,
+      timeEnd: number
+    }) {
+    const date = new Date().getTime() / 1000
+    if (queryType && stime) {
+      switch (queryType) {
+        case 1:
+          return (stime - date > timeStart * 60) ? true : false
+          break
+        case 2:
+          return (stime - date < timeEnd * 60) ? true : false
+          break
+        case 3:
+          return (stime - date < timeEnd * 60 && stime - date > timeStart * 60) ? true : false
+          break
+      }
+    }
+    return
+  }
 }

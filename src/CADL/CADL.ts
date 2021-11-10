@@ -398,7 +398,7 @@ export default class CADL extends EventEmitter {
     } else {
       if (!pageCADL) {
         //refresh the pageObject
-        ;({ pageCADL } = await this.getPage(pageName))
+        ; ({ pageCADL } = await this.getPage(pageName))
       }
       pageCADL && options?.onReceive && (await options?.onReceive?.(pageCADL))
     }
@@ -492,9 +492,10 @@ export default class CADL extends EventEmitter {
             'dataIn',
             'display',
             'backgroundColor',
-            'height',
-            'pointerEvents',
-            'highlightKey',
+            // 'height',
+            // 'pointerEvents',
+            // 'highlightKey',
+            // 'boxShadow',
             ...skip,
           ],
           withFns: true,
@@ -1162,8 +1163,8 @@ export default class CADL extends EventEmitter {
         dispatch: boundDispatch,
         force:
           populateAfterAttachingMyBaseUrl['dataIn'] &&
-          (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
-            populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
+            (populateAfterAttachingMyBaseUrl['dataIn'].includes('Global') ||
+              populateAfterAttachingMyBaseUrl['dataIn'].includes('Firebase'))
             ? true
             : false,
       })
@@ -2442,7 +2443,7 @@ export default class CADL extends EventEmitter {
 
   private initRawRoot(root) {
     //@ts-ignore
-    return produce(root, (draft) => {})
+    return produce(root, (draft) => { })
   }
 
   public newDispatch(action) {
