@@ -920,9 +920,8 @@ export default {
 
   startMeeting({ stime }) {
     // Temporary notes for test conveniently
-    // if ((stime - 900) * 1000 <= new Date().getTime()) return true
-    // return false
-    return true
+    if ((stime - 900) * 1000 <= new Date().getTime()) return true
+    return false
   },
   transformSelectWeek({ object }) {
     if (isArray(object)) {
