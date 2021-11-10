@@ -32,10 +32,10 @@ export default [
         sourcemap: true,
       },
       {
-        file: 'dist/index.min.js',
+        file: 'dist/aitmed-cadl.js',
         format: 'iife', // ES6 output - the preferred format
         sourcemap: true,
-        name: 'aitmedCadl',
+        name: 'CADL',
       },
     ],
     plugins: [
